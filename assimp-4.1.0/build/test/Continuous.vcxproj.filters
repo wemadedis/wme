@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\build\CMakeFiles\75309b867b9a6b21c7785afc301e11b4\Continuous.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\test\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\build\test\CMakeFiles\Continuous" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{C9D74A5E-AEB8-3985-B360-624CBFE6F1CE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

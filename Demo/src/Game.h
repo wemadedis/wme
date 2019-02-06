@@ -4,7 +4,6 @@
 class Game
 {
 public:
-	Game();
+	explicit Game();
 	~Game();
 };
-

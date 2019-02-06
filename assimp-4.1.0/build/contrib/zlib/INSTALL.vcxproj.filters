@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\build\CMakeFiles\cb05f029b95946941430f292d894ca24\INSTALL_force.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{C9D74A5E-AEB8-3985-B360-624CBFE6F1CE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
