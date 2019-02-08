@@ -1,34 +1,31 @@
 #include "PlatformLayer.h"
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
 #include <tuple>
-PlatformLayer::PlatformLayer()
+
+namespace RTE_PL
 {
-}
-
-
-PlatformLayer::~PlatformLayer()
-{
-}
-
-void PlatformLayer::OpenWindow(WindowSetupInfo info)
-{
-
-	GLFWwindow* window;
-
-	auto [t, w, h] = info;
-
-	/* Initialize the library */
-	if (!glfwInit())
-		return;
-
-
-	/* Create a windowed mode window and its OpenGL context */
-	window = glfwCreateWindow(w, h, t.c_str(), NULL, NULL);
-	if (!window)
+	WindowInfo OpenWindow(std::string title, int width, int height)
 	{
-		glfwTerminate();
-		return;
+		GLFWwindow* window;
+		WindowInfo w = WindowInfo();
+
+		/* Initialize the library */
+		if (!glfwInit())
+			w.status = RTEWindowStatus::FAIL;
+
+
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
+		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
+
+		/* Create a windowed mode window and its OpenGL context */
+		window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+		if (!window)
+		{
+			glfwTerminate();
+			w.status = RTEWindowStatus::FAIL;
+		}
+		return w;
 	}
 }
+

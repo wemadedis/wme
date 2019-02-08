@@ -1,0 +1,1695 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Assimp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BaseImporter.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BaseProcess.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\PostStepRegistry.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ImporterRegistry.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\DefaultIOStream.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\DefaultIOSystem.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\CInterfaceIOWrapper.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Importer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SGSpatialSort.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\VertexTriangleAdjacency.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SpatialSort.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SceneCombiner.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ScenePreprocessor.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SkeletonMeshBuilder.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SplitByBoneCountProcess.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ScaleProcess.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\StandardShapes.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\TargetAnimation.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\RemoveComments.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Subdivision.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\scene.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Bitmap.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Version.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\CreateAnimMesh.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\DefaultLogger.cpp">
+      <Filter>Logging</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Exporter.cpp">
+      <Filter>Exporter</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AssimpCExport.cpp">
+      <Filter>Exporter</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\CalcTangentsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ComputeUVMappingProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ConvertToLHProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FindDegenerates.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FindInstancesProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FindInvalidDataProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FixNormalsStep.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\GenFaceNormalsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\GenVertexNormalsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\PretransformVertices.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ImproveCacheLocality.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\JoinVerticesProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LimitBoneWeightsProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\RemoveRedundantMaterials.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\RemoveVCProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SortByPTypeProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SplitLargeMeshes.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\TextureTransform.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\TriangulateProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ValidateDataStructure.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OptimizeGraph.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OptimizeMeshes.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\DeboneProcess.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ProcessHelper.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MakeVerboseFormat.cpp">
+      <Filter>PostProcessing</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MaterialSystem.cpp">
+      <Filter>MaterialSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\StepExporter.cpp">
+      <Filter>Step</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AMFImporter.cpp">
+      <Filter>AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AMFImporter_Geometry.cpp">
+      <Filter>AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AMFImporter_Material.cpp">
+      <Filter>AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AMFImporter_Postprocess.cpp">
+      <Filter>AMF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\3DSConverter.cpp">
+      <Filter>3DS</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\3DSLoader.cpp">
+      <Filter>3DS</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\3DSExporter.cpp">
+      <Filter>3DS</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ACLoader.cpp">
+      <Filter>AC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ASELoader.cpp">
+      <Filter>ASE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ASEParser.cpp">
+      <Filter>ASE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AssbinExporter.cpp">
+      <Filter>ASSBIN</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AssbinLoader.cpp">
+      <Filter>ASSBIN</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AssxmlExporter.cpp">
+      <Filter>ASSXML</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\B3DImporter.cpp">
+      <Filter>B3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BVHLoader.cpp">
+      <Filter>BVH</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ColladaLoader.cpp">
+      <Filter>COLLADA</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ColladaParser.cpp">
+      <Filter>COLLADA</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ColladaExporter.cpp">
+      <Filter>COLLADA</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\DXFLoader.cpp">
+      <Filter>DXF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\CSMLoader.cpp">
+      <Filter>CSM</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\HMPLoader.cpp">
+      <Filter>HMP</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IRRMeshLoader.cpp">
+      <Filter>IRRMESH</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IRRShared.cpp">
+      <Filter>IRR</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IRRLoader.cpp">
+      <Filter>IRR</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LWOAnimation.cpp">
+      <Filter>LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LWOBLoader.cpp">
+      <Filter>LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LWOLoader.cpp">
+      <Filter>LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LWOMaterial.cpp">
+      <Filter>LWO</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LWSLoader.cpp">
+      <Filter>LWS</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD2Loader.cpp">
+      <Filter>MD2</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD3Loader.cpp">
+      <Filter>MD3</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD5Loader.cpp">
+      <Filter>MD5</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD5Parser.cpp">
+      <Filter>MD5</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MDCLoader.cpp">
+      <Filter>MDC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MDLLoader.cpp">
+      <Filter>MDL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MDLMaterialLoader.cpp">
+      <Filter>MDL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\NFFLoader.cpp">
+      <Filter>NFF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\NDOLoader.cpp">
+      <Filter>NDO</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OFFLoader.cpp">
+      <Filter>OFF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ObjFileImporter.cpp">
+      <Filter>OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ObjFileMtlImporter.cpp">
+      <Filter>OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ObjFileParser.cpp">
+      <Filter>OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ObjExporter.cpp">
+      <Filter>OBJ</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OgreImporter.cpp">
+      <Filter>OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OgreStructs.cpp">
+      <Filter>OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OgreBinarySerializer.cpp">
+      <Filter>OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OgreXmlSerializer.cpp">
+      <Filter>OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OgreMaterial.cpp">
+      <Filter>OGRE</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OpenGEXExporter.cpp">
+      <Filter>OPENGEX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OpenGEXImporter.cpp">
+      <Filter>OPENGEX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\PlyLoader.cpp">
+      <Filter>PLY</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\PlyParser.cpp">
+      <Filter>PLY</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\PlyExporter.cpp">
+      <Filter>PLY</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MS3DLoader.cpp">
+      <Filter>MS3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\COBLoader.cpp">
+      <Filter>COB</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderLoader.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderDNA.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderScene.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderModifier.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderBMesh.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderTessellator.cpp">
+      <Filter>BLEND</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCLoader.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCReaderGen1.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCReaderGen2.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCUtil.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCGeometry.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCMaterial.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCProfile.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCCurve.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCBoolean.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCOpenings.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\STEPFileReader.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\STEPFileEncoding.cpp">
+      <Filter>IFC</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\XGLLoader.cpp">
+      <Filter>XGL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXImporter.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXParser.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXTokenizer.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXConverter.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXUtil.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXDocument.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXProperties.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXMeshGeometry.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXMaterial.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXModel.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXAnimation.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXNodeAttribute.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXDeformer.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXBinaryTokenizer.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXDocumentUtil.cpp">
+      <Filter>FBX</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Q3DLoader.cpp">
+      <Filter>Q3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Q3BSPFileParser.cpp">
+      <Filter>Q3BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Q3BSPFileImporter.cpp">
+      <Filter>Q3BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Q3BSPZipArchive.cpp">
+      <Filter>Q3BSP</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\RawLoader.cpp">
+      <Filter>RAW</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SIBImporter.cpp">
+      <Filter>SIB</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SMDLoader.cpp">
+      <Filter>SMD</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\STLLoader.cpp">
+      <Filter>STL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\STLExporter.cpp">
+      <Filter>STL</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\TerragenLoader.cpp">
+      <Filter>TERRAGEN</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\UnrealLoader.cpp">
+      <Filter>3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\XFileImporter.cpp">
+      <Filter>X</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\XFileParser.cpp">
+      <Filter>X</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\XFileExporter.cpp">
+      <Filter>X</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DExporter.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Geometry2D.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Geometry3D.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Group.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Light.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Metadata.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Networking.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Postprocess.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Rendering.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Shape.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Texturing.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FIReader.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DVocabulary.cpp">
+      <Filter>X3D</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTFImporter.cpp">
+      <Filter>GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTFExporter.cpp">
+      <Filter>GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTF2Importer.cpp">
+      <Filter>GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTF2Exporter.cpp">
+      <Filter>GLTF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\D3MFImporter.cpp">
+      <Filter>3MF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\D3MFExporter.cpp">
+      <Filter>3MF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\D3MFOpcPackage.cpp">
+      <Filter>3MF</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MMDImporter.cpp">
+      <Filter>MMD</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MMDPmxParser.cpp">
+      <Filter>MMD</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\unzip\ioapi.c">
+      <Filter>unzip</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\unzip\unzip.c">
+      <Filter>unzip</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\common\shapes.cc">
+      <Filter>Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\sweep\advancing_front.cc">
+      <Filter>Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\sweep\cdt.cc">
+      <Filter>Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\sweep\sweep.cc">
+      <Filter>Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\sweep\sweep_context.cc">
+      <Filter>Poly2Tri</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\clipper\clipper.cpp">
+      <Filter>Clipper</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\code\OpenDDLParser.cpp">
+      <Filter>openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\code\DDLNode.cpp">
+      <Filter>openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\code\OpenDDLCommon.cpp">
+      <Filter>openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\code\OpenDDLExport.cpp">
+      <Filter>openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\code\Value.cpp">
+      <Filter>openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\code\OpenDDLStream.cpp">
+      <Filter>openddl_parser</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcArithmeticCodec.cpp">
+      <Filter>open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcDynamicVectorDecoder.cpp">
+      <Filter>open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcDynamicVectorEncoder.cpp">
+      <Filter>open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcTools.cpp">
+      <Filter>open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcTriangleFans.cpp">
+      <Filter>open3dgc</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\zip\src\zip.c">
+      <Filter>ziplib</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\fast_atof.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\qnan.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BaseImporter.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BaseProcess.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Importer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ScenePrivate.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ByteSwapper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\DefaultProgressHandler.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\CInterfaceIOWrapper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Hash.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFF.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MemoryIOWrapper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ParsingUtils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\StreamReader.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\StreamWriter.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\StringComparison.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\StringUtils.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SGSpatialSort.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\VertexTriangleAdjacency.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\GenericProperty.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SpatialSort.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ScenePreprocessor.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SkeletonMeshBuilder.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SplitByBoneCountProcess.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ScaleProcess.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SmoothingGroups.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\StandardShapes.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\TargetAnimation.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\RemoveComments.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Subdivision.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Vertex.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LineSplitter.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\TinyFormatter.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Profiler.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LogAux.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Bitmap.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\XMLTools.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IOStreamBuffer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\CreateAnimMesh.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\DefaultLogger.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\LogStream.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\Logger.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\NullLogger.hpp">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Win32DebugLogStream.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FileLogStream.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\StdOStreamLogStream.h">
+      <Filter>Logging</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlobIOSystem.h">
+      <Filter>Exporter</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\CalcTangentsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ComputeUVMappingProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ConvertToLHProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FindDegenerates.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FindInstancesProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FindInvalidDataProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FixNormalsStep.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\GenFaceNormalsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\GenVertexNormalsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\PretransformVertices.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ImproveCacheLocality.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\JoinVerticesProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LimitBoneWeightsProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\RemoveRedundantMaterials.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\RemoveVCProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SortByPTypeProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SplitLargeMeshes.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\TextureTransform.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\TriangulateProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ValidateDataStructure.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OptimizeGraph.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OptimizeMeshes.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\DeboneProcess.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ProcessHelper.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\PolyTools.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MakeVerboseFormat.h">
+      <Filter>PostProcessing</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MaterialSystem.h">
+      <Filter>MaterialSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\StepExporter.h">
+      <Filter>Step</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AMFImporter.hpp">
+      <Filter>AMF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AMFImporter_Macro.hpp">
+      <Filter>AMF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AMFImporter_Node.hpp">
+      <Filter>AMF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\3DSHelper.h">
+      <Filter>3DS</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\3DSLoader.h">
+      <Filter>3DS</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\3DSExporter.h">
+      <Filter>3DS</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ACLoader.h">
+      <Filter>AC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ASELoader.h">
+      <Filter>ASE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ASEParser.h">
+      <Filter>ASE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AssbinExporter.h">
+      <Filter>ASSBIN</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AssbinLoader.h">
+      <Filter>ASSBIN</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\AssxmlExporter.h">
+      <Filter>ASSXML</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\B3DImporter.h">
+      <Filter>B3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BVHLoader.h">
+      <Filter>BVH</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ColladaHelper.h">
+      <Filter>COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ColladaLoader.h">
+      <Filter>COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ColladaParser.h">
+      <Filter>COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ColladaExporter.h">
+      <Filter>COLLADA</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\DXFLoader.h">
+      <Filter>DXF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\DXFHelper.h">
+      <Filter>DXF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\CSMLoader.h">
+      <Filter>CSM</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\HMPFileData.h">
+      <Filter>HMP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\HMPLoader.h">
+      <Filter>HMP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\HalfLifeFileData.h">
+      <Filter>HMP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IRRMeshLoader.h">
+      <Filter>IRRMESH</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IRRShared.h">
+      <Filter>IRR</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IRRLoader.h">
+      <Filter>IRR</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LWOAnimation.h">
+      <Filter>LWO</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LWOFileData.h">
+      <Filter>LWO</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LWOLoader.h">
+      <Filter>LWO</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\LWSLoader.h">
+      <Filter>LWS</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD2FileData.h">
+      <Filter>MD2</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD2Loader.h">
+      <Filter>MD2</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD2NormalTable.h">
+      <Filter>MD2</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD3FileData.h">
+      <Filter>MD3</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD3Loader.h">
+      <Filter>MD3</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD5Loader.h">
+      <Filter>MD5</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MD5Parser.h">
+      <Filter>MD5</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MDCFileData.h">
+      <Filter>MDC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MDCLoader.h">
+      <Filter>MDC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MDCNormalTable.h">
+      <Filter>MDC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MDLDefaultColorMap.h">
+      <Filter>MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MDLFileData.h">
+      <Filter>MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MDLLoader.h">
+      <Filter>MDL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\NFFLoader.h">
+      <Filter>NFF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\NDOLoader.h">
+      <Filter>NDO</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OFFLoader.h">
+      <Filter>OFF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ObjFileData.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ObjFileImporter.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ObjFileMtlImporter.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ObjFileParser.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ObjTools.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\ObjExporter.h">
+      <Filter>OBJ</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OgreImporter.h">
+      <Filter>OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OgreStructs.h">
+      <Filter>OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OgreParsingUtils.h">
+      <Filter>OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OgreBinarySerializer.h">
+      <Filter>OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OgreXmlSerializer.h">
+      <Filter>OGRE</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OpenGEXExporter.h">
+      <Filter>OPENGEX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OpenGEXImporter.h">
+      <Filter>OPENGEX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\OpenGEXStructs.h">
+      <Filter>OPENGEX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\PlyLoader.h">
+      <Filter>PLY</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\PlyParser.h">
+      <Filter>PLY</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\PlyExporter.h">
+      <Filter>PLY</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MS3DLoader.h">
+      <Filter>MS3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\COBLoader.h">
+      <Filter>COB</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\COBScene.h">
+      <Filter>COB</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderLoader.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderDNA.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderDNA.inl">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderScene.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderSceneGen.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderIntermediate.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderModifier.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderBMesh.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\BlenderTessellator.h">
+      <Filter>BLEND</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCLoader.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCReaderGen.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\IFCUtil.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\STEPFile.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\STEPFileReader.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\STEPFileEncoding.h">
+      <Filter>IFC</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\XGLLoader.h">
+      <Filter>XGL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXCompileConfig.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXImporter.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXParser.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXTokenizer.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXImportSettings.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXConverter.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXUtil.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXDocument.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXProperties.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FBXMeshGeometry.h">
+      <Filter>FBX</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Q3DLoader.h">
+      <Filter>Q3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Q3BSPFileData.h">
+      <Filter>Q3BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Q3BSPFileParser.h">
+      <Filter>Q3BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Q3BSPFileImporter.h">
+      <Filter>Q3BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\Q3BSPZipArchive.h">
+      <Filter>Q3BSP</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\RawLoader.h">
+      <Filter>RAW</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SIBImporter.h">
+      <Filter>SIB</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\SMDLoader.h">
+      <Filter>SMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\STLLoader.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\STLExporter.h">
+      <Filter>STL</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\TerragenLoader.h">
+      <Filter>TERRAGEN</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\UnrealLoader.h">
+      <Filter>3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\XFileHelper.h">
+      <Filter>X</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\XFileImporter.h">
+      <Filter>X</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\XFileParser.h">
+      <Filter>X</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\XFileExporter.h">
+      <Filter>X</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DExporter.hpp">
+      <Filter>X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter.hpp">
+      <Filter>X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Macro.hpp">
+      <Filter>X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\X3DImporter_Node.hpp">
+      <Filter>X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\FIReader.hpp">
+      <Filter>X3D</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTFAsset.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTFAsset.inl">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTFAssetWriter.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTFAssetWriter.inl">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTFImporter.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTFExporter.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTF2Asset.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTF2Asset.inl">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTF2AssetWriter.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTF2AssetWriter.inl">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTF2Importer.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\glTF2Exporter.h">
+      <Filter>GLTF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\D3MFImporter.h">
+      <Filter>3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\D3MFExporter.h">
+      <Filter>3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\D3MFOpcPackage.h">
+      <Filter>3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\3MFXmlTags.h">
+      <Filter>3MF</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MMDCpp14.h">
+      <Filter>MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MMDImporter.h">
+      <Filter>MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MMDPmdParser.h">
+      <Filter>MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MMDPmxParser.h">
+      <Filter>MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\MMDVmdParser.h">
+      <Filter>MMD</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\irrXMLWrapper.h">
+      <Filter>IrrXML</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\unzip\crypt.h">
+      <Filter>unzip</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\unzip\ioapi.h">
+      <Filter>unzip</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\unzip\unzip.h">
+      <Filter>unzip</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\common\shapes.h">
+      <Filter>Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\common\utils.h">
+      <Filter>Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\sweep\advancing_front.h">
+      <Filter>Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\sweep\cdt.h">
+      <Filter>Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\sweep\sweep.h">
+      <Filter>Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\poly2tri\poly2tri\sweep\sweep_context.h">
+      <Filter>Poly2Tri</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\clipper\clipper.hpp">
+      <Filter>Clipper</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\include\openddlparser\OpenDDLParser.h">
+      <Filter>openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\include\openddlparser\OpenDDLParserUtils.h">
+      <Filter>openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\include\openddlparser\OpenDDLCommon.h">
+      <Filter>openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\include\openddlparser\OpenDDLExport.h">
+      <Filter>openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\include\openddlparser\OpenDDLStream.h">
+      <Filter>openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\include\openddlparser\DDLNode.h">
+      <Filter>openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\openddlparser\include\openddlparser\Value.h">
+      <Filter>openddl_parser</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcAdjacencyInfo.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcArithmeticCodec.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcBinaryStream.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcCommon.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcDVEncodeParams.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcDynamicVectorDecoder.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcDynamicVectorEncoder.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcDynamicVector.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcFIFO.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcIndexedFaceSet.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcIndexedFaceSet.inl">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcSC3DMCDecoder.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcSC3DMCDecoder.inl">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcSC3DMCEncodeParams.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcSC3DMCEncoder.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcSC3DMCEncoder.inl">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcTimer.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcTriangleFans.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcTriangleListDecoder.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcTriangleListDecoder.inl">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcTriangleListEncoder.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcTriangleListEncoder.inl">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcVector.h">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\Open3DGC\o3dgcVector.inl">
+      <Filter>open3dgc</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\zip\src\miniz.h">
+      <Filter>ziplib</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\contrib\zip\src\zip.h">
+      <Filter>ziplib</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\anim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\ai_assert.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\color4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\color4.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\defs.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\Defines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\cfileio.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\material.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\material.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\matrix3x3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\matrix3x3.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\matrix4x4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\matrix4x4.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\postprocess.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\quaternion.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\scene.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\metadata.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\texture.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\vector2.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\vector2.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\vector3.inl">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\cimport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\importerdesc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\Importer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\ProgressHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\IOStream.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\IOSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\cexport.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\Exporter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\DefaultIOStream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\DefaultIOSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\SceneCombiner.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\Compiler\pushpack1.h">
+      <Filter>Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\Compiler\poppack1.h">
+      <Filter>Compiler</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\include\assimp\Compiler\pstdint.h">
+      <Filter>Compiler</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Freemedude\Documents\Projects\itu\games\rte\assimp-4.1.0\code\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="3D">
+      <UniqueIdentifier>{B49D024A-930A-33D5-8C76-AE9B0DA572D9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3DS">
+      <UniqueIdentifier>{32CC437B-31C3-3137-9C7D-6ACD25ED5741}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="3MF">
+      <UniqueIdentifier>{EA80EBC0-8126-3653-A31A-BE0AFAFD4E33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AC">
+      <UniqueIdentifier>{F7EA8CB3-7DFF-39E0-908A-595DF0647DB2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="AMF">
+      <UniqueIdentifier>{1DEE2EF7-A7BC-345C-89D2-0BF04B6F8220}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASE">
+      <UniqueIdentifier>{C043CB39-E482-32DB-B75B-586999F63B8A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASSBIN">
+      <UniqueIdentifier>{827121AB-3A66-3736-A1FE-242215B10BAE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ASSXML">
+      <UniqueIdentifier>{67EF32C9-98FA-350F-BBD7-8E946A049598}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="B3D">
+      <UniqueIdentifier>{5C0BBD35-231B-343B-B9F9-D10321C67D9A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BLEND">
+      <UniqueIdentifier>{4CE254C5-A1BA-3317-B5EE-FF9ECCDB059F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BVH">
+      <UniqueIdentifier>{7B79EF9D-5A85-309A-84A2-D28C7EB9D07D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="COB">
+      <UniqueIdentifier>{25986138-CE26-3506-B496-FED125C796D6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="COLLADA">
+      <UniqueIdentifier>{B1C8237E-5ED6-3029-9403-4E20203E9ED0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="CSM">
+      <UniqueIdentifier>{60D2F205-B013-3447-A5F7-D7711720FAAC}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Clipper">
+      <UniqueIdentifier>{5DAA9132-8C9D-3ABA-9B7D-02F922D2B5A3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{6FC6EC25-6EA0-36BD-9C39-5265D1A0F0F0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Compiler">
+      <UniqueIdentifier>{9B990371-3B01-3217-9640-E3182514EED1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXF">
+      <UniqueIdentifier>{C439BD91-799C-3AFF-975A-A30F3126D728}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Exporter">
+      <UniqueIdentifier>{283A0027-465F-335C-A83D-95C90EDB8D23}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="FBX">
+      <UniqueIdentifier>{2169FC0A-CF24-350E-A820-406A32FE3545}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GLTF">
+      <UniqueIdentifier>{BB839294-79C7-3330-932D-F2D7CC19AF14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HMP">
+      <UniqueIdentifier>{DA0524EE-2C6F-386D-862C-E1B423E23CFD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{E10F731F-99F9-3FD9-A993-B7FB2E8E6822}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IFC">
+      <UniqueIdentifier>{E16C7EDE-77CC-334E-AA35-FC0B34841D22}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IRR">
+      <UniqueIdentifier>{046B59CF-419C-395C-8ADF-6A89E922DB3B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IRRMESH">
+      <UniqueIdentifier>{271DAB19-EB57-3381-B17F-96BF2CD81E1B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IrrXML">
+      <UniqueIdentifier>{074D4123-DC0F-327C-AE36-C4F3A98C7D3A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LWO">
+      <UniqueIdentifier>{D64AAB40-990B-3FB3-A764-70A64A2BA3F5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="LWS">
+      <UniqueIdentifier>{64817648-B451-3A00-8EB0-F1669903A674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Logging">
+      <UniqueIdentifier>{6D69B694-171D-359C-B10B-90D82D567EA7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MD2">
+      <UniqueIdentifier>{48274CD0-A6D2-31D9-B90F-314F4F8EE7EA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MD3">
+      <UniqueIdentifier>{CDB4D784-E946-3C6D-882D-C48E61C8DCB4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MD5">
+      <UniqueIdentifier>{FFB5B0FB-DEE8-391E-9A50-ABF74CB7E2E7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MDC">
+      <UniqueIdentifier>{ED26BFC5-04EF-3226-A773-8AAAAE2F3BE9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MDL">
+      <UniqueIdentifier>{615E74F5-3F16-3755-95AD-8FCFDEEF899B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MMD">
+      <UniqueIdentifier>{49B18B17-C4A4-3C1C-9205-79A32E9D9336}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MS3D">
+      <UniqueIdentifier>{6611CAF4-A30C-3F9B-8409-35E3F2C53067}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MaterialSystem">
+      <UniqueIdentifier>{F7D7E940-0D19-302E-814B-85D19DF2CD83}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NDO">
+      <UniqueIdentifier>{8BCE4739-744A-3443-8923-019B4E66C023}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NFF">
+      <UniqueIdentifier>{8D388551-142D-3D0F-9F63-426B3BD0E46A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OBJ">
+      <UniqueIdentifier>{9DC02CD6-C66E-3F0A-AFDE-95A9B0FD9A02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OFF">
+      <UniqueIdentifier>{E23C1ACF-B880-35C7-9284-DC52A38F249A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OGRE">
+      <UniqueIdentifier>{89C79179-C06A-396B-9A00-CCD2856DF50A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="OPENGEX">
+      <UniqueIdentifier>{A1F0BDB1-8F52-3550-B3AD-AF3995BDCF79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PLY">
+      <UniqueIdentifier>{83BCB715-8EBA-3A29-BEE0-FD5E8561778A}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Poly2Tri">
+      <UniqueIdentifier>{882BBCC8-03DF-34B8-8396-D5C71AA43582}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PostProcessing">
+      <UniqueIdentifier>{81931913-59FA-3D89-BA86-45DA8154D05E}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Q3BSP">
+      <UniqueIdentifier>{7ED5830C-C8CE-30D2-AA37-B0C037FFCAA7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Q3D">
+      <UniqueIdentifier>{80C3B444-A10A-3D6A-81E2-0CD265C49331}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RAW">
+      <UniqueIdentifier>{83E22BFB-9F72-30A5-A8CC-5E75BF9E071D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SIB">
+      <UniqueIdentifier>{2C4F5BD4-14A7-3C98-A886-6199E2B941EA}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SMD">
+      <UniqueIdentifier>{9860CF43-6C95-38A8-9A78-2050B229A8C1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="STL">
+      <UniqueIdentifier>{9CA8C891-4C88-35B6-8497-86619F46EACD}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{935E9325-FAF9-355E-84C5-B631F53339A2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Step">
+      <UniqueIdentifier>{67260752-9BBF-3DC3-AA7B-5442EBCAA861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TERRAGEN">
+      <UniqueIdentifier>{93278F0E-15E5-32A1-9C66-1EDEF3B4F650}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="X">
+      <UniqueIdentifier>{70E31667-61A2-354F-838B-D5C43F76099C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="X3D">
+      <UniqueIdentifier>{253F98FB-11BA-379E-9C54-2F6CA23DD2FB}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="XGL">
+      <UniqueIdentifier>{20EDE465-2875-3110-AC92-B82318865A8F}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="open3dgc">
+      <UniqueIdentifier>{25D533B6-C94F-3401-BDC4-25C0BC00421D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="openddl_parser">
+      <UniqueIdentifier>{6B0C73CC-6EDB-38A4-B1E3-0EBF90C9082D}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="unzip">
+      <UniqueIdentifier>{054C81A3-D27E-3634-AB8E-3197F64D8AFE}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ziplib">
+      <UniqueIdentifier>{FDAB30E9-CFBF-34FD-8905-793B3EF28745}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
