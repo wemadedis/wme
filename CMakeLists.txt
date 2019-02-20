@@ -5,13 +5,6 @@ set (CMAKE_CXX_STANDARD 17)
 set( ENGINE_INCLUDE "${PROJECT_SOURCE_DIR}/engine/include" )
 set( ENGINE_ASSETS "${PROJECT_SOURCE_DIR}/engine/assets" )
 
-macro (PRINT_TARGETS)
-    get_property(targets
-                 DIRECTORY "."
-        PROPERTY BUILDSYSTEM_TARGETS)
-    message("Targets: " ${targets})
-endmacro (PRINT_TARGETS)
-
 ###<RTE>
 add_library(rte INTERFACE)
 target_include_directories(rte INTERFACE engine/include)
@@ -28,7 +21,9 @@ execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.ve
 ###</VULKAN>
 
 ###<ASSIMP>
-add_subdirectory(engine/third_party/assimp)
+add_library(assimp INTERFACE)
+target_link_libraries(assimp INTERFACE ${PROJECT_SOURCE_DIR}/engine/third_party/assimp/lib/assimp.lib)
+target_include_directories(assimp INTERFACE engine/third_party/assimp/include)
 ###</ASSIMP>
 
 ###<RENDERER>

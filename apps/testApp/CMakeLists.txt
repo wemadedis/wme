@@ -1,7 +1,5 @@
-add_executable(testApp Main.cpp MyClass.cpp)
-target_include_directories(testApp 
-    PRIVATE ${ENGINE_INCLUDE}
-)
+add_executable(testApp Main.cpp)
+
 target_link_libraries(testApp 
-    PUBLIC renderer glm glfw vulkan
+    PUBLIC assimp
 )
