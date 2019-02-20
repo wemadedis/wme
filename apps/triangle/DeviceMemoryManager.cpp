@@ -3,22 +3,26 @@
 #include <vk_mem_alloc.h>
 #include <iostream>
 #include <memory>
+#include <map>
+
+using namespace std;
+namespace DeviceMemoryManager
+{
+
 VmaAllocator *alloc = nullptr;
+map<VkBuffer, VmaAllocation> buffers;
 
-
-void DeviceMemoryManager::InitializeAllocator(VkPhysicalDevice physicalDevice, VkDevice device)
+void InitializeAllocator(VkPhysicalDevice physicalDevice, VkDevice device)
 {
     //FIX THIS MALLOC PLS <--------------------------------------------------------------------------------------------------------
-    alloc = (VmaAllocator*)malloc(sizeof(VmaAllocator));
+    alloc = (VmaAllocator *)malloc(sizeof(VmaAllocator));
     VmaAllocatorCreateInfo info = {};
     info.physicalDevice = physicalDevice;
     info.device = device;
-    std::cout << alloc << std::endl;
     vmaCreateAllocator(&info, alloc);
-    std::cout << alloc << std::endl;
 }
 
-void DeviceMemoryManager::CreateBuffer(DATATYPE type, uint32_t size)
+BufferInformation CreateBuffer(DataType type, MemUsage usage, uint32_t size)
 {
     VkBufferCreateInfo bufferInfo = {};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -26,24 +30,52 @@ void DeviceMemoryManager::CreateBuffer(DATATYPE type, uint32_t size)
 
     switch (type)
     {
-    case DATATYPE::VERTEX:
+    case DataType::VERTEX:
         bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
         break;
-    case DATATYPE::INDEX:
+    case DataType::INDEX:
         bufferInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
         break;
-    case DATATYPE::UNIFORM:
+    case DataType::UNIFORM:
         bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
         break;
     }
+
     VmaAllocationCreateInfo allocInfo = {};
-    allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+    switch (usage)
+    {
+    case MemUsage::HOST:
+        allocInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
+        break;
+    case MemUsage::DEVICE:
+        allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+        break;
+    }
 
     VkBuffer buffer;
     VmaAllocation allocation;
-    
+
     VkResult result = vmaCreateBuffer(*alloc, &bufferInfo, &allocInfo, &buffer, &allocation, nullptr);
-    if(result != VK_SUCCESS) {
+    if (result != VK_SUCCESS)
+    {
         throw std::runtime_error("(DeviceMemoryManager) Failed to create buffer!");
     }
+
+    buffers.insert(pair<VkBuffer, VmaAllocation>(buffer, allocation));
+    return { type, usage, size, buffer };
 }
+
+
+void DestroyBuffer(BufferInformation bufferInfo)
+{
+    VmaAllocation allocation = buffers[bufferInfo.buffer];
+    vmaDestroyBuffer(*alloc, bufferInfo.buffer, allocation);
+    buffers.erase(bufferInfo.buffer);
+}
+
+char* GetMemoryState()
+{
+    return "FECK";
+}
+
+} // namespace DeviceMemoryManager

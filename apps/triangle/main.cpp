@@ -671,7 +671,10 @@ private:
 
 	void createGraphicsPipeline() {
 		DeviceMemoryManager::InitializeAllocator(physicalDevice, device);
-		DeviceMemoryManager::CreateBuffer(DeviceMemoryManager::DATATYPE::INDEX, 1024);
+		
+		auto bufferinfo = DeviceMemoryManager::CreateBuffer(DeviceMemoryManager::DataType::INDEX, DeviceMemoryManager::MemUsage::DEVICE, 1024);
+		
+		DeviceMemoryManager::DestroyBuffer(bufferinfo);
 
 		std::ostringstream ss;
         ss << ENGINE_ASSET_DIR << "shaders/vert.spv";
