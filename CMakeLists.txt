@@ -27,12 +27,16 @@ execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.fr
 execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.vert" )
 ###</VULKAN>
 
-###<Renderer>
-add_library(renderer SHARED engine/renderer/RenderManager.cpp)
+###<ASSIMP>
+add_subdirectory(engine/third_party/assimp)
+###</ASSIMP>
+
+###<RENDERER>
+add_library(renderer engine/renderer/RenderManager.cpp)
 target_link_libraries(renderer glm)
 target_include_directories(renderer PUBLIC engine/renderer/include)
 target_include_directories(renderer PRIVATE ${ENGINE_INCLUDE})
-###</Renderer>
+###</RENDERER>
 
 ###<GLFW>
 # Don't build GLFW documentation, tests, and examples
