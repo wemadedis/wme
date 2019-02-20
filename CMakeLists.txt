@@ -28,7 +28,7 @@ execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.ve
 ###</VULKAN>
 
 ###<Renderer>
-add_library(renderer SHARED engine/renderer/RenderManager.cpp)
+add_library(renderer engine/renderer/RenderManager.cpp)
 target_link_libraries(renderer glm)
 target_include_directories(renderer PUBLIC engine/renderer/include)
 target_include_directories(renderer PRIVATE ${ENGINE_INCLUDE})
