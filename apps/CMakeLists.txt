@@ -1,0 +1,2 @@
+#add_subdirectory(testApp)
+add_subdirectory(triangle)

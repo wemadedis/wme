@@ -1,9 +1,0 @@
-# CMake generation dependency list for this directory.
-C:/CMake/share/cmake-3.13/Modules/CheckCSourceCompiles.cmake
-C:/CMake/share/cmake-3.13/Modules/CheckFunctionExists.cmake
-C:/CMake/share/cmake-3.13/Modules/CheckIncludeFile.cmake
-C:/CMake/share/cmake-3.13/Modules/CheckIncludeFileCXX.cmake
-C:/CMake/share/cmake-3.13/Modules/CheckTypeSize.cmake
-C:/Users/Freemedude/Documents/Projects/itu/games/rte/assimp-4.1.0/contrib/zlib/CMakeLists.txt
-C:/Users/Freemedude/Documents/Projects/itu/games/rte/assimp-4.1.0/contrib/zlib/zconf.h.cmakein
-C:/Users/Freemedude/Documents/Projects/itu/games/rte/assimp-4.1.0/contrib/zlib/zlib.pc.cmakein
