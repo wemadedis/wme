@@ -6,36 +6,36 @@ namespace RTE_Renderer
 	/// <summary>Vertex struct for use in RTE rendering.</summary>
 	struct Vertex
 	{
-		glm::vec3 _Position;
-		glm::vec3 _Normal;
-		glm::vec4 _Color;
+		glm::vec3 Position;
+		glm::vec3 Normal;
+		glm::vec4 Color;
 	};
 
 	struct Camera
 	{
-		glm::vec3 _Position;
-		glm::mat4 _ViewMatrix;
-		glm::mat4 _ProjectionMatrix;
+		glm::vec3 Position;
+		glm::mat4 ViewMatrix;
+		glm::mat4 ProjectionMatrix;
 	};
 
 	enum class LightType {DIRECTIONAL, POINT, AMBIENT};
 
 	struct Light
 	{
-		LightType _LightType;
-		glm::vec4 _Color;
+		LightType LightType;
+		glm::vec4 Color;
 		union
 		{
 			struct
 			{
-				glm::vec3 _Direction;
-			} _DirectionalLight;
+				glm::vec3 Direction;
+			};
 			struct
 			{
-				float _Radius;
-				float _Intensity;
-			} _PointLight;
-		} _Properties;
+				float Radius;
+				float Intensity;
+			};
+		};
 	};
 
 	struct Texture
