@@ -19,6 +19,8 @@
 #include <array>
 #include <sstream>
 
+#include "DeviceMemoryManager.h"
+
 const int WIDTH = 800;
 const int HEIGHT = 600;
 const int MAX_FRAMES_IN_FLIGHT = 2;
@@ -668,6 +670,9 @@ private:
 	}
 
 	void createGraphicsPipeline() {
+		DeviceMemoryManager::InitializeAllocator(physicalDevice, device);
+		DeviceMemoryManager::CreateBuffer(DeviceMemoryManager::DATATYPE::INDEX, 1024);
+
 		std::ostringstream ss;
         ss << ENGINE_ASSET_DIR << "shaders/vert.spv";
         
