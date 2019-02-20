@@ -209,6 +209,9 @@ private:
 		createSurface();
 		pickPhysicalDevice();
 		createLogicalDevice();
+		
+		DeviceMemoryManager::InitializeAllocator(physicalDevice, device);
+		
 		createSwapChain();
 		createImageViews();
 		createRenderPass();
@@ -367,7 +370,8 @@ private:
 
 		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, indexBuffer, indexBufferMemory);
 
-		copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+		//copyBuffer(stagingBuffer, indexBuffer, bufferSize);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer, indexBuffer, bufferSize, commandPool, graphicsQueue);
 
 		vkDestroyBuffer(device, stagingBuffer, nullptr);
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
@@ -412,12 +416,13 @@ private:
 
 		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
 		
-		copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+		//copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer, vertexBuffer, bufferSize, commandPool, graphicsQueue);
 
 		vkDestroyBuffer(device, stagingBuffer, nullptr);
 		vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
-
+/*
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
 		//May need to create a seperate command buffer pool for these short lived buffers
 		VkCommandBufferAllocateInfo allocInfo = {};
@@ -450,10 +455,14 @@ private:
 
 		vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
 		vkQueueWaitIdle(graphicsQueue);
-		//A fence would allow you to schedule multiple transfers simultaneously and wait for all of them complete, instead of executing one at a time. That may give the driver more opportunities to optimize.
+		
+		//A fence would allow you to schedule multiple transfers simultaneously 
+		//and wait for all of them complete, instead of executing one at a time. 
+		//That may give the driver more opportunities to optimize.
+		
 		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 	}
-
+*/
 	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
 		VkPhysicalDeviceMemoryProperties memProperties;
 		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
@@ -670,12 +679,6 @@ private:
 	}
 
 	void createGraphicsPipeline() {
-		DeviceMemoryManager::InitializeAllocator(physicalDevice, device);
-		
-		auto bufferinfo = DeviceMemoryManager::CreateBuffer(DeviceMemoryManager::DataType::INDEX, DeviceMemoryManager::MemUsage::DEVICE, 1024);
-		
-		DeviceMemoryManager::DestroyBuffer(bufferinfo);
-
 		std::ostringstream ss;
         ss << ENGINE_ASSET_DIR << "shaders/vert.spv";
         

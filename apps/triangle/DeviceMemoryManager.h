@@ -28,6 +28,11 @@ namespace DeviceMemoryManager
 	Create a buffer, allocate the necessary memory, and bind the buffer to it.
 	*/
 	BufferInformation CreateBuffer(DataType type, MemUsage usage, uint32_t size);
+
+	/*
+	Copy data from on buffer to another. Used to transfer data from a host visible buffer to a device local buffer.
+	*/
+	void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkCommandPool commandPool, VkQueue submitQueue);
 	
 	/*
 	SHOULD IT RETURN A BOOL TO KNOW IF WE DID GOOD, OR CRASH IF WE WANT TO DELETE NON-EXISTENT ITEMS?
