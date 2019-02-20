@@ -1,7 +1,7 @@
 #pragma once
 namespace RTE_Renderer
 {
-	class RenderManager
+	struct RenderManager
 	{
 	public:
 		RenderManager();
