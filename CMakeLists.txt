@@ -14,6 +14,11 @@ add_library(glm INTERFACE)
 target_include_directories(glm INTERFACE engine/third_party/glm)
 ###</GLM>
 
+###<VMA> 
+add_library(vma INTERFACE)
+target_include_directories(vma INTERFACE engine/third_party/vma)
+###</VMA>
+
 ###<VULKAN>
 find_package(Vulkan REQUIRED)
 execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.frag" )
@@ -27,6 +32,7 @@ target_include_directories(assimp INTERFACE engine/third_party/assimp/include)
 ###</ASSIMP>
 
 ###<RENDERER>
+###<Renderer>
 add_library(renderer engine/renderer/RenderManager.cpp)
 target_link_libraries(renderer glm)
 target_include_directories(renderer PUBLIC engine/renderer/include)
