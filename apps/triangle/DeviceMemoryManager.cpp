@@ -13,7 +13,7 @@ VmaAllocator *alloc = nullptr;
 map<VkBuffer, VmaAllocation> buffers;
 VkDevice device;
 
-void InitializeAllocator(VkPhysicalDevice physicalDevice, VkDevice device)
+void Initialize(VkPhysicalDevice physicalDevice, VkDevice device)
 {
     //FIX THIS MALLOC PLS <--------------------------------------------------------------------------------------------------------
     alloc = (VmaAllocator *)malloc(sizeof(VmaAllocator));
@@ -24,32 +24,21 @@ void InitializeAllocator(VkPhysicalDevice physicalDevice, VkDevice device)
     DeviceMemoryManager::device = device;
 }
 
-BufferInformation CreateBuffer(DataType type, MemUsage usage, uint32_t size)
+void CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, BufferInformation& bufferInformation)
 {
     VkBufferCreateInfo bufferInfo = {};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
-
-    switch (type)
-    {
-    case DataType::VERTEX:
-        bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
-        break;
-    case DataType::INDEX:
-        bufferInfo.usage = VK_BUFFER_USAGE_INDEX_BUFFER_BIT;
-        break;
-    case DataType::UNIFORM:
-        bufferInfo.usage = VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
-        break;
-    }
+    bufferInfo.usage = bufferUsage;
+    //bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     VmaAllocationCreateInfo allocInfo = {};
-    switch (usage)
+    switch (props)
     {
-    case MemUsage::HOST:
+    case MemProps::HOST:
         allocInfo.usage = VMA_MEMORY_USAGE_CPU_ONLY;
         break;
-    case MemUsage::DEVICE:
+    case MemProps::DEVICE:
         allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
         break;
     }
@@ -62,14 +51,26 @@ BufferInformation CreateBuffer(DataType type, MemUsage usage, uint32_t size)
     {
         throw std::runtime_error("(DeviceMemoryManager) Failed to create buffer!");
     }
-
     buffers.insert(pair<VkBuffer, VmaAllocation>(buffer, allocation));
-    return { type, usage, size, buffer };
+    
+    bufferInformation.bufferUsage = bufferUsage;
+    bufferInformation.memoryProperties = props;
+    bufferInformation.size = size;
+    bufferInformation.buffer = buffer;
 }
 
-void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size, VkCommandPool commandPool, VkQueue submitQueue) {
+void CopyDataToBuffer(BufferInformation& bufferInfo, void* data){
+    void *mapping = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
+    VmaAllocation& allocation = buffers[bufferInfo.buffer];
+    vmaMapMemory(*alloc, allocation, &mapping);
+    memcpy(mapping, data, bufferInfo.size);
+    vmaUnmapMemory(*alloc, allocation);
+    
+}
+
+void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue) {
 		//May need to create a seperate command buffer pool for these short lived buffers
-        cout << "lel" << endl;
+        cout << "keks butter" << endl;
 		VkCommandBufferAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -120,4 +121,4 @@ char* GetMemoryState()
     return "FECK";
 }
 
-} // namespace DeviceMemoryManager
+}; // namespace DeviceMemoryManager

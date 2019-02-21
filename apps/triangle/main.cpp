@@ -178,6 +178,7 @@ private:
 
 	VkBuffer vertexBuffer;
 	VkDeviceMemory vertexBufferMemory;
+
 	VkBuffer indexBuffer;
 	VkDeviceMemory indexBufferMemory;
 
@@ -186,6 +187,20 @@ private:
 
 	VkDescriptorPool descriptorPool;
 	std::vector<VkDescriptorSet> descriptorSets;
+
+
+
+
+	//OUR MEMORY MANAGEMENT
+	typedef DeviceMemoryManager::BufferInformation BufferInformation;
+
+	BufferInformation vertexBufferInformation = {};
+	BufferInformation indexBufferInformation = {};
+	//std::vector<BufferInformation> uniformBuffersInformation;
+
+	
+
+
 
 	void initWindow() {
 		glfwInit();
@@ -210,7 +225,7 @@ private:
 		pickPhysicalDevice();
 		createLogicalDevice();
 		
-		DeviceMemoryManager::InitializeAllocator(physicalDevice, device);
+		DeviceMemoryManager::Initialize(physicalDevice, device);
 		
 		createSwapChain();
 		createImageViews();
@@ -357,7 +372,7 @@ private:
 	}
 
 	void createIndexBuffer() {
-		VkDeviceSize bufferSize = sizeof(indices[0]) * indices.size();
+		size_t bufferSize = sizeof(indices[0]) * indices.size();
 
 		VkBuffer stagingBuffer;
 		VkDeviceMemory stagingBufferMemory;
@@ -404,23 +419,23 @@ private:
 	}
 
 	void createVertexBuffer() {
-		VkDeviceSize bufferSize = sizeof(vertices[0]) * vertices.size();
-		VkBuffer stagingBuffer;
-		VkDeviceMemory stagingBufferMemory;
-		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, stagingBuffer, stagingBufferMemory);
-
-		void* data;
-		vkMapMemory(device, stagingBufferMemory, 0, bufferSize, 0, &data);
-		memcpy(data, vertices.data(), (size_t)bufferSize);
-		vkUnmapMemory(device, stagingBufferMemory);
+		size_t bufferSize = sizeof(vertices[0]) * vertices.size();
+		
+		
+		BufferInformation stagingBuffer = {};
+		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, stagingBuffer);
+		
+		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)vertices.data());
 
 		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
 		
-		//copyBuffer(stagingBuffer, vertexBuffer, bufferSize);
-		DeviceMemoryManager::CopyBuffer(stagingBuffer, vertexBuffer, bufferSize, commandPool, graphicsQueue);
+		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, vertexBufferInformation);
 
-		vkDestroyBuffer(device, stagingBuffer, nullptr);
-		vkFreeMemory(device, stagingBufferMemory, nullptr);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer.buffer, vertexBufferInformation.buffer, bufferSize, commandPool, graphicsQueue);
+		vertexBuffer = vertexBufferInformation.buffer;
+		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
+		//vkDestroyBuffer(device, stagingBuffer, nullptr);
+		//vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
 /*
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
