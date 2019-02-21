@@ -421,21 +421,17 @@ private:
 	void createVertexBuffer() {
 		size_t bufferSize = sizeof(vertices[0]) * vertices.size();
 		
-		
 		BufferInformation stagingBuffer = {};
+		
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, stagingBuffer);
 		
 		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)vertices.data());
 
-		createBuffer(bufferSize, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, vertexBuffer, vertexBufferMemory);
-		
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, vertexBufferInformation);
 
 		DeviceMemoryManager::CopyBuffer(stagingBuffer.buffer, vertexBufferInformation.buffer, bufferSize, commandPool, graphicsQueue);
-		vertexBuffer = vertexBufferInformation.buffer;
+
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
-		//vkDestroyBuffer(device, stagingBuffer, nullptr);
-		//vkFreeMemory(device, stagingBufferMemory, nullptr);
 	}
 /*
 	void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size) {
@@ -590,7 +586,7 @@ private:
 
 			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 			
-			VkBuffer vertexBuffers[] = { vertexBuffer };
+			VkBuffer vertexBuffers[] = { vertexBufferInformation.buffer };
 			VkDeviceSize offsets[] = { 0 };
 			
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
@@ -1290,9 +1286,9 @@ private:
 		vkDestroyBuffer(device, indexBuffer, nullptr);
 		vkFreeMemory(device, indexBufferMemory, nullptr);
 
-		vkDestroyBuffer(device, vertexBuffer, nullptr);
-		vkFreeMemory(device, vertexBufferMemory, nullptr);
-
+		//vkDestroyBuffer(device, vertexBuffer, nullptr);
+		//vkFreeMemory(device, vertexBufferMemory, nullptr);
+		DeviceMemoryManager::DestroyBuffer(vertexBufferInformation);
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 			vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
