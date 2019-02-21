@@ -68,7 +68,7 @@ void CopyDataToBuffer(BufferInformation& bufferInfo, void* data){
     
 }
 
-void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue) {
+void CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue) {
 		//May need to create a seperate command buffer pool for these short lived buffers
         cout << "keks butter" << endl;
 		VkCommandBufferAllocateInfo allocInfo = {};
@@ -90,7 +90,7 @@ void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, size_t size, VkCommandPo
 		copyRegion.srcOffset = 0; // Optional
 		copyRegion.dstOffset = 0; // Optional
 		copyRegion.size = size;
-		vkCmdCopyBuffer(commandBuffer, srcBuffer, dstBuffer, 1, &copyRegion);
+		vkCmdCopyBuffer(commandBuffer, srcBuffer.buffer, dstBuffer.buffer, 1, &copyRegion);
 
 		vkEndCommandBuffer(commandBuffer);
 
@@ -109,7 +109,7 @@ void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, size_t size, VkCommandPo
 		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
 	}
 
-void DestroyBuffer(BufferInformation bufferInfo)
+void DestroyBuffer(BufferInformation& bufferInfo)
 {
     VmaAllocation allocation = buffers[bufferInfo.buffer];
     vmaDestroyBuffer(*alloc, bufferInfo.buffer, allocation);

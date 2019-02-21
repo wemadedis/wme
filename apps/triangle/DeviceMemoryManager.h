@@ -10,6 +10,10 @@ namespace DeviceMemoryManager
 
 	enum class MemProps { HOST, DEVICE };
 
+
+	/*
+	
+	*/
 	struct BufferInformation {
 		VkBufferUsageFlags bufferUsage;
 		MemProps memoryProperties;
@@ -38,12 +42,12 @@ namespace DeviceMemoryManager
 	/*
 	Copy data from on buffer to another. Used to transfer data from a host visible buffer to a device local buffer.
 	*/
-	void CopyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue);
+	void CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue);
 	
 	/*
 	SHOULD IT RETURN A BOOL TO KNOW IF WE DID GOOD, OR CRASH IF WE WANT TO DELETE NON-EXISTENT ITEMS?
 	*/
-	void DestroyBuffer(BufferInformation bufferInfo);
+	void DestroyBuffer(BufferInformation& bufferInfo);
 
 	/*
 	Returns a pointer to a char array describing the current state of memory in JSON format.

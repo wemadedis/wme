@@ -190,7 +190,7 @@ private:
 
 	BufferInformation vertexBufferInformation = {};
 	BufferInformation indexBufferInformation = {};
-	//std::vector<BufferInformation> uniformBuffersInformation;
+	std::vector<BufferInformation> uniformBuffersInformation;
 
 	
 
@@ -301,7 +301,7 @@ private:
 
 		for (size_t i = 0; i < swapChainImages.size(); i++) {
 			VkDescriptorBufferInfo bufferInfo = {};
-			bufferInfo.buffer = uniformBuffers[i];
+			bufferInfo.buffer = uniformBuffersInformation[i].buffer;
 			bufferInfo.offset = 0;
 			bufferInfo.range = sizeof(UniformBufferObject);
 			
@@ -337,13 +337,12 @@ private:
 	}
 
 	void createUniformBuffers() {
-		VkDeviceSize bufferSize = sizeof(UniformBufferObject);
+		size_t bufferSize = sizeof(UniformBufferObject);
 
-		uniformBuffers.resize(swapChainImages.size());
-		uniformBuffersMemory.resize(swapChainImages.size());
-
+		uniformBuffersInformation.resize(swapChainImages.size());
 		for (size_t i = 0; i < swapChainImages.size(); i++) {
-			createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, uniformBuffers[i], uniformBuffersMemory[i]);
+			BufferInformation info = {};
+			DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, uniformBuffersInformation[i]);
 		}
 	}
 
@@ -376,35 +375,9 @@ private:
 
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, indexBufferInformation);
 
-		DeviceMemoryManager::CopyBuffer(stagingBuffer.buffer, indexBufferInformation.buffer, bufferSize, commandPool, graphicsQueue);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer, indexBufferInformation, bufferSize, commandPool, graphicsQueue);
 
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
-	}
-
-	void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
-		VkBufferCreateInfo bufferInfo = {};
-		bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
-		bufferInfo.size = size;
-		bufferInfo.usage = usage;
-		bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-
-		if (vkCreateBuffer(device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create buffer!");
-		}
-
-		VkMemoryRequirements memRequirements;
-		vkGetBufferMemoryRequirements(device, buffer, &memRequirements);
-
-		VkMemoryAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
-		allocInfo.allocationSize = memRequirements.size;
-		allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, properties);
-
-		if (vkAllocateMemory(device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
-			throw std::runtime_error("failed to allocate buffer memory!");
-		}
-
-		vkBindBufferMemory(device, buffer, bufferMemory, 0);
 	}
 
 	void createVertexBuffer() {
@@ -418,7 +391,7 @@ private:
 
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, vertexBufferInformation);
 
-		DeviceMemoryManager::CopyBuffer(stagingBuffer.buffer, vertexBufferInformation.buffer, bufferSize, commandPool, graphicsQueue);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer, vertexBufferInformation, bufferSize, commandPool, graphicsQueue);
 
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
 	}
@@ -1214,10 +1187,11 @@ private:
 		ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
 		ubo.proj[1][1] *= -1;
 
-		void* data;
+		DeviceMemoryManager::CopyDataToBuffer(uniformBuffersInformation[currentImage], &ubo);
+		/*void* data;
 		vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
 		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, uniformBuffersMemory[currentImage]);
+		vkUnmapMemory(device, uniformBuffersMemory[currentImage]);*/
 	}
 
 	void cleanup() {
@@ -1227,8 +1201,9 @@ private:
 		vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 
 		for (size_t i = 0; i < swapChainImages.size(); i++) {
-			vkDestroyBuffer(device, uniformBuffers[i], nullptr);
-			vkFreeMemory(device, uniformBuffersMemory[i], nullptr);
+			//vkDestroyBuffer(device, uniformBuffers[i], nullptr);
+			//vkFreeMemory(device, uniformBuffersMemory[i], nullptr);
+			DeviceMemoryManager::DestroyBuffer(uniformBuffersInformation[i]);
 		}
 
 		vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
