@@ -21,6 +21,7 @@ target_include_directories(vma INTERFACE engine/third_party/vma)
 
 ###<VULKAN>
 find_package(Vulkan REQUIRED)
+# TODO: (danh 22/02 10:08): Make this work
 execute_process( COMMAND "echo" "hello")
 execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.frag" )
 execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.vert" )
@@ -34,10 +35,9 @@ target_include_directories(assimp INTERFACE engine/third_party/assimp/include)
 
 ###<RENDERER>
 ###<Renderer>
-add_library(renderer engine/renderer/RenderManager.cpp)
-target_link_libraries(renderer glm)
-target_include_directories(renderer PUBLIC engine/renderer/include)
-target_include_directories(renderer PRIVATE ${ENGINE_INCLUDE})
+add_library(platform engine/platform/Platform.cpp)
+target_link_libraries(platform glfw)
+target_include_directories(platform PUBLIC  ${ENGINE_INCLUDE} engine/platform/include)
 ###</RENDERER>
 
 ###<GLFW>
@@ -48,5 +48,4 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_VULKAN_STATIC OFF CACHE BOOL "" FORCE)
 add_subdirectory(engine/third_party/glfw)
 ###</GLFW>
-add_subdirectory(engine)
 add_subdirectory(apps)

@@ -1,6 +1,6 @@
+// TODO: (danh 22/02 09:57): Place this in appropriate Renderer-library when it exists
 #pragma once
 #include <glm\glm.hpp>
-
 namespace RTE_Renderer
 {
 	/// <summary>Vertex struct for use in RTE rendering.</summary>

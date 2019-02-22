@@ -1,2 +1,3 @@
 add_subdirectory(testApp)
+add_subdirectory(platformTest)
 add_subdirectory(triangle)
