@@ -8,13 +8,16 @@ namespace DeviceMemoryManager
 	//Textures: yeah, what? It is kinda uniform, but has specific format.
 	//Uniforms: that can be anything, so we need to look at which uniforms we will use in the shaders.
 
-	enum class DataType { VERTEX, INDEX, UNIFORM};
-	enum class MemUsage { HOST, DEVICE };
+	enum class MemProps { HOST, DEVICE };
 
+
+	/*
+	
+	*/
 	struct BufferInformation {
-		DataType dataType;
-		MemUsage memoryUsage;
-		uint32_t size;
+		VkBufferUsageFlags bufferUsage;
+		MemProps memoryProperties;
+		size_t size;
 		VkBuffer buffer;
 	};
 	
@@ -22,17 +25,29 @@ namespace DeviceMemoryManager
 	/*
 	Initialize the allocator. Required before calling any other DeviceMemoryManager function.
 	*/
-	void InitializeAllocator(VkPhysicalDevice physicalDevice, VkDevice device);
+	void Initialize(VkPhysicalDevice physicalDevice, VkDevice device);
 	
 	/*
 	Create a buffer, allocate the necessary memory, and bind the buffer to it.
 	*/
-	BufferInformation CreateBuffer(DataType type, MemUsage usage, uint32_t size);
+	void CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, BufferInformation& bufferInfo);
+
+	
+	/*
+	Copies data from the host memory to a host visible buffer by mapping the buffer memory.
+	*/
+	void CopyDataToBuffer(BufferInformation& bufferInfo, void* data);
+
+
+	/*
+	Copy data from on buffer to another. Used to transfer data from a host visible buffer to a device local buffer.
+	*/
+	void CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue);
 	
 	/*
 	SHOULD IT RETURN A BOOL TO KNOW IF WE DID GOOD, OR CRASH IF WE WANT TO DELETE NON-EXISTENT ITEMS?
 	*/
-	void DestroyBuffer(BufferInformation bufferInfo);
+	void DestroyBuffer(BufferInformation& bufferInfo);
 
 	/*
 	Returns a pointer to a char array describing the current state of memory in JSON format.
