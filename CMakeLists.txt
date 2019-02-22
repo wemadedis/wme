@@ -21,13 +21,14 @@ target_include_directories(vma INTERFACE engine/third_party/vma)
 
 ###<VULKAN>
 find_package(Vulkan REQUIRED)
+execute_process( COMMAND "echo" "hello")
 execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.frag" )
 execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.vert" )
 ###</VULKAN>
 
 ###<ASSIMP>
 add_library(assimp INTERFACE)
-target_link_libraries(assimp INTERFACE ${PROJECT_SOURCE_DIR}/engine/third_party/assimp/lib/assimp.lib)
+target_link_libraries(assimp INTERFACE ${PROJECT_SOURCE_DIR}/engine/third_party/assimp/lib/assimp)
 target_include_directories(assimp INTERFACE engine/third_party/assimp/include)
 ###</ASSIMP>
 

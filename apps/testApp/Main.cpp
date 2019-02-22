@@ -1,6 +1,7 @@
 #include <assimp/Importer.hpp>      // C++ importer interface
 #include <assimp/scene.h>           // Output data structure
 #include <assimp/postprocess.h>     // Post processing flags
+#include <iostream>
 
 bool DoTheImportThing( const std::string& pFile)
 {
@@ -28,6 +29,7 @@ bool DoTheImportThing( const std::string& pFile)
 
 int main()
 {
+    std::cout << "Executed this" << std::endl;
     DoTheImportThing("Hi there.gpj");
 }
 
