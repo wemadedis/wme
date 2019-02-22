@@ -1,6 +1,14 @@
 #pragma once
-
-namespace Platform
+#include <string>
+#include <GLFW/glfw3.h>
+namespace RTE::Platform
 {
-    void OpenWindow();
-} // Platform
+struct RTEWindow
+{
+    int Width;
+    int Height;
+    std::string Title;
+    bool WindowResized;
+    GLFWwindow *glfwWindow;
+};
+} // namespace RTE::Platform

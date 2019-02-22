@@ -33,12 +33,11 @@ target_link_libraries(assimp INTERFACE ${PROJECT_SOURCE_DIR}/engine/third_party/
 target_include_directories(assimp INTERFACE engine/third_party/assimp/include)
 ###</ASSIMP>
 
-###<RENDERER>
-###<Renderer>
-add_library(platform engine/platform/Platform.cpp)
-target_link_libraries(platform glfw)
-target_include_directories(platform PUBLIC  ${ENGINE_INCLUDE} engine/platform/include)
-###</RENDERER>
+###<PLATFORM>
+add_library(platform engine/platform/WindowManager.cpp)
+target_link_libraries(platform glfw Vulkan::Vulkan)
+target_include_directories(platform PUBLIC ${ENGINE_INCLUDE} engine/platform/include)
+###</PLATFORM>
 
 ###<GLFW>
 # Don't build GLFW documentation, tests, and examples
