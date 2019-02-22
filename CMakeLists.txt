@@ -28,7 +28,7 @@ execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.ve
 
 ###<ASSIMP>
 add_library(assimp INTERFACE)
-target_link_libraries(assimp INTERFACE ${PROJECT_SOURCE_DIR}/engine/third_party/assimp/lib/assimp)
+target_link_libraries(assimp INTERFACE ${PROJECT_SOURCE_DIR}/engine/third_party/assimp/lib/assimp.lib)
 target_include_directories(assimp INTERFACE engine/third_party/assimp/include)
 ###</ASSIMP>
 
