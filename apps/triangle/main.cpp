@@ -126,6 +126,7 @@ private:
 	GLFWwindow* window;
 
 	VkInstance instance;
+
 	VkDebugUtilsMessengerEXT callback;
 
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -174,7 +175,7 @@ private:
 	BufferInformation indexBufferInformation = {};
 	std::vector<BufferInformation> uniformBuffersInformation;
 	
-	
+	std::vector<Mesh*> meshes;
 
 
 
@@ -210,8 +211,8 @@ private:
 		createGraphicsPipeline();
 		createFramebuffers();
 		createCommandPool();
-		createVertexBuffer();
-		createIndexBuffer();
+		createVertexBuffer(mesh);
+		createIndexBuffer(mesh);
 		createUniformBuffers();
 		createDescriptorPool();
 		createDescriptorSets();
@@ -346,35 +347,37 @@ private:
 		}
 	}
 
-	void createIndexBuffer() {
-		size_t bufferSize = sizeof(indices[0]) * indices.size();
+		void createIndexBuffer(Mesh* mesh) {
+		size_t bufferSize = sizeof(mesh->indices[0]) * mesh->indices.size();
 
 		BufferInformation stagingBuffer = {};
 
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, stagingBuffer);
 		
-		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)indices.data());
+		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)mesh->indices.data());
 
-		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, indexBufferInformation);
+		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, mesh->indexBuffer);
 
-		DeviceMemoryManager::CopyBuffer(stagingBuffer, indexBufferInformation, bufferSize, commandPool, graphicsQueue);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer, mesh->indexBuffer, bufferSize, commandPool, graphicsQueue);
 
+		//Possibly destroy indices in host memory
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
 	}
 
-	void createVertexBuffer() {
-		size_t bufferSize = sizeof(vertices[0]) * vertices.size();
+	void createVertexBuffer(Mesh* mesh) {
+		size_t bufferSize = sizeof(mesh->vertices[0]) * mesh->vertices.size();
 		
 		BufferInformation stagingBuffer = {};
 
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, stagingBuffer);
 		
-		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)vertices.data());
+		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)mesh->vertices.data());
 
-		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, vertexBufferInformation);
+		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, mesh->vertexBuffer);
 
-		DeviceMemoryManager::CopyBuffer(stagingBuffer, vertexBufferInformation, bufferSize, commandPool, graphicsQueue);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer, mesh->vertexBuffer, bufferSize, commandPool, graphicsQueue);
 
+		//Possibly destroy vertices in host memory
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
 	}
 
@@ -490,12 +493,12 @@ private:
 
 			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 			
-			VkBuffer vertexBuffers[] = { vertexBufferInformation.buffer };
+			VkBuffer vertexBuffers[] = { mesh->vertexBuffer.buffer };
 			VkDeviceSize offsets[] = { 0 };
 			
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
 			
-			vkCmdBindIndexBuffer(commandBuffers[i], indexBufferInformation.buffer, 0, VK_INDEX_TYPE_UINT16);
+			vkCmdBindIndexBuffer(commandBuffers[i], mesh->indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
 
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
 
@@ -1190,9 +1193,9 @@ private:
 
 		vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 
-		DeviceMemoryManager::DestroyBuffer(indexBufferInformation);
+		DeviceMemoryManager::DestroyBuffer(mesh->indexBuffer);
 
-		DeviceMemoryManager::DestroyBuffer(vertexBufferInformation);
+		DeviceMemoryManager::DestroyBuffer(mesh->vertexBuffer);
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
 			vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);

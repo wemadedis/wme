@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
 #include <array>
+#include "DeviceMemoryManager.h"
 
 struct Vertex {
 	glm::vec3 pos;
@@ -41,6 +42,9 @@ struct Vertex {
 struct Mesh {
     std::vector<Vertex> vertices = {};
     std::vector<uint16_t> indices = {};
+	DeviceMemoryManager::BufferInformation vertexBuffer;
+	DeviceMemoryManager::BufferInformation indexBuffer;
+	DeviceMemoryManager::BufferInformation uniformBuffer;
 };
 
 Mesh* MakeCylinder(float radius, float height, int faces);
