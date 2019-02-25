@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.4.0)
 
 set( CMAKE_VERBOSE_MAKEFILE off )
 set (CMAKE_CXX_STANDARD 17)
-set( ENGINE_INCLUDE "${PROJECT_SOURCE_DIR}/engine/include" )
 set( ENGINE_ASSETS "${PROJECT_SOURCE_DIR}/engine/assets" )
 
 ###<RTE>
 add_library(rte INTERFACE)
 target_include_directories(rte INTERFACE engine/include)
 ###</RTE>
+
 ###<GLM> 
 add_library(glm INTERFACE)
 target_include_directories(glm INTERFACE engine/third_party/glm)
@@ -33,10 +33,16 @@ target_link_libraries(assimp INTERFACE ${PROJECT_SOURCE_DIR}/engine/third_party/
 target_include_directories(assimp INTERFACE engine/third_party/assimp/include)
 ###</ASSIMP>
 
+###<RENDERER>
+add_library(renderer engine/renderer/Renderer.cpp)
+target_link_libraries(renderer Vulkan::Vulkan)
+target_include_directories(renderer PUBLIC rte engine/renderer/include)
+###</RENDERER>
+
 ###<PLATFORM>
 add_library(platform engine/platform/WindowManager.cpp)
-target_link_libraries(platform glfw Vulkan::Vulkan)
-target_include_directories(platform PUBLIC ${ENGINE_INCLUDE} engine/platform/include)
+target_link_libraries(platform glfw Vulkan::Vulkan renderer)
+target_include_directories(platform PUBLIC rte engine/platform/include)
 ###</PLATFORM>
 
 ###<GLFW>
