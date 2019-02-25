@@ -45,6 +45,9 @@ struct Mesh {
 	DeviceMemoryManager::BufferInformation vertexBuffer;
 	DeviceMemoryManager::BufferInformation indexBuffer;
 	DeviceMemoryManager::BufferInformation uniformBuffer;
+	glm::vec3 pos = {0.0f, 0.0f, 0.0f};
+	glm::vec3 rot = {0.0f, 0.0f, 0.0f};
+	glm::vec3 scale={1.0f, 1.0f, 1.0f};
 };
 
 Mesh* MakeCylinder(float radius, float height, int faces);

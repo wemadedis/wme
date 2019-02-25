@@ -13,8 +13,11 @@
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_ENABLE_EXPERIMENTAL
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
+#include <glm/gtx/transform.hpp>
 
 #include <chrono>
 #include <array>
@@ -121,10 +124,14 @@ class HelloTriangleApplication {
 public:
 	void run() {
 		initWindow();
-		meshes.push_back(MakeCylinder(1.0f, 2.0f, 32));
-		Mesh* mesh = new Mesh();
+		Mesh* mesh = MakeCylinder(1.0f, 2.0f, 32);
+		mesh->pos = {1.0f, 0.0f, 0.0f};
+		meshes.push_back(mesh);
+		mesh = new Mesh();
 		mesh->indices = indices;
 		mesh->vertices = vertices;
+		mesh->pos = {-1.0f, 0.0f, 0.0f};
+		mesh->rot = {0.0f, glm::radians(180.0f), 0.0f};
 		meshes.push_back(mesh);
 		initVulkan();
 		mainLoop();
@@ -233,7 +240,7 @@ public:
 		
 		createUniformBuffers2();
 		createDescriptorPool();
-		createDescriptorSets2();
+		createDescriptorSets();
 		createCommandBuffers();
 		createSyncObjects();
 	}
@@ -381,7 +388,7 @@ public:
         vkBindImageMemory(device, image, imageMemory, 0);
     }
 
-	void createDescriptorSets2() {
+	void createDescriptorSets() {
 		std::vector<VkDescriptorSetLayout> layouts(meshes.size(), descriptorSetLayout);
 		VkDescriptorSetAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -409,41 +416,6 @@ public:
 			descriptorWrite.descriptorCount = 1;
 			descriptorWrite.pBufferInfo = &bufferInfo;
 			descriptorWrite.pImageInfo = nullptr; // Optional
-			descriptorWrite.pTexelBufferView = nullptr; // Optional
-			vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
-		}
-	}
-
-	void createDescriptorSets() {
-		std::vector<VkDescriptorSetLayout> layouts(swapChainImages.size(), descriptorSetLayout);
-		VkDescriptorSetAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-		allocInfo.descriptorPool = descriptorPool;
-		allocInfo.descriptorSetCount = static_cast<uint32_t>(swapChainImages.size());
-		allocInfo.pSetLayouts = layouts.data();
-
-		descriptorSets.resize(swapChainImages.size());
-		if (vkAllocateDescriptorSets(device, &allocInfo, descriptorSets.data()) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to allocate descriptor sets!");
-		}
-
-		for (size_t i = 0; i < swapChainImages.size(); i++)
-		{
-			VkDescriptorBufferInfo bufferInfo = {};
-			bufferInfo.buffer = uniformBuffersInformation[i].buffer;
-			bufferInfo.offset = 0;
-			bufferInfo.range = sizeof(UniformBufferObject);
-
-			VkWriteDescriptorSet descriptorWrite = {};
-			descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-			descriptorWrite.dstSet = descriptorSets[i];
-			descriptorWrite.dstBinding = 0;
-			descriptorWrite.dstArrayElement = 0;
-			descriptorWrite.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-			descriptorWrite.descriptorCount = 1;
-			descriptorWrite.pBufferInfo = &bufferInfo;
-			descriptorWrite.pImageInfo = nullptr;		// Optional
 			descriptorWrite.pTexelBufferView = nullptr; // Optional
 			vkUpdateDescriptorSets(device, 1, &descriptorWrite, 0, nullptr);
 		}
@@ -1338,9 +1310,8 @@ public:
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
-		//updateUniformBuffer(imageIndex);
 		for(int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
-			updateUniformBuffer2(meshes[meshIndex]);
+			updateUniformBuffer(meshes[meshIndex]);
 		}
 
 		VkSubmitInfo submitInfo = {};
@@ -1393,43 +1364,22 @@ public:
 		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 	}
 
-	void updateUniformBuffer2(Mesh* mesh) {
-		static float offset = 1.0f;
+	void updateUniformBuffer(Mesh* mesh) {
 		static auto startTime = std::chrono::high_resolution_clock::now();
-		offset = -offset;
 		auto currentTime = std::chrono::high_resolution_clock::now();
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 		UniformBufferObject ubo = {};
-		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(offset, 0.0f, 0.0f));
+		glm::mat4 rot = glm::eulerAngleXYZ(mesh->rot.x, mesh->rot.y, mesh->rot.z);
+		glm::mat4 trn = glm::translate(mesh->pos);
+		glm::mat4 scl = glm::scale(mesh->scale);
+
+		ubo.model = trn * rot * scl;
 		ubo.view = glm::lookAt(glm::vec3(0.0f, 4.0f, -6.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
 		ubo.proj[1][1] *= -1;
 
 		DeviceMemoryManager::CopyDataToBuffer(mesh->uniformBuffer, &ubo);
-		/*void* data;
-		vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, uniformBuffersMemory[currentImage]);*/
-	}
-
-	void updateUniformBuffer(uint32_t currentImage) {
-		static auto startTime = std::chrono::high_resolution_clock::now();
-
-		auto currentTime = std::chrono::high_resolution_clock::now();
-		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-
-		UniformBufferObject ubo = {};
-		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ubo.view = glm::lookAt(glm::vec3(0.0f, 4.0f, -6.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
-		ubo.proj[1][1] *= -1;
-
-		DeviceMemoryManager::CopyDataToBuffer(uniformBuffersInformation[currentImage], &ubo);
-		/*void* data;
-		vkMapMemory(device, uniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
-		memcpy(data, &ubo, sizeof(ubo));
-		vkUnmapMemory(device, uniformBuffersMemory[currentImage]);*/
 	}
 
 	void cleanup()
