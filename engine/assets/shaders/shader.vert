@@ -13,22 +13,28 @@ layout(location = 2) in vec3 normal;
 
 layout(location = 0) out vec3 fragColor;
 
-vec3 lightDir = vec3(0.0f, -1.0f, 0.0f);
+layout(location = 1) out vec3 N;
+layout(location = 2) out vec3 L;
+layout(location = 3) out vec3 V;
+layout(location = 4) out vec3 R;
+
+
+
+vec3 lightDir = vec3(0.0f, -1.0f, 1.0f);
+
 
 
 void ComputePhong(){
-    vec3 globNormal = vec3(0.0f, 1.0f, 0.0f); //(ubo.proj * ubo.view * ubo.model * vec4(normal, 0.0f)).xyz;
-    vec3 invLight = -lightDir;
-    float diff = dot(globNormal, invLight);
-    vec3 reflection = reflect(invLight, globNormal);
-    vec3 eye = -normalize(gl_Position.xyz);
-    float spec = dot(globNormal, eye);
-    fragColor = diff * spec * inColor;
+    lightDir = normalize(lightDir);
+    L = -normalize(ubo.view * vec4(lightDir,0.0f)).xyz;
+    N = normalize(ubo.view * ubo.model * vec4(normal,0.0f)).xyz;
+    V = -normalize(ubo.view * ubo.model * vec4(inPosition, 1.0f)).xyz;
+    R = reflect(L,N);
 }
 
 
 void main() {
     gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0);
     ComputePhong();
-    //fragColor = inColor;
+    fragColor = inColor;
 }

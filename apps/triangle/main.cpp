@@ -19,6 +19,7 @@
 #include <array>
 #include <sstream>
 
+#include "Utilities.h"
 #include "DeviceMemoryManager.h"
 
 const int WIDTH = 800;
@@ -94,65 +95,37 @@ static std::vector<char> readFile(const std::string &filename)
 	return buffer;
 }
 
-struct Vertex
-{
-	glm::vec3 pos;
-	glm::vec3 color;
-	glm::vec3 normal;
 
-	static VkVertexInputBindingDescription getBindingDescription()
-	{
-		VkVertexInputBindingDescription bindingDescription = {};
-		bindingDescription.binding = 0;
-		bindingDescription.stride = sizeof(Vertex);
-		bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
-
-		return bindingDescription;
-	}
-
-	static std::array<VkVertexInputAttributeDescription, 3> getAttributeDescriptions()
-	{
-		std::array<VkVertexInputAttributeDescription, 3> attributeDescriptions = {};
-		attributeDescriptions[0].binding = 0;
-		attributeDescriptions[0].location = 0;
-		attributeDescriptions[0].format = VK_FORMAT_R32G32_SFLOAT;
-		attributeDescriptions[0].offset = offsetof(Vertex, pos);
-
-		attributeDescriptions[1].binding = 0;
-		attributeDescriptions[1].location = 1;
-		attributeDescriptions[1].format = VK_FORMAT_R32G32B32_SFLOAT;
-		attributeDescriptions[1].offset = offsetof(Vertex, color);
-
-		attributeDescriptions[2].binding = 0;
-		attributeDescriptions[2].location = 2;
-		attributeDescriptions[2].format = VK_FORMAT_R32G32_SFLOAT;
-		attributeDescriptions[2].offset = offsetof(Vertex, normal);
-		return attributeDescriptions;
-	}
-};
-
-struct UniformBufferObject
-{
+struct UniformBufferObject {
 	glm::mat4 model;
 	glm::mat4 view;
 	glm::mat4 proj;
 };
 
+/*
 const std::vector<Vertex> vertices = {
 	{{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
 	{{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}},
 	{{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}},
-	{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}};
+	{{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}}
+};
+*/
 
+Mesh* mesh;
+std::vector<Vertex> vertices;
+std::vector<uint16_t> indices;
+/*
 const std::vector<uint16_t> indices = {
-	0, 1, 2, 2, 3, 0};
-
-class HelloTriangleApplication
-{
-  public:
-	void run()
-	{
+	0, 1, 2, 2, 3, 0
+};
+*/
+class HelloTriangleApplication {
+public:
+	void run() {
 		initWindow();
+		mesh = MakeCylinder(1.0f, 2.0f, 32);
+		vertices = mesh->vertices;
+		indices = mesh->indices;
 		initVulkan();
 		mainLoop();
 		cleanup();
@@ -162,6 +135,7 @@ class HelloTriangleApplication
 	GLFWwindow *window;
 
 	VkInstance instance;
+
 	VkDebugUtilsMessengerEXT callback;
 
 	VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
@@ -206,6 +180,10 @@ class HelloTriangleApplication
 	BufferInformation vertexBufferInformation = {};
 	BufferInformation indexBufferInformation = {};
 	std::vector<BufferInformation> uniformBuffersInformation;
+	
+	std::vector<Mesh*> meshes;
+
+
 
 	void initWindow()
 	{
@@ -242,8 +220,8 @@ class HelloTriangleApplication
 		createGraphicsPipeline();
 		createFramebuffers();
 		createCommandPool();
-		createVertexBuffer();
-		createIndexBuffer();
+		createVertexBuffer(mesh);
+		createIndexBuffer(mesh);
 		createUniformBuffers();
 		createDescriptorPool();
 		createDescriptorSets();
@@ -394,37 +372,37 @@ class HelloTriangleApplication
 		}
 	}
 
-	void createIndexBuffer()
-	{
-		size_t bufferSize = sizeof(indices[0]) * indices.size();
+		void createIndexBuffer(Mesh* mesh) {
+		size_t bufferSize = sizeof(mesh->indices[0]) * mesh->indices.size();
 
 		BufferInformation stagingBuffer = {};
 
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, stagingBuffer);
+		
+		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)mesh->indices.data());
 
-		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void *)indices.data());
+		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, mesh->indexBuffer);
 
-		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, indexBufferInformation);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer, mesh->indexBuffer, bufferSize, commandPool, graphicsQueue);
 
-		DeviceMemoryManager::CopyBuffer(stagingBuffer, indexBufferInformation, bufferSize, commandPool, graphicsQueue);
-
+		//Possibly destroy indices in host memory
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
 	}
 
-	void createVertexBuffer()
-	{
-		size_t bufferSize = sizeof(vertices[0]) * vertices.size();
-
+	void createVertexBuffer(Mesh* mesh) {
+		size_t bufferSize = sizeof(mesh->vertices[0]) * mesh->vertices.size();
+		
 		BufferInformation stagingBuffer = {};
 
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, stagingBuffer);
+		
+		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)mesh->vertices.data());
 
-		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void *)vertices.data());
+		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, mesh->vertexBuffer);
 
-		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, vertexBufferInformation);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer, mesh->vertexBuffer, bufferSize, commandPool, graphicsQueue);
 
-		DeviceMemoryManager::CopyBuffer(stagingBuffer, vertexBufferInformation, bufferSize, commandPool, graphicsQueue);
-
+		//Possibly destroy vertices in host memory
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
 	}
 
@@ -553,13 +531,13 @@ class HelloTriangleApplication
 			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
 			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
-
-			VkBuffer vertexBuffers[] = {vertexBufferInformation.buffer};
-			VkDeviceSize offsets[] = {0};
-
+			
+			VkBuffer vertexBuffers[] = { mesh->vertexBuffer.buffer };
+			VkDeviceSize offsets[] = { 0 };
+			
 			vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
-
-			vkCmdBindIndexBuffer(commandBuffers[i], indexBufferInformation.buffer, 0, VK_INDEX_TYPE_UINT16);
+			
+			vkCmdBindIndexBuffer(commandBuffers[i], mesh->indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
 
 			vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSets[i], 0, nullptr);
 
@@ -1282,8 +1260,8 @@ class HelloTriangleApplication
 		float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
 		UniformBufferObject ubo = {};
-		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-		ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+		ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.view = glm::lookAt(glm::vec3(0.0f, 4.0f, -6.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 		ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
 		ubo.proj[1][1] *= -1;
 
@@ -1310,9 +1288,9 @@ class HelloTriangleApplication
 
 		vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 
-		DeviceMemoryManager::DestroyBuffer(indexBufferInformation);
+		DeviceMemoryManager::DestroyBuffer(mesh->indexBuffer);
 
-		DeviceMemoryManager::DestroyBuffer(vertexBufferInformation);
+		DeviceMemoryManager::DestroyBuffer(mesh->vertexBuffer);
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
