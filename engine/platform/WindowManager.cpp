@@ -6,11 +6,11 @@
 namespace RTE::Platform
 {
 
-void RTE::Platform::DestroyWindow(RTEWindow* window)
+void DestroyWindow(RTEWindow* window)
 {
     glfwDestroyWindow(window->window);
 }
-void RTE::Platform::Terminate()
+void Terminate()
 {
     glfwTerminate();
 }
@@ -29,10 +29,13 @@ bool ShouldClose(RTEWindow *window)
     return glfwWindowShouldClose(window->window);
 }
 
-// Initialize static member of class Box
+// Initialize WindowManager static instance
 WindowManager *WindowManager::_instance = nullptr;
 
-void CreateSurface(VkInstance instance, GLFWwindow *window, VkSurfaceKHR *surface)
+void WindowManager::CreateSurface(
+    VkInstance instance, 
+    GLFWwindow *window, 
+    VkSurfaceKHR *surface)
 {
     if (glfwCreateWindowSurface(instance, window, nullptr, surface) != VK_SUCCESS)
     {
@@ -40,7 +43,7 @@ void CreateSurface(VkInstance instance, GLFWwindow *window, VkSurfaceKHR *surfac
     }
 }
 
-std::vector<const char *> GetRequiredExtensions()
+std::vector<const char *> WindowManager::GetRequiredExtensions()
 {
     uint32_t glfwExtensionCount = 0;
     const char **glfwExtensions;
@@ -56,7 +59,10 @@ std::vector<const char *> GetRequiredExtensions()
     return extensions;
 }
 
-RTEWindow *WindowManager::OpenWindow(int width, int height, std::string title)
+RTEWindow *WindowManager::OpenWindow(
+    int width, 
+    int height, 
+    std::string title)
 {
     glfwInit();
 
@@ -70,7 +76,7 @@ RTEWindow *WindowManager::OpenWindow(int width, int height, std::string title)
 
     VkInstance *instance = new VkInstance;
     VkSurfaceKHR *surface = new VkSurfaceKHR;
-    RTE::Renderer::CreateInstance(instance, GetRequiredExtensions(), enableValidationLayers);
+    RTE::Renderer::CreateInstance(title, instance, GetRequiredExtensions(), enableValidationLayers);
     RTE::Renderer::SetupDebugCallback(*instance);
 
     rteWindow->Width = width;

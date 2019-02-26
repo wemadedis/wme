@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <string>
 #include <stdexcept>
 
 #ifdef NDEBUG
@@ -12,7 +13,7 @@ const bool enableValidationLayers = true;
 namespace RTE::Renderer
 {
 
-void CreateInstance(VkInstance *instance, std::vector<const char *> extensions, bool enableValidationLayers);
+void CreateInstance(std::string appName, VkInstance *instance, std::vector<const char *> extensions, bool enableValidationLayers);
 void SetupDebugCallback(VkInstance instance);
 void CreateSurface(VkInstance instance);
 }

@@ -29,11 +29,24 @@ public:
   static WindowManager *GetInstance();
 
 private:
+  // Instance for singleton pattern
   static WindowManager *_instance;
 
+  // Creates a Vulkan surface a given GLFW window
+  void CreateSurface(
+      VkInstance instance, 
+      GLFWwindow *window, 
+      VkSurfaceKHR *surface);
+
+  // Returns the VulkanExtensions required for GLFW to operate
+  std::vector<const char *> GetRequiredExtensions();
+  
+  // Callback function called when the size of the window is changed
   static void FramebufferResizeCallback(GLFWwindow *window, int width, int height);
   std::vector<WindowBinding *> _activeWindows;
+  // d
   RTEWindow *GetRTEFromGLFW(GLFWwindow *window);
+  // Private constructors for singleton pattern
   WindowManager();
   ~WindowManager();
 };
