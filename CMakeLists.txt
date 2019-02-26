@@ -4,53 +4,13 @@ set( CMAKE_VERBOSE_MAKEFILE off )
 set (CMAKE_CXX_STANDARD 17)
 set( ENGINE_ASSETS "${PROJECT_SOURCE_DIR}/engine/assets" )
 
-###<RTE>
 add_library(rte INTERFACE)
+target_compile_definitions(rte INTERFACE ENGINE_ASSET_DIR="${ENGINE_ASSETS}/")
 target_include_directories(rte INTERFACE engine/include)
-###</RTE>
+target_link_libraries(rte INTERFACE
+    glm vma vulkan assimp renderer platform glfw
+)
 
-###<GLM> 
-add_library(glm INTERFACE)
-target_include_directories(glm INTERFACE engine/third_party/glm)
-###</GLM>
-
-###<VMA> 
-add_library(vma INTERFACE)
-target_include_directories(vma INTERFACE engine/third_party/vma)
-###</VMA>
-
-###<VULKAN>
 find_package(Vulkan REQUIRED)
-# TODO: (danh 22/02 10:08): Make this work
-execute_process( COMMAND "echo" "hello")
-execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.frag" )
-execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.vert" )
-###</VULKAN>
-
-###<ASSIMP>
-add_library(assimp INTERFACE)
-target_link_libraries(assimp INTERFACE ${PROJECT_SOURCE_DIR}/engine/third_party/assimp/lib/assimp.lib)
-target_include_directories(assimp INTERFACE engine/third_party/assimp/include)
-###</ASSIMP>
-
-###<RENDERER>
-add_library(renderer engine/renderer/Renderer.cpp)
-target_link_libraries(renderer Vulkan::Vulkan)
-target_include_directories(renderer PUBLIC rte engine/renderer/include)
-###</RENDERER>
-
-###<PLATFORM>
-add_library(platform engine/platform/WindowManager.cpp)
-target_link_libraries(platform glfw Vulkan::Vulkan renderer)
-target_include_directories(platform PUBLIC rte engine/platform/include)
-###</PLATFORM>
-
-###<GLFW>
-# Don't build GLFW documentation, tests, and examples
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_VULKAN_STATIC OFF CACHE BOOL "" FORCE)
-add_subdirectory(engine/third_party/glfw)
-###</GLFW>
+add_subdirectory(engine)
 add_subdirectory(apps)
