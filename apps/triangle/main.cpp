@@ -234,7 +234,7 @@ public:
 		createCommandPool();
 		createDepthResources();
 		createFramebuffers();
-		for(int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
+		for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
 			createVertexBuffer(meshes[meshIndex]);
 			createIndexBuffer(meshes[meshIndex]);
 		}
@@ -747,7 +747,7 @@ public:
 
 			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, graphicsPipeline);
 			
-			for(int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
+			for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
 				Mesh* mesh = meshes[meshIndex];
 				VkBuffer vertexBuffers[] = { mesh->vertexBuffer.buffer };
 				VkDeviceSize offsets[] = { 0 };
@@ -1450,7 +1450,7 @@ public:
 			throw std::runtime_error("failed to acquire swap chain image!");
 		}
 
-		for(int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
+		for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
 			updateUniformBuffer(meshes[meshIndex]);
 		}
 
@@ -1539,7 +1539,7 @@ public:
 
 		vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 
-		for(int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
+		for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
 			DeviceMemoryManager::DestroyBuffer(meshes[meshIndex]->indexBuffer);
 
 			DeviceMemoryManager::DestroyBuffer(meshes[meshIndex]->vertexBuffer);
