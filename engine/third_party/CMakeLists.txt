@@ -13,9 +13,6 @@ find_package(Vulkan REQUIRED)
 add_library(vulkan INTERFACE)
 target_include_directories(vulkan INTERFACE ${Vulkan_INCLUDE_DIR})
 target_link_libraries(vulkan INTERFACE ${Vulkan_LIBRARY})
-execute_process( COMMAND "echo" "hello")
-execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.frag" )
-execute_process( COMMAND "glslangvalidator -V ${ENGINE_ASSETS}/shaders/shader.vert" )
 ###</VULKAN>
 
 ###<ASSIMP>
