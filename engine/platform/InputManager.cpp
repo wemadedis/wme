@@ -5,11 +5,12 @@ namespace RTE::InputManager
 {
 void PlayerController::MovePlayerCB(InputData data)
 {
+
 }
 
 void PlayerController::JumpCB(InputData data)
 {
-    
+
 }
 
 void PlayerController::Caller()

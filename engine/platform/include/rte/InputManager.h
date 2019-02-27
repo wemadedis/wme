@@ -25,15 +25,18 @@ enum class KeyboardKey
     SPACE
 };
 
+struct KeyPress
+{
+    KeyboardKey Key;
+    PressType Type;
+};
+
 struct InputBinding
 {
     InputType InputType;
     union {
-        struct
-        {
-            KeyboardKey KeyboardKey;
-            PressType PressType;
-        };
+        KeyPress Key;
+        KeyPress Keys[4];
     };
 };
 
@@ -42,8 +45,8 @@ union InputData
     bool Triggered;
     struct
     {
-        float x;
-        float y;
+        float X;
+        float Y;
     };
 };
 
