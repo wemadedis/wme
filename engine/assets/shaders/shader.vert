@@ -30,6 +30,8 @@ void ComputePhong(){
     L = -normalize(ubo.view * vec4(lightDir,0.0f)).xyz;
     N = normalize(ubo.view * ubo.model * vec4(normal,0.0f)).xyz;
     V = -normalize(ubo.view * ubo.model * vec4(inPosition, 1.0f)).xyz;
+    //Flip the normal if it points away from the eye (REMOVE THIS LATER)
+    if(dot(N,V) < 0) N = -N;
     R = reflect(L,N);
 }
 

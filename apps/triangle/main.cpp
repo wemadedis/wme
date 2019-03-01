@@ -236,15 +236,19 @@ public:
 		createGraphicsPipeline();
 		
 		createCommandPool();
-		createTextureImage();
+		/*createTextureImage();
 		createTextureImageView();
-		createTextureSampler();
+		createTextureSampler();*/
+		for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
+			CreateTextureImage(meshes[meshIndex]);
+		}
 
 		createDepthResources();
 		createFramebuffers();
 		for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
 			createVertexBuffer(meshes[meshIndex]);
 			createIndexBuffer(meshes[meshIndex]);
+			CreateTextureImage(meshes[meshIndex]);
 		}
 		
 		createUniformBuffers2();
@@ -332,10 +336,6 @@ public:
         VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 	}
 
-	bool hasStencilComponent(VkFormat format) {
-    	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
-	}
-
 	void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height) {
 		VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 		//Specify which part of the buffer will be copied to which part of the image
@@ -367,6 +367,23 @@ public:
 		endSingleTimeCommands(commandBuffer);
 	}
 	
+	void CreateTextureImage(Mesh* mesh){
+		int texWidth, texHeight, texChannels;
+		std::ostringstream ss;
+		ss << ENGINE_ASSET_DIR << "textures/aa_beauty_and_the_sun.png";
+
+		stbi_uc* pixels = stbi_load(ss.str().c_str() , &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+		VkDeviceSize imageSize = texWidth * texHeight * 4;
+
+		if (!pixels) {
+			throw std::runtime_error("failed to load texture image!");
+		}
+
+		VkCommandBuffer cmd = beginSingleTimeCommands();
+		mesh->texture = Utilities::CreateTexture(texWidth, texHeight, pixels, imageSize, cmd, device);
+		endSingleTimeCommands(cmd);
+	}
+
 	void createTextureImage() {
 		int texWidth, texHeight, texChannels;
 		std::ostringstream ss;
@@ -383,16 +400,17 @@ public:
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, imageSize, stagingBuffer);
 		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, pixels);
 		stbi_image_free(pixels);
-		meshes[0]->texture = DeviceMemoryManager::CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
+		/*meshes[0]->texture = DeviceMemoryManager::CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
 		transitionImageLayout(meshes[0]->texture.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 		copyBufferToImage(stagingBuffer.buffer, meshes[0]->texture.image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
 		transitionImageLayout(meshes[0]->texture.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
-		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
+		DeviceMemoryManager::DestroyBuffer(stagingBuffer);*/
+
 	}
 
 	void createTextureImageView(){
-		textureImageView = createImageView(meshes[0]->texture.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+		textureImageView = createImageView(meshes[0]->texture.imageInformation.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 
 	void createTextureSampler() {
@@ -464,6 +482,21 @@ public:
         return commandBuffer;
     }
 
+	
+	void endSingleTimeCommands(VkCommandBuffer commandBuffer) {
+        vkEndCommandBuffer(commandBuffer);
+
+        VkSubmitInfo submitInfo = {};
+        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+        submitInfo.commandBufferCount = 1;
+        submitInfo.pCommandBuffers = &commandBuffer;
+
+        vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
+        vkQueueWaitIdle(graphicsQueue);
+
+        vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+    }
+
 	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) {
         VkCommandBuffer commandBuffer = beginSingleTimeCommands();
 
@@ -481,7 +514,7 @@ public:
         if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
             barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
 
-            if (hasStencilComponent(format)) {
+            if (Utilities::HasStencilComponent(format)) {
                 barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
             }
         } else {
@@ -500,7 +533,6 @@ public:
         if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
             barrier.srcAccessMask = 0;
             barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-
             sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
             destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
         } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
@@ -531,19 +563,6 @@ public:
         endSingleTimeCommands(commandBuffer);
     }
 
-	void endSingleTimeCommands(VkCommandBuffer commandBuffer) {
-        vkEndCommandBuffer(commandBuffer);
-
-        VkSubmitInfo submitInfo = {};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &commandBuffer;
-
-        vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(graphicsQueue);
-
-        vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-    }
 
     void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
         VkImageCreateInfo imageInfo = {};
@@ -601,9 +620,8 @@ public:
 
 			VkDescriptorImageInfo imageInfo = {};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = textureImageView;
-			imageInfo.sampler = textureSampler;
-			
+			imageInfo.imageView = meshes[i]->texture.imageView;
+			imageInfo.sampler = meshes[i]->texture.sampler;
 			std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 
 			descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -1604,8 +1622,8 @@ public:
 		glm::mat4 trn = glm::translate(mesh->pos);
 		glm::mat4 scl = glm::scale(mesh->scale);
 		ubo.model = trn * rot  * scl;
-		ubo.view = glm::lookAt(glm::vec3(0.0f, 4.0f, -6.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 10.0f);
+		ubo.view = glm::lookAt(glm::vec3(0.0f, 0.0f, -3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+		ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
 		ubo.proj[1][1] *= -1;
 
 		DeviceMemoryManager::CopyDataToBuffer(mesh->uniformBuffer, &ubo);
@@ -1639,7 +1657,7 @@ public:
 
 			DeviceMemoryManager::DestroyBuffer(meshes[meshIndex]->uniformBuffer);
 
-			DeviceMemoryManager::DestroyImage(meshes[meshIndex]->texture);
+			DeviceMemoryManager::DestroyImage(meshes[meshIndex]->texture.imageInformation);
 		}
 
 		

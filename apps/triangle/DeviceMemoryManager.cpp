@@ -152,6 +152,35 @@ ImageInformation CreateImage(uint32_t width, uint32_t height, VkFormat format, V
     return imgInfo;
 }
 
+void CopyBufferToImage(BufferInformation &srcBuffer, ImageInformation &dstImage, uint32_t width, uint32_t height, VkCommandBuffer &commandBuffer) {
+    //Specify which part of the buffer will be copied to which part of the image
+    VkBufferImageCopy region = {};
+    region.bufferOffset = 0;
+    region.bufferRowLength = 0;
+    region.bufferImageHeight = 0;
+
+    region.imageSubresource.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    region.imageSubresource.mipLevel = 0;
+    region.imageSubresource.baseArrayLayer = 0;
+    region.imageSubresource.layerCount = 1;
+
+    region.imageOffset = {0, 0, 0};
+    region.imageExtent = {
+        width,
+        height,
+        1
+    };
+    
+    vkCmdCopyBufferToImage(
+        commandBuffer,
+        srcBuffer.buffer,
+        dstImage.image,
+        VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL,
+        1,
+        &region
+    );
+}
+
 void DestroyImage(ImageInformation& imageInfo){
     VmaAllocation allocation = images[imageInfo.image];
     vmaDestroyImage(*alloc, imageInfo.image, allocation);

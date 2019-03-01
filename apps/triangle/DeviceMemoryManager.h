@@ -27,10 +27,13 @@ namespace DeviceMemoryManager
 	Do not modify the content.
 	*/
 	struct ImageInformation {
-		
 		MemProps memoryProperties;
 		uint32_t width;
 		uint32_t height;
+		/*
+		Size of the image in bytes.
+		*/
+		uint32_t size; 
 		VkImage image;
 	};
 	
@@ -58,15 +61,19 @@ namespace DeviceMemoryManager
 	void CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue);
 	
 	/*
-	SHOULD IT RETURN A BOOL TO KNOW IF WE DID GOOD, OR CRASH IF WE WANT TO DELETE NON-EXISTENT ITEMS?
+	Destroy the buffer and deallocate the memory used by it.
 	*/
 	void DestroyBuffer(BufferInformation& bufferInfo);
 
 	/*
 	Create an image allocated on the device.
 	*/
-	//void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
 	ImageInformation CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage);
+	
+	/*
+	Copy data from a buffer to an image.
+	*/
+	void CopyBufferToImage(BufferInformation &srcBuffer, ImageInformation &dstImage, uint32_t width, uint32_t height, VkCommandBuffer &commandBuffer);
 
 	void DestroyImage(ImageInformation& imageInfo);
 	/*
