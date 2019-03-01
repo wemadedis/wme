@@ -12,13 +12,26 @@ namespace DeviceMemoryManager
 
 
 	/*
-	
+	Struct describing the buffer created through the CreateBuffer function.
+	Do not modify the content.
 	*/
 	struct BufferInformation {
 		VkBufferUsageFlags bufferUsage;
 		MemProps memoryProperties;
 		size_t size;
 		VkBuffer buffer;
+	};
+
+	/*
+	Struct describing the image created through the CreateImage function.
+	Do not modify the content.
+	*/
+	struct ImageInformation {
+		
+		MemProps memoryProperties;
+		uint32_t width;
+		uint32_t height;
+		VkImage image;
 	};
 	
 
@@ -49,6 +62,13 @@ namespace DeviceMemoryManager
 	*/
 	void DestroyBuffer(BufferInformation& bufferInfo);
 
+	/*
+	Create an image allocated on the device.
+	*/
+	//void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory) {
+	ImageInformation CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage);
+
+	void DestroyImage(ImageInformation& imageInfo);
 	/*
 	Returns a pointer to a char array describing the current state of memory in JSON format.
 	*/

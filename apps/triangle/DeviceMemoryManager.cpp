@@ -11,6 +11,7 @@ namespace DeviceMemoryManager
 
 VmaAllocator *alloc = nullptr;
 map<VkBuffer, VmaAllocation> buffers;
+map<VkImage, VmaAllocation> images;
 VkDevice device;
 
 void Initialize(VkPhysicalDevice physicalDevice, VkDevice device)
@@ -116,9 +117,50 @@ void DestroyBuffer(BufferInformation& bufferInfo)
     buffers.erase(bufferInfo.buffer);
 }
 
+ImageInformation CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage){
+    VkImageCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
+    createInfo.imageType = VK_IMAGE_TYPE_2D;
+    createInfo.extent.width = width;
+    createInfo.extent.height = height;
+    createInfo.extent.depth = 1;
+    createInfo.mipLevels = 1;
+    createInfo.arrayLayers = 1;
+    createInfo.format = format;
+    createInfo.tiling = tiling;
+    createInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+    createInfo.usage = usage;
+    createInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+    //Samples is related to multisampling???
+    createInfo.samples = VK_SAMPLE_COUNT_1_BIT;
+    createInfo.flags = 0;
+    
+
+    VmaAllocationCreateInfo vmaAllocCreateInfo = {};
+    vmaAllocCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+    ImageInformation imgInfo = {};
+    VmaAllocation vmaAlloc = {};
+    VmaAllocationInfo allocInfo = {};
+
+    vmaCreateImage(*alloc, &createInfo, &vmaAllocCreateInfo, &imgInfo.image, &vmaAlloc, nullptr);
+
+    imgInfo.memoryProperties = MemProps::DEVICE;
+    imgInfo.width = width;
+    imgInfo.height = height;
+
+    images.insert(pair<VkImage, VmaAllocation>(imgInfo.image, vmaAlloc));
+    return imgInfo;
+}
+
+void DestroyImage(ImageInformation& imageInfo){
+    VmaAllocation allocation = images[imageInfo.image];
+    vmaDestroyImage(*alloc, imageInfo.image, allocation);
+    images.erase(imageInfo.image);
+}
+
 char* GetMemoryState()
 {
-    return "FECK";
+    throw std::runtime_error("NotImplementedException(GetMemoryState): \"Lel get rekt son\"");
 }
 
 }; // namespace DeviceMemoryManager
