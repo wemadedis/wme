@@ -133,9 +133,17 @@ public:
 		Mesh* mesh = new Mesh();
 		mesh->indices = indices;
 		mesh->vertices = vertices;
-		mesh->pos = {0.0f, 0.0f, -1.0f};
+		mesh->pos = {1.0f, 0.0f, 1.0f};
 		mesh->rot = {0.0f, glm::radians(180.0f), 0.0f};
 		meshes.push_back(mesh);
+
+		mesh = new Mesh();
+		mesh->indices = indices;
+		mesh->vertices = vertices;
+		mesh->pos = {-1.0f, 0.0f, 1.0f};
+		mesh->rot = {0.0f, glm::radians(180.0f), 0.0f};
+		meshes.push_back(mesh);
+
 		initVulkan();
 		mainLoop();
 		cleanup();
@@ -236,22 +244,17 @@ public:
 		createGraphicsPipeline();
 		
 		createCommandPool();
-		/*createTextureImage();
-		createTextureImageView();
-		createTextureSampler();*/
-		for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
-			CreateTextureImage(meshes[meshIndex]);
-		}
 
 		createDepthResources();
 		createFramebuffers();
 		for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
 			createVertexBuffer(meshes[meshIndex]);
 			createIndexBuffer(meshes[meshIndex]);
-			CreateTextureImage(meshes[meshIndex]);
+			if(meshIndex == 0) CreateTextureImage(meshes[meshIndex], "textures/aa_beauty_and_the_sun.png");
+			else CreateTextureImage(meshes[meshIndex], "textures/autismus.png");
 		}
 		
-		createUniformBuffers2();
+		createUniformBuffers();
 		createDescriptorPool();
 		createDescriptorSets();
 		createCommandBuffers();
@@ -367,13 +370,13 @@ public:
 		endSingleTimeCommands(commandBuffer);
 	}
 	
-	void CreateTextureImage(Mesh* mesh){
+	void CreateTextureImage(Mesh* mesh, const char *imagePath){
 		int texWidth, texHeight, texChannels;
 		std::ostringstream ss;
-		ss << ENGINE_ASSET_DIR << "textures/aa_beauty_and_the_sun.png";
+		ss << ENGINE_ASSET_DIR << imagePath;
 
 		stbi_uc* pixels = stbi_load(ss.str().c_str() , &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-		VkDeviceSize imageSize = texWidth * texHeight * 4;
+		uint32_t imageSize = texWidth * texHeight * 4;
 
 		if (!pixels) {
 			throw std::runtime_error("failed to load texture image!");
@@ -382,31 +385,6 @@ public:
 		VkCommandBuffer cmd = beginSingleTimeCommands();
 		mesh->texture = Utilities::CreateTexture(texWidth, texHeight, pixels, imageSize, cmd, device);
 		endSingleTimeCommands(cmd);
-	}
-
-	void createTextureImage() {
-		int texWidth, texHeight, texChannels;
-		std::ostringstream ss;
-		ss << ENGINE_ASSET_DIR << "textures/aa_beauty_and_the_sun.png";
-
-		stbi_uc* pixels = stbi_load(ss.str().c_str() , &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-		VkDeviceSize imageSize = texWidth * texHeight * 4;
-
-		if (!pixels) {
-			throw std::runtime_error("failed to load texture image!");
-		}
-		
-		BufferInformation stagingBuffer;
-		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, imageSize, stagingBuffer);
-		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, pixels);
-		stbi_image_free(pixels);
-		/*meshes[0]->texture = DeviceMemoryManager::CreateImage(texWidth, texHeight, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT);
-		transitionImageLayout(meshes[0]->texture.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-		copyBufferToImage(stagingBuffer.buffer, meshes[0]->texture.image, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight));
-		transitionImageLayout(meshes[0]->texture.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
-
-		DeviceMemoryManager::DestroyBuffer(stagingBuffer);*/
-
 	}
 
 	void createTextureImageView(){
@@ -664,7 +642,7 @@ public:
 		}
 	}
 
-	void createUniformBuffers2() {
+	void createUniformBuffers() {
 		size_t bufferSize = sizeof(UniformBufferObject);
 
 		for (size_t meshIndex = 0; meshIndex < meshes.size(); meshIndex++) {
@@ -673,16 +651,6 @@ public:
 		}
 	}
 
-	void createUniformBuffers() {
-		size_t bufferSize = sizeof(UniformBufferObject);
-
-		uniformBuffersInformation.resize(swapChainImages.size());
-		for (size_t i = 0; i < swapChainImages.size(); i++)
-		{
-			BufferInformation info = {}; //<-----------------------------------------------------
-			DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, uniformBuffersInformation[i]);
-		}
-	}
 
 	void createDescriptorSetLayout()
 	{
@@ -1640,13 +1608,6 @@ public:
 
 		vkDestroyDescriptorPool(device, descriptorPool, nullptr);
 		vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
-
-		for (size_t i = 0; i < swapChainImages.size(); i++)
-		{
-			//vkDestroyBuffer(device, uniformBuffers[i], nullptr);
-			//vkFreeMemory(device, uniformBuffersMemory[i], nullptr);
-			//DeviceMemoryManager::DestroyBuffer(uniformBuffersInformation[i]);
-		}
 
 		vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
 
