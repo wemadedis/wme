@@ -86,6 +86,7 @@ RTEWindow *WindowManager::OpenWindow(
     rteWindow->instance = instance;
     rteWindow->window = window;
 
+    glfwSetKeyCallback(window, KeyCallback);
     CreateSurface(*instance, window, surface);
     rteWindow->surface = surface;
 
@@ -98,6 +99,11 @@ RTEWindow *WindowManager::OpenWindow(
     glfwSetFramebufferSizeCallback(window, FramebufferResizeCallback);
 
     return rteWindow;
+}
+
+void WindowManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+
 }
 
 void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
