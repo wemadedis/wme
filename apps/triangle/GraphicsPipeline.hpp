@@ -1,6 +1,6 @@
 #pragma once
 #include <vulkan/vulkan.h>
-
+#include "Renderpass.hpp"
 class GraphicsPipeline
 {
     
@@ -9,7 +9,7 @@ private:
     VkExtent2D _swapChainExtent;
     VkDescriptorSetLayout _descriptorSetLayout;
     VkDevice _device;
-    VkRenderPass _renderPass;
+    RenderPass* _renderPass;
     VkPipelineLayout _pipelineLayout;
     VkPipeline _pipeline;
 
@@ -28,7 +28,7 @@ private:
     VkPipelineLayout CreatePipelineLayout();
     void CreatePipeline(); //Worth it? Would have too many parameters.
 public:
-    GraphicsPipeline(VkShaderModule vertexShaderModule, VkShaderModule fragShaderModule, VkExtent2D swapChainExtent, VkDescriptorSetLayout layout, VkDevice device, VkRenderPass renderPass);
+    GraphicsPipeline(VkShaderModule vertexShaderModule, VkShaderModule fragShaderModule, VkExtent2D swapChainExtent, VkDescriptorSetLayout layout, VkDevice device, RenderPass* renderPass);
     ~GraphicsPipeline();
     VkPipeline GetHandle();
     VkPipelineLayout GetLayout();

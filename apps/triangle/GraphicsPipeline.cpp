@@ -1,4 +1,4 @@
-#include "GraphicsPipeline.h"
+#include "GraphicsPipeline.hpp"
 #include "Utilities.h"
 
 VkPipelineShaderStageCreateInfo GraphicsPipeline::GetVertexShaderStageInfo()
@@ -198,7 +198,7 @@ void GraphicsPipeline::CreatePipeline()
     //pipelineInfo.pDynamicState = nullptr; // Optional
     CreatePipelineLayout();
     pipelineInfo.layout = _pipelineLayout;
-    pipelineInfo.renderPass = _renderPass;
+    pipelineInfo.renderPass = _renderPass->GetHandle();
     pipelineInfo.subpass = 0;
 
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
@@ -220,7 +220,7 @@ GraphicsPipeline::GraphicsPipeline( VkShaderModule vertexShaderModule,
                                     VkExtent2D swapChainExtent, 
                                     VkDescriptorSetLayout layout, 
                                     VkDevice device, 
-                                    VkRenderPass renderPass) 
+                                    RenderPass* renderPass) 
 {
     _vertexShaderModule = vertexShaderModule;
     _fragShaderModule = fragShaderModule;
