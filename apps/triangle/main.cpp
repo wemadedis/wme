@@ -127,14 +127,18 @@ public:
 	VkSurfaceKHR surface;
 	VkQueue presentQueue;
 
+
+	//Swap chain
 	VkSwapchainKHR swapChain;
 	std::vector<VkImage> swapChainImages;
 	VkFormat swapChainImageFormat;
 	VkExtent2D swapChainExtent;
 	std::vector<VkImageView> swapChainImageViews;
+	std::vector<VkFramebuffer> swapChainFramebuffers;
+
 	VkDescriptorSetLayout descriptorSetLayout;
 
-	std::vector<VkFramebuffer> swapChainFramebuffers;
+	
 
 	VkCommandPool commandPool;
 	std::vector<VkCommandBuffer> commandBuffers;
@@ -191,12 +195,13 @@ public:
 
 	void initVulkan()
 	{
-		rendererInstance = new Instance(getRequiredExtensions(), [this](VkSurfaceKHR &surface, VkInstance &instance) {
+		rendererInstance = new Instance(getRequiredExtensions(), [this](VkSurfaceKHR &surface, VkInstance instance) {
 			if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS)
 			{
 				throw std::runtime_error("failed to create window surface!");
 			}
 		});
+
 		instance = rendererInstance->GetInstance();
 		surface = rendererInstance->GetSurface();
 		physicalDevice = rendererInstance->GetPhysicalDevice();

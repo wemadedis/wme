@@ -159,7 +159,7 @@ void Instance::SetupDebugCallBack()
     }
 }
 
-Instance::Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance &instance)> surfaceBindingFunction)
+Instance::Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction)
 {
     CreateInstance(extensions);
     surfaceBindingFunction(_surface, _instance);

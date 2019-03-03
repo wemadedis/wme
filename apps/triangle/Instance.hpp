@@ -29,7 +29,7 @@ private:
     
     
 public:
-    Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance &instance)> surfaceBindingFunction); 
+    Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction); 
     ~Instance();
     VkInstance GetInstance();
     VkDevice GetDevice();
