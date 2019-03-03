@@ -8,7 +8,7 @@ add_library(rte INTERFACE)
 target_compile_definitions(rte INTERFACE ENGINE_ASSET_DIR="${ENGINE_ASSETS}/")
 target_include_directories(rte INTERFACE engine/include)
 target_link_libraries(rte INTERFACE
-    glm vma vulkan assimp renderer platform glfw
+    glm vma vulkan assimp renderer platform glfw ecs
 )
 
 add_subdirectory(engine)
