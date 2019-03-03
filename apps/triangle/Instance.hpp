@@ -3,6 +3,7 @@
 #include <vector>
 #include "Utilities.h"
 #include <functional>
+
 class Instance 
 {
 private:

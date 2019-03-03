@@ -1,5 +1,5 @@
 #include "Instance.hpp"
-#include "Utilities.h"
+#include "SwapChain.hpp"
 #include <set>
 #include <iostream>
 
@@ -49,8 +49,8 @@ bool Instance::DeviceMeetsRequirements(VkPhysicalDevice device)
     bool swapChainAdequate = false;
     if (extensionsSupported)
     {
-        SwapChainSupportDetails swapChainSupport = Utilities::QuerySwapChainSupport(device, _surface);
-        swapChainAdequate = !swapChainSupport.formats.empty() && !swapChainSupport.presentModes.empty();
+        SwapChain::SupportInformation swapChainSupport = SwapChain::GetSupportInformation(device, _surface);
+        swapChainAdequate = !swapChainSupport._sufraceFormats.empty() && !swapChainSupport._presentModes.empty();
     }
 
     return indices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;

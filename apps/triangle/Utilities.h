@@ -105,7 +105,6 @@ namespace Utilities
 	VkImageView CreateImageView(DeviceMemoryManager::ImageInformation &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags, VkDevice device);
 	VkSampler CreateSampler(VkDevice device);
 	QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
-	SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
 	bool DeviceSupportsExtensions(VkPhysicalDevice device, std::vector<const char*> extensions);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugUtilsMessengerEXT *pCallback);
 	void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks *pAllocator);
