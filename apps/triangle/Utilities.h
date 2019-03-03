@@ -3,6 +3,7 @@
 #include <vulkan/vulkan.h>
 #include <glm/glm.hpp>
 #include <array>
+#include <optional>
 #include "DeviceMemoryManager.h"
 
 struct Vertex {
@@ -74,6 +75,27 @@ struct Mesh {
 };
 
 
+//MODIFY THIS!
+struct QueueFamilyIndices
+{
+	std::optional<uint32_t> GraphicsFamily;
+	std::optional<uint32_t> PresentFamily;
+
+	bool isComplete()
+	{
+		return GraphicsFamily.has_value() && PresentFamily.has_value();
+	}
+};
+
+//AND THIS
+struct SwapChainSupportDetails
+{
+	VkSurfaceCapabilitiesKHR capabilities;
+	std::vector<VkSurfaceFormatKHR> formats;
+	std::vector<VkPresentModeKHR> presentModes;
+};
+
+
 namespace Utilities
 {
 	Mesh* MakeCylinder(float radius, float height, int faces);
@@ -82,5 +104,10 @@ namespace Utilities
 	bool HasStencilComponent(VkFormat format);
 	VkImageView CreateImageView(DeviceMemoryManager::ImageInformation &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags, VkDevice device);
 	VkSampler CreateSampler(VkDevice device);
+	QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
+	SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface);
+	bool DeviceSupportsExtensions(VkPhysicalDevice device, std::vector<const char*> extensions);
+	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugUtilsMessengerEXT *pCallback);
+	void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks *pAllocator);
 }
 

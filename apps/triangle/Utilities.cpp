@@ -2,6 +2,9 @@
 
 
 #include <vector>
+#include<set>
+#include<string>
+
 #include <glm/glm.hpp>
 
 using namespace std;
@@ -10,7 +13,9 @@ using namespace glm;
 #include <glm/gtx/rotate_vector.hpp>
 
 
-Mesh* Utilities::MakeCylinder(float radius, float height, int faces){
+namespace Utilities {
+
+Mesh* MakeCylinder(float radius, float height, int faces){
     vec3 pos = vec3(0.0f,0.0f,radius);
     vector<vec3> vertices;
     vector<vec3> normals;
@@ -76,7 +81,7 @@ Mesh* Utilities::MakeCylinder(float radius, float height, int faces){
     return cylinder;
 }
 
-Texture Utilities::CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t byteSize, VkCommandBuffer commandBuffer, VkDevice device){
+Texture CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t byteSize, VkCommandBuffer commandBuffer, VkDevice device){
     DeviceMemoryManager::BufferInformation stagingBuffer;
     DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, byteSize, stagingBuffer);
     DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, pixels);
@@ -92,7 +97,7 @@ Texture Utilities::CreateTexture(uint32_t width, uint32_t height, unsigned char 
     return {imageView, sampler, texture};
 }
 
-void Utilities::TransitionImageLayout(DeviceMemoryManager::ImageInformation imageInfo, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandBuffer &commandBuffer) {
+void TransitionImageLayout(DeviceMemoryManager::ImageInformation imageInfo, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandBuffer &commandBuffer) {
         VkImageMemoryBarrier barrier = {};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
 		//Old layout can be set to VK_IMAGE_LAYOUT_UNDEFINED if the content of the image is unimportant
@@ -153,11 +158,11 @@ void Utilities::TransitionImageLayout(DeviceMemoryManager::ImageInformation imag
         );
 }
 
-bool Utilities::HasStencilComponent(VkFormat format) {
+bool HasStencilComponent(VkFormat format) {
     	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
 
-VkImageView Utilities::CreateImageView(DeviceMemoryManager::ImageInformation &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags, VkDevice device) {
+VkImageView CreateImageView(DeviceMemoryManager::ImageInformation &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags, VkDevice device) {
     VkImageViewCreateInfo viewInfo = {};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
     viewInfo.image = imageInfo.image;
@@ -177,7 +182,8 @@ VkImageView Utilities::CreateImageView(DeviceMemoryManager::ImageInformation &im
     return imageView;
 }
 
-VkSampler Utilities::CreateSampler(VkDevice device) {
+VkSampler CreateSampler(VkDevice device) 
+{
     VkSamplerCreateInfo samplerInfo = {};
     samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
     samplerInfo.magFilter = VK_FILTER_LINEAR;
@@ -201,3 +207,104 @@ VkSampler Utilities::CreateSampler(VkDevice device) {
     }
     return sampler;
 }
+
+QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
+{
+    QueueFamilyIndices indices;
+
+    uint32_t queueFamilyCount = 0;
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, nullptr);
+
+    std::vector<VkQueueFamilyProperties> queueFamilies(queueFamilyCount);
+    vkGetPhysicalDeviceQueueFamilyProperties(device, &queueFamilyCount, queueFamilies.data());
+
+    int i = 0;
+    for (const auto &queueFamily : queueFamilies)
+    {
+        if (queueFamily.queueCount > 0 && queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
+        {
+            indices.GraphicsFamily = i;
+        }
+
+        VkBool32 presentSupport = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(device, i, surface, &presentSupport);
+        if (queueFamily.queueCount > 0 && presentSupport)
+        {
+            indices.PresentFamily = i;
+        }
+
+        if (indices.isComplete())
+        {
+            break;
+        }
+
+        i++;
+    }
+    return indices;
+}
+
+SwapChainSupportDetails QuerySwapChainSupport(VkPhysicalDevice device, VkSurfaceKHR surface)
+{
+    SwapChainSupportDetails details;
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
+    uint32_t formatCount;
+    vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
+
+    if (formatCount != 0)
+    {
+        details.formats.resize(formatCount);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
+    }
+
+    uint32_t presentModeCount;
+    vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
+
+    if (presentModeCount != 0)
+    {
+        details.presentModes.resize(presentModeCount);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
+    }
+    return details;
+}
+
+bool DeviceSupportsExtensions(VkPhysicalDevice device, std::vector<const char*> extensions)
+{
+    uint32_t extensionCount;
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
+
+    std::vector<VkExtensionProperties> availableExtensions(extensionCount);
+    vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
+
+    std::set<std::string> requiredExtensions(extensions.begin(), extensions.end());
+
+    for (const auto &extension : availableExtensions)
+    {
+        requiredExtensions.erase(extension.extensionName);
+    }
+
+    return requiredExtensions.empty();
+}
+
+VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugUtilsMessengerEXT *pCallback)
+{
+	auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+	if (func != nullptr)
+	{
+		return func(instance, pCreateInfo, pAllocator, pCallback);
+	}
+	else
+	{
+		return VK_ERROR_EXTENSION_NOT_PRESENT;
+	}
+}
+
+void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks *pAllocator)
+{
+	auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+	if (func != nullptr)
+	{
+		func(instance, callback, pAllocator);
+	}
+}
+
+} //namespace Utilities
