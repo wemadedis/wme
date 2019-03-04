@@ -1,9 +1,9 @@
 #pragma once
 
-#include "rte/ECS.h"
+#include "rte/ECSCore.h"
 
 class FloatComponent : public ECSComponent
 {
-    int GetMask();
-    void Trigger();
-}
+  public:
+    float value;
+};

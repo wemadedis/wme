@@ -1,18 +1,29 @@
-#include "rte/ECS.h"
 #include <iostream>
+
+#include "rte/ECSCore.h"
+#include "MultiplyByTwoSystem.h"
+#include "FloatComponent.h"
 
 int totalFrames = 10;
 int frameIndex = 0;
-
-#define FLOAT_COMPONENT 1
 
 void main()
 {
     ECSCore *ecs = new ECSCore();
     std::cout << "Started" << std::endl;
 
-    // Init ECS
-    ecs->AddComponent<float>();
+    // Add components to ECSCore, gives back the MASK for this comp
+    uint64_t floatMask = ecs->AddComponent<FloatComponent>();
+
+    // Declare systems
+    MultiplyByTwoSystem* mult2System = new MultiplyByTwoSystem(ecs, floatMask);
+
+    ecs->AddSystem(mult2System);
+    
+    // Add entity
+    uint64_t e1 = ecs->GetFreeEntity();
+
+    ecs->Mask[e1] = floatMask;
 
     // Every frame
     for(; frameIndex < totalFrames; frameIndex++)

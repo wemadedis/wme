@@ -1,11 +1,3 @@
 #include "FloatComponent.h"
+#include <iostream>
 
-void FloatComponent::Trigger()
-{
-        
-}
-
-int FloatComponent::GetMask()
-{
-    return 1;
-}
