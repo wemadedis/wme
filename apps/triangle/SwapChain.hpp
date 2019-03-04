@@ -36,4 +36,5 @@ public:
 	VkSwapchainKHR GetSwapChain();
 	VkFormat GetSwapChainImageFormat();
 	VkExtent2D GetSwapChainExtent();
+	std::vector<VkImage>& GetSwapChainImages();
 };

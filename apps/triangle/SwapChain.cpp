@@ -177,3 +177,8 @@ VkExtent2D SwapChain::GetSwapChainExtent()
 {
     return _swapChainExtent;
 }
+
+std::vector<VkImage>& SwapChain::GetSwapChainImages()
+{
+    return _swapChainImages;
+}
