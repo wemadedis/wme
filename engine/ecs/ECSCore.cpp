@@ -1,31 +1,39 @@
 #include <iostream>
 #include <cstdint>
+#include <rte/ECSCore.h>
 
 #include "rte/ECSCore.h"
+#include "Defs.h"
 
 void ECSCore::Update()
 {
-    // TODO: (danh) Sun 03/03 - 18:06: parallellise this
-    for (uint32_t entityIndex = 0; entityIndex < EntityCount; entityIndex++)
+    for (u32 entityIndex = 0; entityIndex < EntityCount; entityIndex++)
     {
-        for(uint32_t i = 0; i < Systems.size(); i++)
+        for(u32 i = 0; i < Systems.size(); i++)
         {
-            if (Mask[entityIndex] == Systems[i]->GetMask())
+            if (FitsSystem(Mask[entityIndex], Systems[i]->GetMask()))
             {
-                Systems[i]->Trigger(i);
+                Systems[i]->Trigger(entityIndex);
             }
         }
     }
 }
+
+void
 
 void ECSCore::AddSystem(ECSSystem* system)
 {
     Systems.push_back(system);
 }
 
-uint32_t ECSCore::GetFreeEntity()
+inline bool ECSCore::FitsSystem(u64 entityMask, u64 systemMask)
 {
-    for (uint32_t entityIndex = 0; entityIndex < EntityCount; entityIndex++)
+    return (entityMask & systemMask) == systemMask;
+}
+
+uint64_t ECSCore::GetFreeEntity()
+{
+    for (u32 entityIndex = 0; entityIndex < EntityCount; entityIndex++)
     {
         if (Mask[entityIndex] == 0)
         {
@@ -35,7 +43,7 @@ uint32_t ECSCore::GetFreeEntity()
     return EntityCount;
 }
 
-void ECSCore::DestroyEntity(uint32_t entityIndex)
+void ECSCore::DestroyEntity(u64 entityIndex)
 {
     Mask[entityIndex] = 0;
 }

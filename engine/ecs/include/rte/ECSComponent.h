@@ -4,7 +4,7 @@
 
 class ECSComponent
 {
-  public:
-    ECSComponent(uint64_t mask);
-    uint32_t Mask;
+public:
+    ECSComponent();
+    virtual ~ECSComponent() {}
 };

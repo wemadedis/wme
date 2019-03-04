@@ -3,6 +3,7 @@
 #include "rte/ECSCore.h"
 #include "MultiplyByTwoSystem.h"
 #include "FloatComponent.h"
+#include "RTE.h"
 
 int totalFrames = 10;
 int frameIndex = 0;
@@ -13,7 +14,9 @@ void main()
     std::cout << "Started" << std::endl;
 
     // Add components to ECSCore, gives back the MASK for this comp
-    uint64_t floatMask = ecs->AddComponent<FloatComponent>();
+    FloatComponent* f = new FloatComponent();
+    uint64_t floatMask = ecs->AddComponent<FloatComponent>(*f);
+    
 
     // Declare systems
     MultiplyByTwoSystem* mult2System = new MultiplyByTwoSystem(ecs, floatMask);

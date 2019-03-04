@@ -4,7 +4,9 @@
 
 class MultiplyByTwoSystem : public ECSSystem
 {
+private:
+	u64 _floatMask = 0;
 public:
     MultiplyByTwoSystem(ECSCore* ecs, uint64_t floatMask);
-	void Trigger(int entity);
+	void Trigger(u64 entity) override;
 };

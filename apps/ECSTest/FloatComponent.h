@@ -5,5 +5,5 @@
 class FloatComponent : public ECSComponent
 {
   public:
-    float value;
+    float value = 0;
 };
