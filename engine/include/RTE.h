@@ -1,13 +1,15 @@
 #pragma once
 
-#include <string>
-
+#include "Defs.h"
+#include <vector>
 #ifndef ENGINE_ASSET_DIR
 #define ENGINE_ASSET_DIR "THIS_VARIABLE_IS_SET_BY_CMAKE"
 #endif
 
-struct Engine
+
+struct Scene
 {
-    int _a;
-    std::string _b;
+
 };
+
+std::vector<Scene> Initialize();
