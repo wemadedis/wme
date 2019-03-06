@@ -8,17 +8,23 @@ add_library(vma INTERFACE)
 target_include_directories(vma INTERFACE vma)
 ###</VMA>
 
-###<VULKAN>
+###<VULKAN> 
 find_package(Vulkan REQUIRED)
 add_library(vulkan INTERFACE)
 target_include_directories(vulkan INTERFACE ${Vulkan_INCLUDE_DIR})
 target_link_libraries(vulkan INTERFACE ${Vulkan_LIBRARY})
 ###</VULKAN>
 
-###<ASSIMP>
-add_library(assimp INTERFACE)
-target_link_libraries(assimp INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/assimp/lib/assimp.lib)
-target_include_directories(assimp INTERFACE include)
+###<ASSIMP> 💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀
+
+set(ZLIB_LIBRARIES zlibstatic)
+set(ENABLE_BOOST_WORKAROUND ON)
+set(BUILD_ASSIMP_TOOLS  ON)
+set(ASSIMP_BUILD_STATIC_LIB ON)
+
+add_subdirectory("assimp-4.1.0")
+target_include_directories(assimp PUBLIC assimp-4.1.0/include)
+
 ###</ASSIMP>
 
 ###<GLFW>
