@@ -38,4 +38,7 @@ public:
     VkQueue GetPresentQueue();
     VkPhysicalDevice GetPhysicalDevice();
     VkSurfaceKHR GetSurface();
+    
+    VkFormat GetOptimalFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
+	VkFormat GetOptimalDepthFormat();
 };

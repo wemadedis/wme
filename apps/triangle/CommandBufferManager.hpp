@@ -4,7 +4,6 @@
 
 #include <vulkan/vulkan.h>
 
-
 #include "Instance.hpp"
 
 class CommandBufferManager

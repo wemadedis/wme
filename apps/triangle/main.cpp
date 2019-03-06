@@ -49,27 +49,6 @@ const bool enableValidationLayers = false;
 const bool enableValidationLayers = true;
 #endif
 
-static std::vector<char> readFile(const std::string &filename)
-{
-	std::ifstream file(filename, std::ios::ate | std::ios::binary);
-
-	if (!file.is_open())
-	{
-		throw std::runtime_error("failed to open file!");
-	}
-
-	size_t fileSize = (size_t)file.tellg();
-	std::vector<char> buffer(fileSize);
-
-	file.seekg(0);
-	file.read(buffer.data(), fileSize);
-
-	file.close();
-
-	return buffer;
-}
-
-
 struct UniformBufferObject {
 	glm::mat4 model;
 	glm::mat4 view;
@@ -248,28 +227,6 @@ public:
 		swapChainImages = swpchain->GetSwapChainImages();
 	}
 
-	VkFormat findSupportedFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features) {
-		for (VkFormat format : candidates) {
-
-			VkFormatProperties props;
-			vkGetPhysicalDeviceFormatProperties(physicalDevice, format, &props);
-
-			if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
-				return format;
-			} else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
-				return format;
-			}
-		}
-		throw std::runtime_error("failed to find supported format!");
-	}
-
-	VkFormat findDepthFormat() {
-    return findSupportedFormat(
-        {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
-        VK_IMAGE_TILING_OPTIMAL,
-        VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
-	}
-
 	void CreateTextureImage(Mesh* mesh, const char *imagePath){
 		int texWidth, texHeight, texChannels;
 		std::ostringstream ss;
@@ -292,7 +249,7 @@ public:
 	}
 
 	void createDepthResources() {
-		VkFormat depthFormat = findDepthFormat();
+		VkFormat depthFormat = rendererInstance->GetOptimalDepthFormat();
 		createImage(swapChainExtent.width, swapChainExtent.height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, depthImage, depthImageMemory);
 		depthImageView = createImageView(depthImage, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
 		transitionImageLayout(depthImage, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
@@ -523,17 +480,13 @@ public:
 		}
 	}
 
-		void createIndexBuffer(Mesh* mesh) {
+	void createIndexBuffer(Mesh* mesh) {
 		size_t bufferSize = sizeof(mesh->indices[0]) * mesh->indices.size();
 
 		BufferInformation stagingBuffer = {};
-
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, stagingBuffer);
-		
 		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)mesh->indices.data());
-
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, mesh->indexBuffer);
-
 		DeviceMemoryManager::CopyBuffer(stagingBuffer, mesh->indexBuffer, bufferSize, cmdbManager->GetCommandPool(), graphicsQueue);
 
 		//Possibly destroy indices in host memory
@@ -544,15 +497,10 @@ public:
 		size_t bufferSize = sizeof(mesh->vertices[0]) * mesh->vertices.size();
 		
 		BufferInformation stagingBuffer = {};
-
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, stagingBuffer);
-		
 		DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)mesh->vertices.data());
-
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, mesh->vertexBuffer);
-
 		DeviceMemoryManager::CopyBuffer(stagingBuffer, mesh->vertexBuffer, bufferSize, cmdbManager->GetCommandPool(), graphicsQueue);
-
 		//Possibly destroy vertices in host memory
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
 	}
@@ -733,7 +681,7 @@ public:
 
 	void createRenderPass()
 	{
-		VkFormat dpth = findDepthFormat();
+		VkFormat dpth = rendererInstance->GetOptimalDepthFormat();
 		renderPass = new RenderPass(swapChainImageFormat, dpth, device);
 	}
 
@@ -742,47 +690,22 @@ public:
 		std::ostringstream ss;
 		ss << ENGINE_ASSET_DIR << "shaders/vert.spv";
 
-		auto vertShaderCode = readFile(ss.str().c_str());
+		auto vertShaderCode = Utilities::ReadFile(ss.str().c_str());
 		ss.str("");
 		ss.clear();
 		ss << ENGINE_ASSET_DIR << "shaders/frag.spv";
 		std::cout << ss.str() << std::endl;
-		auto fragShaderCode = readFile(ss.str().c_str());
+		auto fragShaderCode = Utilities::ReadFile(ss.str().c_str());
 		ss.str("");
 		ss.clear();
-		VkShaderModule vertShaderModule = createShaderModule(vertShaderCode);
-		VkShaderModule fragShaderModule = createShaderModule(fragShaderCode);
+		VkShaderModule vertShaderModule = Utilities::CreateShaderModule(vertShaderCode, rendererInstance->GetDevice());
+		VkShaderModule fragShaderModule = Utilities::CreateShaderModule(fragShaderCode, rendererInstance->GetDevice());
 
 		pipeline = new GraphicsPipeline(vertShaderModule, fragShaderModule, swapChainExtent, descriptorSetLayout, device, renderPass);
 		//After creating the pipeline the modules can be deleted
 		vkDestroyShaderModule(device, fragShaderModule, nullptr);
 		vkDestroyShaderModule(device, vertShaderModule, nullptr);
 
-	}
-
-	VkShaderModule createShaderModule(const std::vector<char> &code)
-	{
-
-		/*
-		IMPORTANT
-		we will need to cast the pointer with reinterpret_cast as shown below. 
-		When you perform a cast like this, you also need to ensure that the data 
-		satisfies the alignment requirements of uint32_t. Lucky for us, the data 
-		is stored in an std::vector where the default allocator already ensures 
-		that the data satisfies the worst case alignment requirements.*/
-
-		VkShaderModuleCreateInfo createInfo = {};
-		createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
-		createInfo.codeSize = code.size();
-		createInfo.pCode = reinterpret_cast<const uint32_t *>(code.data());
-
-		VkShaderModule shaderModule;
-		if (vkCreateShaderModule(device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create shader module!");
-		}
-
-		return shaderModule;
 	}
 
 	void createImageViews()
@@ -792,30 +715,6 @@ public:
 		for (uint32_t i = 0; i < swapChainImages.size(); i++) {
 			swapChainImageViews[i] = createImageView(swapChainImages[i], swapChainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT);
 		}
-	}
-
-	SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device)
-	{
-		SwapChainSupportDetails details;
-		vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details.capabilities);
-		uint32_t formatCount;
-		vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
-
-		if (formatCount != 0)
-		{
-			details.formats.resize(formatCount);
-			vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details.formats.data());
-		}
-
-		uint32_t presentModeCount;
-		vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, nullptr);
-
-		if (presentModeCount != 0)
-		{
-			details.presentModes.resize(presentModeCount);
-			vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details.presentModes.data());
-		}
-		return details;
 	}
 
 	void mainLoop()
@@ -919,8 +818,6 @@ public:
 		DeviceMemoryManager::CopyDataToBuffer(mesh->uniformBuffer, &ubo);
 	}
 
-
-
 	void cleanup()
 	{
 		cleanupSwapChain();
@@ -933,15 +830,10 @@ public:
 
 		for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
 			DeviceMemoryManager::DestroyBuffer(meshes[meshIndex]->indexBuffer);
-
 			DeviceMemoryManager::DestroyBuffer(meshes[meshIndex]->vertexBuffer);
-
 			DeviceMemoryManager::DestroyBuffer(meshes[meshIndex]->uniformBuffer);
-
 			DeviceMemoryManager::DestroyImage(meshes[meshIndex]->texture.imageInformation);
 		}
-
-		
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
 		{
@@ -950,14 +842,8 @@ public:
 			vkDestroyFence(device, inFlightFences[i], nullptr);
 		}
 
-
-		vkDestroyDevice(device, nullptr);
-
-		vkDestroySurfaceKHR(instance, surface, nullptr);
-		vkDestroyInstance(instance, nullptr);
-
+		delete rendererInstance;
 		glfwDestroyWindow(window);
-
 		glfwTerminate();
 	}
 
@@ -976,37 +862,6 @@ public:
 
 		return extensions;
 	}
-
-	bool checkValidationLayerSupport()
-	{
-		uint32_t layerCount;
-		vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-
-		std::vector<VkLayerProperties> availableLayers(layerCount);
-		vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-
-		for (const char *layerName : validationLayers)
-		{
-			bool layerFound = false;
-
-			for (const auto &layerProperties : availableLayers)
-			{
-				if (strcmp(layerName, layerProperties.layerName) == 0)
-				{
-					layerFound = true;
-					break;
-				}
-			}
-
-			if (!layerFound)
-			{
-				return false;
-			}
-		}
-
-		return true;
-	}
-
 };
 
 int main()
