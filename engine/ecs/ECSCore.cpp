@@ -19,8 +19,6 @@ void ECSCore::Update()
     }
 }
 
-void
-
 void ECSCore::AddSystem(ECSSystem* system)
 {
     Systems.push_back(system);

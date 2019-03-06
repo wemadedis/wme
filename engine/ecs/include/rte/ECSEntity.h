@@ -7,11 +7,4 @@ public:
     {
 
     }
-
-
-    template <typename T, typename ... ARGS>
-    void AddComponent(ARGS args)
-    {
-
-    }
 };

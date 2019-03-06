@@ -22,6 +22,8 @@ bool DoTheImportThing( const std::string& pFile)
     return false;
   }
 
+
+
   // Now we can access the file's contents.
   // We're done. Everything will be cleaned up by the importer destructor
   return true;
@@ -31,5 +33,6 @@ int main()
 {
     std::cout << "Executed this" << std::endl;
     DoTheImportThing("Hi there.gpj");
+    return 0;
 }
 
