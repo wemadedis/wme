@@ -4,7 +4,6 @@
 #include <glm/glm.hpp>
 #include <array>
 #include <optional>
-#include "DeviceMemoryManager.h"
 
 struct Vertex {
 	glm::vec3 pos;
@@ -46,34 +45,6 @@ struct Vertex {
 	}
 };
 
-struct Texture {
-	/*
-	Vulkan image view.
-	*/
-	VkImageView imageView;
-	/*
-	Vulkan sampler specifying how to sample the texture.
-	*/
-	VkSampler sampler;
-	/*
-	Information about the texture image.
-	*/
-	DeviceMemoryManager::ImageInformation imageInformation;
-};
-
-
-struct Mesh {
-    std::vector<Vertex> vertices = {};
-    std::vector<uint16_t> indices = {};
-	DeviceMemoryManager::BufferInformation vertexBuffer  = {};
-	DeviceMemoryManager::BufferInformation indexBuffer = {};
-	DeviceMemoryManager::BufferInformation uniformBuffer = {};
-	Texture texture = {};
-	glm::vec3 pos = {0.0f, 0.0f, 0.0f};
-	glm::vec3 rot = {0.0f, 0.0f, 0.0f};
-	glm::vec3 scale={1.0f, 1.0f, 1.0f};
-};
-
 
 //MODIFY THIS!
 struct QueueFamilyIndices
@@ -98,15 +69,11 @@ struct SwapChainSupportDetails
 
 namespace Utilities
 {
-	Mesh* MakeCylinder(float radius, float height, int faces);
-	Texture CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t byteSize, VkCommandBuffer commandBuffer, VkDevice device);
-	void TransitionImageLayout(DeviceMemoryManager::ImageInformation imageInfo, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout, VkCommandBuffer &commandBuffer);
+	
 	bool HasStencilComponent(VkFormat format);
-	VkImageView CreateImageView(DeviceMemoryManager::ImageInformation &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags, VkDevice device);
-	VkSampler CreateSampler(VkDevice device);
+
 	QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface);
 	bool DeviceSupportsExtensions(VkPhysicalDevice device, std::vector<const char*> extensions);
 	VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugUtilsMessengerEXT *pCallback);
 	void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks *pAllocator);
-}
-
+};

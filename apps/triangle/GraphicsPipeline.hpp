@@ -25,7 +25,7 @@ private:
     VkPipelineMultisampleStateCreateInfo GetMultisampleCreateInfo();
     VkPipelineColorBlendAttachmentState GetColorBlendAttachment();
     VkPipelineColorBlendStateCreateInfo GetColorBlendCreateInfo(VkPipelineColorBlendAttachmentState &colorBlendAttachment);
-    VkPipelineLayout CreatePipelineLayout();
+    void CreatePipelineLayout();
     void CreatePipeline(); //Worth it? Would have too many parameters.
 public:
     GraphicsPipeline(VkShaderModule vertexShaderModule, VkShaderModule fragShaderModule, VkExtent2D swapChainExtent, VkDescriptorSetLayout layout, VkDevice device, RenderPass* renderPass);

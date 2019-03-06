@@ -1,6 +1,9 @@
 #pragma once
 #include <vulkan/vulkan.h>
 
+
+#include "CommandBufferManager.hpp"
+
 namespace DeviceMemoryManager
 {
 	//Vertex buffer: floats all the way: pos, normal, uvs, etc.
@@ -41,7 +44,7 @@ namespace DeviceMemoryManager
 	/*
 	Initialize the allocator. Required before calling any other DeviceMemoryManager function.
 	*/
-	void Initialize(VkPhysicalDevice physicalDevice, VkDevice device);
+	void Initialize(Instance *instance, CommandBufferManager *commandBufferManager);
 	
 	/*
 	Create a buffer, allocate the necessary memory, and bind the buffer to it.

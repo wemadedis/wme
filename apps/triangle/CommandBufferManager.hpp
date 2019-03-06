@@ -4,12 +4,13 @@
 
 #include <vulkan/vulkan.h>
 
+
 #include "Instance.hpp"
 
 class CommandBufferManager
 {
 private:
-    Instance* _instance;
+    Instance * _instance;
 
     VkCommandPool _commandPool;
 

@@ -12,8 +12,10 @@ namespace DeviceMemoryManager
 VmaAllocator *alloc = nullptr;
 map<VkBuffer, VmaAllocation> buffers;
 VkDevice device;
+Instance* _instance;
+CommandBufferManager *_cmdbManager;
 
-void Initialize(VkPhysicalDevice physicalDevice, VkDevice device)
+void Initialize(Instance *instance, CommandBufferManager *commandBufferManager)
 {
     //FIX THIS MALLOC PLS <--------------------------------------------------------------------------------------------------------
     alloc = (VmaAllocator *)malloc(sizeof(VmaAllocator));

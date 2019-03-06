@@ -30,6 +30,8 @@
 #include "Instance.hpp"
 #include "SwapChain.hpp"
 #include "CommandBufferManager.hpp"
+#include "Texture.hpp"
+#include "Mesh.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -208,7 +210,7 @@ public:
 		graphicsQueue = rendererInstance->GetGraphicsQueue();
 		presentQueue = rendererInstance->GetPresentQueue();
 
-		DeviceMemoryManager::Initialize(physicalDevice, device);
+		
 
 		createSwapChain();
 		
@@ -219,7 +221,7 @@ public:
 		createGraphicsPipeline();
 
 		cmdbManager = new CommandBufferManager(rendererInstance, swpchain->GetSwapChainImages().size());
-
+		DeviceMemoryManager::Initialize(rendererInstance, cmdbManager);
 		createDepthResources();
 		createFramebuffers();
 		for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
@@ -281,7 +283,7 @@ public:
 		}
 
 		VkCommandBuffer cmd = cmdbManager->BeginCommandBufferInstance();
-		mesh->texture = Utilities::CreateTexture(texWidth, texHeight, pixels, imageSize, cmd, device);
+		mesh->texture = Texture().CreateTexture(texWidth, texHeight, pixels, imageSize, cmd, device);
 		cmdbManager->SubmitCommandBufferInstance(cmd, graphicsQueue);
 	}
 

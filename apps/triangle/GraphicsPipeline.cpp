@@ -148,7 +148,7 @@ VkPipelineColorBlendStateCreateInfo GraphicsPipeline::GetColorBlendCreateInfo(Vk
     return colorBlending;
 }
 
-VkPipelineLayout GraphicsPipeline::CreatePipelineLayout()
+void GraphicsPipeline::CreatePipelineLayout()
 {
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;

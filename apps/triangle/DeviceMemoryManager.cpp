@@ -12,17 +12,18 @@ namespace DeviceMemoryManager
 VmaAllocator *alloc = nullptr;
 map<VkBuffer, VmaAllocation> buffers;
 map<VkImage, VmaAllocation> images;
-VkDevice device;
+Instance* _instance;
+CommandBufferManager *_cmdbManager;
 
-void Initialize(VkPhysicalDevice physicalDevice, VkDevice device)
+void Initialize(Instance *instance, CommandBufferManager *commandBufferManager)
 {
     //FIX THIS MALLOC PLS <--------------------------------------------------------------------------------------------------------
     alloc = (VmaAllocator *)malloc(sizeof(VmaAllocator));
     VmaAllocatorCreateInfo info = {};
-    info.physicalDevice = physicalDevice;
-    info.device = device;
+    _instance = instance;
+    info.physicalDevice = _instance->GetPhysicalDevice();
+    info.device = _instance->GetDevice();
     vmaCreateAllocator(&info, alloc);
-    DeviceMemoryManager::device = device;
 }
 
 void CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, BufferInformation& bufferInformation)
@@ -79,7 +80,7 @@ void CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size
 		allocInfo.commandBufferCount = 1;
 
 		VkCommandBuffer commandBuffer;
-		vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
+		vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, &commandBuffer);
 
 		VkCommandBufferBeginInfo beginInfo = {};
 		beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -107,7 +108,7 @@ void CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size
 		and wait for all of them complete, instead of executing one at a time. 
 		That may give the driver more opportunities to optimize.
 		*/
-		vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
+		vkFreeCommandBuffers(_instance->GetDevice(), commandPool, 1, &commandBuffer);
 	}
 
 void DestroyBuffer(BufferInformation& bufferInfo)

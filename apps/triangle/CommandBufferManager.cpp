@@ -1,6 +1,6 @@
 #include "CommandBufferManager.hpp"
 #include "Utilities.h"
-
+#include "Instance.hpp"
 void CommandBufferManager::CreateCommandPool()
 {
     QueueFamilyIndices queueFamilyIndices = Utilities::FindQueueFamilies(_instance->GetPhysicalDevice(), _instance->GetSurface());
