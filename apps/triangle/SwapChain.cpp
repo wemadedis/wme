@@ -1,5 +1,6 @@
 #include "SwapChain.hpp"
 #include <algorithm>
+#include <iostream>
 
 SwapChain::SupportInformation SwapChain::GetSupportInformation(VkPhysicalDevice device, VkSurfaceKHR surface)
 {

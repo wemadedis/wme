@@ -29,6 +29,7 @@
 #include "RenderPass.hpp"
 #include "Instance.hpp"
 #include "SwapChain.hpp"
+#include "CommandBufferManager.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -139,10 +140,6 @@ public:
 
 	VkDescriptorSetLayout descriptorSetLayout;
 
-	
-
-	VkCommandPool commandPool;
-	std::vector<VkCommandBuffer> commandBuffers;
 
 	std::vector<VkSemaphore> imageAvailableSemaphores;
 	std::vector<VkSemaphore> renderFinishedSemaphores;
@@ -170,6 +167,7 @@ public:
 	RenderPass *renderPass;
 	Instance *rendererInstance;
 	SwapChain *swpchain;
+	CommandBufferManager *cmdbManager;
 
 	VkImageView textureImageView;
 	VkSampler textureSampler;
@@ -219,8 +217,8 @@ public:
 		createRenderPass();
 		createDescriptorSetLayout();
 		createGraphicsPipeline();
-		
-		createCommandPool();
+
+		cmdbManager = new CommandBufferManager(rendererInstance, swpchain->GetSwapChainImages().size());
 
 		createDepthResources();
 		createFramebuffers();
@@ -282,36 +280,13 @@ public:
 			throw std::runtime_error("failed to load texture image!");
 		}
 
-		VkCommandBuffer cmd = beginSingleTimeCommands();
+		VkCommandBuffer cmd = cmdbManager->BeginCommandBufferInstance();
 		mesh->texture = Utilities::CreateTexture(texWidth, texHeight, pixels, imageSize, cmd, device);
-		endSingleTimeCommands(cmd);
+		cmdbManager->SubmitCommandBufferInstance(cmd, graphicsQueue);
 	}
 
 	void createTextureImageView(){
 		textureImageView = createImageView(meshes[0]->texture.imageInformation.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
-	}
-
-	void createTextureSampler() {
-		VkSamplerCreateInfo samplerInfo = {};
-		samplerInfo.sType = VK_STRUCTURE_TYPE_SAMPLER_CREATE_INFO;
-		samplerInfo.magFilter = VK_FILTER_LINEAR;
-		samplerInfo.minFilter = VK_FILTER_LINEAR;
-		samplerInfo.addressModeU = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.addressModeV = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
-		samplerInfo.anisotropyEnable = VK_TRUE;
-		samplerInfo.maxAnisotropy = 16;
-		samplerInfo.borderColor = VK_BORDER_COLOR_INT_OPAQUE_BLACK;
-		samplerInfo.unnormalizedCoordinates = VK_FALSE;
-		samplerInfo.compareEnable = VK_FALSE;
-		samplerInfo.compareOp = VK_COMPARE_OP_ALWAYS;
-		samplerInfo.mipmapMode = VK_SAMPLER_MIPMAP_MODE_LINEAR;
-		samplerInfo.mipLodBias = 0.0f;
-		samplerInfo.minLod = 0.0f;
-		samplerInfo.maxLod = 0.0f;
-		if (vkCreateSampler(device, &samplerInfo, nullptr, &textureSampler) != VK_SUCCESS) {
-			throw std::runtime_error("failed to create texture sampler!");
-		}
 	}
 
 	void createDepthResources() {
@@ -341,42 +316,8 @@ public:
         return imageView;
     }
 
-	VkCommandBuffer beginSingleTimeCommands() {
-        VkCommandBufferAllocateInfo allocInfo = {};
-        allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-        allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-        allocInfo.commandPool = commandPool;
-        allocInfo.commandBufferCount = 1;
-
-        VkCommandBuffer commandBuffer;
-        vkAllocateCommandBuffers(device, &allocInfo, &commandBuffer);
-
-        VkCommandBufferBeginInfo beginInfo = {};
-        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-        beginInfo.flags = VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT;
-
-        vkBeginCommandBuffer(commandBuffer, &beginInfo);
-
-        return commandBuffer;
-    }
-
-	
-	void endSingleTimeCommands(VkCommandBuffer commandBuffer) {
-        vkEndCommandBuffer(commandBuffer);
-
-        VkSubmitInfo submitInfo = {};
-        submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-        submitInfo.commandBufferCount = 1;
-        submitInfo.pCommandBuffers = &commandBuffer;
-
-        vkQueueSubmit(graphicsQueue, 1, &submitInfo, VK_NULL_HANDLE);
-        vkQueueWaitIdle(graphicsQueue);
-
-        vkFreeCommandBuffers(device, commandPool, 1, &commandBuffer);
-    }
-
 	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) {
-        VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+        VkCommandBuffer commandBuffer = cmdbManager->BeginCommandBufferInstance();
 
         VkImageMemoryBarrier barrier = {};
         barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -437,8 +378,7 @@ public:
             0, nullptr,
             1, &barrier
         );
-
-        endSingleTimeCommands(commandBuffer);
+		cmdbManager->SubmitCommandBufferInstance(commandBuffer, graphicsQueue);
     }
 
 
@@ -592,7 +532,7 @@ public:
 
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, mesh->indexBuffer);
 
-		DeviceMemoryManager::CopyBuffer(stagingBuffer, mesh->indexBuffer, bufferSize, commandPool, graphicsQueue);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer, mesh->indexBuffer, bufferSize, cmdbManager->GetCommandPool(), graphicsQueue);
 
 		//Possibly destroy indices in host memory
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
@@ -609,7 +549,7 @@ public:
 
 		DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, mesh->vertexBuffer);
 
-		DeviceMemoryManager::CopyBuffer(stagingBuffer, mesh->vertexBuffer, bufferSize, commandPool, graphicsQueue);
+		DeviceMemoryManager::CopyBuffer(stagingBuffer, mesh->vertexBuffer, bufferSize, cmdbManager->GetCommandPool(), graphicsQueue);
 
 		//Possibly destroy vertices in host memory
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
@@ -644,7 +584,7 @@ public:
 			vkDestroyFramebuffer(device, swapChainFramebuffers[i], nullptr);
 		}
 
-		vkFreeCommandBuffers(device, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+		cmdbManager->DeallocateCommandBuffers();
 
 		delete pipeline;
 		
@@ -656,6 +596,7 @@ public:
 		}
 
 		vkDestroySwapchainKHR(device, swapChain, nullptr);
+		delete swpchain;
 	}
 
 	void recreateSwapChain()
@@ -708,26 +649,17 @@ public:
 
 	void createCommandBuffers()
 	{
-		commandBuffers.resize(swapChainFramebuffers.size());
+		//cmdbManager = new CommandBufferManager(rendererInstance, swapChainFramebuffers.size());
 
-		VkCommandBufferAllocateInfo allocInfo = {};
-		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
-		allocInfo.commandPool = commandPool;
-		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-		allocInfo.commandBufferCount = (uint32_t)commandBuffers.size();
+		uint32_t cmdBufCount = cmdbManager->GetCommandBufferCount();
 
-		if (vkAllocateCommandBuffers(device, &allocInfo, commandBuffers.data()) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to allocate command buffers!");
-		}
-
-		for (size_t i = 0; i < commandBuffers.size(); i++)
+		for (uint32_t bufferIndex = 0; bufferIndex < cmdBufCount; bufferIndex++)
 		{
 			VkCommandBufferBeginInfo beginInfo = {};
 			beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
 			beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-
-			if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS)
+			VkCommandBuffer cmdBuffer = cmdbManager->GetCommandBuffer(bufferIndex);
+			if (vkBeginCommandBuffer(cmdBuffer, &beginInfo) != VK_SUCCESS)
 			{
 				throw std::runtime_error("failed to begin recording command buffer!");
 			}
@@ -735,7 +667,7 @@ public:
 			VkRenderPassBeginInfo renderPassInfo = {};
 			renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 			renderPassInfo.renderPass = renderPass->GetHandle();
-			renderPassInfo.framebuffer = swapChainFramebuffers[i];
+			renderPassInfo.framebuffer = swapChainFramebuffers[bufferIndex];
 			renderPassInfo.renderArea.offset = {0, 0};
 			renderPassInfo.renderArea.extent = swapChainExtent;
 
@@ -746,43 +678,28 @@ public:
 			renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
 			renderPassInfo.pClearValues = clearValues.data();
 			
-			vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+			vkCmdBeginRenderPass(cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
 
-			vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetHandle());
+			vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetHandle());
 			
 			for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
 				Mesh* mesh = meshes[meshIndex];
 				VkBuffer vertexBuffers[] = { mesh->vertexBuffer.buffer };
 				VkDeviceSize offsets[] = { 0 };
 				
-				vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+				vkCmdBindVertexBuffers(cmdBuffer, 0, 1, vertexBuffers, offsets);
 				
-				vkCmdBindIndexBuffer(commandBuffers[i], mesh->indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
+				vkCmdBindIndexBuffer(cmdBuffer, mesh->indexBuffer.buffer, 0, VK_INDEX_TYPE_UINT16);
 
-				vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetLayout(), 0, 1, &descriptorSets[meshIndex], 0, nullptr);
+				vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetLayout(), 0, 1, &descriptorSets[meshIndex], 0, nullptr);
 
-				vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(mesh->indices.size()), 1, 0, 0, 0);
+				vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(mesh->indices.size()), 1, 0, 0, 0);
 			}
-			vkCmdEndRenderPass(commandBuffers[i]);
-			if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS)
+			vkCmdEndRenderPass(cmdBuffer);
+			if (vkEndCommandBuffer(cmdBuffer) != VK_SUCCESS)
 			{
 				throw std::runtime_error("failed to record command buffer!");
 			}
-		}
-	}
-
-	void createCommandPool()
-	{
-		QueueFamilyIndices queueFamilyIndices = Utilities::FindQueueFamilies(physicalDevice, surface);
-
-		VkCommandPoolCreateInfo poolInfo = {};
-		poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
-		poolInfo.queueFamilyIndex = queueFamilyIndices.GraphicsFamily.value();
-		poolInfo.flags = 0; // Optional
-
-		if (vkCreateCommandPool(device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS)
-		{
-			throw std::runtime_error("failed to create command pool!");
 		}
 	}
 
@@ -941,8 +858,9 @@ public:
 		submitInfo.pWaitSemaphores = waitSemaphores;
 		submitInfo.pWaitDstStageMask = waitStages;
 
+		VkCommandBuffer cmbBuffer = cmdbManager->GetCommandBuffer(imageIndex);
 		submitInfo.commandBufferCount = 1;
-		submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
+		submitInfo.pCommandBuffers = &cmbBuffer;
 
 		VkSemaphore signalSemaphores[] = {renderFinishedSemaphores[currentFrame]};
 		submitInfo.signalSemaphoreCount = 1;
@@ -1030,7 +948,6 @@ public:
 			vkDestroyFence(device, inFlightFences[i], nullptr);
 		}
 
-		vkDestroyCommandPool(device, commandPool, nullptr);
 
 		vkDestroyDevice(device, nullptr);
 
