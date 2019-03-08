@@ -30,7 +30,7 @@
 #include "Instance.hpp"
 #include "SwapChain.hpp"
 #include "CommandBufferManager.hpp"
-#include "Texture.hpp"
+#include "ImageManager.hpp"
 #include "Mesh.hpp"
 
 #define STB_IMAGE_IMPLEMENTATION
@@ -149,6 +149,7 @@ public:
 	Instance *rendererInstance;
 	SwapChain *swpchain;
 	CommandBufferManager *cmdbManager;
+	ImageManager *imageManager;
 
 	VkImageView textureImageView;
 	VkSampler textureSampler;
@@ -190,6 +191,7 @@ public:
 		presentQueue = rendererInstance->GetPresentQueue();
 
 		
+		
 
 		createSwapChain();
 		
@@ -199,7 +201,9 @@ public:
 		createDescriptorSetLayout();
 		createGraphicsPipeline();
 
-		cmdbManager = new CommandBufferManager(rendererInstance, swpchain->GetSwapChainImages().size());
+		cmdbManager = new CommandBufferManager(rendererInstance, (uint32_t)swpchain->GetSwapChainImages().size());
+		imageManager = new ImageManager(rendererInstance, cmdbManager);
+
 		DeviceMemoryManager::Initialize(rendererInstance, cmdbManager);
 		createDepthResources();
 		createFramebuffers();
@@ -239,13 +243,11 @@ public:
 			throw std::runtime_error("failed to load texture image!");
 		}
 
-		VkCommandBuffer cmd = cmdbManager->BeginCommandBufferInstance();
-		mesh->texture = Texture().CreateTexture(texWidth, texHeight, pixels, imageSize, cmd, device);
-		cmdbManager->SubmitCommandBufferInstance(cmd, graphicsQueue);
+		mesh->texture = imageManager->CreateTexture(texWidth, texHeight, pixels, imageSize);
 	}
 
 	void createTextureImageView(){
-		textureImageView = createImageView(meshes[0]->texture.imageInformation.image, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
+		textureImageView = imageManager->CreateImageView(meshes[0]->texture.image.imageInfo, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
 	}
 
 	void createDepthResources() {
@@ -397,7 +399,7 @@ public:
 
 			VkDescriptorImageInfo imageInfo = {};
 			imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-			imageInfo.imageView = meshes[i]->texture.imageView;
+			imageInfo.imageView = meshes[i]->texture.image.imageView;
 			imageInfo.sampler = meshes[i]->texture.sampler;
 			std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
 
@@ -832,7 +834,7 @@ public:
 			DeviceMemoryManager::DestroyBuffer(meshes[meshIndex]->indexBuffer);
 			DeviceMemoryManager::DestroyBuffer(meshes[meshIndex]->vertexBuffer);
 			DeviceMemoryManager::DestroyBuffer(meshes[meshIndex]->uniformBuffer);
-			DeviceMemoryManager::DestroyImage(meshes[meshIndex]->texture.imageInformation);
+			DeviceMemoryManager::DestroyImage(meshes[meshIndex]->texture.image.imageInfo);
 		}
 
 		for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
