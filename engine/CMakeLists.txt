@@ -1,4 +1,4 @@
 add_subdirectory(renderer)
 add_subdirectory(platform)
 add_subdirectory(third_party)
-add_subdirectory(ecs)
+add_subdirectory(RuntimeArchitecture)
