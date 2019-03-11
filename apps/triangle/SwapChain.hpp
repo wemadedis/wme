@@ -34,9 +34,10 @@ public:
     static SupportInformation GetSupportInformation(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
 
 	SwapChain(Instance *instance, int framebufferWidth, int frameBufferHeight);
-
+	~SwapChain();
 	VkSwapchainKHR GetSwapChain();
 	VkFormat GetSwapChainImageFormat();
 	VkExtent2D GetSwapChainExtent();
 	std::vector<Image>& GetSwapChainImages();
+	uint32_t GetSwapChainImageCount();
 };

@@ -112,8 +112,6 @@ public:
 
 
 	//Swap chain
-	VkSwapchainKHR swapChain;
-	std::vector<Image> swapChainImages;
 	VkExtent2D swapChainExtent;
 	std::vector<VkFramebuffer> swapChainFramebuffers;
 
@@ -146,10 +144,6 @@ public:
 	SwapChain *swpchain;
 	CommandBufferManager *cmdbManager;
 	ImageManager *imageManager;
-
-	VkImageView textureImageView;
-	VkSampler textureSampler;
-
 	
 	Image depthImage = {};
 
@@ -220,9 +214,7 @@ public:
 	void createSwapChain()
 	{
 		swpchain = new SwapChain(rendererInstance, WIDTH, HEIGHT);
-		swapChain = swpchain->GetSwapChain();
 		swapChainExtent = swpchain->GetSwapChainExtent();
-		swapChainImages = swpchain->GetSwapChainImages();
 	}
 
 	void CreateTextureImage(Mesh* mesh, const char *imagePath){
@@ -358,15 +350,15 @@ public:
 	{
 		std::array<VkDescriptorPoolSize, 2> poolSizes = {};
 		poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-		poolSizes[0].descriptorCount = static_cast<uint32_t>(swapChainImages.size());
+		poolSizes[0].descriptorCount = static_cast<uint32_t>(swpchain->GetSwapChainImageCount());
 		poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
-		poolSizes[1].descriptorCount = static_cast<uint32_t>(swapChainImages.size());
+		poolSizes[1].descriptorCount = static_cast<uint32_t>(swpchain->GetSwapChainImageCount());
 
 		VkDescriptorPoolCreateInfo poolInfo = {};
 		poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
 		poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
 		poolInfo.pPoolSizes = poolSizes.data();
-		poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size());
+		poolInfo.maxSets = static_cast<uint32_t>(swpchain->GetSwapChainImageCount());
 
 		if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) != VK_SUCCESS)
 		{
@@ -438,25 +430,6 @@ public:
 		DeviceMemoryManager::DestroyBuffer(stagingBuffer);
 	}
 
-	uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties)
-	{
-		VkPhysicalDeviceMemoryProperties memProperties;
-		vkGetPhysicalDeviceMemoryProperties(physicalDevice, &memProperties);
-
-		for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++)
-		{
-			if (typeFilter & (1 << i))
-			{
-				if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties)
-				{
-					return i;
-				}
-			}
-		}
-
-		throw std::runtime_error("failed to find suitable memory type!");
-	}
-
 	void cleanupSwapChain()
 	{
 		/*vkDestroyImageView(device, depthImageView, nullptr);
@@ -471,14 +444,8 @@ public:
 
 		delete pipeline;
 		
-		vkDestroyRenderPass(device, renderPass->GetHandle(), nullptr);
+		delete renderPass;
 
-		for (size_t i = 0; i < swapChainImages.size(); i++)
-		{
-			vkDestroyImageView(device, swapChainImages[i].imageView, nullptr);
-		}
-
-		vkDestroySwapchainKHR(device, swapChain, nullptr);
 		delete swpchain;
 	}
 
@@ -586,8 +553,10 @@ public:
 
 	void createFramebuffers()
 	{
-		swapChainFramebuffers.resize(swapChainImages.size());
-		for (size_t i = 0; i < swapChainImages.size(); i++)
+		uint32_t frameBufferCount = swpchain->GetSwapChainImageCount();
+		std::vector<Image> &swapChainImages = swpchain->GetSwapChainImages();
+		swapChainFramebuffers.resize(frameBufferCount);
+		for (size_t i = 0; i < frameBufferCount; i++)
 		{
 			std::array<VkImageView, 2> attachments = {
 				swapChainImages[i].imageView,
@@ -650,7 +619,7 @@ public:
 		vkResetFences(device, 1, &inFlightFences[currentFrame]);
 
 		uint32_t imageIndex;
-		VkResult result = vkAcquireNextImageKHR(device, swapChain, std::numeric_limits<uint64_t>::max(), imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+		VkResult result = vkAcquireNextImageKHR(device, swpchain->GetSwapChain(), std::numeric_limits<uint64_t>::max(), imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
 
 		if (result == VK_ERROR_OUT_OF_DATE_KHR)
 		{
@@ -696,7 +665,7 @@ public:
 		presentInfo.waitSemaphoreCount = 1;
 		presentInfo.pWaitSemaphores = signalSemaphores;
 
-		VkSwapchainKHR swapChains[] = {swapChain};
+		VkSwapchainKHR swapChains[] = {swpchain->GetSwapChain()};
 		presentInfo.swapchainCount = 1;
 		presentInfo.pSwapchains = swapChains;
 		presentInfo.pImageIndices = &imageIndex;
@@ -737,9 +706,6 @@ public:
 	void cleanup()
 	{
 		cleanupSwapChain();
-
-		//vkDestroySampler(device, textureSampler, nullptr);
-		//vkDestroyImageView(device, textureImageView, nullptr);
 
 		vkDestroyDescriptorPool(device, descriptorPool, nullptr);
 		vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);

@@ -202,6 +202,15 @@ SwapChain::SwapChain(Instance *instance, int framebufferWidth, int frambufferhei
     CreateSwapChain();
 }
 
+SwapChain::~SwapChain()
+{
+    for(size_t imageIndex = 0; imageIndex < _swapChainImageCount; imageIndex++)
+    {
+        vkDestroyImageView(_instance->GetDevice(), _swapChainImages[imageIndex].imageView, nullptr);
+    }
+    vkDestroySwapchainKHR(_instance->GetDevice(), _swapChain, nullptr);
+}
+
 VkSwapchainKHR SwapChain::GetSwapChain()
 {
     return _swapChain;
@@ -220,4 +229,9 @@ VkExtent2D SwapChain::GetSwapChainExtent()
 std::vector<Image>& SwapChain::GetSwapChainImages()
 {
     return _swapChainImages;
+}
+
+uint32_t SwapChain::GetSwapChainImageCount()
+{
+    return _swapChainImageCount;
 }
