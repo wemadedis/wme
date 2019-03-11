@@ -135,6 +135,17 @@ VkSampler ImageManager::CreateSampler()
     return sampler;
 }
 
+
+Image ImageManager::CreateDepthImage(uint32_t width, uint32_t height) {
+    VkFormat depthFormat = _instance->GetOptimalDepthFormat();
+    DeviceMemoryManager::ImageInformation imgInfo = DeviceMemoryManager::CreateImage(width, height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
+    VkImageView imgview = CreateImageView(imgInfo, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
+    TransitionImageLayout(imgInfo, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
+    return {imgInfo, imgview};
+}
+
+
+
 ImageManager::ImageManager(Instance *instance, CommandBufferManager *cmdbManager)
 {
     _instance = instance;

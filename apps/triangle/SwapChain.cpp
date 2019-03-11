@@ -1,6 +1,8 @@
 #include "SwapChain.hpp"
+
 #include <algorithm>
 #include <iostream>
+
 
 SwapChain::SupportInformation SwapChain::GetSupportInformation(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
@@ -93,6 +95,44 @@ struct {VkSurfaceFormatKHR _surfaceFormat;
     return {optimalFormat, optimalPresentMode, optimalExtent};
 }
 
+VkImageView SwapChain::CreateSwapChainImageView(VkImage image) {
+    VkImageViewCreateInfo viewInfo = {};
+    viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
+    viewInfo.image = image;
+    viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
+    viewInfo.format = _swapChainImageFormat;
+    viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    viewInfo.subresourceRange.baseMipLevel = 0;
+    viewInfo.subresourceRange.levelCount = 1;
+    viewInfo.subresourceRange.baseArrayLayer = 0;
+    viewInfo.subresourceRange.layerCount = 1;
+
+    VkImageView imageView;
+    if (vkCreateImageView(_instance->GetDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+        throw std::runtime_error("failed to create texture image view!");
+    }
+
+    return imageView;
+}
+
+void SwapChain::CreateSwapChainImages()
+{
+    vkGetSwapchainImagesKHR(_instance->GetDevice(), _swapChain, &_swapChainImageCount, nullptr);
+    _swapChainImages.resize(_swapChainImageCount);
+    std::vector<VkImage> vkSwapChainImages;
+    vkSwapChainImages.resize(_swapChainImageCount);
+    vkGetSwapchainImagesKHR(_instance->GetDevice(), _swapChain, &_swapChainImageCount, vkSwapChainImages.data());
+
+    for(int imageIndex = 0; imageIndex < _swapChainImageCount; imageIndex++)
+    {
+        Image &img = _swapChainImages[imageIndex];
+        img.imageInfo.image = vkSwapChainImages[imageIndex];
+        img.imageInfo.width = _framebufferWidth;
+        img.imageInfo.height = _framebufferHeight;
+        img.imageView = CreateSwapChainImageView(img.imageInfo.image);
+    }
+}
+
 void SwapChain::CreateSwapChain()
 {
     SupportInformation supportInfo = GetSupportInformation(_instance->GetPhysicalDevice(), _instance->GetSurface());
@@ -103,17 +143,17 @@ void SwapChain::CreateSwapChain()
     
 
     //Specify minimum amount of images to function properly
-    uint32_t imageCount = capabilities.minImageCount + 1;
-    if (capabilities.maxImageCount > 0 && imageCount > capabilities.maxImageCount)
+    _swapChainImageCount = capabilities.minImageCount + 1;
+    if (capabilities.maxImageCount > 0 && _swapChainImageCount > capabilities.maxImageCount)
     {
-        imageCount = capabilities.maxImageCount;
+        _swapChainImageCount = capabilities.maxImageCount;
     }
 
     VkSwapchainCreateInfoKHR createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SWAPCHAIN_CREATE_INFO_KHR;
     createInfo.surface = _instance->GetSurface();
 
-    createInfo.minImageCount = imageCount;
+    createInfo.minImageCount = _swapChainImageCount;
     createInfo.imageFormat = optFormat.format;
     createInfo.imageColorSpace = optFormat.colorSpace;
     createInfo.imageExtent = optExtent;
@@ -147,12 +187,10 @@ void SwapChain::CreateSwapChain()
     {
         throw std::runtime_error("failed to create swap chain!");
     }
-
-    vkGetSwapchainImagesKHR(_instance->GetDevice(), _swapChain, &imageCount, nullptr);
-    _swapChainImages.resize(imageCount);
-    vkGetSwapchainImagesKHR(_instance->GetDevice(), _swapChain, &imageCount, _swapChainImages.data());
     _swapChainImageFormat = optFormat.format;
     _swapChainExtent = optExtent;
+    
+    CreateSwapChainImages();
 }
 
 
@@ -179,7 +217,7 @@ VkExtent2D SwapChain::GetSwapChainExtent()
     return _swapChainExtent;
 }
 
-std::vector<VkImage>& SwapChain::GetSwapChainImages()
+std::vector<Image>& SwapChain::GetSwapChainImages()
 {
     return _swapChainImages;
 }

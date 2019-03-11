@@ -5,7 +5,7 @@
 #include <vulkan/vulkan.h>
 
 #include "Instance.hpp"
-
+#include "ImageManager.hpp"
 class SwapChain
 {
 
@@ -13,12 +13,14 @@ private:
 	Instance* _instance;
 	int _framebufferWidth, _framebufferHeight;
 	VkSwapchainKHR _swapChain;
-	std::vector<VkImage> _swapChainImages;
+	uint32_t _swapChainImageCount;
+	std::vector<Image> _swapChainImages;
 	VkFormat _swapChainImageFormat;
 	VkExtent2D _swapChainExtent;
 	std::vector<VkImageView> _swapChainImageViews;
 	std::vector<VkFramebuffer> _swapChainFramebuffers;
-
+	VkImageView CreateSwapChainImageView(VkImage image);
+	void CreateSwapChainImages();
 	void CreateSwapChain();
 
 public:
@@ -36,5 +38,5 @@ public:
 	VkSwapchainKHR GetSwapChain();
 	VkFormat GetSwapChainImageFormat();
 	VkExtent2D GetSwapChainExtent();
-	std::vector<VkImage>& GetSwapChainImages();
+	std::vector<Image>& GetSwapChainImages();
 };
