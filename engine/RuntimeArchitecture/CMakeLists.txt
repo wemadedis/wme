@@ -1,0 +1,3 @@
+add_library(runtime_architecture MemoryManager.cpp)
+target_include_directories(runtime_architecture PUBLIC include)
+target_link_libraries(runtime_architecture PUBLIC rte)

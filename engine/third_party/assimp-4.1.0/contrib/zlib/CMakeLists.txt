@@ -3,12 +3,6 @@ set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS ON)
 
 # CMake 3.0 changed the project command, setting policy CMP0048 reverts to the old behaviour.
 # See http://www.cmake.org/cmake/help/v3.0/policy/CMP0048.html
-cmake_policy(PUSH)
-if(CMAKE_MAJOR_VERSION GREATER 2)
-	cmake_policy(SET CMP0048 OLD)
-endif()
-project(zlib C)
-cmake_policy(POP)
 
 set(VERSION "1.2.11.1")
 
