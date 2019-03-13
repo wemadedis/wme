@@ -185,7 +185,7 @@ public:
 		
 
 		createSwapChain();
-		renderPass = new RenderPass(swpchain->GetSwapChainImageFormat(), rendererInstance->GetOptimalDepthFormat(), device);
+		renderPass = new RenderPass(rendererInstance, swpchain);
 		
 		createDescriptorSetLayout();
 		createGraphicsPipeline();
@@ -464,7 +464,7 @@ public:
 		cleanupSwapChain();
 
 		createSwapChain();
-		renderPass = new RenderPass(swpchain->GetSwapChainImageFormat() , rendererInstance->GetOptimalDepthFormat(), device);
+		renderPass = new RenderPass(rendererInstance, swpchain);
 		createGraphicsPipeline();
 		depthImage = imageManager->CreateDepthImage(swapChainExtent.width, swapChainExtent.height);
 		createFramebuffers();
