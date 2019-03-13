@@ -115,15 +115,23 @@ VkRenderPass RenderPass::GetHandle()
 {
     return _vkrpHandle;
 }
-/*
-void RenderPass::BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer *cmdBuffer)
+
+void RenderPass::BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer cmdBuffer, VkFramebuffer frameBuffer)
 {
+    VkCommandBufferBeginInfo beginInfo = {};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+    if (vkBeginCommandBuffer(cmdBuffer, &beginInfo) != VK_SUCCESS)
+    {
+        throw std::runtime_error("RenderPass: Failed to begin recording command buffer!");
+    }
+
     VkRenderPassBeginInfo renderPassInfo = {};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
     renderPassInfo.renderPass = _vkrpHandle;
-    renderPassInfo.framebuffer = swapChainFramebuffers[bufferIndex];
+    renderPassInfo.framebuffer = frameBuffer;
     renderPassInfo.renderArea.offset = {0, 0};
-    renderPassInfo.renderArea.extent = swapChainExtent;
+    renderPassInfo.renderArea.extent = _swapChain->GetSwapChainExtent();
 
     std::array<VkClearValue, 2> clearValues = {};
     clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
@@ -136,4 +144,12 @@ void RenderPass::BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer *cm
 
     vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetHandle());
 }
-*/
+
+void RenderPass::EndRenderPass(VkCommandBuffer cmdBuffer)
+{
+    vkCmdEndRenderPass(cmdBuffer);
+    if (vkEndCommandBuffer(cmdBuffer) != VK_SUCCESS)
+    {
+        throw std::runtime_error("RenderPass: Failed to record command buffer!");
+    }
+}
