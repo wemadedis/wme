@@ -4,6 +4,8 @@
 #include <iostream>
 
 
+#include "Renderpass.hpp"
+
 SwapChain::SupportInformation SwapChain::GetSupportInformation(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
     SupportInformation details;
@@ -206,9 +208,39 @@ SwapChain::~SwapChain()
 {
     for(size_t imageIndex = 0; imageIndex < _swapChainImageCount; imageIndex++)
     {
+        vkDestroyFramebuffer(_instance->GetDevice(), _swapChainFramebuffers[imageIndex], nullptr);
         vkDestroyImageView(_instance->GetDevice(), _swapChainImages[imageIndex].imageView, nullptr);
     }
+
+
     vkDestroySwapchainKHR(_instance->GetDevice(), _swapChain, nullptr);
+}
+
+void SwapChain::CreateFramebuffers(RenderPass *renderPass, ImageManager *imageManager)
+{
+    _depthImage = imageManager->CreateDepthImage(_framebufferWidth, _framebufferHeight);
+    _swapChainFramebuffers.resize(_swapChainImageCount);
+    for (size_t i = 0; i < _swapChainImageCount; i++)
+    {
+        std::array<VkImageView, 2> attachments = {
+            _swapChainImages[i].imageView,
+            _depthImage.imageView
+        };
+
+        VkFramebufferCreateInfo framebufferInfo = {};
+        framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
+        framebufferInfo.renderPass = renderPass->GetHandle();
+        framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+        framebufferInfo.pAttachments = attachments.data();
+        framebufferInfo.width = _swapChainExtent.width;
+        framebufferInfo.height = _swapChainExtent.height;
+        framebufferInfo.layers = 1;
+
+        if (vkCreateFramebuffer(_instance->GetDevice(), &framebufferInfo, nullptr, &_swapChainFramebuffers[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to create framebuffer!");
+        }
+    }
 }
 
 VkSwapchainKHR SwapChain::GetSwapChain()
@@ -234,4 +266,9 @@ std::vector<Image>& SwapChain::GetSwapChainImages()
 uint32_t SwapChain::GetSwapChainImageCount()
 {
     return _swapChainImageCount;
+}
+
+std::vector<VkFramebuffer>& SwapChain::GetFramebuffers()
+{
+    return _swapChainFramebuffers;
 }

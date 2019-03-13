@@ -6,6 +6,9 @@
 
 #include "Instance.hpp"
 #include "ImageManager.hpp"
+
+class RenderPass;
+
 class SwapChain
 {
 
@@ -19,6 +22,7 @@ private:
 	VkExtent2D _swapChainExtent;
 	std::vector<VkImageView> _swapChainImageViews;
 	std::vector<VkFramebuffer> _swapChainFramebuffers;
+	Image _depthImage;
 	VkImageView CreateSwapChainImageView(VkImage image);
 	void CreateSwapChainImages();
 	void CreateSwapChain();
@@ -35,9 +39,12 @@ public:
 
 	SwapChain(Instance *instance, int framebufferWidth, int frameBufferHeight);
 	~SwapChain();
+	void CreateFramebuffers(RenderPass *renderPass, ImageManager *imageManager);
+
 	VkSwapchainKHR GetSwapChain();
 	VkFormat GetSwapChainImageFormat();
 	VkExtent2D GetSwapChainExtent();
 	std::vector<Image>& GetSwapChainImages();
 	uint32_t GetSwapChainImageCount();
+	std::vector<VkFramebuffer>& GetFramebuffers();
 };

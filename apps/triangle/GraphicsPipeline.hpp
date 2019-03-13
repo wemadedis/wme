@@ -5,7 +5,6 @@ class GraphicsPipeline
 {
     
 private:
-    VkShaderModule _vertexShaderModule, _fragShaderModule;
     VkExtent2D _swapChainExtent;
     VkDescriptorSetLayout _descriptorSetLayout;
     VkDevice _device;
@@ -13,8 +12,8 @@ private:
     VkPipelineLayout _pipelineLayout;
     VkPipeline _pipeline;
 
-    VkPipelineShaderStageCreateInfo GetVertexShaderStageInfo();
-    VkPipelineShaderStageCreateInfo GetFragmentShaderStageInfo();
+    VkPipelineShaderStageCreateInfo GetVertexShaderStageInfo(VkShaderModule vertexModule);
+    VkPipelineShaderStageCreateInfo GetFragmentShaderStageInfo(VkShaderModule fragmentModule);
     VkPipelineVertexInputStateCreateInfo GetVertexInputInfo(VkVertexInputBindingDescription &binding, VkVertexInputAttributeDescription *attribute, uint32_t attributeDescriptionCount);
     VkPipelineInputAssemblyStateCreateInfo GetInputAssemblyCreateInfo();
     VkPipelineDepthStencilStateCreateInfo GetDepthStencilCreateInfo();
@@ -26,9 +25,9 @@ private:
     VkPipelineColorBlendAttachmentState GetColorBlendAttachment();
     VkPipelineColorBlendStateCreateInfo GetColorBlendCreateInfo(VkPipelineColorBlendAttachmentState &colorBlendAttachment);
     void CreatePipelineLayout();
-    void CreatePipeline(); //Worth it? Would have too many parameters.
+    void CreatePipeline(VkShaderModule vertexShaderModule, VkShaderModule fragmentShaderModule); //Worth it? Would have too many parameters.
 public:
-    GraphicsPipeline(VkShaderModule vertexShaderModule, VkShaderModule fragShaderModule, VkExtent2D swapChainExtent, VkDescriptorSetLayout layout, VkDevice device, RenderPass* renderPass);
+    GraphicsPipeline(const char* vertexShaderPath, const char* fragShaderPath, VkExtent2D swapChainExtent, VkDescriptorSetLayout layout, VkDevice device, RenderPass* renderPass);
     ~GraphicsPipeline();
     VkPipeline GetHandle();
     VkPipelineLayout GetLayout();

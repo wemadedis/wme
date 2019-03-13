@@ -111,10 +111,6 @@ public:
 	VkQueue presentQueue;
 
 
-	//Swap chain
-	VkExtent2D swapChainExtent;
-	std::vector<VkFramebuffer> swapChainFramebuffers;
-
 	VkDescriptorSetLayout descriptorSetLayout;
 
 
@@ -184,18 +180,17 @@ public:
 		
 		
 
-		createSwapChain();
+		swpchain = new SwapChain(rendererInstance, WIDTH, HEIGHT);
 		renderPass = new RenderPass(rendererInstance, swpchain);
 		
 		createDescriptorSetLayout();
-		createGraphicsPipeline();
 
+		pipeline = new GraphicsPipeline("shaders/vert.spv", "shaders/frag.spv", swpchain->GetSwapChainExtent(), descriptorSetLayout, device, renderPass);
 		cmdbManager = new CommandBufferManager(rendererInstance, (uint32_t)swpchain->GetSwapChainImages().size());
 		imageManager = new ImageManager(rendererInstance, cmdbManager);
 
 		DeviceMemoryManager::Initialize(rendererInstance, cmdbManager);
-		depthImage = imageManager->CreateDepthImage(swapChainExtent.width, swapChainExtent.height);
-		createFramebuffers();
+		swpchain->CreateFramebuffers(renderPass, imageManager);
 		for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
 			createVertexBuffer(meshes[meshIndex]);
 			createIndexBuffer(meshes[meshIndex]);
@@ -206,15 +201,8 @@ public:
 		createUniformBuffers();
 		createDescriptorPool();
 		createDescriptorSets();
-		createCommandBuffers();
+		RecordRenderPass();
 		createSyncObjects();
-	}
-
-	
-	void createSwapChain()
-	{
-		swpchain = new SwapChain(rendererInstance, WIDTH, HEIGHT);
-		swapChainExtent = swpchain->GetSwapChainExtent();
 	}
 
 	void CreateTextureImage(Mesh* mesh, const char *imagePath){
@@ -230,72 +218,6 @@ public:
 		}
 		mesh->texture = imageManager->CreateTexture(texWidth, texHeight, pixels, imageSize);
 	}
-
-	void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout) {
-        VkCommandBuffer commandBuffer = cmdbManager->BeginCommandBufferInstance();
-
-        VkImageMemoryBarrier barrier = {};
-        barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-		//Old layout can be set to VK_IMAGE_LAYOUT_UNDEFINED if the content of the image is unimportant
-        barrier.oldLayout = oldLayout;
-        barrier.newLayout = newLayout;
-		//Next two are used if transferring queue family ownership. Otherwise must be set to VK_QUEUE_FAMILY_IGNORED
-        barrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-        barrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-		//image and subresourceRange specify the affected image and its specific parts.
-        barrier.image = image;
-
-        if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-            barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-
-            if (Utilities::HasStencilComponent(format)) {
-                barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
-            }
-        } else {
-            barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-        }
-		//No mipmap levels
-        barrier.subresourceRange.baseMipLevel = 0;
-        barrier.subresourceRange.levelCount = 1;
-        barrier.subresourceRange.baseArrayLayer = 0;
-        barrier.subresourceRange.layerCount = 1;
-
-        VkPipelineStageFlags sourceStage;
-        VkPipelineStageFlags destinationStage;
-		//For synchronization purposes: specifi which types of operations involvling the resource happens
-		//before the barrier, and which operations must wait on the barrier.
-        if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
-            barrier.srcAccessMask = 0;
-            barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-            sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-            destinationStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-        } else if (oldLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL && newLayout == VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL) {
-            barrier.srcAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
-            barrier.dstAccessMask = VK_ACCESS_SHADER_READ_BIT;
-
-            sourceStage = VK_PIPELINE_STAGE_TRANSFER_BIT;
-            destinationStage = VK_PIPELINE_STAGE_FRAGMENT_SHADER_BIT;
-        } else if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
-            barrier.srcAccessMask = 0;
-            barrier.dstAccessMask = VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_READ_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
-
-            sourceStage = VK_PIPELINE_STAGE_TOP_OF_PIPE_BIT;
-            destinationStage = VK_PIPELINE_STAGE_EARLY_FRAGMENT_TESTS_BIT;
-        } else {
-            throw std::invalid_argument("unsupported layout transition!");
-        }
-		//
-        vkCmdPipelineBarrier(
-            commandBuffer,
-            sourceStage, destinationStage,
-            0, //Either 0 or VK_DEPENDENCY_BY_REGION_BIT allowing to read data if that part is written to
-            0, nullptr,
-            0, nullptr,
-            1, &barrier
-        );
-		cmdbManager->SubmitCommandBufferInstance(commandBuffer, graphicsQueue);
-    }
-
 
     void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, ImageInformation &info) {
 		info = DeviceMemoryManager::CreateImage(width, height, format, tiling, usage);
@@ -435,10 +357,6 @@ public:
 		/*vkDestroyImageView(device, depthImageView, nullptr);
         vkDestroyImage(device, depthImage, nullptr);
         vkFreeMemory(device, depthImageMemory, nullptr);*/
-		for (size_t i = 0; i < swapChainFramebuffers.size(); i++)
-		{
-			vkDestroyFramebuffer(device, swapChainFramebuffers[i], nullptr);
-		}
 
 		cmdbManager->DeallocateCommandBuffers();
 
@@ -463,12 +381,11 @@ public:
 
 		cleanupSwapChain();
 
-		createSwapChain();
+		swpchain = new SwapChain(rendererInstance, WIDTH, HEIGHT);
 		renderPass = new RenderPass(rendererInstance, swpchain);
-		createGraphicsPipeline();
-		depthImage = imageManager->CreateDepthImage(swapChainExtent.width, swapChainExtent.height);
-		createFramebuffers();
-		createCommandBuffers();
+		pipeline = new GraphicsPipeline("shaders/vert.spv", "shaders/frag.spv", swpchain->GetSwapChainExtent(), descriptorSetLayout, device, renderPass);
+		swpchain->CreateFramebuffers(renderPass, imageManager);
+		RecordRenderPass();
 	}
 
 	void createSyncObjects()
@@ -495,12 +412,12 @@ public:
 		}
 	}
 
-	void createCommandBuffers()
+	void RecordRenderPass()
 	{
 		for (uint32_t bufferIndex = 0; bufferIndex < cmdbManager->GetCommandBufferCount(); bufferIndex++)
 		{
 			VkCommandBuffer cmdBuffer = cmdbManager->GetCommandBuffer(bufferIndex);
-			renderPass->BeginRenderPass(pipeline, cmdBuffer, swapChainFramebuffers[bufferIndex]);
+			renderPass->BeginRenderPass(pipeline, cmdBuffer, swpchain->GetFramebuffers()[bufferIndex]);
 
 			for(unsigned int meshIndex = 0; meshIndex < meshes.size(); meshIndex++){
 				Mesh* mesh = meshes[meshIndex];
@@ -520,56 +437,6 @@ public:
 		}
 	}
 
-	void createFramebuffers()
-	{
-		uint32_t frameBufferCount = swpchain->GetSwapChainImageCount();
-		std::vector<Image> &swapChainImages = swpchain->GetSwapChainImages();
-		swapChainFramebuffers.resize(frameBufferCount);
-		for (size_t i = 0; i < frameBufferCount; i++)
-		{
-			std::array<VkImageView, 2> attachments = {
-				swapChainImages[i].imageView,
-				depthImage.imageView
-			};
-
-			VkFramebufferCreateInfo framebufferInfo = {};
-			framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
-			framebufferInfo.renderPass = renderPass->GetHandle();
-			framebufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
-			framebufferInfo.pAttachments = attachments.data();
-			framebufferInfo.width = swapChainExtent.width;
-			framebufferInfo.height = swapChainExtent.height;
-			framebufferInfo.layers = 1;
-
-			if (vkCreateFramebuffer(device, &framebufferInfo, nullptr, &swapChainFramebuffers[i]) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to create framebuffer!");
-			}
-		}
-	}
-
-	void createGraphicsPipeline()
-	{
-		std::ostringstream ss;
-		ss << ENGINE_ASSET_DIR << "shaders/vert.spv";
-
-		auto vertShaderCode = Utilities::ReadFile(ss.str().c_str());
-		ss.str("");
-		ss.clear();
-		ss << ENGINE_ASSET_DIR << "shaders/frag.spv";
-		std::cout << ss.str() << std::endl;
-		auto fragShaderCode = Utilities::ReadFile(ss.str().c_str());
-		ss.str("");
-		ss.clear();
-		VkShaderModule vertShaderModule = Utilities::CreateShaderModule(vertShaderCode, rendererInstance->GetDevice());
-		VkShaderModule fragShaderModule = Utilities::CreateShaderModule(fragShaderCode, rendererInstance->GetDevice());
-
-		pipeline = new GraphicsPipeline(vertShaderModule, fragShaderModule, swapChainExtent, descriptorSetLayout, device, renderPass);
-		//After creating the pipeline the modules can be deleted
-		vkDestroyShaderModule(device, fragShaderModule, nullptr);
-		vkDestroyShaderModule(device, vertShaderModule, nullptr);
-
-	}
 
 	void mainLoop()
 	{
@@ -666,7 +533,7 @@ public:
 		glm::mat4 scl = glm::scale(mesh->scale);
 		ubo.model = trn * rot  * scl;
 		ubo.view = glm::lookAt(glm::vec3(0.0f, 0.0f, -3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float)swapChainExtent.height, 0.1f, 100.0f);
+		ubo.proj = glm::perspective(glm::radians(45.0f), swpchain->GetSwapChainExtent().width / (float)swpchain->GetSwapChainExtent().height, 0.1f, 100.0f);
 		ubo.proj[1][1] *= -1;
 
 		DeviceMemoryManager::CopyDataToBuffer(mesh->uniformBuffer, &ubo);

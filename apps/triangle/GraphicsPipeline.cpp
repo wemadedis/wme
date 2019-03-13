@@ -1,22 +1,22 @@
 #include "GraphicsPipeline.hpp"
 #include "Utilities.h"
 
-VkPipelineShaderStageCreateInfo GraphicsPipeline::GetVertexShaderStageInfo()
+VkPipelineShaderStageCreateInfo GraphicsPipeline::GetVertexShaderStageInfo(VkShaderModule vertexModule)
 {
     VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
     vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-    vertShaderStageInfo.module = _vertexShaderModule;
+    vertShaderStageInfo.module = vertexModule;
     vertShaderStageInfo.pName = "main";
     return vertShaderStageInfo;
 }
 
-VkPipelineShaderStageCreateInfo GraphicsPipeline::GetFragmentShaderStageInfo()
+VkPipelineShaderStageCreateInfo GraphicsPipeline::GetFragmentShaderStageInfo(VkShaderModule fragmentModule)
 {
     VkPipelineShaderStageCreateInfo fragShaderStageInfo = {};
     fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
     fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    fragShaderStageInfo.module = _fragShaderModule;
+    fragShaderStageInfo.module = fragmentModule;
     fragShaderStageInfo.pName = "main";
     return fragShaderStageInfo;
 }
@@ -163,10 +163,10 @@ void GraphicsPipeline::CreatePipelineLayout()
     }
 }
 
-void GraphicsPipeline::CreatePipeline()
+void GraphicsPipeline::CreatePipeline(VkShaderModule vertexShaderModule, VkShaderModule fragmentShaderModule)
 {
-    VkPipelineShaderStageCreateInfo vShaderStageInfo = GetVertexShaderStageInfo();
-    VkPipelineShaderStageCreateInfo fShaderStageInfo = GetFragmentShaderStageInfo();
+    VkPipelineShaderStageCreateInfo vShaderStageInfo = GetVertexShaderStageInfo(vertexShaderModule);
+    VkPipelineShaderStageCreateInfo fShaderStageInfo = GetFragmentShaderStageInfo(fragmentShaderModule);
     
     VkPipelineShaderStageCreateInfo shaderStages[] = {vShaderStageInfo, fShaderStageInfo};
     auto vAttDesc = Vertex::getAttributeDescriptions();
@@ -215,21 +215,24 @@ void GraphicsPipeline::CreatePipeline()
 
 }
 
-GraphicsPipeline::GraphicsPipeline( VkShaderModule vertexShaderModule, 
-                                    VkShaderModule fragShaderModule, 
+GraphicsPipeline::GraphicsPipeline( const char*  vertexShaderPath, 
+                                    const char* fragShaderPath, 
                                     VkExtent2D swapChainExtent, 
                                     VkDescriptorSetLayout layout, 
                                     VkDevice device, 
                                     RenderPass* renderPass) 
 {
-    _vertexShaderModule = vertexShaderModule;
-    _fragShaderModule = fragShaderModule;
     _swapChainExtent = swapChainExtent;
     _descriptorSetLayout = layout;
     _device = device;
     _renderPass = renderPass;
-    
-    CreatePipeline();
+
+    VkShaderModule vertexShaderModule = Utilities::CreateShaderModule(Utilities::ReadEngineAsset(vertexShaderPath), device);
+    VkShaderModule fragShaderModule = Utilities::CreateShaderModule(Utilities::ReadEngineAsset(fragShaderPath), device);
+
+    CreatePipeline(vertexShaderModule, fragShaderModule);
+    vkDestroyShaderModule(device, vertexShaderModule, nullptr);
+    vkDestroyShaderModule(device, fragShaderModule, nullptr);
 }
 
 GraphicsPipeline::~GraphicsPipeline()
