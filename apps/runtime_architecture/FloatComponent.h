@@ -1,15 +1,13 @@
 #pragma once
 
-#include "rte/Component.h"
 #include <iostream>
+
+#include "rte/Component.h"
 
 class FloatComponent : public Component
 {
-
   public:
     float value = 0;
-    void Update()
-    {
-        std::cout << (value++) << std::endl;
-    }
+    void Initialize(float startValue);
+    void Update();
 };

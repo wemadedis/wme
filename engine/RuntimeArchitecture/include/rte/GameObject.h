@@ -2,10 +2,16 @@
 
 #include <vector>
 
-#include "Component.h"
+#include "rte/Component.h"
+#include "Defs.h"
 
 class GameObject
 {
   private:
-    std::vector<ComponentId> Components;
+    u64 Id;
+
+  public:
+    GameObject(u64 id);
+    u64 GetId();
+    void SetId(u64 id);
 };

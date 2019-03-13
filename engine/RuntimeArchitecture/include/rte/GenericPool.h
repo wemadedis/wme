@@ -4,14 +4,14 @@
 #include <vector>
 
 template <typename T, int N>
-class GenericPool
+class GenericPool : public ComponentPool
 {
   private:
     int _poolSize = 0;
 
   public:
-    T *Pool;
-    bool *InUse;
+    T *Pool = nullptr;
+    bool *InUse = nullptr;
 
     T *Get(int index)
     {
