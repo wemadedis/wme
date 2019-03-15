@@ -33,11 +33,10 @@ bool ShouldClose(RTEWindow *window)
 WindowManager *WindowManager::_instance = nullptr;
 
 void WindowManager::CreateSurface(
-    VkInstance instance, 
-    GLFWwindow *window, 
-    VkSurfaceKHR *surface)
+    VkInstance instance,
+    VkSurfaceKHR &surface)
 {
-    if (glfwCreateWindowSurface(instance, window, nullptr, surface) != VK_SUCCESS)
+    if (glfwCreateWindowSurface(instance, _window->GLFWWindow, nullptr, &surface) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create window surface!");
     }
@@ -76,8 +75,8 @@ RTEWindow *WindowManager::OpenWindow(
 
     VkInstance *instance = new VkInstance;
     VkSurfaceKHR *surface = new VkSurfaceKHR;
-    RTE::Renderer::CreateInstance(title, instance, GetRequiredExtensions(), enableValidationLayers);
-    RTE::Renderer::SetupDebugCallback(*instance);
+    //RTE::Renderer::CreateInstance(title, instance, GetRequiredExtensions(), enableValidationLayers);
+    //RTE::Renderer::SetupDebugCallback(*instance);
 
     rteWindow->Width = width;
     rteWindow->Height = height;
@@ -87,14 +86,14 @@ RTEWindow *WindowManager::OpenWindow(
     rteWindow->window = window;
 
     glfwSetKeyCallback(window, KeyCallback);
-    CreateSurface(*instance, window, surface);
+    //CreateSurface(*instance, window, surface);
     rteWindow->surface = surface;
 
     WindowBinding *binding = new WindowBinding();
     binding->GLFWWindow = window;
     binding->RTEWindow = rteWindow;
-    _activeWindows.push_back(binding);
-
+    //_activeWindows.push_back(binding);
+    _window = binding;
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, FramebufferResizeCallback);
 
@@ -108,24 +107,11 @@ void WindowManager::KeyCallback(GLFWwindow* window, int key, int scancode, int a
 
 void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
 {
-    auto wm = GetInstance();
-    auto rteWindow = wm->GetRTEFromGLFW(window);
+    auto win = GetInstance()->_window->RTEWindow;
+    win->Width = width;
+    win->Height = height;
 
-    rteWindow->WindowResized = true;
-}
-
-RTEWindow *WindowManager::GetRTEFromGLFW(GLFWwindow *glfwWindow)
-{
-    for (int windowIndex = 0; windowIndex < _activeWindows.size(); windowIndex++)
-    {
-        auto curWindow = _activeWindows.at(windowIndex);
-        if (curWindow->GLFWWindow == glfwWindow)
-        {
-            return curWindow->RTEWindow;
-        }
-    }
-    std::cout << "ERROR: Could not find RTE-GLFW binding" << std::endl;
-    return nullptr;
+    win->WindowResized = true;
 }
 
 WindowManager *WindowManager::GetInstance()

@@ -23,6 +23,7 @@
 #include <array>
 #include <sstream>
 
+#include "rte/WindowManager.h"
 #include "Utilities.h"
 #include "DeviceMemoryManager.h"
 #include "GraphicsPipeline.hpp"
@@ -66,10 +67,9 @@ const std::vector<uint16_t> indices = {
 class HelloTriangleApplication {
 public:
 	void run() {
-		initWindow();
-		//Mesh* mesh = MakeCylinder(1.0f, 2.0f, 32);
-		//mesh->pos = {0.0f, 0.0f, 1.0f};
-		//meshes.push_back(mesh);
+		windowManager = RTE::Platform::WindowManager::GetInstance();
+		win = windowManager->OpenWindow(WIDTH, HEIGHT, "Triangle");
+		//initWindow();
 		Mesh* mesh = new Mesh();
 		mesh->indices = indices;
 		mesh->vertices = vertices;
@@ -91,7 +91,8 @@ public:
 
   private:
 	GLFWwindow *window;
-
+	RTE::Platform::WindowManager *windowManager;
+	RTE::Platform::RTEWindow *win = nullptr;
 	VkInstance instance;
 
 	VkDebugUtilsMessengerEXT callback;
@@ -108,8 +109,6 @@ public:
 	std::vector<VkSemaphore> renderFinishedSemaphores;
 	std::vector<VkFence> inFlightFences;
 	size_t currentFrame = 0;
-
-	bool framebufferResized = false;
 
 	VkDescriptorSetLayout descriptorSetLayout;
 	VkDescriptorPool descriptorPool;
@@ -129,31 +128,10 @@ public:
 	ImageManager *imageManager;
 	DescriptorManager *descriptorManager;
 
-	void initWindow()
-	{
-		glfwInit();
-
-		glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-		glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-		window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan", nullptr, nullptr);
-		glfwSetWindowUserPointer(window, this);
-		glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
-	}
-
-	static void framebufferResizeCallback(GLFWwindow *window, int width, int height)
-	{
-		auto app = reinterpret_cast<HelloTriangleApplication *>(glfwGetWindowUserPointer(window));
-		app->framebufferResized = true;
-	}
-
 	void initVulkan()
 	{
-		rendererInstance = new Instance(getRequiredExtensions(), [this](VkSurfaceKHR &surface, VkInstance instance) {
-			if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS)
-			{
-				throw std::runtime_error("failed to create window surface!");
-			}
+		rendererInstance = new Instance(windowManager->GetRequiredExtensions(), [this](VkSurfaceKHR &surface, VkInstance instance) {
+			windowManager->CreateSurface(instance, surface);
 		});
 
 		instance = rendererInstance->GetInstance();
@@ -263,19 +241,14 @@ public:
 
 	void recreateSwapChain()
 	{
-		int width = 0, height = 0;
-		glfwGetFramebufferSize(window, &width, &height);
-		while (width == 0 || height == 0)
-		{
-
-			glfwWaitEvents();
-		}
+		int width = win->Width;
+		int height = win->Height;
 
 		vkDeviceWaitIdle(device);
 
 		cleanupSwapChain();
-
-		swpchain = new SwapChain(rendererInstance, WIDTH, HEIGHT);
+		cmdbManager->AllocateCommandBuffers();
+		swpchain = new SwapChain(rendererInstance, width, height);
 		renderPass = new RenderPass(rendererInstance, swpchain);
 		pipeline = new GraphicsPipeline("shaders/vert.spv", "shaders/frag.spv", swpchain->GetSwapChainExtent(), descriptorSetLayout, device, renderPass);
 		swpchain->CreateFramebuffers(renderPass, imageManager);
@@ -334,9 +307,9 @@ public:
 
 	void mainLoop()
 	{
-		while (!glfwWindowShouldClose(window))
+		while (!RTE::Platform::ShouldClose(win))
 		{
-			glfwPollEvents();
+			RTE::Platform::PollEvents();
 			drawFrame();
 		}
 
@@ -403,9 +376,9 @@ public:
 
 		result = vkQueuePresentKHR(presentQueue, &presentInfo);
 
-		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized)
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || win->WindowResized)
 		{
-			framebufferResized = false;
+			win->WindowResized = false;
 			recreateSwapChain();
 		}
 		else if (result != VK_SUCCESS)
@@ -455,24 +428,8 @@ public:
 		}
 
 		delete rendererInstance;
-		glfwDestroyWindow(window);
-		glfwTerminate();
-	}
-
-	std::vector<const char *> getRequiredExtensions()
-	{
-		uint32_t glfwExtensionCount = 0;
-		const char **glfwExtensions;
-		glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
-
-		std::vector<const char *> extensions(glfwExtensions, glfwExtensions + glfwExtensionCount);
-
-		if (enableValidationLayers)
-		{
-			extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-		}
-
-		return extensions;
+		RTE::Platform::DestroyWindow(win);
+		RTE::Platform::Terminate();
 	}
 };
 
