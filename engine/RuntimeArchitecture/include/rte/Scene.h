@@ -1,19 +1,34 @@
 #pragma once
 
-#include "MemoryManager.h"
+#include <vector>
+#include <unordered_map>
+
+#include "Defs.h"
+#include "rte/ComponentPool.h"
+#include "rte/GameObjectPool.h"
+#include "rte/GameObject.h"
 
 class Scene
 {
   private:
-    
+    std::vector<ComponentPool *> _componentPools;
+    GameObjectPool _gameObjectPool;
+
   public:
+    void UpdateComponents();
+    GameObject *CreateGameObject();
+
     template <typename TComp>
-    void DefineComponent(int MaxCount)
+    u64 DefineComponent()
     {
-        // Okay we're trying to define an object pool of type TComp
-        // TComp has a type! Surprising, no?
-        // So what we're trying to do, is generate a THING that can handle THAT
-        auto floatPool = new GenericPool<float, 100>();
-        float *f = floatPool->Get(1);
+        ComponentPool *compPool = new ComponentPoolInstance<TComp>();
+        _componentPools.push_back(compPool);
+        return _componentPools.size() - 1;
+    }
+
+    template <typename TComp>
+    TComp *AddComponent(u64 compId, GameObject *go)
+    {
+        return dynamic_cast<TComp *>(_componentPools[compId]->AddComponent(go->GetId()));
     }
 };
