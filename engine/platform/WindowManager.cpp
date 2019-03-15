@@ -110,7 +110,6 @@ void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int
     auto win = GetInstance()->_window->RTEWindow;
     win->Width = width;
     win->Height = height;
-
     win->WindowResized = true;
 }
 
