@@ -37,6 +37,13 @@ std::vector<char> ReadFile(const std::string &filename)
 	return buffer;
 }
 
+std::vector<char> ReadEngineAsset(const char* filePath)
+{
+    std::ostringstream ss;
+    ss << ENGINE_ASSET_DIR << filePath;
+    return Utilities::ReadFile(ss.str().c_str());
+}
+
 
 VkShaderModule CreateShaderModule(const std::vector<char> &code, VkDevice device)
 {

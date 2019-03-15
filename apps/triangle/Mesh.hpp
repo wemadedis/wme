@@ -7,6 +7,14 @@
 #include <glm/gtx/rotate_vector.hpp>
 using namespace glm;
 using namespace std;
+
+
+struct UniformBufferObject {
+	glm::mat4 model;
+	glm::mat4 view;
+	glm::mat4 proj;
+};
+
 struct Mesh 
 {
     std::vector<Vertex> vertices = {};

@@ -1,8 +1,9 @@
 #pragma once
 #include <vulkan/vulkan.h>
 #include <vector>
-#include "Utilities.h"
 #include <functional>
+
+#include "Utilities.h"
 
 class Instance 
 {

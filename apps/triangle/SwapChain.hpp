@@ -5,6 +5,9 @@
 #include <vulkan/vulkan.h>
 
 #include "Instance.hpp"
+#include "ImageManager.hpp"
+
+class RenderPass;
 
 class SwapChain
 {
@@ -13,12 +16,15 @@ private:
 	Instance* _instance;
 	int _framebufferWidth, _framebufferHeight;
 	VkSwapchainKHR _swapChain;
-	std::vector<VkImage> _swapChainImages;
+	uint32_t _swapChainImageCount;
+	std::vector<Image> _swapChainImages;
 	VkFormat _swapChainImageFormat;
 	VkExtent2D _swapChainExtent;
 	std::vector<VkImageView> _swapChainImageViews;
 	std::vector<VkFramebuffer> _swapChainFramebuffers;
-
+	Image _depthImage;
+	VkImageView CreateSwapChainImageView(VkImage image);
+	void CreateSwapChainImages();
 	void CreateSwapChain();
 
 public:
@@ -32,9 +38,13 @@ public:
     static SupportInformation GetSupportInformation(VkPhysicalDevice physicalDevice, VkSurfaceKHR surface);
 
 	SwapChain(Instance *instance, int framebufferWidth, int frameBufferHeight);
+	~SwapChain();
+	void CreateFramebuffers(RenderPass *renderPass, ImageManager *imageManager);
 
 	VkSwapchainKHR GetSwapChain();
 	VkFormat GetSwapChainImageFormat();
 	VkExtent2D GetSwapChainExtent();
-	std::vector<VkImage>& GetSwapChainImages();
+	std::vector<Image>& GetSwapChainImages();
+	uint32_t GetSwapChainImageCount();
+	std::vector<VkFramebuffer>& GetFramebuffers();
 };

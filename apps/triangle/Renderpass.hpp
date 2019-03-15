@@ -2,14 +2,17 @@
 #include <vulkan/vulkan.h>
 
 
+#include "SwapChain.hpp"
+
+class GraphicsPipeline;
+
 class RenderPass 
 {
 
 private:
-    VkRenderPass _vkrphandle;
-    VkFormat _swapChainImageFormat;
-    VkFormat _depthFormat;
-    VkDevice _device;
+    VkRenderPass _vkrpHandle;
+    Instance *_instance;
+    SwapChain *_swapChain;
 
     VkAttachmentDescription GetColorAttachment();
     VkAttachmentReference GetColorAttachmentReference();
@@ -23,7 +26,9 @@ private:
     void CreateRenderPass();
 
 public:
-    RenderPass(VkFormat swapChainImageFormat, VkFormat depthFormat, VkDevice device);
+    RenderPass(Instance *instance, SwapChain *swapChain);
     ~RenderPass();
     VkRenderPass GetHandle();
+    void BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer cmdBuffer, VkFramebuffer frameBuffer);
+    void EndRenderPass(VkCommandBuffer cmdBuffer);
 };

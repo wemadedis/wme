@@ -5,6 +5,7 @@
 #include <array>
 #include <optional>
 #include <fstream>
+#include <sstream>
 
 struct Vertex {
 	glm::vec3 pos;
@@ -70,7 +71,8 @@ struct SwapChainSupportDetails
 
 namespace Utilities
 {
-	std::vector<char> ReadFile(const std::string &filename);
+	std::vector<char> ReadFile(const std::string &filePath);
+	std::vector<char> ReadEngineAsset(const char* filePath);
 	VkShaderModule CreateShaderModule(const std::vector<char> &code, VkDevice device);
 	
 	bool HasStencilComponent(VkFormat format);

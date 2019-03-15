@@ -1,10 +1,12 @@
 #include "Renderpass.hpp"
 #include <array>
 
+#include "GraphicsPipeline.hpp"
+
 VkAttachmentDescription RenderPass::GetColorAttachment()
 {
     VkAttachmentDescription colorAttachment = {};
-    colorAttachment.format = _swapChainImageFormat;
+    colorAttachment.format = _swapChain->GetSwapChainImageFormat();
     colorAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
     colorAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     colorAttachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
@@ -28,7 +30,7 @@ VkAttachmentReference RenderPass::GetColorAttachmentReference()
 VkAttachmentDescription RenderPass::GetDepthAttachment()
 {
     VkAttachmentDescription depthAttachment = {};
-    depthAttachment.format = _depthFormat;
+    depthAttachment.format = _instance->GetOptimalDepthFormat();
     depthAttachment.samples = VK_SAMPLE_COUNT_1_BIT;
     depthAttachment.loadOp = VK_ATTACHMENT_LOAD_OP_CLEAR;
     depthAttachment.storeOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
@@ -91,26 +93,63 @@ void RenderPass::CreateRenderPass()
     renderPassInfo.dependencyCount = 1;
     renderPassInfo.pDependencies = &subpassDependency;
 
-    if (vkCreateRenderPass(_device, &renderPassInfo, nullptr, &_vkrphandle) != VK_SUCCESS)
+    if (vkCreateRenderPass(_instance->GetDevice(), &renderPassInfo, nullptr, &_vkrpHandle) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create render pass!");
     }
 }
 
-RenderPass::RenderPass(VkFormat swapChainImageFormat, VkFormat depthFormat, VkDevice device)
+RenderPass::RenderPass(Instance *instance, SwapChain *swapChain)
 {
-    _swapChainImageFormat = swapChainImageFormat;
-    _depthFormat = depthFormat;
-    _device = device;
+    _instance = instance;
+    _swapChain = swapChain;
     CreateRenderPass();
 }
 
 RenderPass::~RenderPass()
 {
-    vkDestroyRenderPass(_device, _vkrphandle, nullptr);
+    vkDestroyRenderPass(_instance->GetDevice(), _vkrpHandle, nullptr);
 }
 
 VkRenderPass RenderPass::GetHandle()
 {
-    return _vkrphandle;
+    return _vkrpHandle;
+}
+
+void RenderPass::BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer cmdBuffer, VkFramebuffer frameBuffer)
+{
+    VkCommandBufferBeginInfo beginInfo = {};
+    beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
+    if (vkBeginCommandBuffer(cmdBuffer, &beginInfo) != VK_SUCCESS)
+    {
+        throw std::runtime_error("RenderPass: Failed to begin recording command buffer!");
+    }
+
+    VkRenderPassBeginInfo renderPassInfo = {};
+    renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+    renderPassInfo.renderPass = _vkrpHandle;
+    renderPassInfo.framebuffer = frameBuffer;
+    renderPassInfo.renderArea.offset = {0, 0};
+    renderPassInfo.renderArea.extent = _swapChain->GetSwapChainExtent();
+
+    std::array<VkClearValue, 2> clearValues = {};
+    clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
+    clearValues[1].depthStencil = {1.0f, 0};
+
+    renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+    renderPassInfo.pClearValues = clearValues.data();
+    
+    vkCmdBeginRenderPass(cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetHandle());
+}
+
+void RenderPass::EndRenderPass(VkCommandBuffer cmdBuffer)
+{
+    vkCmdEndRenderPass(cmdBuffer);
+    if (vkEndCommandBuffer(cmdBuffer) != VK_SUCCESS)
+    {
+        throw std::runtime_error("RenderPass: Failed to record command buffer!");
+    }
 }
