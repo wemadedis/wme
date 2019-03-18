@@ -5,6 +5,16 @@
 #include <stdexcept>
 #include <vector>
 
+#include "RenderStructs.h"
+#include "Utilities.h"
+#include "DeviceMemoryManager.h"
+#include "GraphicsPipeline.hpp"
+#include "RenderPass.hpp"
+#include "Instance.hpp"
+#include "SwapChain.hpp"
+#include "CommandBufferManager.hpp"
+#include "ImageManager.hpp"
+#include "DescriptorManager.hpp"
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -16,30 +26,60 @@ const bool enableValidationLayers = true;
 //make a renderer class as well. rename struct and keep it for some additional structs
 namespace RTE::Renderer
 {
-
-
-    
-//Mesh contains the vertex data info along with the transformations needed to render it properly (HOW DO WE HANDLE MULTIPLE MESHES USING SAME DATA?)
-struct Mesh;
-struct RenderPassInfo;
+typedef std::function<void(VkSurfaceKHR &surface, VkInstance instance)> SurfaceBindingFunc;
 enum RenderMode { RASTERIZE, RAYTRACE };
-struct RTEWindow;
+
 //Settings related to things such as resolution, background colour, etc. (dunno what more)
-struct RendererSettings;
-struct Light;
-struct Texture;
-struct Shader;
 
-void CreateInstance(std::string appName, VkInstance *instance, std::vector<const char *> extensions, bool enableValidationLayers);
-void SetupDebugCallback(VkInstance instance);
-void CreateSurface(VkInstance instance);
+struct MeshInfo;
+struct TextureInfo;
+
+struct RendererInitInfo
+{
+    std::vector<const char*> extensions;
+    int Widht, Height;
+    SurfaceBindingFunc BindingFunc;
+};
+
+typedef uint16_t MeshHandle;
+typedef uint16_t TextureHandle;
+typedef uint16_t LightHandle;
+typedef uint16_t ShaderHandle;
 
 
 
+class Renderer
+{
+private:
+    RendererInitInfo _initInfo;
+    GraphicsPipeline *_pipeline;
+	RenderPass *_renderPass;
+	Instance *_instance;
+	SwapChain *_swapChain;
+	CommandBufferManager *_commandBufferManager;
+	ImageManager *_imageManager;
+	DescriptorManager *_descriptorManager;
+
+    std::vector<MeshInfo*> _meshes;
+    std::vector<TextureInfo> _textures;
+    
+    std::vector<VkSemaphore> _imageAvailableSemaphores;
+	std::vector<VkSemaphore> _renderFinishedSemaphores;
+	std::vector<VkFence> _inFlightFences;
+    size_t _currentFrame = 0;
+    
+    
+    void Initialize();
+    void RecordRenderPass();
+    void CreateSyncObjects();
+    void CleanupSwapChain();
+    void RecreateSwapChain();
+    void CreateTexture(MeshInfo* mesh, const char *imagePath);
+public:
 /*
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.
 */
-void Initialize(RendererSettings settings, RTEWindow window);
+Renderer(RendererInitInfo info);
 
 /*
 Sets the render mode to make the renderer use either rasterization or raytracing.
@@ -47,17 +87,22 @@ Could be defined in RendererSettings but if we want to change rendering mode at 
 */
 void SetRenderMode(RenderMode mode);
 
-/*
-Upload meshes to the GPU. The meshes can still be used to call the update/other kind of functions.
-Can be made into single mesh upload.
-*/
-void UploadMeshes(std::vector<Mesh> meshes);
+
+MeshHandle UploadMesh(Mesh* mesh);
 
 /*
 Functions to remove individual meshes or just clearing all mesh data.
 */
-void RemoveMesh(Mesh* mesh);
+void RemoveMesh(MeshHandle mesh);
 void ClearAllMeshData();
+
+TextureHandle UploadTexture(Texture &texture);
+
+void RemoveTexture(TextureHandle texture);
+
+void BindTexture(TextureHandle texture, MeshHandle mesh);
+
+void Finalize();
 /*
 Draw the scene based on some info given to the renderer. Does not need to be called renderpass. Though prolly best
 In this info struct we define which meshes to render (when for instance frustum culling). LOOK AT SRE 😥
@@ -73,7 +118,7 @@ void Draw();
 Inform the renderer that some property of the mesh has changed, thus forcing it to synchronize the data.
 The renderer will the internally handle everything related to this.
 */
-void MarkDirty(Mesh* mesh);
+void MarkDirty(MeshHandle mesh);
 
 
 //LLLLLLLLLIIIIIIIIIIIIIIGGGGGGGGGGGHHHHHHHHHHHHTTTTTTTTTTSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -81,13 +126,21 @@ void AddLight(Light light);
 
 void RemoveLight(Light light);
 
-void AddTexture(Texture texture);
-
-void RemoveTexture(Texture texture);
-
 void UploadShader(Shader shader);
 
 void RemoveShader(Shader shader);
+
+
+};
+
+    
+
+
+void CreateInstance(std::string appName, VkInstance *instance, std::vector<const char *> extensions, bool enableValidationLayers);
+void SetupDebugCallback(VkInstance instance);
+void CreateSurface(VkInstance instance);
+
+
 
 
 };
