@@ -41,9 +41,14 @@ class Component
      */
     void SetEnabled(bool enabled);
 
+
+    ~Component()
+    {
+    }
+
     /**
      * @brief 
      *      Virtual update function, called every frame unless #GetEnabled returns false.
      */
-    virtual void Update() {}
+    virtual void Update() = 0; 
 };

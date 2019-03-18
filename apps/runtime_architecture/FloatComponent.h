@@ -9,5 +9,6 @@ class FloatComponent : public Component
   public:
     float value = 0;
     void Initialize(float startValue);
-    void Update();
+    void Update() override;
+    ~FloatComponent();
 };
