@@ -90,15 +90,9 @@ void SetRenderMode(RenderMode mode);
 
 MeshHandle UploadMesh(Mesh* mesh);
 
-/*
-Functions to remove individual meshes or just clearing all mesh data.
-*/
-void RemoveMesh(MeshHandle mesh);
 void ClearAllMeshData();
 
 TextureHandle UploadTexture(Texture &texture);
-
-void RemoveTexture(TextureHandle texture);
 
 void BindTexture(TextureHandle texture, MeshHandle mesh);
 
@@ -124,11 +118,7 @@ void MarkDirty(MeshHandle mesh);
 //LLLLLLLLLIIIIIIIIIIIIIIGGGGGGGGGGGHHHHHHHHHHHHTTTTTTTTTTSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!
 void AddLight(Light light);
 
-void RemoveLight(Light light);
-
 void UploadShader(Shader shader);
-
-void RemoveShader(Shader shader);
 
 
 };

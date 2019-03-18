@@ -105,11 +105,6 @@ TextureHandle Renderer::UploadTexture(Texture &texture)
     return _textures.size()-1;
 }
 
-void Renderer::RemoveTexture(TextureHandle texture)
-{
-
-}
-
 void Renderer::BindTexture(TextureHandle texture, MeshHandle mesh)
 {
     _meshes[mesh]->texture = _textures[texture];
@@ -214,12 +209,6 @@ void Renderer::SetRenderMode(RenderMode mode)
 
 }
 
-
-void Renderer::RemoveMesh(MeshHandle mesh)
-{
-    
-}
-
 void Renderer::ClearAllMeshData()
 {
     
@@ -313,21 +302,10 @@ void Renderer::AddLight(Light light)
     
 }
 
-void Renderer::RemoveLight(Light light)
-{
-    
-}
-
 void Renderer::UploadShader(Shader shader)
 {
     
 }
-
-void Renderer::RemoveShader(Shader shader)
-{
-    
-}
-
 
 
 const std::vector<const char *> validationLayers = 
