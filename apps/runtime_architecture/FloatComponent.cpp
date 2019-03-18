@@ -1,11 +1,16 @@
 #include "FloatComponent.h"
 
-void FloatComponent::Initialize(float startValue) 
+void FloatComponent::Initialize(float value) 
 {
-    value = startValue;
+    this->value = value;
 }
 
 void FloatComponent::Update()
 {
     std::cout << (value++) << std::endl;
+}
+
+FloatComponent::~FloatComponent()
+{
+    
 }

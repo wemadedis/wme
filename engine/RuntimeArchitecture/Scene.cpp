@@ -11,7 +11,6 @@ void Scene::UpdateComponents()
 {
     for (i32 componentPoolIndex = 0; componentPoolIndex < _componentPools.size(); componentPoolIndex++)
     {
-
         _componentPools[componentPoolIndex]->UpdateAll();
     }
 }

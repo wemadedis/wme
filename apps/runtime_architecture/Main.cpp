@@ -7,15 +7,14 @@
 
 #include "FloatComponent.h"
 
-
 void Initialize()
-{ 
-    Scene* scene = CreateScene();
-    
+{
+    Scene *scene = CreateScene();
+
     u64 floatCompIndex = scene->DefineComponent<FloatComponent>();
 
-    GameObject* go = scene->CreateGameObject(); 
-    
-    scene->AddComponent<FloatComponent>(floatCompIndex, go);
-    
+    GameObject *go = scene->CreateGameObject();
+
+    FloatComponent *comp = scene->AddComponent<FloatComponent>(floatCompIndex, go);
+    comp->Initialize(10);
 }

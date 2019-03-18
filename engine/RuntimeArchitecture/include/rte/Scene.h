@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 #include <unordered_map>
 
 #include "Defs.h"
@@ -29,6 +30,10 @@ class Scene
     template <typename TComp>
     TComp *AddComponent(u64 compId, GameObject *go)
     {
-        return dynamic_cast<TComp *>(_componentPools[compId]->AddComponent(go->GetId()));
+        Component *comp = _componentPools[compId]->AddComponent(go->GetId());
+        comp->SetEnabled(true);
+        TComp *tp = static_cast<TComp*>(comp);
+        go->GetComponents()->push_back(tp);
+        return tp;
     }
 };
