@@ -42,6 +42,7 @@ void Renderer::Initialize()
     _imageManager = new ImageManager(_instance, _commandBufferManager);
     DeviceMemoryManager::Initialize(_instance, _commandBufferManager);
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
+
 }
 
 void Renderer::CreateTexture(MeshInfo* mesh, const char *imagePath){
@@ -58,7 +59,7 @@ void Renderer::CreateTexture(MeshInfo* mesh, const char *imagePath){
     mesh->texture = _imageManager->CreateTexture(texWidth, texHeight, pixels, imageSize);
 }
 
-void Renderer::UploadMesh(Mesh* mesh)
+MeshHandle Renderer::UploadMesh(Mesh* mesh)
 {
     MeshInfo* info = new MeshInfo();
     info->IndexCount = mesh->indices.size();
@@ -95,6 +96,23 @@ void Renderer::UploadMesh(Mesh* mesh)
     CreateTexture(info, "textures/aa_beauty_and_the_sun.png");
     
     _meshes.push_back(info);
+    return _meshes.size()-1;
+}
+
+TextureHandle Renderer::UploadTexture(Texture &texture)
+{
+    _textures.push_back(_imageManager->CreateTexture(texture.Width, texture.Height, texture.Pixels, texture.Width*texture.Height*4));
+    return _textures.size()-1;
+}
+
+void Renderer::RemoveTexture(TextureHandle texture)
+{
+
+}
+
+void Renderer::BindTexture(TextureHandle texture, MeshHandle mesh)
+{
+    _meshes[mesh]->texture = _textures[texture];
 }
 
 void Renderer::RecordRenderPass()
@@ -177,11 +195,14 @@ void Renderer::RecreateSwapChain()
     RecordRenderPass();
 }
 
-Renderer::Renderer(RendererInitInfo info, std::vector<Mesh*> &meshData)
+Renderer::Renderer(RendererInitInfo info)
 {
     _initInfo = info;
     Initialize();
-    UploadMeshes(meshData);
+}
+
+void Renderer::Finalize()
+{
     _descriptorManager->CreateDescriptorPool(_swapChain);
     _descriptorManager->CreateDescriptorSets(_meshes);
     RecordRenderPass();
@@ -193,15 +214,8 @@ void Renderer::SetRenderMode(RenderMode mode)
 
 }
 
-void Renderer::UploadMeshes(std::vector<Mesh*> &meshData)
-{
-    for(uint32_t meshIndex = 0; meshIndex < meshData.size(); meshIndex++)
-    {
-        UploadMesh(meshData[meshIndex]);
-    }
-}
 
-void Renderer::RemoveMesh(Mesh* mesh)
+void Renderer::RemoveMesh(MeshHandle mesh)
 {
     
 }
@@ -289,7 +303,7 @@ void Renderer::Draw()
     _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
-void Renderer::MarkDirty(Mesh* mesh)
+void Renderer::MarkDirty(MeshHandle mesh)
 {
     
 }
@@ -300,16 +314,6 @@ void Renderer::AddLight(Light light)
 }
 
 void Renderer::RemoveLight(Light light)
-{
-    
-}
-
-void Renderer::AddTexture(Texture texture)
-{
-    
-}
-
-void Renderer::RemoveTexture(Texture texture)
 {
     
 }

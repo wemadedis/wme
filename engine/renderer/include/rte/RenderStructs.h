@@ -78,14 +78,8 @@ namespace RTE::Renderer
 
 	struct Texture
 	{
-		/*
-		Vulkan sampler specifying how to sample the texture.
-		*/
-		VkSampler sampler;
-		/*
-		Information about the texture image.
-		*/
-		//Image image;
+		unsigned char *Pixels;
+		uint16_t Width, Height;
 	};
 
 
