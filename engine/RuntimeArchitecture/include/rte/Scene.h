@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 #include <unordered_map>
 
 #include "Defs.h"
@@ -32,6 +33,7 @@ class Scene
         Component *comp = _componentPools[compId]->AddComponent(go->GetId());
         comp->SetEnabled(true);
         TComp *tp = static_cast<TComp*>(comp);
+        go->GetComponents()->push_back(tp);
         return tp;
     }
 };

@@ -22,6 +22,7 @@ u64 GameObject::GetId()
 void GameObject::SetId(u64 id)
 {
     _id = id;
+    _components = new std::vector<Component*>();
 }
 
 bool GameObject::GetEnabled()
