@@ -302,6 +302,11 @@ void Renderer::AddLight(Light light)
     
 }
 
+void SetCamera(Camera camera)
+{
+    
+}
+
 void Renderer::UploadShader(Shader shader)
 {
     

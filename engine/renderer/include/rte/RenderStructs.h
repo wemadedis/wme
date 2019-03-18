@@ -51,7 +51,6 @@ namespace RTE::Renderer
 
 	struct Camera
 	{
-		glm::vec3 Position;
 		glm::mat4 ViewMatrix;
 		glm::mat4 ProjectionMatrix;
 	};

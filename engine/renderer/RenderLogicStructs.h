@@ -22,6 +22,17 @@ struct TextureInfo
 	ImageInfo image;
 };
 
+struct MeshUniformData
+{
+	glm::mat4 ModelMatrix;
+};
+
+struct GlobalUniformData
+{
+	glm::mat4 ViewMatrix;
+	glm::mat4 ProjectionMatrix;
+};
+
 struct UniformBufferObject {
 	glm::mat4 model;
 	glm::mat4 view;

@@ -60,6 +60,7 @@ private:
 	ImageManager *_imageManager;
 	DescriptorManager *_descriptorManager;
 
+    DeviceMemoryManager::BufferInformation _globalUniformBuffer;
     std::vector<MeshInfo*> _meshes;
     std::vector<TextureInfo> _textures;
     
@@ -118,8 +119,9 @@ void MarkDirty(MeshHandle mesh);
 //LLLLLLLLLIIIIIIIIIIIIIIGGGGGGGGGGGHHHHHHHHHHHHTTTTTTTTTTSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!
 void AddLight(Light light);
 
-void UploadShader(Shader shader);
+void SetCamera(Camera camera);
 
+void UploadShader(Shader shader);
 
 };
 
