@@ -15,6 +15,7 @@ int main()
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
     auto cylinder = Primitives::MakeCylinder(1.0f, 2.0f, 36);
+    auto quad = Primitives::MakeQuad();
     RendererInitInfo info;
     info.Widht = 800;
     info.Height = 600;
@@ -39,9 +40,11 @@ int main()
     }
 
     auto renderer = Renderer(info);
-    auto handle = renderer.UploadMesh(cylinder);
+    //auto cylinderhandle = renderer.UploadMesh(cylinder);
+    auto quadhandle = renderer.UploadMesh(quad);
     auto texture = renderer.UploadTexture(tex);
-    renderer.BindTexture(texture, handle);
+    //renderer.BindTexture(texture, cylinderhandle);
+    renderer.BindTexture(texture, quadhandle);
     renderer.Finalize();
 
     while(true)

@@ -5,5 +5,5 @@ namespace RTE::Renderer::Primitives
 {
 
 Mesh* MakeCylinder(float radius, float height, int faces);
-
+Mesh* MakeQuad();
 };
