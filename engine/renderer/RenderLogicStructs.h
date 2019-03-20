@@ -33,12 +33,6 @@ struct GlobalUniformData
 	glm::mat4 ProjectionMatrix;
 };
 
-struct UniformBufferObject {
-	glm::mat4 model;
-	glm::mat4 view;
-	glm::mat4 proj;
-};
-
 struct MeshInfo
 {
     uint64_t IndexCount;

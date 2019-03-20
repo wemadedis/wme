@@ -28,7 +28,7 @@ const int MAX_FRAMES_IN_FLIGHT = 2;
 void Renderer::Initialize()
 {
     _instance = new Instance(_initInfo.extensions, _initInfo.BindingFunc);
-    _swapChain = new SwapChain(_instance, _initInfo.Widht, _initInfo.Height);
+    _swapChain = new SwapChain(_instance, _initInfo.Width, _initInfo.Height);
     _renderPass = new RenderPass(_instance, _swapChain);
     _descriptorManager = new DescriptorManager(_instance);
     _descriptorManager->CreateDescriptorSetLayout();
@@ -43,6 +43,7 @@ void Renderer::Initialize()
     DeviceMemoryManager::Initialize(_instance, _commandBufferManager);
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
 
+    DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, DeviceMemoryManager::MemProps::HOST, sizeof(GlobalUniformData), _globalUniformBuffer);
 }
 
 void Renderer::CreateTexture(MeshInfo* mesh, const char *imagePath){
@@ -78,20 +79,17 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)mesh->vertices.data());
     DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, info->vertexBuffer);
     DeviceMemoryManager::CopyBuffer(stagingBuffer, info->vertexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
-    //Possibly destroy vertices in host memory
-    DeviceMemoryManager::DestroyBuffer(stagingBuffer);
-    DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, DeviceMemoryManager::MemProps::HOST, sizeof(UniformBufferObject), info->uniformBuffer);
     
-    UniformBufferObject ubo = {};
-    glm::mat4 rot = glm::eulerAngleXYZ(0, 0, 0);
-    glm::mat4 trn = glm::translate(glm::vec3(0.0f, -0.5f, 1.0f));
+    DeviceMemoryManager::DestroyBuffer(stagingBuffer);
+    DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, DeviceMemoryManager::MemProps::HOST, sizeof(MeshUniformData), info->uniformBuffer);
+    
+    MeshUniformData meshUniform = {};
+    glm::mat4 rot = glm::eulerAngleXYZ(0.0f, 0.0f, 0.0f);
+    glm::mat4 trn = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
     glm::mat4 scl = glm::scale(glm::vec3(1.0f));
-    ubo.model = trn * rot  * scl;
-    ubo.view = glm::lookAt(glm::vec3(0.0f, 2.0f, -3.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    ubo.proj = glm::perspective(glm::radians(45.0f), _swapChain->GetSwapChainExtent().width / (float)_swapChain->GetSwapChainExtent().height, 0.1f, 100.0f);
-    ubo.proj[1][1] *= -1;
+    meshUniform.ModelMatrix = trn * rot * scl;
 
-    DeviceMemoryManager::CopyDataToBuffer(info->uniformBuffer, &ubo);
+    DeviceMemoryManager::CopyDataToBuffer(info->uniformBuffer, &meshUniform);
     
     CreateTexture(info, "textures/aa_beauty_and_the_sun.png");
     
@@ -172,7 +170,7 @@ void Renderer::CleanupSwapChain()
 
 void Renderer::RecreateSwapChain()
 {
-    int width = _initInfo.Widht;   //win->Width;
+    int width = _initInfo.Width;   //win->Width;
     int height = _initInfo.Height; //win->Height;
 
     vkDeviceWaitIdle(_instance->GetDevice());
@@ -199,7 +197,7 @@ Renderer::Renderer(RendererInitInfo info)
 void Renderer::Finalize()
 {
     _descriptorManager->CreateDescriptorPool(_swapChain);
-    _descriptorManager->CreateDescriptorSets(_meshes);
+    _descriptorManager->CreateDescriptorSets(_meshes, _globalUniformBuffer);
     RecordRenderPass();
     CreateSyncObjects();
 }
@@ -297,14 +295,29 @@ void Renderer::MarkDirty(MeshHandle mesh)
     
 }
 
+void Renderer::SetMeshTransform(MeshHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl)
+{
+    MeshUniformData meshUniform = {};
+    glm::mat4 rotation = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
+    glm::mat4 translation = glm::translate(pos);
+    glm::mat4 scale = glm::scale(scl);
+    meshUniform.ModelMatrix = translation * rotation * scale;
+
+    DeviceMemoryManager::CopyDataToBuffer(_meshes[mesh]->uniformBuffer, &meshUniform);
+}
+
 void Renderer::AddLight(Light light)
 {
     
 }
 
-void SetCamera(Camera camera)
+void Renderer::SetCamera(Camera camera)
 {
-    
+    GlobalUniformData globalUniform = {};
+    globalUniform.ViewMatrix = camera.ProjectionMatrix;
+    globalUniform.ProjectionMatrix = camera.ProjectionMatrix;
+
+    DeviceMemoryManager::CopyDataToBuffer(_globalUniformBuffer, &globalUniform);
 }
 
 void Renderer::UploadShader(Shader shader)

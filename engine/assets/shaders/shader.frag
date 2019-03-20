@@ -12,7 +12,7 @@ layout(location = 5) in vec2 UV;
 
 layout(location = 0) out vec4 outColor;
 
-layout(binding = 1) uniform sampler2D texSampler;
+layout(binding = 2) uniform sampler2D texSampler;
 
 void Phong(){
     float diff = max(0.0f, dot(L,N));

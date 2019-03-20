@@ -37,7 +37,7 @@ struct TextureInfo;
 struct RendererInitInfo
 {
     std::vector<const char*> extensions;
-    int Widht, Height;
+    int Width, Height;
     SurfaceBindingFunc BindingFunc;
 };
 
@@ -114,6 +114,8 @@ Inform the renderer that some property of the mesh has changed, thus forcing it 
 The renderer will the internally handle everything related to this.
 */
 void MarkDirty(MeshHandle mesh);
+
+void SetMeshTransform(MeshHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl);
 
 
 //LLLLLLLLLIIIIIIIIIIIIIIGGGGGGGGGGGHHHHHHHHHHHHTTTTTTTTTTSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!

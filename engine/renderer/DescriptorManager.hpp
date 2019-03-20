@@ -19,7 +19,7 @@ public:
     DescriptorManager(Instance *instance);
     void CreateDescriptorPool(SwapChain *swapChain);
     void CreateDescriptorSetLayout();
-    void CreateDescriptorSets(std::vector<MeshInfo*> &meshes);
+    void CreateDescriptorSets(std::vector<MeshInfo*> &meshes, DeviceMemoryManager::BufferInformation &globalUniformData);
     VkDescriptorSetLayout GetDescriptorLayout();
     VkDescriptorPool GetDescriptorPool();
     std::vector<VkDescriptorSet> GetDescriptorSets();
