@@ -17,7 +17,7 @@ layout(binding = 2) uniform sampler2D texSampler;
 void Phong(){
     float diff = max(0.0f, dot(L,N));
     float spec = max(0.0f, dot(V,R));
-    outColor = texture(texSampler, UV) + vec4(fragColor * diff,1.0f);
+    outColor = texture(texSampler, UV) + vec4(fragColor * diff ,1.0f);
 }
 
 void main() {

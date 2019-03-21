@@ -1,6 +1,12 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
+struct DirectionalLight
+{
+	vec4 Color;
+	vec3 Direction;
+};
+
 layout(binding = 0) uniform MeshUniformData {
     mat4 ModelMatrix;
 } MeshUniform;
@@ -9,6 +15,7 @@ layout(binding = 1) uniform GlobalUniformData
 {
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
+    DirectionalLight DirLight[10];
 } GlobalUniform;
 
 layout(location = 0) in vec3 inPosition;
@@ -27,11 +34,10 @@ layout(location = 5) out vec2 UV;
 
 vec3 lightDir = vec3(0.0f, -1.0f, 1.0f);
 
-
-
+//https://learnopengl.com/Lighting/Multiple-lights
 void ComputePhong(){
     lightDir = normalize(lightDir);
-    L = -normalize(GlobalUniform.ViewMatrix * vec4(lightDir,0.0f)).xyz;
+    L = -normalize(GlobalUniform.ViewMatrix * vec4(GlobalUniform.DirLight[0].Direction,0.0f)).xyz;
     N = normalize(GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix *  vec4(normal,0.0f)).xyz;
     V = -normalize(GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0f)).xyz;
     //Flip the normal if it points away from the eye (REMOVE THIS LATER)

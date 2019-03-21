@@ -196,6 +196,9 @@ Renderer::Renderer(RendererInitInfo info)
 
 void Renderer::Finalize()
 {
+    _globalUniform.Light[0] = _dirLights[0];
+    DeviceMemoryManager::CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
+    
     _descriptorManager->CreateDescriptorPool(_swapChain);
     _descriptorManager->CreateDescriptorSets(_meshes, _globalUniformBuffer);
     RecordRenderPass();
@@ -306,18 +309,21 @@ void Renderer::SetMeshTransform(MeshHandle mesh, glm::vec3 pos, glm::vec3 rot, g
     DeviceMemoryManager::CopyDataToBuffer(_meshes[mesh]->uniformBuffer, &meshUniform);
 }
 
-void Renderer::AddLight(Light light)
+LightHandle Renderer::AddLight(Light light)
 {
-    
+    switch(light.LightType){
+        case LightType::DIRECTIONAL:
+        {
+            _dirLights.push_back({light.Color, light.Direction});
+            return _dirLights.size()-1;
+        }
+    }
 }
 
 void Renderer::SetCamera(Camera camera)
 {
-    GlobalUniformData globalUniform = {};
-    globalUniform.ViewMatrix = camera.ViewMatrix;
-    globalUniform.ProjectionMatrix = camera.ProjectionMatrix;
-
-    DeviceMemoryManager::CopyDataToBuffer(_globalUniformBuffer, &globalUniform);
+    _globalUniform.ViewMatrix = camera.ViewMatrix;
+    _globalUniform.ProjectionMatrix = camera.ProjectionMatrix;
 }
 
 void Renderer::UploadShader(Shader shader)
