@@ -314,7 +314,7 @@ void Renderer::AddLight(Light light)
 void Renderer::SetCamera(Camera camera)
 {
     GlobalUniformData globalUniform = {};
-    globalUniform.ViewMatrix = camera.ProjectionMatrix;
+    globalUniform.ViewMatrix = camera.ViewMatrix;
     globalUniform.ProjectionMatrix = camera.ProjectionMatrix;
 
     DeviceMemoryManager::CopyDataToBuffer(_globalUniformBuffer, &globalUniform);

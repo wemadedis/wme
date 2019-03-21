@@ -47,8 +47,8 @@ int main()
         throw std::runtime_error("failed to load texture image!");
     }
     Camera cam;
-    cam.ViewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 100.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    cam.ProjectionMatrix = glm::mat4(1.0f);//glm::perspective(glm::radians(180.0f), (float)800 / (float)600, 0.1f, 100.0f);
+    cam.ViewMatrix = glm::lookAt(glm::vec3(0.0f, 0.5f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
 
     auto renderer = Renderer(info);
@@ -59,14 +59,16 @@ int main()
     renderer.BindTexture(texture, quadhandle);
     
     renderer.SetCamera(cam);
-
-    //renderer.SetMeshTransform(quadhandle, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.8f, 0.0f, 0.0f), glm::vec3(1.0f));
-
+    float y = 0.0f;
+    renderer.SetMeshTransform(quadhandle, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
+    renderer.SetMeshTransform(cylinderhandle, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f));
     renderer.Finalize();
 
     while(true)
     {
         RTE::Platform::PollEvents();
         renderer.Draw();
+        renderer.SetMeshTransform(quadhandle, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f, y, 0.0f), glm::vec3(1.0f));
+        y+= 0.00035f;
     }
 }
