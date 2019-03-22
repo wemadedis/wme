@@ -9,6 +9,7 @@ struct DirectionalLight
 
 layout(binding = 0) uniform MeshUniformData {
     mat4 ModelMatrix;
+    int HasTexture;
 } MeshUniform;
 
 layout(binding = 1) uniform GlobalUniformData
@@ -30,7 +31,10 @@ layout(location = 2) out vec3 L;
 layout(location = 3) out vec3 V;
 layout(location = 4) out vec3 R;
 
+
 layout(location = 5) out vec2 UV;
+
+layout(location = 6) out int HasTexture;
 
 vec3 lightDir = vec3(0.0f, -1.0f, 1.0f);
 
@@ -47,6 +51,7 @@ void ComputePhong(){
 
 
 void main() {
+    HasTexture = MeshUniform.HasTexture ? 1 : 0;
     gl_Position = GlobalUniform.ProjectionMatrix * GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0);
     ComputePhong();
     fragColor = inColor;

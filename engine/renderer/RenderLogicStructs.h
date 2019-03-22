@@ -6,7 +6,7 @@ namespace RTE::Renderer
 
 struct ImageInfo
 {
-    DeviceMemoryManager::ImageInformation imageInfo;
+    ImageInformation imageInfo;
     VkImageView imageView;
 };
 
@@ -25,6 +25,7 @@ struct TextureInfo
 struct MeshUniformData
 {
 	glm::mat4 ModelMatrix;
+	int HasTexture;
 };
 
 struct DirectionalLight
@@ -43,10 +44,10 @@ struct GlobalUniformData
 struct MeshInfo
 {
     uint64_t IndexCount;
-	DeviceMemoryManager::BufferInformation vertexBuffer  = {};
-	DeviceMemoryManager::BufferInformation indexBuffer = {};
-	DeviceMemoryManager::BufferInformation uniformBuffer = {};
-	TextureInfo texture = {};
+	BufferInformation vertexBuffer  = {};
+	BufferInformation indexBuffer = {};
+	BufferInformation uniformBuffer = {};
+	TextureInfo *texture = nullptr;
 };
 
 };

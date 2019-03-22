@@ -1,49 +1,59 @@
 #pragma once
 #include <vulkan/vulkan.h>
 
+#include <vk_mem_alloc.h>
+#include <iostream>
+#include <memory>
+#include <map>
+
 
 #include "CommandBufferManager.hpp"
 
-namespace RTE::Renderer::DeviceMemoryManager
+namespace RTE::Renderer
 {
-	//Vertex buffer: floats all the way: pos, normal, uvs, etc.
-	//Indices: uints all the way
-	//Textures: yeah, what? It is kinda uniform, but has specific format.
-	//Uniforms: that can be anything, so we need to look at which uniforms we will use in the shaders.
+enum class MemProps { HOST, DEVICE };
 
-	enum class MemProps { HOST, DEVICE };
+/*
+Struct describing the buffer created through the CreateBuffer function.
+Do not modify the content.
+*/
+struct BufferInformation {
+	VkBufferUsageFlags bufferUsage;
+	MemProps memoryProperties;
+	size_t size;
+	VkBuffer buffer;
+};
 
+/*
+Struct describing the image created through the CreateImage function.
+Do not modify the content.
+*/
+struct ImageInformation {
+	MemProps memoryProperties;
+	uint32_t width;
+	uint32_t height;
 	/*
-	Struct describing the buffer created through the CreateBuffer function.
-	Do not modify the content.
+	Size of the image in bytes.
 	*/
-	struct BufferInformation {
-		VkBufferUsageFlags bufferUsage;
-		MemProps memoryProperties;
-		size_t size;
-		VkBuffer buffer;
-	};
+	uint32_t size; 
+	VkImage image;
+};
 
-	/*
-	Struct describing the image created through the CreateImage function.
-	Do not modify the content.
-	*/
-	struct ImageInformation {
-		MemProps memoryProperties;
-		uint32_t width;
-		uint32_t height;
-		/*
-		Size of the image in bytes.
-		*/
-		uint32_t size; 
-		VkImage image;
-	};
-	
 
+class DeviceMemoryManager
+{
+	VmaAllocator *alloc = nullptr;
+	VkBuffer b;
+	VmaAllocation Alloc;
+	std::map<VkBuffer, VmaAllocation> buffers;
+	std::map<VkImage, VmaAllocation> images;
+	Instance* _instance;
+	CommandBufferManager *_cmdbManager;
+public:
 	/*
 	Initialize the allocator. Required before calling any other DeviceMemoryManager function.
 	*/
-	void Initialize(Instance *instance, CommandBufferManager *commandBufferManager);
+	DeviceMemoryManager(Instance *instance, CommandBufferManager *commandBufferManager);
 	
 	/*
 	Create a buffer, allocate the necessary memory, and bind the buffer to it.
@@ -56,6 +66,16 @@ namespace RTE::Renderer::DeviceMemoryManager
 	*/
 	void CopyDataToBuffer(BufferInformation& bufferInfo, void* data);
 
+	template<typename T>
+	void ModifyBufferData(BufferInformation& bufferInfo, std::function<void(T*)> Mutator)
+	{
+		void *mapping = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
+		VmaAllocation& allocation = buffers[bufferInfo.buffer];
+		vmaMapMemory(*alloc, allocation, &mapping);
+		T* before = (T*)mapping;
+		Mutator(before);
+		vmaUnmapMemory(*alloc, allocation);
+	}
 
 	/*
 	Copy data from on buffer to another. Used to transfer data from a host visible buffer to a device local buffer.
@@ -82,4 +102,5 @@ namespace RTE::Renderer::DeviceMemoryManager
 	Returns a pointer to a char array describing the current state of memory in JSON format.
 	*/
 	char* GetMemoryState();
+};
 };

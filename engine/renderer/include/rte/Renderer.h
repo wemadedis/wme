@@ -59,9 +59,10 @@ private:
 	CommandBufferManager *_commandBufferManager;
 	ImageManager *_imageManager;
 	DescriptorManager *_descriptorManager;
+    DeviceMemoryManager *_deviceMemoryManager;
 
     GlobalUniformData _globalUniform;
-    DeviceMemoryManager::BufferInformation _globalUniformBuffer;
+    BufferInformation _globalUniformBuffer;
     std::vector<MeshInfo*> _meshes;
     std::vector<TextureInfo> _textures;
     std::vector<DirectionalLight> _dirLights;
@@ -77,7 +78,6 @@ private:
     void CreateSyncObjects();
     void CleanupSwapChain();
     void RecreateSwapChain();
-    void CreateTexture(MeshInfo* mesh, const char *imagePath);
 public:
 /*
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.
@@ -127,7 +127,7 @@ void SetLightDirection(LightHandle light, glm::vec3 dir)
 {
     _dirLights[light].Direction = dir;
     _globalUniform.Light[0] = _dirLights[light];
-    DeviceMemoryManager::CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
+    _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
 }
 
 void SetCamera(Camera camera);

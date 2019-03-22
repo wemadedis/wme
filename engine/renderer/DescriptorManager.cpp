@@ -69,7 +69,7 @@ void DescriptorManager::CreateDescriptorSetLayout()
     }
 }
 
-void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, DeviceMemoryManager::BufferInformation &globalUniformData)
+void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, BufferInformation &globalUniformData)
 {
     size_t setCount = meshes.size();
     std::vector<VkDescriptorSetLayout> layouts(setCount, _layout);
@@ -98,8 +98,8 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, Dev
 
         VkDescriptorImageInfo imageInfo = {};
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        imageInfo.imageView = meshes[i]->texture.image.imageView;
-        imageInfo.sampler = meshes[i]->texture.sampler;
+        imageInfo.imageView = meshes[i]->texture->image.imageView;
+        imageInfo.sampler = meshes[i]->texture->sampler;
         std::array<VkWriteDescriptorSet, 3> descriptorWrites = {};
 
         descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

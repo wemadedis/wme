@@ -87,7 +87,7 @@ Mesh* MakeQuad()
         {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}}
     };
     const std::vector<uint16_t> indices = {
-        0, 1, 2, 2, 3, 0, 2, 1, 0, 0, 3, 2
+        0, 1, 2, 2, 3, 0
     };
     Mesh* quad = new Mesh();
     quad->vertices = vertices;

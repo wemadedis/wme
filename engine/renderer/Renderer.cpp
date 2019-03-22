@@ -39,25 +39,12 @@ void Renderer::Initialize()
                                         _instance->GetDevice(), 
                                         _renderPass);
     _commandBufferManager = new CommandBufferManager(_instance, (uint32_t)_swapChain->GetSwapChainImageCount());
-    _imageManager = new ImageManager(_instance, _commandBufferManager);
-    DeviceMemoryManager::Initialize(_instance, _commandBufferManager);
+    _deviceMemoryManager = new DeviceMemoryManager(_instance, _commandBufferManager);
+    _imageManager = new ImageManager(_instance, _commandBufferManager, _deviceMemoryManager);
+    
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
 
-    DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, DeviceMemoryManager::MemProps::HOST, sizeof(GlobalUniformData), _globalUniformBuffer);
-}
-
-void Renderer::CreateTexture(MeshInfo* mesh, const char *imagePath){
-    int texWidth, texHeight, texChannels;
-    std::ostringstream ss;
-    ss << ENGINE_ASSET_DIR << imagePath;
-
-    stbi_uc* pixels = stbi_load(ss.str().c_str() , &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
-    uint32_t imageSize = texWidth * texHeight * 4;
-
-    if (!pixels) {
-        throw std::runtime_error("failed to load texture image!");
-    }
-    mesh->texture = _imageManager->CreateTexture(texWidth, texHeight, pixels, imageSize);
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(GlobalUniformData), _globalUniformBuffer);
 }
 
 MeshHandle Renderer::UploadMesh(Mesh* mesh)
@@ -67,21 +54,21 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     size_t bufferSize = sizeof(mesh->indices[0]) * info->IndexCount;
     
     //Indices
-    DeviceMemoryManager::BufferInformation stagingBuffer = {};
-    DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, stagingBuffer);
-    DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)mesh->indices.data());
-    DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, info->indexBuffer);
-    DeviceMemoryManager::CopyBuffer(stagingBuffer, info->indexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
-    DeviceMemoryManager::DestroyBuffer(stagingBuffer);
+    BufferInformation stagingBuffer = {};
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, bufferSize, stagingBuffer);
+    _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, (void*)mesh->indices.data());
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, MemProps::DEVICE, bufferSize, info->indexBuffer);
+    _deviceMemoryManager->CopyBuffer(stagingBuffer, info->indexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
+    _deviceMemoryManager->DestroyBuffer(stagingBuffer);
     //Vertices
     bufferSize = sizeof(mesh->vertices[0]) * mesh->vertices.size();
-    DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, bufferSize, stagingBuffer);
-    DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, (void*)mesh->vertices.data());
-    DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, DeviceMemoryManager::MemProps::DEVICE, bufferSize, info->vertexBuffer);
-    DeviceMemoryManager::CopyBuffer(stagingBuffer, info->vertexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
-    
-    DeviceMemoryManager::DestroyBuffer(stagingBuffer);
-    DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, DeviceMemoryManager::MemProps::HOST, sizeof(MeshUniformData), info->uniformBuffer);
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, bufferSize, stagingBuffer);
+    _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, (void*)mesh->vertices.data());
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, MemProps::DEVICE, bufferSize, info->vertexBuffer);
+    _deviceMemoryManager->CopyBuffer(stagingBuffer, info->vertexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
+
+    _deviceMemoryManager->DestroyBuffer(stagingBuffer);
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(MeshUniformData), info->uniformBuffer);
     
     MeshUniformData meshUniform = {};
     glm::mat4 rot = glm::eulerAngleXYZ(0.0f, 0.0f, 0.0f);
@@ -89,9 +76,7 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     glm::mat4 scl = glm::scale(glm::vec3(1.0f));
     meshUniform.ModelMatrix = trn * rot * scl;
 
-    DeviceMemoryManager::CopyDataToBuffer(info->uniformBuffer, &meshUniform);
-    
-    CreateTexture(info, "textures/aa_beauty_and_the_sun.png");
+    _deviceMemoryManager->CopyDataToBuffer(info->uniformBuffer, &meshUniform);
     
     _meshes.push_back(info);
     return _meshes.size()-1;
@@ -105,7 +90,10 @@ TextureHandle Renderer::UploadTexture(Texture &texture)
 
 void Renderer::BindTexture(TextureHandle texture, MeshHandle mesh)
 {
-    _meshes[mesh]->texture = _textures[texture];
+    _meshes[mesh]->texture = &_textures[texture];
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshes[mesh]->uniformBuffer, [](MeshUniformData *data){
+        data->HasTexture = 1;
+    });
 }
 
 void Renderer::RecordRenderPass()
@@ -197,7 +185,7 @@ Renderer::Renderer(RendererInitInfo info)
 void Renderer::Finalize()
 {
     _globalUniform.Light[0] = _dirLights[0];
-    DeviceMemoryManager::CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
+    _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
     
     _descriptorManager->CreateDescriptorPool(_swapChain);
     _descriptorManager->CreateDescriptorSets(_meshes, _globalUniformBuffer);
@@ -300,13 +288,13 @@ void Renderer::MarkDirty(MeshHandle mesh)
 
 void Renderer::SetMeshTransform(MeshHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl)
 {
-    MeshUniformData meshUniform = {};
     glm::mat4 rotation = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
     glm::mat4 translation = glm::translate(pos);
     glm::mat4 scale = glm::scale(scl);
-    meshUniform.ModelMatrix = translation * rotation * scale;
-
-    DeviceMemoryManager::CopyDataToBuffer(_meshes[mesh]->uniformBuffer, &meshUniform);
+    auto modelMatrix = translation * rotation * scale;
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshes[mesh]->uniformBuffer, [modelMatrix](MeshUniformData *data){
+        data->ModelMatrix = modelMatrix;
+    });
 }
 
 LightHandle Renderer::AddLight(Light light)
