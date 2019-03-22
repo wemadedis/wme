@@ -1,21 +1,11 @@
 #include "DeviceMemoryManager.h"
 #define VMA_IMPLEMENTATION
 #include <vk_mem_alloc.h>
-#include <iostream>
-#include <memory>
-#include <map>
-
 using namespace std;
-namespace RTE::Renderer::DeviceMemoryManager
+namespace RTE::Renderer
 {
-
-VmaAllocator *alloc = nullptr;
-map<VkBuffer, VmaAllocation> buffers;
-map<VkImage, VmaAllocation> images;
-Instance* _instance;
-CommandBufferManager *_cmdbManager;
-
-void Initialize(Instance *instance, CommandBufferManager *commandBufferManager)
+    
+DeviceMemoryManager::DeviceMemoryManager(Instance *instance, CommandBufferManager *commandBufferManager)
 {
     //FIX THIS MALLOC PLS <--------------------------------------------------------------------------------------------------------
     alloc = (VmaAllocator *)malloc(sizeof(VmaAllocator));
@@ -26,7 +16,7 @@ void Initialize(Instance *instance, CommandBufferManager *commandBufferManager)
     vmaCreateAllocator(&info, alloc);
 }
 
-void CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, BufferInformation& bufferInformation)
+void DeviceMemoryManager::CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, BufferInformation& bufferInformation)
 {
     VkBufferCreateInfo bufferInfo = {};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -61,16 +51,16 @@ void CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, B
     bufferInformation.buffer = buffer;
 }
 
-void CopyDataToBuffer(BufferInformation& bufferInfo, void* data){
+void DeviceMemoryManager::CopyDataToBuffer(BufferInformation& bufferInfo, void* data){
     void *mapping = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
     VmaAllocation& allocation = buffers[bufferInfo.buffer];
-    vmaMapMemory(*alloc, allocation, &mapping);
+    vmaMapMemory(*alloc, allocation, &mapping);    
     memcpy(mapping, data, bufferInfo.size);
     vmaUnmapMemory(*alloc, allocation);
     
 }
 
-void CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue) {
+void DeviceMemoryManager::CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue) {
 		//May need to create a seperate command buffer pool for these short lived buffers
         cout << "keks butter" << endl;
 		VkCommandBufferAllocateInfo allocInfo = {};
@@ -78,7 +68,6 @@ void CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
 		allocInfo.commandPool = commandPool;
 		allocInfo.commandBufferCount = 1;
-
 		VkCommandBuffer commandBuffer;
 		vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, &commandBuffer);
 
@@ -111,14 +100,14 @@ void CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size
 		vkFreeCommandBuffers(_instance->GetDevice(), commandPool, 1, &commandBuffer);
 	}
 
-void DestroyBuffer(BufferInformation& bufferInfo)
+void DeviceMemoryManager::DestroyBuffer(BufferInformation& bufferInfo)
 {
     VmaAllocation allocation = buffers[bufferInfo.buffer];
     vmaDestroyBuffer(*alloc, bufferInfo.buffer, allocation);
     buffers.erase(bufferInfo.buffer);
 }
 
-ImageInformation CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage){
+ImageInformation DeviceMemoryManager::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage){
     VkImageCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     createInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -153,7 +142,7 @@ ImageInformation CreateImage(uint32_t width, uint32_t height, VkFormat format, V
     return imgInfo;
 }
 
-void CopyBufferToImage(BufferInformation &srcBuffer, ImageInformation &dstImage, uint32_t width, uint32_t height, VkCommandBuffer &commandBuffer) {
+void DeviceMemoryManager::CopyBufferToImage(BufferInformation &srcBuffer, ImageInformation &dstImage, uint32_t width, uint32_t height, VkCommandBuffer &commandBuffer) {
     //Specify which part of the buffer will be copied to which part of the image
     VkBufferImageCopy region = {};
     region.bufferOffset = 0;
@@ -182,13 +171,13 @@ void CopyBufferToImage(BufferInformation &srcBuffer, ImageInformation &dstImage,
     );
 }
 
-void DestroyImage(ImageInformation& imageInfo){
+void DeviceMemoryManager::DestroyImage(ImageInformation& imageInfo){
     VmaAllocation allocation = images[imageInfo.image];
     vmaDestroyImage(*alloc, imageInfo.image, allocation);
     images.erase(imageInfo.image);
 }
 
-char* GetMemoryState()
+char* DeviceMemoryManager::GetMemoryState()
 {
     throw std::runtime_error("NotImplementedException(GetMemoryState): \"Lel get rekt son\"");
 }

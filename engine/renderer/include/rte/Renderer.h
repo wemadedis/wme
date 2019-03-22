@@ -37,7 +37,7 @@ struct TextureInfo;
 struct RendererInitInfo
 {
     std::vector<const char*> extensions;
-    int Widht, Height;
+    int Width, Height;
     SurfaceBindingFunc BindingFunc;
 };
 
@@ -59,9 +59,13 @@ private:
 	CommandBufferManager *_commandBufferManager;
 	ImageManager *_imageManager;
 	DescriptorManager *_descriptorManager;
+    DeviceMemoryManager *_deviceMemoryManager;
 
+    GlobalUniformData _globalUniform;
+    BufferInformation _globalUniformBuffer;
     std::vector<MeshInfo*> _meshes;
     std::vector<TextureInfo> _textures;
+    std::vector<DirectionalLight> _dirLights;
     
     std::vector<VkSemaphore> _imageAvailableSemaphores;
 	std::vector<VkSemaphore> _renderFinishedSemaphores;
@@ -74,7 +78,6 @@ private:
     void CreateSyncObjects();
     void CleanupSwapChain();
     void RecreateSwapChain();
-    void CreateTexture(MeshInfo* mesh, const char *imagePath);
 public:
 /*
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.
@@ -90,15 +93,9 @@ void SetRenderMode(RenderMode mode);
 
 MeshHandle UploadMesh(Mesh* mesh);
 
-/*
-Functions to remove individual meshes or just clearing all mesh data.
-*/
-void RemoveMesh(MeshHandle mesh);
 void ClearAllMeshData();
 
 TextureHandle UploadTexture(Texture &texture);
-
-void RemoveTexture(TextureHandle texture);
 
 void BindTexture(TextureHandle texture, MeshHandle mesh);
 
@@ -120,16 +117,22 @@ The renderer will the internally handle everything related to this.
 */
 void MarkDirty(MeshHandle mesh);
 
+void SetMeshTransform(MeshHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl);
+
 
 //LLLLLLLLLIIIIIIIIIIIIIIGGGGGGGGGGGHHHHHHHHHHHHTTTTTTTTTTSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!
-void AddLight(Light light);
+LightHandle AddLight(Light light);
 
-void RemoveLight(Light light);
+void SetLightDirection(LightHandle light, glm::vec3 dir)
+{
+    _dirLights[light].Direction = dir;
+    _globalUniform.Light[0] = _dirLights[light];
+    _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
+}
+
+void SetCamera(Camera camera);
 
 void UploadShader(Shader shader);
-
-void RemoveShader(Shader shader);
-
 
 };
 

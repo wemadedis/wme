@@ -3,7 +3,7 @@
 namespace RTE::Renderer
 {
 
-VkImageView ImageManager::CreateImageView(DeviceMemoryManager::ImageInformation &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags)
+VkImageView ImageManager::CreateImageView(ImageInformation &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags)
 {
     VkImageViewCreateInfo viewInfo = {};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -24,7 +24,7 @@ VkImageView ImageManager::CreateImageView(DeviceMemoryManager::ImageInformation 
     return imageView;
 }
 
-void ImageManager::TransitionImageLayout(DeviceMemoryManager::ImageInformation &imageInfo, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+void ImageManager::TransitionImageLayout(ImageInformation &imageInfo, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
 {
     VkImageMemoryBarrier barrier = {};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -88,22 +88,22 @@ void ImageManager::TransitionImageLayout(DeviceMemoryManager::ImageInformation &
 }
 
 TextureInfo ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t byteSize){
-    DeviceMemoryManager::BufferInformation stagingBuffer;
-    DeviceMemoryManager::CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, DeviceMemoryManager::MemProps::HOST, byteSize, stagingBuffer);
-    DeviceMemoryManager::CopyDataToBuffer(stagingBuffer, pixels);
+    BufferInformation stagingBuffer;
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, byteSize, stagingBuffer);
+    _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, pixels);
     
-    DeviceMemoryManager::ImageInformation texture = DeviceMemoryManager::CreateImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT); 
+    ImageInformation texture = _deviceMemoryManager->CreateImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT); 
     
     TransitionImageLayout(texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
     
     VkCommandBuffer commandBuffer = _cmdbManager->BeginCommandBufferInstance();
-    DeviceMemoryManager::CopyBufferToImage(stagingBuffer, texture, width, height, commandBuffer);
+    _deviceMemoryManager->CopyBufferToImage(stagingBuffer, texture, width, height, commandBuffer);
     _cmdbManager->SubmitCommandBufferInstance(commandBuffer, _instance->GetGraphicsQueue());
 
     TransitionImageLayout(texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
 
-    DeviceMemoryManager::DestroyBuffer(stagingBuffer);
+    _deviceMemoryManager->DestroyBuffer(stagingBuffer);
     VkImageView imageView = CreateImageView(texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
     VkSampler sampler = CreateSampler(); //Unnecessary to make one per texture since it is independent and can be used for all
 
@@ -139,7 +139,7 @@ VkSampler ImageManager::CreateSampler()
 
 ImageInfo ImageManager::CreateDepthImage(uint32_t width, uint32_t height) {
     VkFormat depthFormat = _instance->GetOptimalDepthFormat();
-    DeviceMemoryManager::ImageInformation imgInfo = DeviceMemoryManager::CreateImage(width, height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
+    ImageInformation imgInfo = _deviceMemoryManager->CreateImage(width, height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
     VkImageView imgview = CreateImageView(imgInfo, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
     TransitionImageLayout(imgInfo, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     return {imgInfo, imgview};
@@ -147,10 +147,11 @@ ImageInfo ImageManager::CreateDepthImage(uint32_t width, uint32_t height) {
 
 
 
-ImageManager::ImageManager(Instance *instance, CommandBufferManager *cmdbManager)
+ImageManager::ImageManager(Instance *instance, CommandBufferManager *cmdbManager, DeviceMemoryManager *memoryManager)
 {
     _instance = instance;
     _cmdbManager = cmdbManager;
+    _deviceMemoryManager = memoryManager;
 }
 
 

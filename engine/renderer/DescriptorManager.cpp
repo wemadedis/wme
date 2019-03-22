@@ -13,11 +13,13 @@ DescriptorManager::DescriptorManager(Instance *instance)
 
 void DescriptorManager::CreateDescriptorPool(SwapChain *swapChain)
 {
-    std::array<VkDescriptorPoolSize, 2> poolSizes = {};
+    std::array<VkDescriptorPoolSize, 3> poolSizes = {};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[0].descriptorCount = static_cast<uint32_t>(swapChain->GetSwapChainImageCount());
-    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[1].descriptorCount = static_cast<uint32_t>(swapChain->GetSwapChainImageCount());
+    poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[2].descriptorCount = static_cast<uint32_t>(swapChain->GetSwapChainImageCount());
 
     VkDescriptorPoolCreateInfo poolInfo = {};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -33,21 +35,28 @@ void DescriptorManager::CreateDescriptorPool(SwapChain *swapChain)
 
 void DescriptorManager::CreateDescriptorSetLayout()
 {
-    VkDescriptorSetLayoutBinding uboLayoutBinding = {};
-    uboLayoutBinding.binding = 0;
-    uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    uboLayoutBinding.descriptorCount = 1;
-    uboLayoutBinding.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
-    uboLayoutBinding.pImmutableSamplers = nullptr;
+    VkDescriptorSetLayoutBinding meshUboLayout = {};
+    meshUboLayout.binding = 0;
+    meshUboLayout.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    meshUboLayout.descriptorCount = 1;
+    meshUboLayout.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    meshUboLayout.pImmutableSamplers = nullptr;
+
+    VkDescriptorSetLayoutBinding globalUboLayout = {};
+    globalUboLayout.binding = 1;
+    globalUboLayout.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    globalUboLayout.descriptorCount = 1;
+    globalUboLayout.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    globalUboLayout.pImmutableSamplers = nullptr;
 
     VkDescriptorSetLayoutBinding samplerLayoutBinding = {};
-    samplerLayoutBinding.binding = 1;
+    samplerLayoutBinding.binding = 2;
     samplerLayoutBinding.descriptorCount = 1;
     samplerLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
     samplerLayoutBinding.pImmutableSamplers = nullptr;
     samplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-    std::array<VkDescriptorSetLayoutBinding, 2> bindings = {uboLayoutBinding, samplerLayoutBinding};
+    std::array<VkDescriptorSetLayoutBinding, 3> bindings = {meshUboLayout, globalUboLayout, samplerLayoutBinding};
 
     VkDescriptorSetLayoutCreateInfo layoutInfo = {};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -60,31 +69,38 @@ void DescriptorManager::CreateDescriptorSetLayout()
     }
 }
 
-void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes)
+void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, BufferInformation &globalUniformData)
 {
-    std::vector<VkDescriptorSetLayout> layouts(meshes.size(), _layout);
+    size_t setCount = meshes.size();
+    std::vector<VkDescriptorSetLayout> layouts(setCount, _layout);
     VkDescriptorSetAllocateInfo allocInfo = {};
     allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     allocInfo.descriptorPool = _pool;
-    allocInfo.descriptorSetCount = static_cast<uint32_t>(meshes.size());
+    allocInfo.descriptorSetCount = static_cast<uint32_t>(setCount);
     allocInfo.pSetLayouts = layouts.data();
 
-    _descriptorSets.resize(meshes.size());
+    _descriptorSets.resize(setCount);
     if (vkAllocateDescriptorSets(_instance->GetDevice(), &allocInfo, _descriptorSets.data()) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate descriptor sets!");
     }
     
-    for (size_t i = 0; i < meshes.size(); i++) {
-        VkDescriptorBufferInfo bufferInfo = {};
-        bufferInfo.buffer = meshes[i]->uniformBuffer.buffer;
-        bufferInfo.offset = 0;
-        bufferInfo.range = sizeof(UniformBufferObject);
+    for (size_t i = 0; i < setCount; i++) {
+        VkDescriptorBufferInfo meshBuffer = {};
+        meshBuffer.buffer = meshes[i]->uniformBuffer.buffer;
+        meshBuffer.offset = 0;
+        meshBuffer.range = sizeof(MeshUniformData);
+
+        VkDescriptorBufferInfo globalBuffer = {};
+        globalBuffer.buffer = globalUniformData.buffer;
+        globalBuffer.offset = 0;
+        globalBuffer.range = sizeof(GlobalUniformData);
+
 
         VkDescriptorImageInfo imageInfo = {};
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        imageInfo.imageView = meshes[i]->texture.image.imageView;
-        imageInfo.sampler = meshes[i]->texture.sampler;
-        std::array<VkWriteDescriptorSet, 2> descriptorWrites = {};
+        imageInfo.imageView = meshes[i]->texture->image.imageView;
+        imageInfo.sampler = meshes[i]->texture->sampler;
+        std::array<VkWriteDescriptorSet, 3> descriptorWrites = {};
 
         descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWrites[0].dstSet = _descriptorSets[i];
@@ -92,15 +108,23 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes)
         descriptorWrites[0].dstArrayElement = 0;
         descriptorWrites[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         descriptorWrites[0].descriptorCount = 1;
-        descriptorWrites[0].pBufferInfo = &bufferInfo;
+        descriptorWrites[0].pBufferInfo = &meshBuffer;
 
         descriptorWrites[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
         descriptorWrites[1].dstSet = _descriptorSets[i];
         descriptorWrites[1].dstBinding = 1;
         descriptorWrites[1].dstArrayElement = 0;
-        descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descriptorWrites[1].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
         descriptorWrites[1].descriptorCount = 1;
-        descriptorWrites[1].pImageInfo = &imageInfo;
+        descriptorWrites[1].pBufferInfo = &globalBuffer;
+
+        descriptorWrites[2].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+        descriptorWrites[2].dstSet = _descriptorSets[i];
+        descriptorWrites[2].dstBinding = 2;
+        descriptorWrites[2].dstArrayElement = 0;
+        descriptorWrites[2].descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        descriptorWrites[2].descriptorCount = 1;
+        descriptorWrites[2].pImageInfo = &imageInfo;
 
         vkUpdateDescriptorSets(_instance->GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
