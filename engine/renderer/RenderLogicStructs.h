@@ -25,7 +25,7 @@ struct TextureInfo
 struct MeshUniformData
 {
 	glm::mat4 ModelMatrix;
-	int HasTexture;
+	bool HasTexture;
 };
 
 struct DirectionalLight
@@ -34,11 +34,20 @@ struct DirectionalLight
 	glm::vec3 Direction;
 };
 
+struct PointLight
+{
+    glm::vec3 Position;
+	glm::vec4 Color;
+	glm::vec3 Radius;
+};
+
 struct GlobalUniformData
 {
 	glm::mat4 ViewMatrix;
 	glm::mat4 ProjectionMatrix;
-	DirectionalLight Light[10];
+    glm::vec4 AmbientColour;
+    DirectionalLight DirLight[10];
+    PointLight PointLight[10];
 };
 
 struct MeshInfo

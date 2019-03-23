@@ -65,7 +65,7 @@ private:
     BufferInformation _globalUniformBuffer;
     std::vector<MeshInfo*> _meshes;
     std::vector<TextureInfo> _textures;
-    std::vector<DirectionalLight> _dirLights;
+    std::vector<Light> _lights;
     
     std::vector<VkSemaphore> _imageAvailableSemaphores;
 	std::vector<VkSemaphore> _renderFinishedSemaphores;
@@ -123,12 +123,9 @@ void SetMeshTransform(MeshHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 s
 //LLLLLLLLLIIIIIIIIIIIIIIGGGGGGGGGGGHHHHHHHHHHHHTTTTTTTTTTSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!
 LightHandle AddLight(Light light);
 
-void SetLightDirection(LightHandle light, glm::vec3 dir)
-{
-    _dirLights[light].Direction = dir;
-    _globalUniform.Light[0] = _dirLights[light];
-    _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
-}
+void SetAmbientLightColor(glm::vec4 color);
+
+void SetLightTransform(LightHandle light, glm::vec3 pos, glm::vec3 rot);
 
 void SetCamera(Camera camera);
 

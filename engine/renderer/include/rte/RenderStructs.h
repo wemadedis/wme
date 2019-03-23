@@ -69,6 +69,7 @@ namespace RTE::Renderer
 			};
 			struct
 			{
+				glm::vec3 Position;
 				float Radius;
 				float Intensity;
 			};

@@ -7,16 +7,25 @@ struct DirectionalLight
 	vec3 Direction;
 };
 
+struct PointLight
+{
+    vec3 Position;
+	vec4 Color;
+	vec3 Radius;
+};
+
 layout(binding = 0) uniform MeshUniformData {
     mat4 ModelMatrix;
-    int HasTexture;
+    bool HasTexture;
 } MeshUniform;
 
 layout(binding = 1) uniform GlobalUniformData
 {
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
+    vec4 AmbientColour;
     DirectionalLight DirLight[10];
+    PointLight PointLight[10];
 } GlobalUniform;
 
 layout(location = 0) in vec3 inPosition;

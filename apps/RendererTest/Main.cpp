@@ -63,7 +63,7 @@ int main()
     Light lgt;
     lgt.LightType = LightType::DIRECTIONAL;
     lgt.Color = glm::vec4(1.0f);
-    glm::vec3 lightDir = glm::vec3(0.0f, -1.0f, 1.0f);
+    glm::vec3 lightDir = glm::vec3(0.0f, -1.0f, -1.0f);
     lgt.Direction = lightDir;
     LightHandle light = renderer.AddLight(lgt);
     float y = 0.0f;
@@ -76,7 +76,7 @@ int main()
         RTE::Platform::PollEvents();
         renderer.Draw();
         renderer.SetMeshTransform(cylinderhandle, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(y, 0.0f, 0.0f), glm::vec3(0.1f));
-        renderer.SetLightDirection(light, glm::rotateX(lightDir, y));
+        //renderer.SetLightDirection(light, glm::rotateX(lightDir, y));
         y+= 0.00055f;
     }
 }

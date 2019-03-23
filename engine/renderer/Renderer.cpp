@@ -75,6 +75,7 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     glm::mat4 trn = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
     glm::mat4 scl = glm::scale(glm::vec3(1.0f));
     meshUniform.ModelMatrix = trn * rot * scl;
+    meshUniform.HasTexture = false;
 
     _deviceMemoryManager->CopyDataToBuffer(info->uniformBuffer, &meshUniform);
     
@@ -92,7 +93,7 @@ void Renderer::BindTexture(TextureHandle texture, MeshHandle mesh)
 {
     _meshes[mesh]->texture = &_textures[texture];
     _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshes[mesh]->uniformBuffer, [](MeshUniformData *data){
-        data->HasTexture = 1;
+        data->HasTexture = true;
     });
 }
 
@@ -184,7 +185,6 @@ Renderer::Renderer(RendererInitInfo info)
 
 void Renderer::Finalize()
 {
-    _globalUniform.Light[0] = _dirLights[0];
     _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
     
     _descriptorManager->CreateDescriptorPool(_swapChain);
@@ -299,13 +299,25 @@ void Renderer::SetMeshTransform(MeshHandle mesh, glm::vec3 pos, glm::vec3 rot, g
 
 LightHandle Renderer::AddLight(Light light)
 {
-    switch(light.LightType){
-        case LightType::DIRECTIONAL:
-        {
-            _dirLights.push_back({light.Color, light.Direction});
-            return _dirLights.size()-1;
-        }
-    }
+    _lights.push_back(light);
+    return _lights.size()-1;
+}
+
+void Renderer::SetAmbientLightColor(glm::vec4 color)
+{
+
+}
+
+
+void Renderer::SetLightTransform(LightHandle light, glm::vec3 pos, glm::vec3 rot)
+{
+    Light& l = _lights[light];
+    if(l.LightType != LightType::DIRECTIONAL) l.Position = pos;
+    
+    /*_deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [dir](GlobalUniformData *buffer){
+        buffer->Light[0].Direction = dir;
+    });*/
+    //_deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
 }
 
 void Renderer::SetCamera(Camera camera)
