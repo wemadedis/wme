@@ -71,27 +71,27 @@ Mesh* MakeCylinder(float radius, float height, int faces){
     }
     Mesh* cylinder = new Mesh();
     for(uint32_t i = 0; i < vertices.size(); i++){
-        Vertex v = {vertices[i], vec3(0.5f), normals[i]};
-        cylinder->vertices.push_back(v);
+        Vertex v = {vertices[i], vec4(0.5f), normals[i]};
+        cylinder->Vertices.push_back(v);
     }
-    cylinder->indices = indices;
+    cylinder->Indices = indices;
     return cylinder;
 }
 
 Mesh* MakeQuad()
 {
     const std::vector<Vertex> vertices = {
-        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-        {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}}
+        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+        {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}}
     };
     const std::vector<uint16_t> indices = {
         0, 1, 2, 2, 3, 0
     };
     Mesh* quad = new Mesh();
-    quad->vertices = vertices;
-    quad->indices = indices;
+    quad->Vertices = vertices;
+    quad->Indices = indices;
     return quad;
 }
 
