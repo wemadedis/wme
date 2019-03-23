@@ -1,6 +1,6 @@
 #include "GraphicsPipeline.hpp"
 #include "Utilities.h"
-
+#include "include/rte/RenderStructs.h"
 namespace RTE::Renderer
 {
 
@@ -172,8 +172,8 @@ void GraphicsPipeline::CreatePipeline(VkShaderModule vertexShaderModule, VkShade
     VkPipelineShaderStageCreateInfo fShaderStageInfo = GetFragmentShaderStageInfo(fragmentShaderModule);
     
     VkPipelineShaderStageCreateInfo shaderStages[] = {vShaderStageInfo, fShaderStageInfo};
-    auto vAttDesc = Utilities::Vertex::getAttributeDescriptions();
-    auto vBindDesc =  Utilities::Vertex::getBindingDescription();
+    auto vAttDesc = Vertex::getAttributeDescriptions();
+    auto vBindDesc =  Vertex::getBindingDescription();
 
     VkPipelineVertexInputStateCreateInfo vInputInfo =  GetVertexInputInfo(vBindDesc, vAttDesc.data(), vAttDesc.size());
     VkPipelineInputAssemblyStateCreateInfo inputAssembly = GetInputAssemblyCreateInfo();
