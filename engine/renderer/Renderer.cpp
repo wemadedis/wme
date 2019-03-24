@@ -20,7 +20,7 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 const int MAX_FRAMES_IN_FLIGHT = 2;

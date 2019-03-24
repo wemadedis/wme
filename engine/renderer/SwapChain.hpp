@@ -7,7 +7,7 @@
 #include "Instance.hpp"
 #include "ImageManager.hpp"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 

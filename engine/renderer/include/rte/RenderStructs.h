@@ -5,7 +5,7 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 /// <summary>Vertex struct for use in RTE rendering.</summary>
 struct Vertex

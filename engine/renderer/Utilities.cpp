@@ -8,7 +8,7 @@
 
 #include "DeviceMemoryManager.h"
 
-namespace RTE::Renderer::Utilities 
+namespace RTE::Rendering::Utilities 
 {
 
 

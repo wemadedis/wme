@@ -5,10 +5,10 @@
 
 void Initialize()
 {
-    using namespace RTE::Import;
+    using namespace RTE::Importing;
     std::ostringstream stringStream;
     stringStream << ENGINE_ASSET_DIR << "models/cube.obj";
     std::string cubePath = stringStream.str();
 
-    RTE::Renderer::Mesh mesh = ModelImporter::ImportMesh(cubePath.c_str());
+    RTE::Rendering::Mesh mesh = ModelImporter::ImportMesh(cubePath.c_str());
 }

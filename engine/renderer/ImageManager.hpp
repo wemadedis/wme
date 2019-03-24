@@ -3,7 +3,7 @@
 
 #include "RenderLogicStructs.h"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 class ImageManager

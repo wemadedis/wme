@@ -10,7 +10,7 @@ const bool enableValidationLayers = false;
 const bool enableValidationLayers = true;
 #endif
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 

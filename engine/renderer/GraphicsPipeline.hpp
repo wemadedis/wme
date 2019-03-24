@@ -2,7 +2,7 @@
 #include <vulkan/vulkan.h>
 #include "Renderpass.hpp"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 class GraphicsPipeline

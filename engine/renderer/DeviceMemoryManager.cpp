@@ -2,7 +2,7 @@
 #define VMA_IMPLEMENTATION
 #include <vk_mem_alloc.h>
 using namespace std;
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
     
 DeviceMemoryManager::DeviceMemoryManager(Instance *instance, CommandBufferManager *commandBufferManager)

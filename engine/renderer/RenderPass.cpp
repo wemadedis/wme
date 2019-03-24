@@ -3,7 +3,7 @@
 
 #include "GraphicsPipeline.hpp"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 VkAttachmentDescription RenderPass::GetColorAttachment()

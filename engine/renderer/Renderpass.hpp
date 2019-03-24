@@ -4,7 +4,7 @@
 
 #include "SwapChain.hpp"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 

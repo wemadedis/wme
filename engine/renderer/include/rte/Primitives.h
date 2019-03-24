@@ -1,7 +1,7 @@
 #pragma once
 #include "RenderStructs.h"
 
-namespace RTE::Renderer::Primitives
+namespace RTE::Rendering::Primitives
 {
 
 Mesh* MakeCylinder(float radius, float height, int faces);

@@ -6,7 +6,7 @@
 
 #include "Renderpass.hpp"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 SwapChain::SupportInformation SwapChain::GetSupportInformation(VkPhysicalDevice device, VkSurfaceKHR surface)

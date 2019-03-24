@@ -9,7 +9,7 @@
 using namespace std;
 using namespace glm;
 
-namespace RTE::Renderer::Primitives
+namespace RTE::Rendering::Primitives
 {
 
 Mesh* MakeCylinder(float radius, float height, int faces){

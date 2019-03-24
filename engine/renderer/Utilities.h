@@ -8,7 +8,7 @@
 #include <sstream>
 
 
-namespace RTE::Renderer::Utilities
+namespace RTE::Rendering::Utilities
 {
 //MODIFY THIS!
 struct QueueFamilyIndices

@@ -5,7 +5,7 @@
 
 #include "Utilities.h"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 

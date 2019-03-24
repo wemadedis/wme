@@ -3,7 +3,7 @@
 #include <array>
 
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 DescriptorManager::DescriptorManager(Instance *instance)

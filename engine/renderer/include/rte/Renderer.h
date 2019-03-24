@@ -24,7 +24,7 @@ const bool enableValidationLayers = true;
 
 
 //make a renderer class as well. rename struct and keep it for some additional structs
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 typedef std::function<void(VkSurfaceKHR &surface, VkInstance instance)> SurfaceBindingFunc;
 enum RenderMode { RASTERIZE, RAYTRACE };

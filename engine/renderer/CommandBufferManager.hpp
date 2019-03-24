@@ -6,7 +6,7 @@
 
 #include "Instance.hpp"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 class CommandBufferManager

@@ -9,7 +9,7 @@
 
 #include "CommandBufferManager.hpp"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 enum class MemProps { HOST, DEVICE };
 

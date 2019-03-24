@@ -1,6 +1,6 @@
 #include "ImageManager.hpp"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 VkImageView ImageManager::CreateImageView(ImageInformation &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags)

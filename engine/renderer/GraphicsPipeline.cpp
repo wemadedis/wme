@@ -1,7 +1,7 @@
 #include "GraphicsPipeline.hpp"
 #include "Utilities.h"
 #include "include/rte/RenderStructs.h"
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 VkPipelineShaderStageCreateInfo GraphicsPipeline::GetVertexShaderStageInfo(VkShaderModule vertexModule)

@@ -4,7 +4,7 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "DeviceMemoryManager.h"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 struct ImageInfo

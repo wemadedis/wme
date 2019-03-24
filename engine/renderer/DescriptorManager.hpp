@@ -6,7 +6,7 @@
 #include "Instance.hpp"
 #include "SwapChain.hpp"
 #include "RenderLogicStructs.h"
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 class DescriptorManager

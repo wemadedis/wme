@@ -2,7 +2,7 @@
 #include "Utilities.h"
 #include "Instance.hpp"
 
-namespace RTE::Renderer
+namespace RTE::Rendering
 {
 
 void CommandBufferManager::CreateCommandPool()

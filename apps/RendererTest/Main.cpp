@@ -17,7 +17,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
-using namespace RTE::Renderer;
+using namespace RTE::Rendering;
 
 int main()
 {

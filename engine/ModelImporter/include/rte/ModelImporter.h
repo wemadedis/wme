@@ -6,6 +6,7 @@
 #include <glm/glm.hpp>
 
 #include "rte/RenderStructs.h"
+
 namespace RTE::Importing
 {
 
@@ -51,4 +52,4 @@ class ModelImporter
   public:
     static RTE::Rendering::Mesh ImportMesh(const char *filename);
 };
-} // namespace RTE::Import
+} // namespace RTE::Importing
