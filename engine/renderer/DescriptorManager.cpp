@@ -39,14 +39,14 @@ void DescriptorManager::CreateDescriptorSetLayout()
     meshUboLayout.binding = 0;
     meshUboLayout.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     meshUboLayout.descriptorCount = 1;
-    meshUboLayout.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    meshUboLayout.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
     meshUboLayout.pImmutableSamplers = nullptr;
 
     VkDescriptorSetLayoutBinding globalUboLayout = {};
     globalUboLayout.binding = 1;
     globalUboLayout.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     globalUboLayout.descriptorCount = 1;
-    globalUboLayout.stageFlags = VK_SHADER_STAGE_VERTEX_BIT;
+    globalUboLayout.stageFlags = VK_SHADER_STAGE_VERTEX_BIT | VK_SHADER_STAGE_FRAGMENT_BIT;
     globalUboLayout.pImmutableSamplers = nullptr;
 
     VkDescriptorSetLayoutBinding samplerLayoutBinding = {};

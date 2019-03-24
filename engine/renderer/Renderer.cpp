@@ -45,13 +45,14 @@ void Renderer::Initialize()
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
 
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(GlobalUniformData), _globalUniformBuffer);
+    std::cout << "Global Uniform Size Bytes: " << sizeof(GlobalUniformData) << std::endl;
 }
 
 MeshHandle Renderer::UploadMesh(Mesh* mesh)
 {
     MeshInfo* info = new MeshInfo();
     info->IndexCount = mesh->Indices.size();
-    size_t bufferSize = sizeof(mesh->Indices[0]) * info->IndexCount;
+    size_t bufferSize = (size_t)(sizeof(mesh->Indices[0]) * info->IndexCount);
     
     //Indices
     BufferInformation stagingBuffer = {};
@@ -80,20 +81,20 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     _deviceMemoryManager->CopyDataToBuffer(info->uniformBuffer, &meshUniform);
     
     _meshes.push_back(info);
-    return _meshes.size()-1;
+    return (MeshHandle)_meshes.size()-1;
 }
 
 TextureHandle Renderer::UploadTexture(Texture &texture)
 {
     _textures.push_back(_imageManager->CreateTexture(texture.Width, texture.Height, texture.Pixels, texture.Width*texture.Height*4));
-    return _textures.size()-1;
+    return (TextureHandle)_textures.size()-1;
 }
 
 void Renderer::BindTexture(TextureHandle texture, MeshHandle mesh)
 {
     _meshes[mesh]->texture = &_textures[texture];
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshes[mesh]->uniformBuffer, [](MeshUniformData *data){
-        data->HasTexture = true;
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshes[mesh]->uniformBuffer, [](MeshUniformData &data){
+        data.HasTexture = true;
     });
 }
 
@@ -177,6 +178,21 @@ void Renderer::RecreateSwapChain()
     RecordRenderPass();
 }
 
+void Renderer::UploadGlobalUniform()
+{
+    for(uint32_t lightIndex = 0; lightIndex < 10; lightIndex++)
+    {
+        _globalUniform.DirectionalLightCount = _directionalLights.size();
+        _globalUniform.PointLightCount = _pointLights.size();
+        if(lightIndex < _directionalLights.size()) _globalUniform.DirectionalLights[lightIndex] = _directionalLights[lightIndex];
+        if(lightIndex < _pointLights.size()) {
+            _globalUniform.PointLights[lightIndex] = _pointLights[lightIndex];
+            std::cout << lightIndex << std::endl;
+        }
+    }
+    _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
+}
+
 Renderer::Renderer(RendererInitInfo info)
 {
     _initInfo = info;
@@ -185,10 +201,10 @@ Renderer::Renderer(RendererInitInfo info)
 
 void Renderer::Finalize()
 {
-    _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
     
     _descriptorManager->CreateDescriptorPool(_swapChain);
     _descriptorManager->CreateDescriptorSets(_meshes, _globalUniformBuffer);
+    UploadGlobalUniform();
     RecordRenderPass();
     CreateSyncObjects();
 }
@@ -292,32 +308,36 @@ void Renderer::SetMeshTransform(MeshHandle mesh, glm::vec3 pos, glm::vec3 rot, g
     glm::mat4 translation = glm::translate(pos);
     glm::mat4 scale = glm::scale(scl);
     auto modelMatrix = translation * rotation * scale;
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshes[mesh]->uniformBuffer, [modelMatrix](MeshUniformData *data){
-        data->ModelMatrix = modelMatrix;
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshes[mesh]->uniformBuffer, [modelMatrix](MeshUniformData &data){
+        data.ModelMatrix = modelMatrix;
     });
 }
 
-LightHandle Renderer::AddLight(Light light)
+DirectionalLightHandle Renderer::AddDirectionalLight(DirectionalLight light)
 {
-    _lights.push_back(light);
-    return _lights.size()-1;
+    _directionalLights.push_back(light);
+    return (DirectionalLightHandle)_directionalLights.size()-1;
 }
 
-void Renderer::SetAmbientLightColor(glm::vec4 color)
+PointLightHandle Renderer::AddPointLight(PointLight light)
 {
-
+    _pointLights.push_back(light);
+    return (PointLightHandle)_pointLights.size()-1;
 }
 
-
-void Renderer::SetLightTransform(LightHandle light, glm::vec3 pos, glm::vec3 rot)
+void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::function<void(DirectionalLight&)> mutator)
 {
-    Light& l = _lights[light];
-    if(l.LightType != LightType::DIRECTIONAL) l.Position = pos;
-    
-    /*_deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [dir](GlobalUniformData *buffer){
-        buffer->Light[0].Direction = dir;
-    });*/
-    //_deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
+    mutator(_directionalLights[light]);
+}
+
+void Renderer::SetPointLightProperties(PointLightHandle light, std::function<void(PointLight&)> mutator)
+{   
+    mutator(_pointLights[light]);
+}
+
+void Renderer::SetAmbientLight(glm::vec4 color)
+{
+    _globalUniform.AmbientColor = color;
 }
 
 void Renderer::SetCamera(Camera camera)

@@ -43,7 +43,8 @@ struct RendererInitInfo
 
 typedef uint16_t MeshHandle;
 typedef uint16_t TextureHandle;
-typedef uint16_t LightHandle;
+typedef uint16_t DirectionalLightHandle;
+typedef uint16_t PointLightHandle;
 typedef uint16_t ShaderHandle;
 
 
@@ -65,7 +66,9 @@ private:
     BufferInformation _globalUniformBuffer;
     std::vector<MeshInfo*> _meshes;
     std::vector<TextureInfo> _textures;
-    std::vector<Light> _lights;
+    //WARNING: CURRENT STRUCTURE DOES NOT ALLOW TO REMOVE LIGHTS FROM THE LIST AS THE HANDLES CAN BECOME INVALID
+    std::vector<PointLight> _pointLights;
+    std::vector<DirectionalLight> _directionalLights;
     
     std::vector<VkSemaphore> _imageAvailableSemaphores;
 	std::vector<VkSemaphore> _renderFinishedSemaphores;
@@ -78,6 +81,7 @@ private:
     void CreateSyncObjects();
     void CleanupSwapChain();
     void RecreateSwapChain();
+    void UploadGlobalUniform();
 public:
 /*
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.
@@ -121,11 +125,15 @@ void SetMeshTransform(MeshHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 s
 
 
 //LLLLLLLLLIIIIIIIIIIIIIIGGGGGGGGGGGHHHHHHHHHHHHTTTTTTTTTTSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!
-LightHandle AddLight(Light light);
+DirectionalLightHandle AddDirectionalLight(DirectionalLight light);
 
-void SetAmbientLightColor(glm::vec4 color);
+PointLightHandle AddPointLight(PointLight light);
 
-void SetLightTransform(LightHandle light, glm::vec3 pos, glm::vec3 rot);
+void SetDirectionalLightProperties(DirectionalLightHandle light, std::function<void(DirectionalLight&)> mutator);
+
+void SetPointLightProperties(PointLightHandle light, std::function<void(PointLight&)> mutator);
+
+void SetAmbientLight(glm::vec4 color);
 
 void SetCamera(Camera camera);
 
