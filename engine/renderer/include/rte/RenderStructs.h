@@ -35,7 +35,7 @@ struct Vertex
 
         attributeDescriptions[1].binding = 0;
         attributeDescriptions[1].location = 1;
-        attributeDescriptions[1].format = VK_FORMAT_R32G32B32A32_SFLOAT;//VK_FORMAT_R32G32B32A32_SFLOAT;
+        attributeDescriptions[1].format = VK_FORMAT_R32G32B32A32_SFLOAT; //VK_FORMAT_R32G32B32A32_SFLOAT;
         attributeDescriptions[1].offset = offsetof(Vertex, color);
 
         attributeDescriptions[2].binding = 0;
@@ -67,21 +67,20 @@ enum class LightType
 
 struct Light
 {
-	LightType LightType;
-	glm::vec4 Color;
-	union
-	{
-		struct
-		{
-			glm::vec3 Direction;
-		};
-		struct
-		{
-			glm::vec3 Position;
-			float Radius;
-			float Intensity;
-		};
-	};
+    LightType LightType;
+    glm::vec4 Color;
+    union {
+        struct
+        {
+            glm::vec3 Direction;
+        };
+        struct
+        {
+            glm::vec3 Position;
+            float Radius;
+            float Intensity;
+        };
+    };
 };
 
 struct Texture
@@ -97,17 +96,19 @@ struct Shader
 
 struct Material
 {
-    float Reflectivity;
     float Diffuse;
     float Specular;
     float Shininess;
+    float Reflectivity;
+
     glm::vec4 Color;
+
     Texture *Texture;
+
 };
 
 struct Mesh
 {
-    // TODO: (danh 22/03 13:33): Adhere to style guide
     std::vector<Vertex> Vertices = {};
     std::vector<uint16_t> Indices = {};
     // EXTEND: (danh 22/03 13:32): Improve support for nested meshes
@@ -120,8 +121,9 @@ struct Transform
     glm::vec3 Scale;
     glm::vec3 Rot;
 
-    Transform() : Transform(glm::vec3(0),glm::vec3(0),glm::vec3(0)) 
-    {}
+    Transform() : Transform(glm::vec3(0), glm::vec3(0), glm::vec3(0))
+    {
+    }
 
     Transform(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot)
     {
@@ -130,7 +132,7 @@ struct Transform
         Rot = rot;
     }
 
-    Transform &operator+(const Transform &other)
+    Transform operator+(const Transform &other)
     {
         Transform t;
         t.Pos = this->Pos + other.Pos;
@@ -139,7 +141,6 @@ struct Transform
         return t;
     }
 };
-
 
 struct RenderPassInfo
 {

@@ -16,5 +16,5 @@ add_subdirectory(apps)
 
 
 target_link_libraries(rte INTERFACE
-    glm vma vulkan assimp renderer platform glfw runtime_architecture AssetImporter
+    glm vma vulkan assimp renderer platform glfw runtime_architecture ModelImporter
 )
