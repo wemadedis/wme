@@ -9,9 +9,9 @@ struct DirectionalLight
 
 struct PointLight
 {
+    vec4 Color;
     vec3 Position;
-	vec4 Color;
-	vec3 Radius;
+	float Radius;
 };
 
 layout(binding = 0) uniform MeshUniformData {
@@ -23,17 +23,18 @@ layout(binding = 1) uniform GlobalUniformData
 {
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
-    vec4 AmbientColour;
-    DirectionalLight DirLight[10];
-    PointLight PointLight[10];
+    vec4 AmbientColor;
+    PointLight PointLights[10];
+    DirectionalLight DirectionalLights[10];
+    
 } GlobalUniform;
 
 layout(location = 0) in vec3 inPosition;
-layout(location = 1) in vec3 inColor;
+layout(location = 1) in vec4 inColor;
 layout(location = 2) in vec3 normal;
 layout(location = 3) in vec2 texCoord;
 
-layout(location = 0) out vec3 fragColor;
+layout(location = 0) out vec4 fragColor;
 
 layout(location = 1) out vec3 N;
 layout(location = 2) out vec3 L;
@@ -45,12 +46,18 @@ layout(location = 5) out vec2 UV;
 
 layout(location = 6) out int HasTexture;
 
-vec3 lightDir = vec3(0.0f, -1.0f, 1.0f);
+layout(location = 7) out float Distance;
+layout(location = 8) out vec4 Color;
 
 //https://learnopengl.com/Lighting/Multiple-lights
 void ComputePhong(){
-    lightDir = normalize(lightDir);
-    L = -normalize(GlobalUniform.ViewMatrix * vec4(GlobalUniform.DirLight[0].Direction,0.0f)).xyz;
+    vec4 pos = MeshUniform.ModelMatrix * vec4(inPosition, 1.0);
+    vec3 poss = pos.xyz/pos.w;
+    vec3 distance = poss - GlobalUniform.PointLights[0].Position;
+    Distance = length(distance);
+    vec3 lightDir = normalize(distance);
+    Color = GlobalUniform.PointLights[0].Color;
+    L = normalize(GlobalUniform.ViewMatrix * vec4(lightDir,0.0f)).xyz;
     N = normalize(GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix *  vec4(normal,0.0f)).xyz;
     V = -normalize(GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0f)).xyz;
     //Flip the normal if it points away from the eye (REMOVE THIS LATER)

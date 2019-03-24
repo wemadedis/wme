@@ -1,4 +1,7 @@
 #pragma once
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_ENABLE_EXPERIMENTAL
 #include "DeviceMemoryManager.h"
 
 namespace RTE::Renderer
@@ -36,18 +39,19 @@ struct DirectionalLight
 
 struct PointLight
 {
-    glm::vec3 Position;
 	glm::vec4 Color;
-	glm::vec3 Radius;
+    glm::vec3 Position;
+	float Radius;
 };
 
 struct GlobalUniformData
 {
 	glm::mat4 ViewMatrix;
 	glm::mat4 ProjectionMatrix;
-    glm::vec4 AmbientColour;
-    DirectionalLight DirLight[10];
-    PointLight PointLight[10];
+    glm::vec4 AmbientColor;
+	PointLight PointLights[10] = {};
+    DirectionalLight DirectionalLights[10] = {};
+    
 };
 
 struct MeshInfo

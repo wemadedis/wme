@@ -9,10 +9,34 @@ layout(location = 3) in vec3 V;
 layout(location = 4) in vec3 R;
 layout(location = 5) in vec2 UV;
 layout(location = 6) in flat int HasTexture;
-
+layout(location = 7) in float Distance;
+layout(location = 8) in vec4 Color;
 layout(location = 0) out vec4 outColor;
 
 layout(binding = 2) uniform sampler2D texSampler;
+
+struct DirectionalLight
+{
+	vec4 Color;
+	vec3 Direction;
+};
+
+struct PointLight
+{
+    vec4 Color;
+    vec3 Position;
+	float Radius;
+};
+
+layout(binding = 1) uniform GlobalUniformData
+{
+	mat4 ViewMatrix;
+	mat4 ProjectionMatrix;
+    vec4 AmbientColor;
+    PointLight PointLights[10];
+    DirectionalLight DirectionalLights[10];
+    
+} GlobalUniform;
 
 vec4 ambient = vec4(0.1);
 
@@ -20,7 +44,7 @@ void Phong(){
     float diff = max(0.0f, dot(L,N));
     float spec = max(0.0f, dot(V,R));
     vec4 texSample = texture(texSampler, UV);
-    outColor = texSample * ambient + texSample * diff;
+    outColor = texSample * ambient + texSample * GlobalUniform.PointLights[0].Radius / (Distance * Distance);
 }
 
 void main() {
@@ -30,7 +54,7 @@ void main() {
     } 
     else
     {
-        outColor = vec4(fragColor, 1.0);
+        outColor = vec4(0.0);
     }
     
     

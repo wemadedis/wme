@@ -53,30 +53,36 @@ int main()
     cam.ProjectionMatrix[1][1] *= -1;
 
     auto renderer = Renderer(info);
-    auto cylinderhandle = renderer.UploadMesh(cylinder);
+    //auto cylinderhandle = renderer.UploadMesh(cylinder);
     auto quadhandle = renderer.UploadMesh(quad);
     auto texture = renderer.UploadTexture(tex);
-    renderer.BindTexture(texture, cylinderhandle);
+    //renderer.BindTexture(texture, cylinderhandle);
     renderer.BindTexture(texture, quadhandle);
     
     renderer.SetCamera(cam);
-    Light lgt;
-    lgt.LightType = LightType::DIRECTIONAL;
-    lgt.Color = glm::vec4(1.0f);
+    DirectionalLight lgt;
+    lgt.Color = glm::vec4(0.0f,1.0f, 0.0f, 0.0f);
     glm::vec3 lightDir = glm::vec3(0.0f, -1.0f, -1.0f);
     lgt.Direction = lightDir;
-    LightHandle light = renderer.AddLight(lgt);
+    DirectionalLightHandle light = renderer.AddDirectionalLight(lgt);
+
+    PointLight p;
+    p.Color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+    p.Radius = 0.2f;
+    p.Position = glm::vec3(0.5f, 0.5f, 0.0f);
+
+    PointLightHandle pl = renderer.AddPointLight(p);
+
     float y = 0.0f;
     renderer.SetMeshTransform(quadhandle, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-    renderer.SetMeshTransform(cylinderhandle, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.1f));
+    //renderer.SetMeshTransform(cylinderhandle, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.1f));
     renderer.Finalize();
 
     while(!RTE::Platform::ShouldClose(window))
     {
         RTE::Platform::PollEvents();
         renderer.Draw();
-        renderer.SetMeshTransform(cylinderhandle, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(y, 0.0f, 0.0f), glm::vec3(0.1f));
-        //renderer.SetLightDirection(light, glm::rotateX(lightDir, y));
+        //renderer.SetMeshTransform(cylinderhandle, glm::vec3(0.0f,0.0f,0.0f), glm::vec3(y, 0.0f, 0.0f), glm::vec3(0.1f));
         y+= 0.00055f;
     }
 }

@@ -67,13 +67,13 @@ public:
 	void CopyDataToBuffer(BufferInformation& bufferInfo, void* data);
 
 	template<typename T>
-	void ModifyBufferData(BufferInformation& bufferInfo, std::function<void(T*)> Mutator)
+	void ModifyBufferData(BufferInformation& bufferInfo, std::function<void(T&)> Mutator)
 	{
 		void *mapping = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
 		VmaAllocation& allocation = buffers[bufferInfo.buffer];
 		vmaMapMemory(*alloc, allocation, &mapping);
 		T* before = (T*)mapping;
-		Mutator(before);
+		Mutator(*before);
 		vmaUnmapMemory(*alloc, allocation);
 	}
 
