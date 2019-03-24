@@ -178,6 +178,21 @@ void Renderer::RecreateSwapChain()
     RecordRenderPass();
 }
 
+void Renderer::UploadGlobalUniform()
+{
+    for(uint32_t lightIndex = 0; lightIndex < 10; lightIndex++)
+    {
+        _globalUniform.DirectionalLightCount = _directionalLights.size();
+        _globalUniform.PointLightCount = _pointLights.size();
+        if(lightIndex < _directionalLights.size()) _globalUniform.DirectionalLights[lightIndex] = _directionalLights[lightIndex];
+        if(lightIndex < _pointLights.size()) {
+            _globalUniform.PointLights[lightIndex] = _pointLights[lightIndex];
+            std::cout << lightIndex << std::endl;
+        }
+    }
+    _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
+}
+
 Renderer::Renderer(RendererInitInfo info)
 {
     _initInfo = info;
@@ -186,22 +201,10 @@ Renderer::Renderer(RendererInitInfo info)
 
 void Renderer::Finalize()
 {
-    for(int lightIndex = 0; lightIndex < 10; lightIndex++)
-    {
-        if(lightIndex < _directionalLights.size()) _globalUniform.DirectionalLights[lightIndex] = _directionalLights[lightIndex];
-        if(lightIndex < _pointLights.size()) {
-            _globalUniform.PointLights[lightIndex] = _pointLights[lightIndex];
-            std::cout << lightIndex << std::endl;
-            //std::cout << "Hello bitch: " << _globalUniform.PointLights[lightIndex].Color.x << " " << _globalUniform.PointLights[lightIndex].Color.y << " " << _globalUniform.PointLights[lightIndex].Color.z << std::endl;
-        }
-    }
-
-    _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
-    _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [](GlobalUniformData &data){
-        //std::cout << "Hello bitch: " << data.PointLights[1].Color.x << " " << data.PointLights[1].Color.y << " " << data.PointLights[1].Color.z << std::endl;
-    });
+    
     _descriptorManager->CreateDescriptorPool(_swapChain);
     _descriptorManager->CreateDescriptorSets(_meshes, _globalUniformBuffer);
+    UploadGlobalUniform();
     RecordRenderPass();
     CreateSyncObjects();
 }

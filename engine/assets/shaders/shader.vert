@@ -19,13 +19,17 @@ layout(binding = 0) uniform MeshUniformData {
     bool HasTexture;
 } MeshUniform;
 
+const uint MAX_LIGHTS = 10;
+
 layout(binding = 1) uniform GlobalUniformData
 {
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
     vec4 AmbientColor;
-    PointLight PointLights[10];
-    DirectionalLight DirectionalLights[10];
+    PointLight PointLights[MAX_LIGHTS];
+    DirectionalLight DirectionalLights[MAX_LIGHTS];
+    uint PointLightCount;
+    uint DirectionalLightCount;
     
 } GlobalUniform;
 

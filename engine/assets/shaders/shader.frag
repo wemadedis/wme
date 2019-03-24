@@ -28,26 +28,36 @@ struct PointLight
 	float Radius;
 };
 
+const uint MAX_LIGHTS = 10;
+
 layout(binding = 1) uniform GlobalUniformData
 {
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
     vec4 AmbientColor;
-    PointLight PointLights[10];
-    DirectionalLight DirectionalLights[10];
-    
+    PointLight PointLights[MAX_LIGHTS];
+    DirectionalLight DirectionalLights[MAX_LIGHTS];
+    uint PointLightCount;
+    uint DirectionalLightCount;
 } GlobalUniform;
 
 vec4 ambient = vec4(0.1);
 
-void Phong(){
+void Phong()
+{
     float diff = max(0.0f, dot(L,N));
     float spec = max(0.0f, dot(V,R));
     vec4 texSample = texture(texSampler, UV);
     outColor = texSample * ambient + texSample * GlobalUniform.PointLights[0].Radius / (Distance * Distance);
 }
 
-void main() {
+void CalculatePointLights()
+{
+    
+}
+
+void main() 
+{
     if(HasTexture != 0)
     {
         Phong();    

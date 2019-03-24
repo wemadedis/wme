@@ -81,6 +81,7 @@ private:
     void CreateSyncObjects();
     void CleanupSwapChain();
     void RecreateSwapChain();
+    void UploadGlobalUniform();
 public:
 /*
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.

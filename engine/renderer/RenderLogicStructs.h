@@ -31,6 +31,8 @@ struct MeshUniformData
 	bool HasTexture;
 };
 
+const uint32_t MAX_LIGHTS = 10;
+
 struct DirectionalLight
 {
 	glm::vec4 Color;
@@ -49,9 +51,10 @@ struct GlobalUniformData
 	glm::mat4 ViewMatrix;
 	glm::mat4 ProjectionMatrix;
     glm::vec4 AmbientColor;
-	PointLight PointLights[10] = {};
-    DirectionalLight DirectionalLights[10] = {};
-    
+	PointLight PointLights[MAX_LIGHTS] = {};
+    DirectionalLight DirectionalLights[MAX_LIGHTS] = {};
+	uint32_t PointLightCount;
+    uint32_t DirectionalLightCount;
 };
 
 struct MeshInfo
