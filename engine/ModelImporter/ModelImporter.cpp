@@ -105,13 +105,50 @@ inline glm::vec4 ConvertColor(aiColor4D *aiC)
     return glm::vec4(aiC->r, aiC->g, aiC->b, aiC->a);
 }
 
-RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, u32 vertexIndex)
+RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, u32 vertexIndex, MissingImportData &data)
 {
     RTE::Rendering::Vertex v;
-    v.pos = ConvertVector3(mesh->mVertices[vertexIndex]);
-    v.normal = ConvertVector3(mesh->mNormals[vertexIndex]);
-    v.color = ConvertColor(mesh->mColors[vertexIndex]);
-    v.texCoord = ConvertTexture(mesh->mTextureCoords[vertexIndex]);
+    if (mesh->HasPositions())
+    {
+        v.pos = ConvertVector3(mesh->mVertices[vertexIndex]);
+    }
+    else
+    {
+        // This is a pretty critical error 😑
+        data |= MissingImportData::MISSING_VERTICES;
+    }
+
+    if(mesh->HasNormals())
+    {
+        v.normal = ConvertVector3(mesh->mNormals[vertexIndex]);
+    }
+    else
+    {
+        data |= MissingImportData::MISSING_NORMALS;
+    }
+
+    // TODO: (danh) Sun 24/03 - 18:31: Don't know if this is the right way of handling colors. Maybe a for loop?
+    // TODO: (danh) Sun 24/03 - 18:31: test
+    if(mesh->HasVertexColors(0))
+    {
+        v.color = ConvertColor(mesh->mColors[0]);
+    }
+    else
+    {
+        data |= MissingImportData::MISSING_COLORS;
+        v.color = glm::vec4(0);
+    }
+
+    if(mesh->HasTextureCoords(0))
+    {
+        v.texCoord = ConvertTexture(mesh->mTextureCoords[vertexIndex]);
+    }
+    else
+    {
+    v.texCoord = glm::vec2(0);
+        data |= MissingImportData::MISSING_UVS;
+    }
+
     return v;
 }
 
@@ -127,12 +164,14 @@ MissingImportData ModelImporter::HandleMesh(
     for (u32 vertexIndex = 0; vertexIndex < aiMesh->mNumVertices; vertexIndex++)
     {
         RTE::Rendering::Vertex v;
-        v = ConvertVertex(aiMesh, vertexIndex);
+        v = ConvertVertex(aiMesh, vertexIndex, missingInfo);
         //glm::translate(v.pos) * glm::scaleglm::rotate
         // TODO: (danh 22/03 15:02): Convert vertex to parent global space and add to mesh
     }
     return missingInfo;
 }
+
+
 
 RTE::Rendering::Mesh ModelImporter::ImportMesh(const char *filename)
 {
@@ -156,4 +195,4 @@ RTE::Rendering::Mesh ModelImporter::ImportMesh(const char *filename)
 
     return mesh;
 }
-}; // namespace RTE::Import
+}; // namespace RTE::Importing
