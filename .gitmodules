@@ -4,6 +4,7 @@
 [submodule "engine/third_party/glfw"]
 	path = engine/third_party/glfw
 	url = https://github.com/glfw/glfw
-[submodule "engine/third_party/sfml"]
-	path = engine/third_party/sfml
-	url = https://github.com/SFML/SFML
+
+[submodule "engine/third_party/SFML"]
+	path = engine/third_party/SFML
+	url = https://github.com/SFML/SFML.git
