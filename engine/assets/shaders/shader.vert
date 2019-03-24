@@ -1,6 +1,8 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
 
+#define MAX_LIGHTS 10
+
 struct DirectionalLight
 {
 	vec4 Color;
@@ -18,8 +20,6 @@ layout(binding = 0) uniform MeshUniformData {
     mat4 ModelMatrix;
     bool HasTexture;
 } MeshUniform;
-
-const uint MAX_LIGHTS = 10;
 
 layout(binding = 1) uniform GlobalUniformData
 {
@@ -41,39 +41,28 @@ layout(location = 3) in vec2 texCoord;
 layout(location = 0) out vec4 fragColor;
 
 layout(location = 1) out vec3 N;
-layout(location = 2) out vec3 L;
-layout(location = 3) out vec3 V;
-layout(location = 4) out vec3 R;
+layout(location = 2) out vec3 V;
+layout(location = 4) out vec2 UV;
+layout(location = 5) out int HasTexture;
+layout(location = 6) out vec3 PositionCameraSpace;
 
 
-layout(location = 5) out vec2 UV;
-
-layout(location = 6) out int HasTexture;
-
-layout(location = 7) out float Distance;
-layout(location = 8) out vec4 Color;
 
 //https://learnopengl.com/Lighting/Multiple-lights
-void ComputePhong(){
-    vec4 pos = MeshUniform.ModelMatrix * vec4(inPosition, 1.0);
-    vec3 poss = pos.xyz/pos.w;
-    vec3 distance = poss - GlobalUniform.PointLights[0].Position;
-    Distance = length(distance);
-    vec3 lightDir = normalize(distance);
-    Color = GlobalUniform.PointLights[0].Color;
-    L = normalize(GlobalUniform.ViewMatrix * vec4(lightDir,0.0f)).xyz;
+void ComputePhongProperties(){
+    vec4 pos = GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0);
+    PositionCameraSpace = pos.xyz/pos.w;
     N = normalize(GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix *  vec4(normal,0.0f)).xyz;
-    V = -normalize(GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0f)).xyz;
+    V = -normalize(vec3(GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0f)));
     //Flip the normal if it points away from the eye (REMOVE THIS LATER)
     if(dot(N,V) < 0) N = -N;
-    R = reflect(L,N);
 }
 
 
 void main() {
     HasTexture = MeshUniform.HasTexture ? 1 : 0;
     gl_Position = GlobalUniform.ProjectionMatrix * GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0);
-    ComputePhong();
+    ComputePhongProperties();
     fragColor = inColor;
     UV = texCoord;
 }
