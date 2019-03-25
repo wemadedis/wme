@@ -52,9 +52,9 @@ int main()
     renderer.SetCamera(cam);
     
     PointLight p;
-    p.Color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+    p.Color = glm::vec4(0.5f);
     p.Radius = 0.25f;
-    p.Position = glm::vec3(0.25f, 0.25f, 0.0f);
+    p.Position = glm::vec3(0.25f, 0.25f, -0.1f);
     PointLightHandle pl = renderer.AddPointLight(p);
     //p.Position = glm::vec3(-0.25f, 0.25f, 0.0f);
     //PointLightHandle pl2 = renderer.AddPointLight(p);

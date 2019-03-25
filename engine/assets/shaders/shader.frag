@@ -44,20 +44,19 @@ vec4 Phong(vec3 L, vec3 R)
 {
     float diff = max(0.0f, dot(L,N));
     float spec = max(0.0f, dot(V,R));
-    return texture(texSampler, UV) * spec;
+    return texture(texSampler, UV) * diff * spec ;
 }
 
 vec4 CalculatePointLightShading(PointLight light)
 {
     vec4 lightCameraSpace = GlobalUniform.ViewMatrix * vec4(light.Position,1.0f);
-    vec3 lightPosition = lightCameraSpace.xyz/lightCameraSpace.w;
+    vec3 lightPosition = vec3(lightCameraSpace);
     vec3 direction = PositionCameraSpace - lightPosition;
     vec3 L = normalize(direction);
     vec3 R = reflect(L,N);
     float distance = length(direction);
     //if(distance > light.Radius) return Phong(L,N);
-    return Phong(L,R);
-    //return Phong(L,R) * light.Color * light.Radius / (distance*distance);
+    return Phong(L,R) * light.Color * light.Radius / (distance*distance);
 }
 
 vec4 CalculatePerLightShading()
