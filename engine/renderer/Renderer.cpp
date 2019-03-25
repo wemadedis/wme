@@ -54,6 +54,11 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     info->IndexCount = mesh->Indices.size();
     size_t bufferSize = (size_t)(sizeof(mesh->Indices[0]) * info->IndexCount);
     
+    if(bufferSize == 0)
+    {
+        throw std::invalid_argument("Renderer: Trying to create buffer with size 0");
+    }
+
     //Indices
     BufferInformation stagingBuffer = {};
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, bufferSize, stagingBuffer);
@@ -180,10 +185,10 @@ void Renderer::RecreateSwapChain()
 
 void Renderer::UploadGlobalUniform()
 {
+    _globalUniform.LightCounts.x = _directionalLights.size();
+    _globalUniform.LightCounts.y = _pointLights.size();
     for(uint32_t lightIndex = 0; lightIndex < 10; lightIndex++)
     {
-        _globalUniform.DirectionalLightCount = _directionalLights.size();
-        _globalUniform.PointLightCount = _pointLights.size();
         if(lightIndex < _directionalLights.size()) _globalUniform.DirectionalLights[lightIndex] = _directionalLights[lightIndex];
         if(lightIndex < _pointLights.size()) {
             _globalUniform.PointLights[lightIndex] = _pointLights[lightIndex];
@@ -332,7 +337,10 @@ void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::
 
 void Renderer::SetPointLightProperties(PointLightHandle light, std::function<void(PointLight&)> mutator)
 {   
-    mutator(_pointLights[light]);
+    _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData & data){
+        mutator(data.PointLights[light]);
+    });
+    
 }
 
 void Renderer::SetAmbientLight(glm::vec4 color)

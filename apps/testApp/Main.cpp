@@ -8,20 +8,23 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 
+#include "rte/EntryPoint.h"
+#include "RTE.h"
 #include "rte/ModelImporter.h"
+
+using namespace RTE::Rendering;
 
 int main()
 {
-    using namespace RTE::Rendering;
-    using namespace RTE::Importing;
+    CreateScene();
+    std::ostringstream stringStream;
+    stringStream << ENGINE_ASSET_DIR << "models/nested.ply";
+    std::string cubePath = stringStream.str();
+    RTE::Rendering::Mesh *quad = &RTE::Importing::ModelImporter::ImportMesh(cubePath.c_str());
+
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
-    std::ostringstream stringStream;
-    stringStream << ENGINE_ASSET_DIR << "models/cube.obj";
-    std::string cubePath = stringStream.str();
-
-    //auto quad = ModelImporter::ImportMesh(cubePath.c_str());
-    auto quad = *Primitives::MakeQuad();
+    //auto quad = Primitives::MakeQuad();
     RendererInitInfo info;
     info.Width = 800;
     info.Height = 600;
@@ -49,7 +52,7 @@ int main()
     cam.ProjectionMatrix[1][1] *= -1;
 
     auto renderer = Renderer(info);
-    auto quadhandle = renderer.UploadMesh(&quad);
+    auto quadhandle = renderer.UploadMesh(quad);
     auto texture = renderer.UploadTexture(tex);
     renderer.BindTexture(texture, quadhandle);
     
@@ -67,4 +70,5 @@ int main()
         RTE::Platform::PollEvents();
         renderer.Draw();
     }
+
 }
