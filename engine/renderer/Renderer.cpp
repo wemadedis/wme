@@ -54,6 +54,11 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     info->IndexCount = mesh->Indices.size();
     size_t bufferSize = (size_t)(sizeof(mesh->Indices[0]) * info->IndexCount);
     
+    if(bufferSize == 0)
+    {
+        throw std::invalid_argument("Renderer: Trying to create buffer with size 0");
+    }
+
     //Indices
     BufferInformation stagingBuffer = {};
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, bufferSize, stagingBuffer);
