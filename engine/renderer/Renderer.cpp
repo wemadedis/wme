@@ -207,7 +207,7 @@ Renderer::Renderer(RendererInitInfo info)
 void Renderer::Finalize()
 {
     
-    _descriptorManager->CreateDescriptorPool(_swapChain);
+    _descriptorManager->CreateDescriptorPool(_swapChain, _meshes);
     _descriptorManager->CreateDescriptorSets(_meshes, _globalUniformBuffer);
     UploadGlobalUniform();
     RecordRenderPass();
