@@ -1,2 +1,0 @@
-#include "rte/ECSEntity.h"
-

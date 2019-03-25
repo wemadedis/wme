@@ -110,8 +110,15 @@ RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, u32 vertexIndex)
     RTE::Rendering::Vertex v;
     v.pos = ConvertVector3(mesh->mVertices[vertexIndex]);
     v.normal = ConvertVector3(mesh->mNormals[vertexIndex]);
-    v.color = ConvertColor(mesh->mColors[vertexIndex]);
-    v.texCoord = ConvertTexture(mesh->mTextureCoords[vertexIndex]);
+    if(mesh->HasVertexColors(0))
+    {
+        v.color = ConvertColor(mesh->mColors[0]);
+    }
+    if(mesh->HasTextureCoords(0))
+    {
+        v.texCoord = ConvertTexture(mesh->mTextureCoords[0]);
+
+    }
     return v;
 }
 
@@ -120,6 +127,7 @@ MissingImportData ModelImporter::HandleMesh(
     aiMesh *aiMesh,
     RTE::Rendering::Transform t)
 {
+    using namespace glm;
     MissingImportData missingInfo = MissingImportData::NONE;
 
     // TODO: (danh 22/03 16:25): Use this
@@ -128,6 +136,8 @@ MissingImportData ModelImporter::HandleMesh(
     {
         RTE::Rendering::Vertex v;
         v = ConvertVertex(aiMesh, vertexIndex);
+        // TODO: (danh 25/03 09:45): Optimize¨
+        //mat4 toGlobal = rotate(scale(translate(mat4(1), t.Pos), t.Scale), eulerAngleXYZ(t.Rot));
         //glm::translate(v.pos) * glm::scaleglm::rotate
         // TODO: (danh 22/03 15:02): Convert vertex to parent global space and add to mesh
     }
