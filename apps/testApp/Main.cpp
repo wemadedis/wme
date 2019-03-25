@@ -9,6 +9,8 @@
 #include <glm/gtx/transform.hpp>
 
 #include "rte/EntryPoint.h"
+#include "RTE.h"
+#include "rte/ModelImporter.h"
 
 using namespace RTE::Rendering;
 
@@ -18,11 +20,11 @@ void Initialize()
     std::ostringstream stringStream;
     stringStream << ENGINE_ASSET_DIR << "models/nested.ply";
     std::string cubePath = stringStream.str();
+    RTE::Rendering::Mesh *quad = &RTE::Importing::ModelImporter::ImportMesh(cubePath.c_str());
 
-    RTE::Rendering::Mesh mesh = ModelImporter::ImportMesh(cubePath.c_str());
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
-    auto quad = Primitives::MakeQuad();
+    //auto quad = Primitives::MakeQuad();
     RendererInitInfo info;
     info.Width = 800;
     info.Height = 600;
@@ -68,7 +70,5 @@ void Initialize()
         RTE::Platform::PollEvents();
         renderer.Draw();
     }
-}
-
 
 }
