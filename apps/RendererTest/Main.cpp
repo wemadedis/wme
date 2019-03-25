@@ -50,14 +50,23 @@ int main()
     renderer.BindTexture(texture, quadhandle);
     
     renderer.SetCamera(cam);
-    
+
     PointLight p;
     p.Color = glm::vec4(0.5f);
-    p.Radius = 0.25f;
-    p.Position = glm::vec3(0.25f, 0.25f, -0.1f);
+    p.PositionRadius = glm::vec4(0.25f, 0.25f, -0.1f, 0.25f);
     PointLightHandle pl = renderer.AddPointLight(p);
-    //p.Position = glm::vec3(-0.25f, 0.25f, 0.0f);
-    //PointLightHandle pl2 = renderer.AddPointLight(p);
+    p.Color = glm::vec4(1.0f,0.0f,0.0f,0.0f);
+    p.PositionRadius = glm::vec4(-0.25f, -0.25f, -0.1f, 0.25f);
+    PointLightHandle pl2 = renderer.AddPointLight(p);
+
+    p.Color = glm::vec4(0.0f,1.0f,0.0f,0.0f);
+    p.PositionRadius = glm::vec4(0.25f, -0.25f, -0.1f, 0.25f);
+    PointLightHandle pl3 = renderer.AddPointLight(p);
+
+    p.Color = glm::vec4(0.0f,1.0f,1.0f,0.0f);
+    p.PositionRadius = glm::vec4(-0.25f, 0.25f, -0.1f, 0.25f);
+    PointLightHandle pl4 = renderer.AddPointLight(p);
+
 
     renderer.SetAmbientLight(glm::vec4(0.1f));
     renderer.Finalize();

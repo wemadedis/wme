@@ -185,8 +185,8 @@ void Renderer::RecreateSwapChain()
 
 void Renderer::UploadGlobalUniform()
 {
-    _globalUniform.DirectionalLightCount = _directionalLights.size();
-    _globalUniform.PointLightCount = _pointLights.size();
+    _globalUniform.LightCounts.x = _directionalLights.size();
+    _globalUniform.LightCounts.y = _pointLights.size();
     for(uint32_t lightIndex = 0; lightIndex < 10; lightIndex++)
     {
         if(lightIndex < _directionalLights.size()) _globalUniform.DirectionalLights[lightIndex] = _directionalLights[lightIndex];

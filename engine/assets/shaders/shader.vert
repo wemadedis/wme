@@ -6,14 +6,13 @@
 struct DirectionalLight
 {
 	vec4 Color;
-	vec3 Direction;
+	vec4 Direction;
 };
 
 struct PointLight
 {
     vec4 Color;
-    vec3 Position;
-	float Radius;
+    vec4 PositionRadius;
 };
 
 layout(binding = 0) uniform MeshUniformData {
@@ -26,11 +25,9 @@ layout(binding = 1) uniform GlobalUniformData
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
     vec4 AmbientColor;
+    vec4 LightCounts;
     PointLight PointLights[MAX_LIGHTS];
     DirectionalLight DirectionalLights[MAX_LIGHTS];
-    uint PointLightCount;
-    uint DirectionalLightCount;
-    
 } GlobalUniform;
 
 layout(location = 0) in vec3 inPosition;

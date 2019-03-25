@@ -36,14 +36,13 @@ const uint32_t MAX_LIGHTS = 10;
 struct DirectionalLight
 {
 	glm::vec4 Color;
-	glm::vec3 Direction;
+	glm::vec4 Direction;
 };
 
 struct PointLight
 {
 	glm::vec4 Color;
-    glm::vec3 Position;
-	float Radius;
+    glm::vec4 PositionRadius;
 };
 
 struct GlobalUniformData
@@ -51,10 +50,9 @@ struct GlobalUniformData
 	glm::mat4 ViewMatrix;
 	glm::mat4 ProjectionMatrix;
     glm::vec4 AmbientColor;
+	glm::vec4 LightCounts;
 	PointLight PointLights[MAX_LIGHTS] = {};
     DirectionalLight DirectionalLights[MAX_LIGHTS] = {};
-	uint32_t PointLightCount;
-    uint32_t DirectionalLightCount;
 };
 
 struct MeshInfo

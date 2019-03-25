@@ -6,14 +6,13 @@
 struct DirectionalLight
 {
 	vec4 Color;
-	vec3 Direction;
+	vec4 Direction;
 };
 
 struct PointLight
 {
     vec4 Color;
-    vec3 Position;
-	float Radius;
+    vec4 PositionRadius;
 };
 
 layout(binding = 1) uniform GlobalUniformData
@@ -21,10 +20,9 @@ layout(binding = 1) uniform GlobalUniformData
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
     vec4 AmbientColor;
+    vec4 LightCounts;
     PointLight PointLights[MAX_LIGHTS];
     DirectionalLight DirectionalLights[MAX_LIGHTS];
-    uint PointLightCount;
-    uint DirectionalLightCount;
 } GlobalUniform;
 
 layout(binding = 2) uniform sampler2D texSampler;
@@ -49,23 +47,24 @@ vec4 Phong(vec3 L, vec3 R)
 
 vec4 CalculatePointLightShading(PointLight light)
 {
-    vec4 lightCameraSpace = GlobalUniform.ViewMatrix * vec4(light.Position,1.0f);
+    vec4 lightCameraSpace = GlobalUniform.ViewMatrix * vec4(light.PositionRadius.xyz,1.0f);
     vec3 lightPosition = vec3(lightCameraSpace);
     vec3 direction = PositionCameraSpace - lightPosition;
     vec3 L = normalize(direction);
     vec3 R = reflect(L,N);
     float distance = length(direction);
     //if(distance > light.Radius) return Phong(L,N);
-    return Phong(L,R) * light.Color * light.Radius / (distance*distance);
+    return Phong(L,R) * light.Color * light.PositionRadius.w / (distance*distance);
 }
 
 vec4 CalculatePerLightShading()
 {
-    vec4 color = texture(texSampler, UV) * GlobalUniform.AmbientColor + CalculatePointLightShading(GlobalUniform.PointLights[0]);
-    /*for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.PointLightCount; pointLightIndex++)
+    vec4 color = texture(texSampler, UV) * GlobalUniform.AmbientColor;
+    for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
     {
+        if(pointLightIndex == 1) texture(texSampler, UV) * GlobalUniform.AmbientColor + CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex]);
         color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex]);
-    }*/
+    }
     return color;
 }
 
