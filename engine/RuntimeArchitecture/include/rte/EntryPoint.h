@@ -7,11 +7,12 @@
 
 // ENTRY POINT FOR RTE GAMES
 void Initialize();
-Scene *scene;
+// TODO: (danh) Sun 24/03 - 18:38: Hide this
+Scene scene;
+
 Scene *CreateScene()
 {
-    scene = new Scene();
-    return scene;
+    return &scene;
 }
 
 
@@ -22,7 +23,7 @@ int main(int argc, char const *argv[])
     int maxFrames = 10;
     for (int frameIndex = 0; frameIndex < maxFrames; frameIndex++)
     {
-        scene->UpdateComponents();
+        scene.UpdateComponents();
     }
 
     return 0;

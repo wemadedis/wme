@@ -20,7 +20,8 @@ void Initialize()
     std::ostringstream stringStream;
     stringStream << ENGINE_ASSET_DIR << "models/nested.ply";
     std::string cubePath = stringStream.str();
-    RTE::Rendering::Mesh *quad = &RTE::Importing::ModelImporter::ImportMesh(cubePath.c_str());
+    RTE::Rendering::Mesh cube = RTE::Importing::ModelImporter::ImportMesh(cubePath.c_str());
+    RTE::Rendering::Mesh *cubeRef = &cube;
 
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
@@ -52,17 +53,21 @@ void Initialize()
     cam.ProjectionMatrix[1][1] *= -1;
 
     auto renderer = Renderer(info);
-    auto quadhandle = renderer.UploadMesh(quad);
+    auto quadhandle = renderer.UploadMesh(cubeRef);
     auto texture = renderer.UploadTexture(tex);
     renderer.BindTexture(texture, quadhandle);
     
     renderer.SetCamera(cam);
+
     
     PointLight p;
-    p.Color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-    p.Radius = 0.25f;
-    p.Position = glm::vec3(0.25f, 0.25f, 0.0f);
+    p.Color = glm::vec4(0.5f);
+    p.PositionRadius = glm::vec4(0.25f, 0.25f, -0.1f, 0.25f);
     PointLightHandle pl = renderer.AddPointLight(p);
+    p.Color = glm::vec4(1.0f,0.0f,0.0f,0.0f);
+    p.PositionRadius = glm::vec4(-0.25f, -0.25f, -0.1f, 0.25f);
+    PointLightHandle pl2 = renderer.AddPointLight(p);
+    
     renderer.Finalize();
 
     while(!RTE::Platform::ShouldClose(window))
