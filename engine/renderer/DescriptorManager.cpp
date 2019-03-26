@@ -96,6 +96,7 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, Buf
 {
     size_t setCount = meshes.size();
     std::vector<VkDescriptorSetLayout> layouts(setCount, _layout);
+    _descriptorSets.resize(setCount);
     for (size_t i = 0; i < setCount; i++) {
         VkDescriptorSetAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
@@ -103,7 +104,7 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, Buf
         allocInfo.descriptorSetCount = 1;
         allocInfo.pSetLayouts = &layouts[i];
 
-        _descriptorSets.resize(setCount);
+
         VkResult result = vkAllocateDescriptorSets(_instance->GetDevice(), &allocInfo, &_descriptorSets[i]);
         if (result != VK_SUCCESS) {
             throw std::runtime_error("DescriptorManager: Failed to allocate descriptor sets!");
