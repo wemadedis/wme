@@ -149,20 +149,28 @@ MissingImportData ModelImporter::HandleMesh(
     using namespace glm;
     MissingImportData missingInfo = MissingImportData::NONE;
 
-    // TODO: (danh 22/03 16:25): Use this
-    //int indexToAdd = mesh->Indices.size();
+    u64 indexOffset = mesh->Indices.size();
     for (u32 vertexIndex = 0; vertexIndex < aiMesh->mNumVertices; vertexIndex++)
     {
         RTE::Rendering::Vertex v;
         v = ConvertVertex(aiMesh, vertexIndex, missingInfo);
+        mesh->Vertices.push_back(v);
         // TODO: (danh 25/03 09:45): Optimize¨
         //mat4 toGlobal = rotate(scale(translate(mat4(1), t.Pos), t.Scale), eulerAngleXYZ(t.Rot));
         //glm::translate(v.pos) * glm::scaleglm::rotate
         // TODO: (danh 22/03 15:02): Convert vertex to parent global space and add to mesh
     }
+
+
+    u32 indPerFace = aiMesh->mFaces->mNumIndices;
+    for(int i = 0; i < aiMesh->mNumFaces; i++){
+        for(int j = 0; j < indPerFace; j++){
+            mesh->Indices.push_back(aiMesh->mFaces[i].mIndices[j] + indexOffset);
+        }
+    }
+
     return missingInfo;
 }
-
 
 
 RTE::Rendering::Mesh ModelImporter::ImportMesh(const char *filename)
