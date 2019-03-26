@@ -42,7 +42,7 @@ vec4 Phong(vec3 L, vec3 R)
 {
     float diff = max(0.0f, dot(L,N));
     float spec = max(0.0f, dot(V,R));
-    return texture(texSampler, UV) * diff * spec ;
+    return texture(texSampler, UV) * diff *spec;
 }
 
 vec4 CalculatePointLightShading(PointLight light)
@@ -57,13 +57,23 @@ vec4 CalculatePointLightShading(PointLight light)
     return Phong(L,R) * light.Color * light.PositionRadius.w / (distance*distance);
 }
 
+vec4 CalculateDirectionalLightShading(DirectionalLight light)
+{
+    vec3 L = vec3(GlobalUniform.ViewMatrix * vec4(light.Direction.xyz,0.0f));
+    vec3 R = reflect(L, N);
+    return Phong(L,R) * light.Color;
+}
+
 vec4 CalculatePerLightShading()
 {
     vec4 color = texture(texSampler, UV) * GlobalUniform.AmbientColor;
     for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
     {
-        if(pointLightIndex == 1) texture(texSampler, UV) * GlobalUniform.AmbientColor + CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex]);
         color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex]);
+    }
+    for(uint directionalLightIndex = 0; directionalLightIndex < GlobalUniform.LightCounts.x; directionalLightIndex++)
+    {
+        color += CalculateDirectionalLightShading(GlobalUniform.DirectionalLights[directionalLightIndex]);
     }
     return color;
 }

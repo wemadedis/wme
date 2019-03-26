@@ -207,7 +207,7 @@ Renderer::Renderer(RendererInitInfo info)
 void Renderer::Finalize()
 {
     
-    _descriptorManager->CreateDescriptorPool(_swapChain);
+    _descriptorManager->CreateDescriptorPool(_swapChain, _meshes);
     _descriptorManager->CreateDescriptorSets(_meshes, _globalUniformBuffer);
     UploadGlobalUniform();
     RecordRenderPass();
@@ -332,7 +332,10 @@ PointLightHandle Renderer::AddPointLight(PointLight light)
 
 void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::function<void(DirectionalLight&)> mutator)
 {
-    mutator(_directionalLights[light]);
+    _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData &data){
+        mutator(data.DirectionalLights[light]);
+    });
+    
 }
 
 void Renderer::SetPointLightProperties(PointLightHandle light, std::function<void(PointLight&)> mutator)
