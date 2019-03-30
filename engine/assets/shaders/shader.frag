@@ -28,7 +28,7 @@ layout(binding = 1) uniform GlobalUniformData
 layout(binding = 2) uniform sampler2D texSampler;
 
 
-layout(location = 0) in vec3 fragColor;
+layout(location = 0) in vec4 fragColor;
 layout(location = 1) in vec3 N;
 layout(location = 2) in vec3 V;
 layout(location = 4) in vec2 UV;
@@ -42,7 +42,8 @@ vec4 Phong(vec3 L, vec3 R)
 {
     float diff = max(0.0f, dot(L,N));
     float spec = max(0.0f, dot(V,R));
-    return texture(texSampler, UV) * diff *spec;
+    bool hasTex = HasTexture != 0;
+    return hasTex ? texture(texSampler, UV) * diff *spec : fragColor * diff * spec;
 }
 
 vec4 CalculatePointLightShading(PointLight light)
@@ -66,7 +67,8 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light)
 
 vec4 CalculatePerLightShading()
 {
-    vec4 color = texture(texSampler, UV) * GlobalUniform.AmbientColor;
+    bool hasTex = HasTexture != 0;
+    vec4 color = hasTex ? texture(texSampler, UV) * GlobalUniform.AmbientColor : fragColor;
     for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
     {
         color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex]);
@@ -80,14 +82,5 @@ vec4 CalculatePerLightShading()
 
 void main() 
 {
-    if(HasTexture != 0)
-    {
-        outColor = CalculatePerLightShading();   
-    } 
-    else
-    {
-        outColor = vec4(0.0);
-    }
-    
-    
+    outColor = CalculatePerLightShading();   
 }

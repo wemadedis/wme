@@ -3,7 +3,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_ENABLE_EXPERIMENTAL
 #include "DeviceMemoryManager.h"
-
+#include "RendererHandles.h"
 namespace RTE::Rendering
 {
 
@@ -28,6 +28,7 @@ struct TextureInfo
 struct MeshUniformData
 {
 	glm::mat4 ModelMatrix;
+	glm::vec4 Color = glm::vec4(0.5, 0.5, 0.5, 1.0f);
 	bool HasTexture;
 };
 
@@ -62,6 +63,12 @@ struct MeshInfo
 	BufferInformation indexBuffer = {};
 	BufferInformation uniformBuffer = {};
 	TextureInfo *texture = nullptr;
+};
+
+struct MeshInstance
+{
+	MeshHandle mesh;
+	TextureHandle texture;
 };
 
 };

@@ -17,6 +17,7 @@ struct PointLight
 
 layout(binding = 0) uniform MeshUniformData {
     mat4 ModelMatrix;
+    vec4 Color;
     bool HasTexture;
 } MeshUniform;
 
@@ -60,6 +61,6 @@ void main() {
     HasTexture = MeshUniform.HasTexture ? 1 : 0;
     gl_Position = GlobalUniform.ProjectionMatrix * GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0);
     ComputePhongProperties();
-    fragColor = inColor;
+    fragColor = MeshUniform.Color;
     UV = texCoord;
 }

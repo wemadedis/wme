@@ -41,11 +41,6 @@ struct RendererInitInfo
     SurfaceBindingFunc BindingFunc;
 };
 
-typedef uint16_t MeshHandle;
-typedef uint16_t TextureHandle;
-typedef uint16_t DirectionalLightHandle;
-typedef uint16_t PointLightHandle;
-typedef uint16_t ShaderHandle;
 
 
 
@@ -66,6 +61,7 @@ private:
     BufferInformation _globalUniformBuffer;
     std::vector<MeshInfo*> _meshes;
     std::vector<TextureInfo> _textures;
+    std::vector<MeshInstance> _meshInstances;
     //WARNING: CURRENT STRUCTURE DOES NOT ALLOW TO REMOVE LIGHTS FROM THE LIST AS THE HANDLES CAN BECOME INVALID
     std::vector<PointLight> _pointLights;
     std::vector<DirectionalLight> _directionalLights;
@@ -74,6 +70,8 @@ private:
 	std::vector<VkSemaphore> _renderFinishedSemaphores;
 	std::vector<VkFence> _inFlightFences;
     size_t _currentFrame = 0;
+
+    TextureHandle _emptyTexture;
     
     
     void Initialize();
@@ -82,6 +80,7 @@ private:
     void CleanupSwapChain();
     void RecreateSwapChain();
     void UploadGlobalUniform();
+    void CreateEmptyTexture();
 public:
 /*
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.
@@ -96,6 +95,8 @@ void SetRenderMode(RenderMode mode);
 
 
 MeshHandle UploadMesh(Mesh* mesh);
+
+MeshInstanceHandle CreateMeshInstance(MeshHandle mesh);
 
 void ClearAllMeshData();
 

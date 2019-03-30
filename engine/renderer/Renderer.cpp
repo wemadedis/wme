@@ -45,7 +45,7 @@ void Renderer::Initialize()
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
 
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(GlobalUniformData), _globalUniformBuffer);
-    std::cout << "Global Uniform Size Bytes: " << sizeof(GlobalUniformData) << std::endl;
+    CreateEmptyTexture();
 }
 
 MeshHandle Renderer::UploadMesh(Mesh* mesh)
@@ -81,12 +81,18 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     glm::mat4 trn = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
     glm::mat4 scl = glm::scale(glm::vec3(1.0f));
     meshUniform.ModelMatrix = trn * rot * scl;
+    info->texture = &_textures[_emptyTexture];
     meshUniform.HasTexture = false;
 
     _deviceMemoryManager->CopyDataToBuffer(info->uniformBuffer, &meshUniform);
     
     _meshes.push_back(info);
     return (MeshHandle)_meshes.size()-1;
+}
+
+MeshInstanceHandle Renderer::CreateMeshInstance(MeshHandle mesh)
+{
+    return 0;
 }
 
 TextureHandle Renderer::UploadTexture(Texture &texture)
@@ -196,6 +202,16 @@ void Renderer::UploadGlobalUniform()
         }
     }
     _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
+}
+
+void Renderer::CreateEmptyTexture()
+{
+    unsigned char pixels[4] = {255,255,255,255};
+    Texture tex = {};
+    tex.Height = 1;
+    tex.Width = 1;
+    tex.Pixels = pixels;
+    _emptyTexture = UploadTexture(tex);
 }
 
 Renderer::Renderer(RendererInitInfo info)

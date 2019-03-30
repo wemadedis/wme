@@ -56,7 +56,7 @@ int main()
 
     auto texture = renderer.UploadTexture(tex);
     
-    renderer.BindTexture(texture, quadhandle);
+    //renderer.BindTexture(texture, quadhandle);
     renderer.BindTexture(texture,cylinderhandle1);
     renderer.BindTexture(texture,cylinderhandle2);
     renderer.BindTexture(texture,cylinderhandle3);
