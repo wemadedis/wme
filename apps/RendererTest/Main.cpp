@@ -49,25 +49,27 @@ int main()
 
     auto renderer = Renderer(info);
     auto quadhandle = renderer.UploadMesh(quad);
-    auto cylinderhandle1 = renderer.UploadMesh(cylinder);
-    auto cylinderhandle2 = renderer.UploadMesh(cylinder);
-    auto cylinderhandle3 = renderer.UploadMesh(cylinder);
-    auto cylinderhandle4 = renderer.UploadMesh(cylinder);
+    auto quadInstance = renderer.CreateMeshInstance(quadhandle);
+    auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
+    auto cylinderhandle1 = renderer.CreateMeshInstance(cylinderMeshHandle);
+    auto cylinderhandle2 = renderer.CreateMeshInstance(cylinderMeshHandle);
+    auto cylinderhandle3 = renderer.CreateMeshInstance(cylinderMeshHandle);
+    auto cylinderhandle4 = renderer.CreateMeshInstance(cylinderMeshHandle);
 
     auto texture = renderer.UploadTexture(tex);
     
-    //renderer.BindTexture(texture, quadhandle);
-    renderer.BindTexture(texture,cylinderhandle1);
-    renderer.BindTexture(texture,cylinderhandle2);
-    renderer.BindTexture(texture,cylinderhandle3);
-    renderer.BindTexture(texture,cylinderhandle4);
+    renderer.BindTexture(texture, quadInstance);
+    //renderer.BindTexture(texture,cylinderhandle1);
+    //renderer.BindTexture(texture,cylinderhandle2);
+    //renderer.BindTexture(texture,cylinderhandle3);
+    //renderer.BindTexture(texture,cylinderhandle4);
 
     renderer.SetMeshTransform(cylinderhandle1, glm::vec3(2.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
     renderer.SetMeshTransform(cylinderhandle2, glm::vec3(0.0f, 0.0f, 2.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
     renderer.SetMeshTransform(cylinderhandle3, glm::vec3(0.0f, 0.0f, -2.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
     renderer.SetMeshTransform(cylinderhandle4, glm::vec3(-2.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
 
-    renderer.SetMeshTransform(quadhandle, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(10.0f));
+    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(10.0f));
     renderer.SetCamera(cam);
 
     PointLight p;

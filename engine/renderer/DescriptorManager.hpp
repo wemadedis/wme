@@ -18,9 +18,9 @@ class DescriptorManager
     std::vector<VkDescriptorSet> _descriptorSets;
 public:
     DescriptorManager(Instance *instance);
-    void CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInfo*> &meshes);
+    void CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInstance> &meshes);
     void CreateDescriptorSetLayout();
-    void CreateDescriptorSets(std::vector<MeshInfo*> &meshes, BufferInformation &globalUniformData);
+    void CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData);
     VkDescriptorSetLayout GetDescriptorLayout();
     VkDescriptorPool GetDescriptorPool();
     std::vector<VkDescriptorSet> GetDescriptorSets();

@@ -11,7 +11,7 @@ DescriptorManager::DescriptorManager(Instance *instance)
     _instance = instance;
 }
 
-void DescriptorManager::CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInfo*> &meshes)
+void DescriptorManager::CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInstance> &meshes)
 {
     size_t poolsCount = meshes.size();
     _pools.resize(poolsCount);
@@ -92,9 +92,9 @@ void DescriptorManager::CreateDescriptorSetLayout()
     }
 }
 
-void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, BufferInformation &globalUniformData)
+void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData)
 {
-    size_t setCount = meshes.size();
+    size_t setCount = instances.size();
     std::vector<VkDescriptorSetLayout> layouts(setCount, _layout);
     _descriptorSets.resize(setCount);
     for (size_t i = 0; i < setCount; i++) {
@@ -112,7 +112,7 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, Buf
     
     
         VkDescriptorBufferInfo meshBuffer = {};
-        meshBuffer.buffer = meshes[i]->uniformBuffer.buffer;
+        meshBuffer.buffer = instances[i].uniformBuffer.buffer;
         meshBuffer.offset = 0;
         meshBuffer.range = sizeof(MeshUniformData);
 
@@ -124,8 +124,8 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, Buf
 
         VkDescriptorImageInfo imageInfo = {};
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        imageInfo.imageView = meshes[i]->texture->image.imageView;
-        imageInfo.sampler = meshes[i]->texture->sampler;
+        imageInfo.imageView = textures[instances[i].texture].image.imageView;
+        imageInfo.sampler = textures[instances[i].texture].sampler;
         std::array<VkWriteDescriptorSet, 3> descriptorWrites = {};
 
         descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

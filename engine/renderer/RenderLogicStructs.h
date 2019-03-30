@@ -61,14 +61,13 @@ struct MeshInfo
     uint64_t IndexCount;
 	BufferInformation vertexBuffer  = {};
 	BufferInformation indexBuffer = {};
-	BufferInformation uniformBuffer = {};
-	TextureInfo *texture = nullptr;
 };
 
 struct MeshInstance
 {
 	MeshHandle mesh;
 	TextureHandle texture;
+	BufferInformation uniformBuffer = {};
 };
 
 };
