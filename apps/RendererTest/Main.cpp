@@ -19,7 +19,7 @@ int main()
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
     auto quad = Primitives::MakeQuad();
-    auto cylinder = Primitives::MakeCylinder(0.25f, 1.0f, 32);
+    auto cylinder = Primitives::MakeCylinder(0.25f, 0.75f, 32);
     RendererInitInfo info;
     info.Width = 800;
     info.Height = 600;
@@ -42,7 +42,7 @@ int main()
         throw std::runtime_error("failed to load texture image!");
     }
     Camera cam;
-    cam.ViewMatrix = glm::lookAt(glm::vec3(0.0f, 2.0f, 10.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    cam.ViewMatrix = glm::lookAt(glm::vec3(2.5f, 2.5f, 20.0f), glm::vec3(2.5f, 2.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
 
@@ -51,6 +51,28 @@ int main()
     auto quadhandle = renderer.UploadMesh(quad);
     auto quadInstance = renderer.CreateMeshInstance(quadhandle);
     auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
+
+
+    std::vector<MeshInstanceHandle> meshes = {};
+
+    int width = 5;
+    int height = 5;
+    int depth = 5;
+
+    for(int x = 0; x < width; x++)
+    {
+        for(int y = 0; y < height; y++)
+        {
+            for(int z = 0; z < depth; z++)
+            {
+                MeshInstanceHandle mesh = renderer.CreateMeshInstance(cylinderMeshHandle);
+                renderer.SetMeshTransform(mesh, glm::vec3(x,y,z), glm::vec3(0.0f), glm::vec3(1.0f));
+                meshes.push_back(mesh);
+            }
+        }
+    }
+
+    /*
     auto cylinderhandle1 = renderer.CreateMeshInstance(cylinderMeshHandle);
     auto cylinderhandle2 = renderer.CreateMeshInstance(cylinderMeshHandle);
     auto cylinderhandle3 = renderer.CreateMeshInstance(cylinderMeshHandle);
@@ -68,7 +90,7 @@ int main()
     renderer.SetMeshTransform(cylinderhandle2, glm::vec3(0.0f, 0.0f, 2.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
     renderer.SetMeshTransform(cylinderhandle3, glm::vec3(0.0f, 0.0f, -2.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
     renderer.SetMeshTransform(cylinderhandle4, glm::vec3(-2.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-
+    */
     renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(10.0f));
     renderer.SetCamera(cam);
 
