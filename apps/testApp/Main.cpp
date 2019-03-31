@@ -20,12 +20,12 @@ void Initialize()
     std::ostringstream stringStream;
     stringStream << ENGINE_ASSET_DIR << "models/nested.ply";
     std::string cubePath = stringStream.str();
-    // RTE::Rendering::Mesh cube_raw = RTE::Importing::ModelImporter::ImportMesh(cubePath.c_str());
-    // RTE::Rendering::Mesh *quad = &cube_raw;
+    RTE::Rendering::Mesh cube_raw = RTE::Importing::ModelImporter::ImportMesh(cubePath.c_str());
+    RTE::Rendering::Mesh *quad = &cube_raw;
 
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
-    auto quad = Primitives::MakeQuad();
+    //auto quad = Primitives::MakeQuad();
     RendererInitInfo info;
     info.Width = 800;
     info.Height = 600;
@@ -58,14 +58,21 @@ void Initialize()
     auto quadInstance = renderer.CreateMeshInstance(quadhandle);
     auto texture = renderer.UploadTexture(tex);
     renderer.BindTexture(texture, quadhandle);
-    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(10.0f));
     renderer.SetCamera(cam);
 
+
+    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, -4.0f), glm::vec3(glm::radians(20.0f), 0.0f, 0.0f), glm::vec3(1.0f));
+    
     
     PointLight p;
     p.Color = glm::vec4(0.5f);
     p.PositionRadius = glm::vec4(0.25f, 0.25f, -0.1f, 0.25f);
-    PointLightHandle pl = renderer.AddPointLight(p);
+    //PointLightHandle pl = renderer.AddPointLight(p);
+
+    DirectionalLight dl;
+    dl.Color = glm::vec4(0.5f, 0, 0, 0.5);
+    dl.Direction = glm::vec4(-1, -0, 0, 0);
+    DirectionalLightHandle dlh = renderer.AddDirectionalLight(dl);
     renderer.SetAmbientLight(glm::vec4(0.5f));
     renderer.Finalize();
 
