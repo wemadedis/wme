@@ -20,8 +20,8 @@ void Initialize()
     std::ostringstream stringStream;
     stringStream << ENGINE_ASSET_DIR << "models/nested.ply";
     std::string cubePath = stringStream.str();
-    RTE::Rendering::Mesh cube_raw = RTE::Importing::ModelImporter::ImportMesh(cubePath.c_str());
-    //RTE::Rendering::Mesh *quad = &cube_raw;
+    // RTE::Rendering::Mesh cube_raw = RTE::Importing::ModelImporter::ImportMesh(cubePath.c_str());
+    // RTE::Rendering::Mesh *quad = &cube_raw;
 
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");

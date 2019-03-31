@@ -19,6 +19,7 @@ int main()
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
     auto quad = Primitives::MakeQuad();
+    auto cylinder = Primitives::MakeCylinder(0.25f, 0.75f, 32);
     RendererInitInfo info;
     info.Width = 800;
     info.Height = 600;
@@ -49,6 +50,7 @@ int main()
     auto renderer = Renderer(info);
     auto quadhandle = renderer.UploadMesh(quad);
     auto quadInstance = renderer.CreateMeshInstance(quadhandle);
+    auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
 
 
     std::vector<MeshInstanceHandle> meshes = {};
