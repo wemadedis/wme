@@ -12,6 +12,9 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+
+#include "rte/HighLevelRenderer.h"
+
 using namespace RTE::Rendering;
 
 int main()
