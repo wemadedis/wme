@@ -45,7 +45,7 @@ void Renderer::Initialize()
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
 
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(GlobalUniformData), _globalUniformBuffer);
-    std::cout << "Global Uniform Size Bytes: " << sizeof(GlobalUniformData) << std::endl;
+    CreateEmptyTexture();
 }
 
 MeshHandle Renderer::UploadMesh(Mesh* mesh)
@@ -54,6 +54,11 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     info->IndexCount = mesh->Indices.size();
     size_t bufferSize = (size_t)(sizeof(mesh->Indices[0]) * info->IndexCount);
     
+    if(bufferSize == 0)
+    {
+        throw std::invalid_argument("Renderer: Trying to create buffer with size 0");
+    }
+
     //Indices
     BufferInformation stagingBuffer = {};
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, bufferSize, stagingBuffer);
@@ -69,19 +74,29 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     _deviceMemoryManager->CopyBuffer(stagingBuffer, info->vertexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
 
     _deviceMemoryManager->DestroyBuffer(stagingBuffer);
-    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(MeshUniformData), info->uniformBuffer);
+    
+    _meshes.push_back(info);
+    return (MeshHandle)_meshes.size()-1;
+}
+
+MeshInstanceHandle Renderer::CreateMeshInstance(MeshHandle mesh)
+{
+    MeshInstance instance = {};
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(MeshUniformData), instance.uniformBuffer);
     
     MeshUniformData meshUniform = {};
     glm::mat4 rot = glm::eulerAngleXYZ(0.0f, 0.0f, 0.0f);
     glm::mat4 trn = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
     glm::mat4 scl = glm::scale(glm::vec3(1.0f));
     meshUniform.ModelMatrix = trn * rot * scl;
+    instance.texture = _emptyTexture;
+    instance.mesh = mesh;
     meshUniform.HasTexture = false;
 
-    _deviceMemoryManager->CopyDataToBuffer(info->uniformBuffer, &meshUniform);
-    
-    _meshes.push_back(info);
-    return (MeshHandle)_meshes.size()-1;
+    _deviceMemoryManager->CopyDataToBuffer(instance.uniformBuffer, &meshUniform);
+    _meshInstances.push_back(instance);
+    return (MeshInstanceHandle)_meshInstances.size()-1;
+
 }
 
 TextureHandle Renderer::UploadTexture(Texture &texture)
@@ -90,10 +105,10 @@ TextureHandle Renderer::UploadTexture(Texture &texture)
     return (TextureHandle)_textures.size()-1;
 }
 
-void Renderer::BindTexture(TextureHandle texture, MeshHandle mesh)
+void Renderer::BindTexture(TextureHandle texture, MeshInstanceHandle mesh)
 {
-    _meshes[mesh]->texture = &_textures[texture];
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshes[mesh]->uniformBuffer, [](MeshUniformData &data){
+    _meshInstances[mesh].texture = texture;
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [](MeshUniformData &data){
         data.HasTexture = true;
     });
 }
@@ -105,8 +120,8 @@ void Renderer::RecordRenderPass()
         VkCommandBuffer cmdBuffer = _commandBufferManager->GetCommandBuffer(bufferIndex);
         _renderPass->BeginRenderPass(_pipeline, cmdBuffer, _swapChain->GetFramebuffers()[bufferIndex]);
 
-        for(unsigned int meshIndex = 0; meshIndex < _meshes.size(); meshIndex++){
-            MeshInfo* mesh = _meshes[meshIndex];
+        for(unsigned int meshIndex = 0; meshIndex < _meshInstances.size(); meshIndex++){
+            MeshInfo* mesh = _meshes[_meshInstances[meshIndex].mesh];
             VkBuffer vertexBuffers[] = { mesh->vertexBuffer.buffer };
             VkDeviceSize offsets[] = { 0 };
             
@@ -180,10 +195,10 @@ void Renderer::RecreateSwapChain()
 
 void Renderer::UploadGlobalUniform()
 {
+    _globalUniform.LightCounts.x = _directionalLights.size();
+    _globalUniform.LightCounts.y = _pointLights.size();
     for(uint32_t lightIndex = 0; lightIndex < 10; lightIndex++)
     {
-        _globalUniform.DirectionalLightCount = _directionalLights.size();
-        _globalUniform.PointLightCount = _pointLights.size();
         if(lightIndex < _directionalLights.size()) _globalUniform.DirectionalLights[lightIndex] = _directionalLights[lightIndex];
         if(lightIndex < _pointLights.size()) {
             _globalUniform.PointLights[lightIndex] = _pointLights[lightIndex];
@@ -191,6 +206,16 @@ void Renderer::UploadGlobalUniform()
         }
     }
     _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
+}
+
+void Renderer::CreateEmptyTexture()
+{
+    unsigned char pixels[4] = {255,255,255,255};
+    Texture tex = {};
+    tex.Height = 1;
+    tex.Width = 1;
+    tex.Pixels = pixels;
+    _emptyTexture = UploadTexture(tex);
 }
 
 Renderer::Renderer(RendererInitInfo info)
@@ -202,8 +227,8 @@ Renderer::Renderer(RendererInitInfo info)
 void Renderer::Finalize()
 {
     
-    _descriptorManager->CreateDescriptorPool(_swapChain);
-    _descriptorManager->CreateDescriptorSets(_meshes, _globalUniformBuffer);
+    _descriptorManager->CreateDescriptorPool(_swapChain, _meshInstances);
+    _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
     UploadGlobalUniform();
     RecordRenderPass();
     CreateSyncObjects();
@@ -241,11 +266,7 @@ void Renderer::Draw()
     {
         throw std::runtime_error("failed to acquire swap chain image!");
     }
-
-    for(unsigned int meshIndex = 0; meshIndex < _meshes.size(); meshIndex++){
-        //updateUniformBuffer(meshes[meshIndex]);
-    }
-
+    
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
 
@@ -302,13 +323,13 @@ void Renderer::MarkDirty(MeshHandle mesh)
     
 }
 
-void Renderer::SetMeshTransform(MeshHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl)
+void Renderer::SetMeshTransform(MeshInstanceHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl)
 {
     glm::mat4 rotation = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
     glm::mat4 translation = glm::translate(pos);
     glm::mat4 scale = glm::scale(scl);
     auto modelMatrix = translation * rotation * scale;
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshes[mesh]->uniformBuffer, [modelMatrix](MeshUniformData &data){
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [modelMatrix](MeshUniformData &data){
         data.ModelMatrix = modelMatrix;
     });
 }
@@ -327,12 +348,18 @@ PointLightHandle Renderer::AddPointLight(PointLight light)
 
 void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::function<void(DirectionalLight&)> mutator)
 {
-    mutator(_directionalLights[light]);
+    _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData &data){
+        mutator(data.DirectionalLights[light]);
+    });
+    
 }
 
 void Renderer::SetPointLightProperties(PointLightHandle light, std::function<void(PointLight&)> mutator)
 {   
-    mutator(_pointLights[light]);
+    _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData & data){
+        mutator(data.PointLights[light]);
+    });
+    
 }
 
 void Renderer::SetAmbientLight(glm::vec4 color)

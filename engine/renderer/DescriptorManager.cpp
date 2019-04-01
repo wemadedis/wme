@@ -11,9 +11,32 @@ DescriptorManager::DescriptorManager(Instance *instance)
     _instance = instance;
 }
 
-void DescriptorManager::CreateDescriptorPool(SwapChain *swapChain)
+void DescriptorManager::CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInstance> &meshes)
 {
-    std::array<VkDescriptorPoolSize, 3> poolSizes = {};
+    size_t poolsCount = meshes.size();
+    _pools.resize(poolsCount);
+    for(uint32_t poolIndex = 0; poolIndex < poolsCount; poolIndex++)
+    {
+        std::array<VkDescriptorPoolSize, 3> poolSizes = {};
+        poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        poolSizes[0].descriptorCount = static_cast<uint32_t>(swapChain->GetSwapChainImageCount());
+        poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+        poolSizes[1].descriptorCount = static_cast<uint32_t>(swapChain->GetSwapChainImageCount());
+        poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+        poolSizes[2].descriptorCount = static_cast<uint32_t>(swapChain->GetSwapChainImageCount());
+
+        VkDescriptorPoolCreateInfo poolInfo = {};
+        poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+        poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+        poolInfo.pPoolSizes = poolSizes.data();
+        poolInfo.maxSets = static_cast<uint32_t>(swapChain->GetSwapChainImageCount());
+
+        if (vkCreateDescriptorPool(_instance->GetDevice(), &poolInfo, nullptr, &_pools[poolIndex]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("DescriptorManager: Failed to create descriptor pool!");
+        }
+    }
+    /*std::array<VkDescriptorPoolSize, 3> poolSizes = {};
     poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     poolSizes[0].descriptorCount = static_cast<uint32_t>(swapChain->GetSwapChainImageCount());
     poolSizes[1].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -29,8 +52,8 @@ void DescriptorManager::CreateDescriptorPool(SwapChain *swapChain)
 
     if (vkCreateDescriptorPool(_instance->GetDevice(), &poolInfo, nullptr, &_pool) != VK_SUCCESS)
     {
-        throw std::runtime_error("failed to create descriptor pool!");
-    }
+        throw std::runtime_error("DescriptorManager: Failed to create descriptor pool!");
+    }*/
 }
 
 void DescriptorManager::CreateDescriptorSetLayout()
@@ -65,28 +88,31 @@ void DescriptorManager::CreateDescriptorSetLayout()
 
     if (vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layout) != VK_SUCCESS)
     {
-        throw std::runtime_error("failed to create descriptor set layout!");
+        throw std::runtime_error("DescriptorManager: Failed to create descriptor set layout!");
     }
 }
 
-void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, BufferInformation &globalUniformData)
+void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData)
 {
-    size_t setCount = meshes.size();
+    size_t setCount = instances.size();
     std::vector<VkDescriptorSetLayout> layouts(setCount, _layout);
-    VkDescriptorSetAllocateInfo allocInfo = {};
-    allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
-    allocInfo.descriptorPool = _pool;
-    allocInfo.descriptorSetCount = static_cast<uint32_t>(setCount);
-    allocInfo.pSetLayouts = layouts.data();
-
     _descriptorSets.resize(setCount);
-    if (vkAllocateDescriptorSets(_instance->GetDevice(), &allocInfo, _descriptorSets.data()) != VK_SUCCESS) {
-        throw std::runtime_error("failed to allocate descriptor sets!");
-    }
-    
     for (size_t i = 0; i < setCount; i++) {
+        VkDescriptorSetAllocateInfo allocInfo = {};
+        allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+        allocInfo.descriptorPool = _pools[i];
+        allocInfo.descriptorSetCount = 1;
+        allocInfo.pSetLayouts = &layouts[i];
+
+
+        VkResult result = vkAllocateDescriptorSets(_instance->GetDevice(), &allocInfo, &_descriptorSets[i]);
+        if (result != VK_SUCCESS) {
+            throw std::runtime_error("DescriptorManager: Failed to allocate descriptor sets!");
+        }
+    
+    
         VkDescriptorBufferInfo meshBuffer = {};
-        meshBuffer.buffer = meshes[i]->uniformBuffer.buffer;
+        meshBuffer.buffer = instances[i].uniformBuffer.buffer;
         meshBuffer.offset = 0;
         meshBuffer.range = sizeof(MeshUniformData);
 
@@ -98,8 +124,8 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInfo*> &meshes, Buf
 
         VkDescriptorImageInfo imageInfo = {};
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        imageInfo.imageView = meshes[i]->texture->image.imageView;
-        imageInfo.sampler = meshes[i]->texture->sampler;
+        imageInfo.imageView = textures[instances[i].texture].image.imageView;
+        imageInfo.sampler = textures[instances[i].texture].sampler;
         std::array<VkWriteDescriptorSet, 3> descriptorWrites = {};
 
         descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
