@@ -50,7 +50,7 @@ vec4 CalculatePointLightShading(PointLight light)
 {
     vec4 lightCameraSpace = GlobalUniform.ViewMatrix * vec4(light.PositionRadius.xyz,1.0f);
     vec3 lightPosition = vec3(lightCameraSpace);
-    vec3 direction = PositionCameraSpace - lightPosition;
+    vec3 direction = lightPosition - PositionCameraSpace;
     vec3 L = normalize(direction);
     vec3 R = reflect(L,N);
     float distance = length(direction);
@@ -68,7 +68,7 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light)
 vec4 CalculatePerLightShading()
 {
     bool hasTex = HasTexture != 0;
-    vec4 color = hasTex ? texture(texSampler, UV) * GlobalUniform.AmbientColor : fragColor;
+    vec4 color = hasTex ? texture(texSampler, UV) * GlobalUniform.AmbientColor : fragColor * GlobalUniform.AmbientColor;
     for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
     {
         color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex]);
