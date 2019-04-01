@@ -36,11 +36,13 @@ set(GLFW_VULKAN_STATIC OFF CACHE BOOL "" FORCE)
 add_subdirectory(glfw)
 ###</GLFW>
 
-###<SFML>
-set(SFML_BUILD_DOC OFF)
-set(SFML_BUILD_GRAPHICS OFF)
-set(SFML_BUILD_WINDOW OFF)
-set(SFML_BUILD_NETWORK OFF)
-set(SFML_BUILD_EXAMPLES OFF)
-add_subdirectory(SFML)
-###</SFML>
+###<OpenAL>
+add_library(openal INTERFACE)
+target_include_directories(openal INTERFACE openal/include)
+target_link_libraries(openal INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/openal/libs/win64/OpenAL32.lib")
+###</OpenAL>
+
+###<OpenAL>
+# add_subdirectory(openal-soft)
+# target_include_directories(openal-soft INTERFACE openal-soft)
+###</OpenAL>

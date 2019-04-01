@@ -1,10 +1,16 @@
 #pragma once
+#define AL_Withthesource
 
-#include <SFML/Audio.hpp>
+#include <al.h>
+#include <alc.h>
+#include <string>
+#include <iostream>
 
 class AudioEmitter 
 {
     public:
     
-    void test();
-}
+    void PlaySound(const std::string& path);
+    void PlayTrack();
+
+};
