@@ -188,6 +188,7 @@ RTE::Rendering::Mesh ModelImporter::ImportMesh(const char *filename)
 
     RTE::Rendering::Mesh mesh;
     RTE::Rendering::Transform t;
+    auto a = AI_SCENE_FLAGS_INCOMPLETE;
 
     // TODO: (danh 01/04 11:24): Handle materials for children
     //mesh.Material = ConvertMaterial(scene->mMaterials[0]);
