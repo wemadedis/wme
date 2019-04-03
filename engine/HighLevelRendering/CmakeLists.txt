@@ -1,0 +1,5 @@
+add_library(HighLevelRenderer
+    HighLevelRenderer.cpp
+)
+target_include_directories(HighLevelRenderer PUBLIC include .)
+target_link_libraries(HighLevelRenderer PUBLIC rte)

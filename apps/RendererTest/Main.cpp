@@ -12,6 +12,9 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+
+#include "rte/HighLevelRenderer.h"
+
 using namespace RTE::Rendering;
 
 int main()
@@ -96,18 +99,18 @@ int main()
 
     PointLight p;
     p.Color = glm::vec4(0.5f);
-    p.PositionRadius = glm::vec4(2.5f, -0.5f, 2.5f, 3.25f);
+    p.PositionRadius = glm::vec4(2.5f, 1.5f, 2.5f, 4.25f);
     PointLightHandle pl = renderer.AddPointLight(p);
     p.Color = glm::vec4(1.0f,0.0f,0.0f,0.0f);
-    p.PositionRadius = glm::vec4(-2.5f, -0.5f, -2.5f, 2.5f);
+    p.PositionRadius = glm::vec4(-2.5f, 1.5f, -2.5f, 4.25f);
     PointLightHandle pl2 = renderer.AddPointLight(p);
 
     p.Color = glm::vec4(0.0f,1.0f,0.0f,0.0f);
-    p.PositionRadius = glm::vec4(2.5f, -0.5f, -2.5f, 3.25f);
+    p.PositionRadius = glm::vec4(2.5f, 1.5f, -2.5f, 4.25f);
     PointLightHandle pl3 = renderer.AddPointLight(p);
 
     p.Color = glm::vec4(0.0f,0.0f,1.0f,0.0f);
-    p.PositionRadius = glm::vec4(-2.5f, -0.5f, 2.5f, 3.25f);
+    p.PositionRadius = glm::vec4(-2.5f, 1.5f, 2.5f, 4.25f);
     PointLightHandle pl4 = renderer.AddPointLight(p);
 
     //Heck yes!
@@ -116,7 +119,7 @@ int main()
     dirLight.Color = glm::vec4(0.5f);
     dirLight.Direction = glm::normalize(glm::vec4(0.0f, -0.5f, 1.0f, 0.0f));
     auto dirLightHandle = renderer.AddDirectionalLight(dirLight);
-
+/*
     dirLight.Color = glm::vec4(1.0f);
     dirLight.Direction = glm::normalize(glm::vec4(0.0f, 0.5f, -1.0f, 0.0f));
     auto dirLightHandle2 = renderer.AddDirectionalLight(dirLight);
@@ -128,8 +131,9 @@ int main()
     {
         RTE::Platform::PollEvents();
         /*renderer.SetDirectionalLightProperties(dirLightHandle, [](DirectionalLight &light){
-            light.Direction = glm::rotateX(light.Direction, glm::radians(0.05f));
+            light.Direction = glm::rotateX(light.Direction, glm::radians(0.25f));
         });
+        /*
         renderer.SetDirectionalLightProperties(dirLightHandle2, [](DirectionalLight &light){
             light.Direction = glm::rotateX(light.Direction, glm::radians(0.05f));
         });*/

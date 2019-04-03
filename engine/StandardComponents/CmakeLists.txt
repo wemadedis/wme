@@ -1,0 +1,5 @@
+add_library(StandardComponents
+    MeshComponent.cpp
+)
+target_include_directories(StandardComponents PUBLIC include .)
+target_link_libraries(StandardComponents PUBLIC rte)
