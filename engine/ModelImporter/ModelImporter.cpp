@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <assimp/Importer.hpp>
 #include "rte/RenderStructs.h"
@@ -21,17 +22,18 @@ RTE::Rendering::Material ModelImporter::ConvertMaterial(aiMaterial *material)
 {
     aiColor4D diffuse;
     aiColor4D specular;
+    aiColor4D transparent;
     float shininess;
     float reflectivity;
 
     // Float for data retrieval
     if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse) &&
         AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular) &&
+        AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_TRANSPARENT, &transparent) &&
         AI_SUCCESS == aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess) &&
         AI_SUCCESS == aiGetMaterialFloat(material, AI_MATKEY_REFLECTIVITY, &reflectivity))
     {
-        using namespace RTE::Rendering;
-        Material mat;
+        RTE::Rendering::Material mat;
         mat.Diffuse = ColorAverage(diffuse);
         mat.Specular = ColorAverage(specular);
         mat.Shininess = shininess;
@@ -79,13 +81,13 @@ MissingImportData ModelImporter::HandleNode(
     // Handle all meshes in the node
     for (u32 meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++)
     {
-        missingInfo |= HandleMesh(mesh, scene->mMeshes[node->mMeshes[meshIndex]], t);
+        missingInfo |= HandleMesh(mesh, scene->mMeshes[node->mMeshes[meshIndex]], newTransform);
     }
 
     // Recursively handle child nodes
     for (u32 childIndex = 0; childIndex < node->mNumChildren; childIndex++)
     {
-        missingInfo |= HandleNode(mesh, scene, node->mChildren[childIndex], t);
+        missingInfo |= HandleNode(mesh, scene, node->mChildren[childIndex], newTransform);
     }
     return missingInfo;
 }
@@ -149,16 +151,20 @@ MissingImportData ModelImporter::HandleMesh(
     using namespace glm;
     MissingImportData missingInfo = MissingImportData::NONE;
 
+    mat4 toGlobal = translate(
+                        scale(
+                            eulerAngleXYZ(
+                                t.Rot.x, t.Rot.y, t.Rot.z
+                            ), t.Scale),
+                        t.Pos);
     u64 indexOffset = mesh->Indices.size();
     for (u32 vertexIndex = 0; vertexIndex < aiMesh->mNumVertices; vertexIndex++)
     {
         RTE::Rendering::Vertex v;
         v = ConvertVertex(aiMesh, vertexIndex, missingInfo);
+        v.pos = toGlobal * vec4(v.pos, 1);
+        v.normal = glm::normalize(toGlobal * vec4(v.normal, 0));
         mesh->Vertices.push_back(v);
-        // TODO: (danh 25/03 09:45): Optimize¨
-        //mat4 toGlobal = rotate(scale(translate(mat4(1), t.Pos), t.Scale), eulerAngleXYZ(t.Rot));
-        //glm::translate(v.pos) * glm::scaleglm::rotate
-        // TODO: (danh 22/03 15:02): Convert vertex to parent global space and add to mesh
     }
 
 
@@ -182,10 +188,10 @@ RTE::Rendering::Mesh ModelImporter::ImportMesh(const char *filename)
 
     RTE::Rendering::Mesh mesh;
     RTE::Rendering::Transform t;
-    // TODO: (danh 22/03 13:42): Add material
 
-    //mesh.Material = ConvertMaterial();
-    MissingImportData missingInfo;
+    // TODO: (danh 01/04 11:24): Handle materials for children
+    //mesh.Material = ConvertMaterial(scene->mMaterials[0]);
+    MissingImportData missingInfo = MissingImportData::NONE;
     for (u64 meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
     {
         missingInfo |= HandleMesh(&mesh, scene->mMeshes[meshIndex], t);

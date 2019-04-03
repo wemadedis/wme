@@ -121,7 +121,7 @@ struct Transform
     glm::vec3 Scale;
     glm::vec3 Rot;
 
-    Transform() : Transform(glm::vec3(0), glm::vec3(0), glm::vec3(0))
+    Transform() : Transform(glm::vec3(0), glm::vec3(1), glm::vec3(0))
     {
     }
 
