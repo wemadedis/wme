@@ -4,9 +4,10 @@
 
 #include <iostream>
 #include <vector>
-#include "stb_image.h"
+#include <stb_image.h>
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
+#include <glm/gtx/rotate_vector.hpp>
 
 #include "rte/EntryPoint.h"
 #include "RTE.h"
@@ -18,7 +19,7 @@ void Initialize()
 {
     CreateScene();
     std::ostringstream stringStream;
-    stringStream << ENGINE_ASSET_DIR << "models/nested.ply";
+    stringStream << ENGINE_ASSET_DIR << "models/dragon.ply";
     std::string cubePath = stringStream.str();
     RTE::Rendering::Mesh cube_raw = RTE::Importing::ModelImporter::ImportMesh(cubePath.c_str());
     RTE::Rendering::Mesh *quad = &cube_raw;
@@ -48,36 +49,37 @@ void Initialize()
         throw std::runtime_error("failed to load texture image!");
     }
     Camera cam;
-    cam.ViewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    cam.ViewMatrix = glm::lookAt(glm::vec3(0.0f, -40.0f, -2.0f), glm::vec3(0.0f, -10.0f, -40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
     
-
     auto renderer = Renderer(info);
     auto quadhandle = renderer.UploadMesh(quad);
     auto quadInstance = renderer.CreateMeshInstance(quadhandle);
     auto texture = renderer.UploadTexture(tex);
-    renderer.BindTexture(texture, quadhandle);
     renderer.SetCamera(cam);
 
-
-    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, -4.0f), glm::vec3(glm::radians(20.0f), 0.0f, 0.0f), glm::vec3(1.0f));
+    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, -10.0f, -40.0f), glm::vec3(glm::radians(0.0f), glm::radians(0.0f), 0.0f), glm::vec3(0.2f));
     
-    
-    PointLight p;
-    p.Color = glm::vec4(0.5f);
-    p.PositionRadius = glm::vec4(0.25f, 0.25f, -0.1f, 0.25f);
-    //PointLightHandle pl = renderer.AddPointLight(p);
-
     DirectionalLight dl;
-    dl.Color = glm::vec4(0.5f, 0, 0, 0.5);
-    dl.Direction = glm::vec4(-1, -0, 0, 0);
+    dl.Color = glm::vec4(0.5f, 0.5f, 0.5f, 1);
+    dl.Direction = glm::vec4(-2, -2,  1, 0);
     DirectionalLightHandle dlh = renderer.AddDirectionalLight(dl);
+
     renderer.SetAmbientLight(glm::vec4(0.5f));
     renderer.Finalize();
 
+    float y = 0;
+    float x = 0;
+
     while(!RTE::Platform::ShouldClose(window))
     {
+        //renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, -400.0f), glm::vec3(glm::radians(x), glm::radians(y), 0.0f), glm::vec3(1.0f));
+        /*
+        renderer.SetDirectionalLightProperties(dlh, [&](DirectionalLight &dl){
+            dl.Direction = glm::rotateX(dl.Direction, glm::radians(0.1f));
+            dl.Direction = glm::rotateY(dl.Direction, glm::radians(0.05f));
+        });*/
         RTE::Platform::PollEvents();
         renderer.Draw();
     }
