@@ -22,8 +22,8 @@ void Instance::CreateInstance(std::vector<const char*> &extensions)
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
     appInfo.pEngineName = "No Engine";
     appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.apiVersion = VK_API_VERSION_1_0;
-
+    appInfo.apiVersion = VK_API_VERSION_1_1;
+    
     VkInstanceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &appInfo;
@@ -70,7 +70,7 @@ void Instance::ChoosePhysicalDevice()
     }
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
-
+    
     for (const auto &device : devices)
     {
         if (DeviceMeetsRequirements(device))
@@ -107,15 +107,15 @@ void Instance::CreateLogicalDevice()
     VkPhysicalDeviceFeatures deviceFeatures = {};
     deviceFeatures.samplerAnisotropy = VK_TRUE;
 
+    deviceExtensions.push_back(VK_NV_RAY_TRACING_EXTENSION_NAME);
 
     VkDeviceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-
-    createInfo.pQueueCreateInfos = queueCreateInfos.data();
+    createInfo.pNext = nullptr;
+    createInfo.flags = 0;
     createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
-
+    createInfo.pQueueCreateInfos = queueCreateInfos.data();
     createInfo.pEnabledFeatures = &deviceFeatures;
-
     createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
     createInfo.ppEnabledExtensionNames = deviceExtensions.data();
 
@@ -128,8 +128,8 @@ void Instance::CreateLogicalDevice()
     {
         createInfo.enabledLayerCount = 0;
     }
-
-    if (vkCreateDevice(_physicalDevice, &createInfo, nullptr, &_device) != VK_SUCCESS)
+    VkResult result = vkCreateDevice(_physicalDevice, &createInfo, nullptr, &_device);
+    if (result != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create logical device!");
     }
@@ -169,8 +169,7 @@ Instance::Instance(std::vector<const char*> &extensions, std::function<void(VkSu
     surfaceBindingFunction(_surface, _instance);
     ChoosePhysicalDevice();
     CreateLogicalDevice();
-
-
+    
     #ifndef NDEBUG
     SetupDebugCallBack();
     #endif

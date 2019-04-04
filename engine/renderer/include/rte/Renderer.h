@@ -4,6 +4,7 @@
 #include <string>
 #include <stdexcept>
 #include <vector>
+#include <chrono>
 
 #include "RenderStructs.h"
 #include "Utilities.h"
@@ -39,6 +40,7 @@ struct RendererInitInfo
     std::vector<const char*> extensions;
     int Width, Height;
     SurfaceBindingFunc BindingFunc;
+    int MaxFPS;
 };
 
 
@@ -46,6 +48,11 @@ struct RendererInitInfo
 
 class Renderer
 {
+
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::time_point<std::chrono::steady_clock> TimePoint;
+using FpSeconds = std::chrono::duration<float, std::chrono::seconds::period>;
+
 private:
     RendererInitInfo _initInfo;
     GraphicsPipeline *_pipeline;
@@ -72,7 +79,9 @@ private:
     size_t _currentFrame = 0;
 
     TextureHandle _emptyTexture;
-    
+
+    const float _minFrameTime;
+    TimePoint _lastFrameEnd;
     
     void Initialize();
     void RecordRenderPass();

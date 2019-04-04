@@ -23,7 +23,7 @@
 namespace RTE::Rendering
 {
 
-const int MAX_FRAMES_IN_FLIGHT = 2;
+const int MAX_FRAMES_IN_FLIGHT = 1;
 
 void Renderer::Initialize()
 {
@@ -218,9 +218,10 @@ void Renderer::CreateEmptyTexture()
     _emptyTexture = UploadTexture(tex);
 }
 
-Renderer::Renderer(RendererInitInfo info)
+Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f/info.MaxFPS)
 {
     _initInfo = info;
+    _lastFrameEnd = Clock::now();
     Initialize();
 }
 
@@ -254,8 +255,15 @@ void Renderer::Draw()
     vkWaitForFences(_instance->GetDevice(), 1, &_inFlightFences[_currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
     vkResetFences(_instance->GetDevice(), 1, &_inFlightFences[_currentFrame]);
 
+    float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
+    while(time < _minFrameTime)
+    {
+        time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
+    }
+
     uint32_t imageIndex;
     VkResult result = vkAcquireNextImageKHR(_instance->GetDevice(), _swapChain->GetSwapChain(), std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphores[_currentFrame], VK_NULL_HANDLE, &imageIndex);
+
 
     if (result == VK_ERROR_OUT_OF_DATE_KHR)
     {
@@ -314,7 +322,7 @@ void Renderer::Draw()
     {
         throw std::runtime_error("failed to present swap chain image!");
     }
-
+    _lastFrameEnd = Clock::now();
     _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 

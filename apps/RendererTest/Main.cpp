@@ -2,6 +2,9 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_ENABLE_EXPERIMENTAL
 
+#define VK_PROTOTYPES
+#define VK_USE_PLATFORM_WIN32_KHR
+
 #include "rte/Renderer.h"
 #include "rte/Primitives.h"
 #include "rte/WindowManager.h"
@@ -17,8 +20,14 @@
 
 using namespace RTE::Rendering;
 
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::time_point<std::chrono::steady_clock> TimePoint;
+using FpSeconds = std::chrono::duration<float, std::chrono::seconds::period>;
+
+
 int main()
 {
+    
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
     auto quad = Primitives::MakeQuad();
@@ -27,6 +36,8 @@ int main()
     info.Width = 800;
     info.Height = 600;
     info.extensions = winMan->GetRequiredExtensions();
+    info.MaxFPS = 60;
+    //info.extensions.push_back(VK_NV_RAY_TRACING_EXTENSION_NAME);
     info.BindingFunc = [winMan](VkSurfaceKHR &surface, VkInstance instance) {
 			winMan->CreateSurface(instance, surface);
     };
@@ -45,7 +56,7 @@ int main()
         throw std::runtime_error("failed to load texture image!");
     }
     Camera cam;
-    cam.ViewMatrix = glm::lookAt(glm::vec3(2.5f, 2.5f, 20.0f), glm::vec3(2.5f, 2.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    cam.ViewMatrix = glm::lookAt(glm::vec3(2.5f, 2.5f, 10.0f), glm::vec3(2.5f, 2.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
 
@@ -126,7 +137,8 @@ int main()
 */
     renderer.SetAmbientLight(glm::vec4(0.1f));
     renderer.Finalize();
-
+    TimePoint now = Clock::now();
+    float deltaTime = 0.0f;
     while(!RTE::Platform::ShouldClose(window))
     {
         RTE::Platform::PollEvents();
@@ -137,34 +149,36 @@ int main()
         renderer.SetDirectionalLightProperties(dirLightHandle2, [](DirectionalLight &light){
             light.Direction = glm::rotateX(light.Direction, glm::radians(0.05f));
         });*/
-        renderer.SetPointLightProperties(pl, [](PointLight &light){
+        renderer.SetPointLightProperties(pl, [deltaTime](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(0.05f));
+            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
-        renderer.SetPointLightProperties(pl2, [](PointLight &light){
+        renderer.SetPointLightProperties(pl2, [deltaTime](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(0.05f));
+            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
-        renderer.SetPointLightProperties(pl3, [](PointLight &light){
+        renderer.SetPointLightProperties(pl3, [deltaTime](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(0.05f));
+            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
-        renderer.SetPointLightProperties(pl4, [](PointLight &light){
+        renderer.SetPointLightProperties(pl4, [deltaTime](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(0.05f));
+            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
         renderer.Draw();
+        deltaTime = std::chrono::duration_cast<FpSeconds>(Clock::now() - now).count();
+        now = Clock::now();
     }
 }
