@@ -100,6 +100,7 @@ struct Material
     float Specular;
     float Shininess;
     float Reflectivity;
+    float Transparency;
 
     glm::vec4 Color;
 

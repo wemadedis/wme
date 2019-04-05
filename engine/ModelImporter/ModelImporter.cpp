@@ -20,30 +20,41 @@ inline float ModelImporter::ColorAverage(aiColor4D col, float numChannels)
 
 RTE::Rendering::Material ModelImporter::ConvertMaterial(aiMaterial *material)
 {
+    RTE::Rendering::Material mat;
     aiColor4D diffuse;
     aiColor4D specular;
-    aiColor4D transparent;
+    aiColor4D transparency;
     float shininess;
     float reflectivity;
 
     // Float for data retrieval
-    if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse) &&
-        AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular) &&
-        AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_TRANSPARENT, &transparent) &&
-        AI_SUCCESS == aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess) &&
-        AI_SUCCESS == aiGetMaterialFloat(material, AI_MATKEY_REFLECTIVITY, &reflectivity))
+    if (AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_DIFFUSE, &diffuse))
     {
-        RTE::Rendering::Material mat;
         mat.Diffuse = ColorAverage(diffuse);
-        mat.Specular = ColorAverage(specular);
-        mat.Shininess = shininess;
-        mat.Reflectivity = reflectivity;
-        return mat;
     }
-    else
+
+    if(AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_SPECULAR, &specular))
     {
-        throw ImportException();
+        mat.Specular = ColorAverage(specular);
     }
+
+    if(AI_SUCCESS == aiGetMaterialColor(material, AI_MATKEY_COLOR_TRANSPARENT, &transparency))
+    {
+        mat.Transparency = ColorAverage(transparency);
+    }
+
+    if(AI_SUCCESS == aiGetMaterialFloat(material, AI_MATKEY_SHININESS, &shininess))
+    {
+        mat.Shininess = shininess;
+    }
+
+    if(AI_SUCCESS == aiGetMaterialFloat(material, AI_MATKEY_REFLECTIVITY, &reflectivity))
+    {
+        mat.Reflectivity = reflectivity;
+    }
+
+
+    return mat;
 }
 
 /**
@@ -107,12 +118,13 @@ inline glm::vec4 ConvertColor(aiColor4D *aiC)
     return glm::vec4(aiC->r, aiC->g, aiC->b, aiC->a);
 }
 
-RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, u32 vertexIndex, MissingImportData &data)
+RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, u32 vertexIndex, MissingImportData &data, glm::mat4 toGlobal)
 {
     RTE::Rendering::Vertex v;
     if (mesh->HasPositions())
     {
-        v.pos = ConvertVector3(mesh->mVertices[vertexIndex]);
+        glm::vec3 p = ConvertVector3(mesh->mVertices[vertexIndex]);
+        v.pos = toGlobal * glm::vec4(p, 1);
     }
     else
     {
@@ -122,23 +134,23 @@ RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, u32 vertexIndex, MissingImpor
 
     if(mesh->HasNormals())
     {
-        v.normal = ConvertVector3(mesh->mNormals[vertexIndex]);
+        glm::vec3 n = ConvertVector3(mesh->mNormals[vertexIndex]);
+        v.normal = glm::normalize(toGlobal * glm::vec4(n, 0));
     }
     else
     {
         data |= MissingImportData::MISSING_NORMALS;
     }
 
-    // TODO: (danh) Sun 24/03 - 18:31: Don't know if this is the right way of handling colors. Maybe a for loop?
-    // TODO: (danh) Sun 24/03 - 18:31: test
+    // ! (danh) Sun 24/03 - 18:31: Don't know if this is the right way of handling colors.
     if(mesh->HasVertexColors(0))
     {
         v.color = ConvertColor(mesh->mColors[0]);
     }
+
     if(mesh->HasTextureCoords(0))
     {
         v.texCoord = ConvertTexture(mesh->mTextureCoords[0]);
-
     }
     return v;
 }
@@ -157,20 +169,20 @@ MissingImportData ModelImporter::HandleMesh(
                                 t.Rot.x, t.Rot.y, t.Rot.z
                             ), t.Scale),
                         t.Pos);
-    u64 indexOffset = mesh->Indices.size();
     for (u32 vertexIndex = 0; vertexIndex < aiMesh->mNumVertices; vertexIndex++)
     {
         RTE::Rendering::Vertex v;
-        v = ConvertVertex(aiMesh, vertexIndex, missingInfo);
-        v.pos = toGlobal * vec4(v.pos, 1);
-        v.normal = glm::normalize(toGlobal * vec4(v.normal, 0));
+        v = ConvertVertex(aiMesh, vertexIndex, missingInfo, toGlobal);
         mesh->Vertices.push_back(v);
     }
 
 
+    u32 indexOffset = static_cast<u32>(mesh->Indices.size());
     u32 indPerFace = aiMesh->mFaces->mNumIndices;
-    for(int i = 0; i < aiMesh->mNumFaces; i++){
-        for(int j = 0; j < indPerFace; j++){
+    for(u32 i = 0; i < aiMesh->mNumFaces; i++)
+    {
+        for(u32 j = 0; j < indPerFace; j++)
+        {
             mesh->Indices.push_back(aiMesh->mFaces[i].mIndices[j] + indexOffset);
         }
     }
@@ -188,15 +200,10 @@ RTE::Rendering::Mesh ModelImporter::ImportMesh(const char *filename)
 
     RTE::Rendering::Mesh mesh;
     RTE::Rendering::Transform t;
-    auto a = AI_SCENE_FLAGS_INCOMPLETE;
 
-    // TODO: (danh 01/04 11:24): Handle materials for children
-    //mesh.Material = ConvertMaterial(scene->mMaterials[0]);
+    mesh.Material = ConvertMaterial(scene->mMaterials[0]);
+
     MissingImportData missingInfo = MissingImportData::NONE;
-    for (u64 meshIndex = 0; meshIndex < scene->mNumMeshes; meshIndex++)
-    {
-        missingInfo |= HandleMesh(&mesh, scene->mMeshes[meshIndex], t);
-    }
 
     missingInfo |= HandleNode(&mesh, scene, scene->mRootNode, t);
 

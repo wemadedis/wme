@@ -10,6 +10,26 @@
 namespace RTE::Importing
 {
 
+enum class MisssingMaterialData
+{
+    NONE = 0,
+    DIFFUSE = 1,
+    SPECULAR = 2,
+    SHININESS = 4,
+    REFLECTIVITY = 8,
+    TRANSPARENCY = 16
+};
+
+inline MisssingMaterialData operator|(MisssingMaterialData a, MisssingMaterialData b)
+{
+    return static_cast<MisssingMaterialData>(static_cast<int>(a) | static_cast<int>(b));
+}
+
+inline MisssingMaterialData operator|=(MisssingMaterialData a, MisssingMaterialData b)
+{
+    return a | b;
+}
+
 enum class MissingImportData
 {
     NONE = 0,
@@ -52,4 +72,4 @@ class ModelImporter
   public:
     static RTE::Rendering::Mesh ImportMesh(const char *filename);
 };
-} // namespace RTE::Importing
+}; // namespace RTE::Importing

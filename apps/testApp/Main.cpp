@@ -8,12 +8,14 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
+#include <GLFW/glfw3.h>
 
 #include "rte/EntryPoint.h"
 #include "RTE.h"
 #include "rte/ModelImporter.h"
 
 using namespace RTE::Rendering;
+
 
 void Initialize()
 {
@@ -26,6 +28,8 @@ void Initialize()
 
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
+
+
     //auto quad = Primitives::MakeQuad();
     RendererInitInfo info;
     info.Width = 800;
@@ -72,6 +76,8 @@ void Initialize()
     float y = 0;
     float x = 0;
 
+    float speed;
+    
     while(!RTE::Platform::ShouldClose(window))
     {
         //renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, -400.0f), glm::vec3(glm::radians(x), glm::radians(y), 0.0f), glm::vec3(1.0f));
@@ -80,6 +86,13 @@ void Initialize()
             dl.Direction = glm::rotateX(dl.Direction, glm::radians(0.1f));
             dl.Direction = glm::rotateY(dl.Direction, glm::radians(0.05f));
         });*/
+
+        int aKeyState = glfwGetKey(window->window, GLFW_KEY_A);
+        if(aKeyState == GLFW_PRESS)
+        {
+
+        }
+
         RTE::Platform::PollEvents();
         renderer.Draw();
     }
