@@ -19,11 +19,12 @@ private:
     VkQueue _graphicsQueue;
     VkQueue _presentQueue;
     VkDebugUtilsMessengerEXT _callback;
+    bool _rayTracingCapable = false;
 
     const std::vector<const char *> validationLayers = 
     { "VK_LAYER_LUNARG_standard_validation" };
 
-    std::vector<const char *> deviceExtensions = 
+    std::vector<const char *> _neededDeviceExtensions = 
     { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
     void CreateInstance(std::vector<const char*> &extensions);
@@ -35,7 +36,7 @@ private:
     
     
 public:
-    Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction); 
+    Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction, bool isRayTracing); 
     ~Instance();
     VkInstance GetInstance();
     VkDevice GetDevice();
@@ -46,6 +47,7 @@ public:
     
     VkFormat GetOptimalFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 	VkFormat GetOptimalDepthFormat();
+    bool IsRayTracingCapable();
 };
 
 };

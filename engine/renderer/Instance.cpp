@@ -48,7 +48,8 @@ bool Instance::DeviceMeetsRequirements(VkPhysicalDevice device)
     VkPhysicalDeviceFeatures supportedFeatures;
     vkGetPhysicalDeviceFeatures(device, &supportedFeatures);
     Utilities::QueueFamilyIndices indices = Utilities::FindQueueFamilies(device, _surface);
-    bool extensionsSupported = Utilities::DeviceSupportsExtensions(device, deviceExtensions);
+    bool extensionsSupported = Utilities::DeviceSupportsExtensions(device, _neededDeviceExtensions);
+
 
     bool swapChainAdequate = false;
     if (extensionsSupported)
@@ -70,16 +71,27 @@ void Instance::ChoosePhysicalDevice()
     }
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
-    
+    bool supportsRT = false;
     for (const auto &device : devices)
     {
         if (DeviceMeetsRequirements(device))
         {
             _physicalDevice = device;
-            break;
+            if(_rayTracingCapable)
+            {
+                supportsRT = Utilities::DeviceSupportsExtensions(device, {VK_NV_RAY_TRACING_EXTENSION_NAME});
+                if(supportsRT) 
+                {
+                    break;
+                }
+            } else 
+            {
+                break;
+            }
+            
         }
     }
-
+    _rayTracingCapable = supportsRT;
     if (_physicalDevice == VK_NULL_HANDLE)
     {
         throw std::runtime_error("failed to find a suitable GPU!");
@@ -107,8 +119,6 @@ void Instance::CreateLogicalDevice()
     VkPhysicalDeviceFeatures deviceFeatures = {};
     deviceFeatures.samplerAnisotropy = VK_TRUE;
 
-    deviceExtensions.push_back(VK_NV_RAY_TRACING_EXTENSION_NAME);
-
     VkDeviceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
     createInfo.pNext = nullptr;
@@ -116,8 +126,8 @@ void Instance::CreateLogicalDevice()
     createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
     createInfo.pEnabledFeatures = &deviceFeatures;
-    createInfo.enabledExtensionCount = static_cast<uint32_t>(deviceExtensions.size());
-    createInfo.ppEnabledExtensionNames = deviceExtensions.data();
+    createInfo.enabledExtensionCount = static_cast<uint32_t>(_neededDeviceExtensions.size());
+    createInfo.ppEnabledExtensionNames = _neededDeviceExtensions.data();
 
     if (enableValidationLayers)
     {
@@ -163,8 +173,12 @@ void Instance::SetupDebugCallBack()
     }
 }
 
-Instance::Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction)
+Instance::Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction, bool isRayTracing)
 {
+    if(isRayTracing)
+    {
+        _rayTracingCapable = isRayTracing;
+    }
     CreateInstance(extensions);
     surfaceBindingFunction(_surface, _instance);
     ChoosePhysicalDevice();
@@ -242,5 +256,11 @@ return GetOptimalFormat(
     VK_IMAGE_TILING_OPTIMAL,
     VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
 }
+
+bool Instance::IsRayTracingCapable()
+{
+    return _rayTracingCapable;
+}
+
 
 };

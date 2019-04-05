@@ -40,7 +40,8 @@ struct RendererInitInfo
     std::vector<const char*> extensions;
     int Width, Height;
     SurfaceBindingFunc BindingFunc;
-    int MaxFPS;
+    int MaxFPS = 60;
+    bool RayTracingOn = false;
 };
 
 
@@ -79,6 +80,8 @@ private:
     size_t _currentFrame = 0;
 
     TextureHandle _emptyTexture;
+
+    bool RTXon = false;
 
     const float _minFrameTime;
     TimePoint _lastFrameEnd;

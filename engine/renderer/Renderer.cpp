@@ -27,7 +27,8 @@ const int MAX_FRAMES_IN_FLIGHT = 1;
 
 void Renderer::Initialize()
 {
-    _instance = new Instance(_initInfo.extensions, _initInfo.BindingFunc);
+    _instance = new Instance(_initInfo.extensions, _initInfo.BindingFunc, _initInfo.RayTracingOn);
+    RTXon = _instance->IsRayTracingCapable();
     _swapChain = new SwapChain(_instance, _initInfo.Width, _initInfo.Height);
     _renderPass = new RenderPass(_instance, _swapChain);
     _descriptorManager = new DescriptorManager(_instance);

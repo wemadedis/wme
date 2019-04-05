@@ -37,7 +37,8 @@ int main()
     info.Height = 600;
     info.extensions = winMan->GetRequiredExtensions();
     info.MaxFPS = 60;
-    //info.extensions.push_back(VK_NV_RAY_TRACING_EXTENSION_NAME);
+    info.RayTracingOn = true;
+    
     info.BindingFunc = [winMan](VkSurfaceKHR &surface, VkInstance instance) {
 			winMan->CreateSurface(instance, surface);
     };
