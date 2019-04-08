@@ -169,6 +169,7 @@ MissingImportData ModelImporter::HandleMesh(
                                 t.Rot.x, t.Rot.y, t.Rot.z
                             ), t.Scale),
                         t.Pos);
+    
     for (u32 vertexIndex = 0; vertexIndex < aiMesh->mNumVertices; vertexIndex++)
     {
         RTE::Rendering::Vertex v;
@@ -179,11 +180,12 @@ MissingImportData ModelImporter::HandleMesh(
 
     u32 indexOffset = static_cast<u32>(mesh->Indices.size());
     u32 indPerFace = aiMesh->mFaces->mNumIndices;
-    for(u32 i = 0; i < aiMesh->mNumFaces; i++)
+    for(u32 faceIndex = 0; faceIndex < aiMesh->mNumFaces; faceIndex++)
     {
-        for(u32 j = 0; j < indPerFace; j++)
+        for(u32 indexIndex = 0; indexIndex < indPerFace; indexIndex++)
         {
-            mesh->Indices.push_back(aiMesh->mFaces[i].mIndices[j] + indexOffset);
+            u32 index = aiMesh->mFaces[faceIndex].mIndices[indexIndex];
+            mesh->Indices.push_back(index);
         }
     }
 
@@ -206,6 +208,7 @@ RTE::Rendering::Mesh ModelImporter::ImportMesh(const char *filename)
     MissingImportData missingInfo = MissingImportData::NONE;
 
     missingInfo |= HandleNode(&mesh, scene, scene->mRootNode, t);
+
 
     return mesh;
 }
