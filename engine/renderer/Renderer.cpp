@@ -380,6 +380,7 @@ void Renderer::SetCamera(Camera camera)
 {
     _globalUniform.ViewMatrix = camera.ViewMatrix;
     _globalUniform.ProjectionMatrix = camera.ProjectionMatrix;
+    UploadGlobalUniform();
 }
 
 void Renderer::UploadShader(Shader shader)

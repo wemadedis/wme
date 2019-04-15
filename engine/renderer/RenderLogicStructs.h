@@ -3,7 +3,7 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_ENABLE_EXPERIMENTAL
 #include "DeviceMemoryManager.h"
-#include "RendererHandles.h"
+#include "rte/RendererHandles.h"
 namespace RTE::Rendering
 {
 

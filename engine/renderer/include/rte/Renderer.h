@@ -42,6 +42,7 @@ struct RendererInitInfo
     SurfaceBindingFunc BindingFunc;
     int MaxFPS = 60;
     bool RayTracingOn = false;
+    glm::vec4 ClearColor = glm::vec4(0.0f);
 };
 
 
