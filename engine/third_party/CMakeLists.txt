@@ -42,7 +42,29 @@ target_include_directories(openal INTERFACE openal/include)
 target_link_libraries(openal INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/openal/libs/win64/OpenAL32.lib")
 ###</OpenAL>
 
-###<OpenAL>
-# add_subdirectory(openal-soft)
-# target_include_directories(openal-soft INTERFACE openal-soft)
-###</OpenAL>
+set(wave_enable_tests OFF)
+
+
+# add_subdirectory(wave)
+message(${CMAKE_CURRENT_SOURCE_DIR})
+add_library(wave
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header/data_header.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header/data_header.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header/riff_header.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header/riff_header.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header/fmt_header.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header/fmt_header.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header/wave_header.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header/wave_header.cc
+  
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header_list.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/header_list.cc
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/error.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/file.h
+  ${CMAKE_CURRENT_SOURCE_DIR}/wave/src/wave/file.cc
+)
+
+target_include_directories(wave INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/wave/src/")
+

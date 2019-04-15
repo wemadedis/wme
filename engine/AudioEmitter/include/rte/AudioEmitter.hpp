@@ -1,16 +1,19 @@
 #pragma once
-#define AL_Withthesource
 
 #include <al.h>
 #include <alc.h>
+// #include <alc
+
 #include <string>
 #include <iostream>
+#include <wave/file.h>
+// #include <file.h>
 
 class AudioEmitter 
 {
     public:
     
-    void PlaySound(const std::string& path);
+    int PlaySound(const std::string& path);
     void PlayTrack();
 
 };
