@@ -42,14 +42,15 @@ struct ImageInformation {
 
 class DeviceMemoryManager
 {
-	VmaAllocator *alloc = nullptr;
-	VkBuffer b;
-	VmaAllocation Alloc;
-	std::map<VkBuffer, VmaAllocation> buffers;
-	std::map<VkImage, VmaAllocation> images;
+	VmaAllocator *_allocator = nullptr;
+	std::map<VkBuffer, VmaAllocation> _buffers;
+	std::map<VkImage, VmaAllocation> _images;
+	std::map<VkAccelerationStructureNV, VkDeviceMemory> _accelerationStructures;
 	Instance* _instance;
 	CommandBufferManager *_cmdbManager;
+	VkPhysicalDeviceMemoryProperties _physicalDeviceMemoryProperties;
 public:
+
 	/*
 	Initialize the allocator. Required before calling any other DeviceMemoryManager function.
 	*/
@@ -70,11 +71,11 @@ public:
 	void ModifyBufferData(BufferInformation& bufferInfo, std::function<void(T&)> Mutator)
 	{
 		void *mapping = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
-		VmaAllocation& allocation = buffers[bufferInfo.buffer];
-		vmaMapMemory(*alloc, allocation, &mapping);
+		VmaAllocation& allocation = _buffers[bufferInfo.buffer];
+		vmaMapMemory(*_allocator, allocation, &mapping);
 		T* before = (T*)mapping;
 		Mutator(*before);
-		vmaUnmapMemory(*alloc, allocation);
+		vmaUnmapMemory(*_allocator, allocation);
 	}
 
 	/*
@@ -98,6 +99,11 @@ public:
 	void CopyBufferToImage(BufferInformation &srcBuffer, ImageInformation &dstImage, uint32_t width, uint32_t height, VkCommandBuffer &commandBuffer);
 
 	void DestroyImage(ImageInformation& imageInfo);
+
+	uint32_t GetMemoryType(VkMemoryRequirements& memoryRequiriments, VkMemoryPropertyFlags memoryProperties);
+
+	void AllocateAccelerationStructureMemory(VkAccelerationStructureNV& AS);
+
 	/*
 	Returns a pointer to a char array describing the current state of memory in JSON format.
 	*/

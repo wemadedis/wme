@@ -10,6 +10,7 @@ add_library(renderer
     ImageManager.cpp 
     DescriptorManager.cpp
     Primitives.cpp
+    AccelerationStructureRT.cpp
 )
 target_include_directories(renderer PUBLIC include .)
 target_link_libraries(renderer PUBLIC rte)

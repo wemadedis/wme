@@ -17,6 +17,9 @@
 #include "ImageManager.hpp"
 #include "DescriptorManager.hpp"
 
+//RT
+#include "AccelerationStructureRT.h"
+
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
 #else
@@ -44,8 +47,6 @@ struct RendererInitInfo
     bool RayTracingOn = false;
     glm::vec4 ClearColor = glm::vec4(0.0f);
 };
-
-
 
 
 class Renderer
@@ -82,7 +83,9 @@ private:
 
     TextureHandle _emptyTexture;
 
+
     bool RTXon = false;
+    AccelerationStructure *_accelerationStructure;
 
     const float _minFrameTime;
     TimePoint _lastFrameEnd;

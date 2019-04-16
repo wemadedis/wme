@@ -16,6 +16,7 @@
 #include "RenderLogicStructs.h"
 
 #include "Instance.hpp"
+#include "RTUtilities.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -29,6 +30,7 @@ void Renderer::Initialize()
 {
     _instance = new Instance(_initInfo.extensions, _initInfo.BindingFunc, _initInfo.RayTracingOn);
     RTXon = _instance->IsRayTracingCapable();
+    
     _swapChain = new SwapChain(_instance, _initInfo.Width, _initInfo.Height);
     _renderPass = new RenderPass(_instance, _swapChain);
     _descriptorManager = new DescriptorManager(_instance);
@@ -43,6 +45,13 @@ void Renderer::Initialize()
     _deviceMemoryManager = new DeviceMemoryManager(_instance, _commandBufferManager);
     _imageManager = new ImageManager(_instance, _commandBufferManager, _deviceMemoryManager);
     
+    if(RTXon)
+    {
+        VkDevice device = _instance->GetDevice();
+        RTUtilities::GetInstance(&device);
+        _accelerationStructure = new AccelerationStructure(_instance, _deviceMemoryManager);
+    }
+
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
 
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(GlobalUniformData), _globalUniformBuffer);
@@ -365,6 +374,7 @@ void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::
 
 void Renderer::SetPointLightProperties(PointLightHandle light, std::function<void(PointLight&)> mutator)
 {   
+    mutator(_pointLights[light]);
     _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData & data){
         mutator(data.PointLights[light]);
     });

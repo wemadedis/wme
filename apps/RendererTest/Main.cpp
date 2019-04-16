@@ -38,7 +38,7 @@ int main()
     info.Width = 800;
     info.Height = 600;
     info.extensions = winMan->GetRequiredExtensions();
-    info.MaxFPS = 60;
+    info.MaxFPS = 144;
     info.RayTracingOn = true;
     
     info.BindingFunc = [winMan](VkSurfaceKHR &surface, VkInstance instance) {
@@ -132,12 +132,11 @@ int main()
         {
             pos = glm::rotateY(pos, glm::radians(-25.0f)*deltaTime);
             cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            renderer.SetCamera(cam);
         } else if(RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
         {
             pos = glm::rotateY(pos, glm::radians(25.0f)*deltaTime);
             cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            renderer.SetCamera(cam);
+            
         }
         
         renderer.SetPointLightProperties(pl, [deltaTime](PointLight &light){
@@ -168,6 +167,7 @@ int main()
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
+        renderer.SetCamera(cam);
         renderer.Draw();
         deltaTime = std::chrono::duration_cast<FpSeconds>(Clock::now() - now).count();
         now = Clock::now();
