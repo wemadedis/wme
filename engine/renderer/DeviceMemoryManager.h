@@ -73,7 +73,7 @@ public:
 		void *mapping = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
 		VmaAllocation& allocation = _buffers[bufferInfo.buffer];
 		vmaMapMemory(*_allocator, allocation, &mapping);
-		T* before = (T*)mapping;
+		T* before = reinterpret_cast<T*>(mapping);
 		Mutator(*before);
 		vmaUnmapMemory(*_allocator, allocation);
 	}

@@ -88,7 +88,9 @@ private:
 
 
     bool RTXon = false;
+    VkPhysicalDeviceRayTracingPropertiesNV _rtProperties = {};
     AccelerationStructure *_accelerationStructure;
+    BufferInformation _shaderBindingTable;
 
     const float _minFrameTime;
     TimePoint _lastFrameEnd;
@@ -100,6 +102,10 @@ private:
     void RecreateSwapChain();
     void UploadGlobalUniform();
     void CreateEmptyTexture();
+
+    void InitRT();
+    void CreateShaderBindingTable();
+
 public:
 /*
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.

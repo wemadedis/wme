@@ -42,8 +42,7 @@ void Renderer::Initialize()
     
     if(RTXon)
     {
-        VkDevice device = _instance->GetDevice();
-        RTUtilities::GetInstance(&device);
+        InitRT();
     }
     
     _pipeline = new GraphicsPipeline(   rayGen, 
@@ -51,6 +50,7 @@ void Renderer::Initialize()
                                         _descriptorManager, 
                                         _instance, 
                                         _renderPass);
+    //COMMENT THIS OUT
     delete _pipeline;
     _pipeline = new GraphicsPipeline(   vertexShader, 
                                         fragmentShader, 
@@ -65,6 +65,8 @@ void Renderer::Initialize()
     if(RTXon)
     {
         _accelerationStructure = new AccelerationStructure(_instance, _deviceMemoryManager, _commandBufferManager);
+        //UNCOMMENT THIS
+        //CreateShaderBindingTable();
     }
 
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
@@ -245,6 +247,37 @@ void Renderer::CreateEmptyTexture()
     tex.Width = 1;
     tex.Pixels = pixels;
     _emptyTexture = UploadTexture(tex);
+}
+
+void Renderer::InitRT()
+{
+    VkDevice device = _instance->GetDevice();
+    RTUtilities::GetInstance(&device);
+    
+    _rtProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_NV;
+    _rtProperties.pNext = nullptr;
+    _rtProperties.maxRecursionDepth = 0;
+    _rtProperties.shaderGroupHandleSize = 0;
+    
+    VkPhysicalDeviceProperties2 props;
+    props.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+    props.pNext = &_rtProperties;
+    props.properties = { };
+
+    vkGetPhysicalDeviceProperties2(_instance->GetPhysicalDevice(), &props);
+}
+
+void Renderer::CreateShaderBindingTable()
+{
+    const uint32_t groupNum = 1; // 1 group is listed in pGroupNumbers in VkRayTracingPipelineCreateInfoNV
+    const uint32_t shaderBindingTableSize = _rtProperties.shaderGroupHandleSize * groupNum;
+
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, shaderBindingTableSize, _shaderBindingTable);
+    
+    _deviceMemoryManager->ModifyBufferData<void*>(_shaderBindingTable, [&](void* data){
+        VkResult code = RTUtilities::GetInstance()->vkGetRayTracingShaderGroupHandlesNV(_instance->GetDevice(), _pipeline->GetHandle(), 0, groupNum, shaderBindingTableSize, data);
+        Utilities::CheckVkResult(code, "Failed to get RT shader group handles!");
+    });
 }
 
 Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f/info.MaxFPS)
