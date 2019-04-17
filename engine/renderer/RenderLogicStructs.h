@@ -4,8 +4,16 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include "DeviceMemoryManager.h"
 #include "rte/RendererHandles.h"
+#include "rte/RenderStructs.h"
+
 namespace RTE::Rendering
 {
+
+struct ShaderInfo
+{
+	ShaderType Type;
+	VkShaderModule Module;
+};
 
 struct ImageInfo
 {

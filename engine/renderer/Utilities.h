@@ -8,8 +8,17 @@
 #include <sstream>
 
 
-namespace RTE::Rendering::Utilities
+
+
+namespace RTE::Rendering 
 {
+//Must be forward declared (including renderlogicstructs will introduce a circular dependency)
+struct ShaderInfo;
+
+namespace Utilities
+{
+
+
 //MODIFY THIS!
 struct QueueFamilyIndices
 {
@@ -33,6 +42,9 @@ struct SwapChainSupportDetails
 std::vector<char> ReadFile(const std::string &filePath);
 std::vector<char> ReadEngineAsset(const char* filePath);
 VkShaderModule CreateShaderModule(const std::vector<char> &code, VkDevice device);
+ShaderInfo GetStandardVertexShader(VkDevice device);
+ShaderInfo GetStandardFragmentShader(VkDevice device);
+
 
 bool HasStencilComponent(VkFormat format);
 
@@ -40,4 +52,6 @@ QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surfa
 bool DeviceSupportsExtensions(VkPhysicalDevice device, std::vector<const char*> extensions);
 VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugUtilsMessengerEXT *pCallback);
 void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks *pAllocator);
+void CheckVkResult(VkResult code, const char* errorMessage);
+};
 };

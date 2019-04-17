@@ -69,6 +69,9 @@ private:
 
     GlobalUniformData _globalUniform;
     BufferInformation _globalUniformBuffer;
+
+    std::vector<ShaderInfo> _shaders;
+
     std::vector<MeshInfo*> _meshes;
     std::vector<TextureInfo> _textures;
     std::vector<MeshInstance> _meshInstances;
@@ -154,7 +157,7 @@ void SetAmbientLight(glm::vec4 color);
 
 void SetCamera(Camera camera);
 
-void UploadShader(Shader shader);
+ShaderHandle UploadShader(Shader shader);
 
 };
 

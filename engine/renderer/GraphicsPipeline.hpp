@@ -1,6 +1,7 @@
 #pragma once
 #include <vulkan/vulkan.h>
 #include "Renderpass.hpp"
+#include "DescriptorManager.hpp"
 
 namespace RTE::Rendering
 {
@@ -10,14 +11,14 @@ class GraphicsPipeline
     
 private:
     VkExtent2D _swapChainExtent;
-    VkDescriptorSetLayout _descriptorSetLayout;
-    VkDevice _device;
+    DescriptorManager *_descriptorManager;
+    Instance *_instance;
     RenderPass* _renderPass;
     VkPipelineLayout _pipelineLayout;
     VkPipeline _pipeline;
 
-    VkPipelineShaderStageCreateInfo GetVertexShaderStageInfo(VkShaderModule vertexModule);
-    VkPipelineShaderStageCreateInfo GetFragmentShaderStageInfo(VkShaderModule fragmentModule);
+
+    VkPipelineShaderStageCreateInfo GetPipelineStageInfo(VkShaderStageFlagBits stage, ShaderInfo shader);
     VkPipelineVertexInputStateCreateInfo GetVertexInputInfo(VkVertexInputBindingDescription &binding, VkVertexInputAttributeDescription *attribute, uint32_t attributeDescriptionCount);
     VkPipelineInputAssemblyStateCreateInfo GetInputAssemblyCreateInfo();
     VkPipelineDepthStencilStateCreateInfo GetDepthStencilCreateInfo();
@@ -29,9 +30,12 @@ private:
     VkPipelineColorBlendAttachmentState GetColorBlendAttachment();
     VkPipelineColorBlendStateCreateInfo GetColorBlendCreateInfo(VkPipelineColorBlendAttachmentState &colorBlendAttachment);
     void CreatePipelineLayout();
-    void CreatePipeline(VkShaderModule vertexShaderModule, VkShaderModule fragmentShaderModule); //Worth it? Would have too many parameters.
+    void CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader);
+
+    
+    void CreatePipelineRT(ShaderInfo rayGenerationShader);
 public:
-    GraphicsPipeline(const char* vertexShaderPath, const char* fragShaderPath, VkExtent2D swapChainExtent, VkDescriptorSetLayout layout, VkDevice device, RenderPass* renderPass);
+    GraphicsPipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader, VkExtent2D swapChainExtent, DescriptorManager *descriptorManager, Instance *instance, RenderPass* renderPass);
     ~GraphicsPipeline();
     VkPipeline GetHandle();
     VkPipelineLayout GetLayout();

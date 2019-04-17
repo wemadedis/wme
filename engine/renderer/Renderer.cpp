@@ -35,11 +35,15 @@ void Renderer::Initialize()
     _renderPass = new RenderPass(_instance, _swapChain);
     _descriptorManager = new DescriptorManager(_instance);
     _descriptorManager->CreateDescriptorSetLayout();
-    _pipeline = new GraphicsPipeline(   "shaders/vert.spv", 
-                                        "shaders/frag.spv", 
+
+    auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
+    auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
+
+    _pipeline = new GraphicsPipeline(   vertexShader, 
+                                        fragmentShader, 
                                         _swapChain->GetSwapChainExtent(), 
-                                        _descriptorManager->GetDescriptorLayout(), 
-                                        _instance->GetDevice(), 
+                                        _descriptorManager, 
+                                        _instance, 
                                         _renderPass);
     _commandBufferManager = new CommandBufferManager(_instance, (uint32_t)_swapChain->GetSwapChainImageCount());
     _deviceMemoryManager = new DeviceMemoryManager(_instance, _commandBufferManager);
@@ -194,11 +198,15 @@ void Renderer::RecreateSwapChain()
     _commandBufferManager->AllocateCommandBuffers();
     _swapChain = new SwapChain(_instance, width, height);
     _renderPass = new RenderPass(_instance, _swapChain);
-    _pipeline = new GraphicsPipeline(   "shaders/vert.spv", 
-                                        "shaders/frag.spv", 
+    auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
+    auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
+
+    _pipeline = new GraphicsPipeline(   vertexShader, 
+                                        fragmentShader,
                                         _swapChain->GetSwapChainExtent(), 
-                                        _descriptorManager->GetDescriptorLayout()
-                                        , _instance->GetDevice(), _renderPass);
+                                        _descriptorManager,
+                                        _instance, 
+                                        _renderPass);
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
     RecordRenderPass();
 }
@@ -393,9 +401,13 @@ void Renderer::SetCamera(Camera camera)
     UploadGlobalUniform();
 }
 
-void Renderer::UploadShader(Shader shader)
+ShaderHandle Renderer::UploadShader(Shader shader)
 {
-    
+    ShaderInfo info = {};
+    info.Type = shader.Type;
+    info.Module = Utilities::CreateShaderModule(Utilities::ReadEngineAsset(shader.FilePath), _instance->GetDevice());
+    _shaders.push_back(info);
+    return (ShaderHandle)_shaders.size()-1;
 }
 
 

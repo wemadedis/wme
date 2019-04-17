@@ -1,27 +1,18 @@
 #include "GraphicsPipeline.hpp"
 #include "Utilities.h"
 #include "include/rte/RenderStructs.h"
+#include "RTUtilities.h"
 namespace RTE::Rendering
 {
 
-VkPipelineShaderStageCreateInfo GraphicsPipeline::GetVertexShaderStageInfo(VkShaderModule vertexModule)
+VkPipelineShaderStageCreateInfo GraphicsPipeline::GetPipelineStageInfo(VkShaderStageFlagBits stage, ShaderInfo shader)
 {
-    VkPipelineShaderStageCreateInfo vertShaderStageInfo = {};
-    vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    vertShaderStageInfo.stage = VK_SHADER_STAGE_VERTEX_BIT;
-    vertShaderStageInfo.module = vertexModule;
-    vertShaderStageInfo.pName = "main";
-    return vertShaderStageInfo;
-}
-
-VkPipelineShaderStageCreateInfo GraphicsPipeline::GetFragmentShaderStageInfo(VkShaderModule fragmentModule)
-{
-    VkPipelineShaderStageCreateInfo fragShaderStageInfo = {};
-    fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
-    fragShaderStageInfo.stage = VK_SHADER_STAGE_FRAGMENT_BIT;
-    fragShaderStageInfo.module = fragmentModule;
-    fragShaderStageInfo.pName = "main";
-    return fragShaderStageInfo;
+    VkPipelineShaderStageCreateInfo stageInfo = {};
+    stageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
+    stageInfo.stage = stage;
+    stageInfo.module = shader.Module;
+    stageInfo.pName = "main";
+    return stageInfo;
 }
 
 VkPipelineVertexInputStateCreateInfo GraphicsPipeline::GetVertexInputInfo(VkVertexInputBindingDescription &binding, VkVertexInputAttributeDescription *attribute, uint32_t attributeDescriptionCount)
@@ -156,20 +147,20 @@ void GraphicsPipeline::CreatePipelineLayout()
     VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = 1;				   // Optional
-    pipelineLayoutInfo.pSetLayouts = &_descriptorSetLayout; // Optional
+    pipelineLayoutInfo.pSetLayouts = _descriptorManager->GetDescriptorLayout(); // Optional
     pipelineLayoutInfo.pushConstantRangeCount = 0;		   // Optional
     pipelineLayoutInfo.pPushConstantRanges = nullptr;	  // Optional
 
-    if (vkCreatePipelineLayout(_device, &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
+    if (vkCreatePipelineLayout(_instance->GetDevice(), &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create pipeline layout!");
     }
 }
 
-void GraphicsPipeline::CreatePipeline(VkShaderModule vertexShaderModule, VkShaderModule fragmentShaderModule)
+void GraphicsPipeline::CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader)
 {
-    VkPipelineShaderStageCreateInfo vShaderStageInfo = GetVertexShaderStageInfo(vertexShaderModule);
-    VkPipelineShaderStageCreateInfo fShaderStageInfo = GetFragmentShaderStageInfo(fragmentShaderModule);
+    VkPipelineShaderStageCreateInfo vShaderStageInfo = GetPipelineStageInfo(VK_SHADER_STAGE_VERTEX_BIT, vertexShader);
+    VkPipelineShaderStageCreateInfo fShaderStageInfo = GetPipelineStageInfo(VK_SHADER_STAGE_FRAGMENT_BIT, fragmentShader);
     
     VkPipelineShaderStageCreateInfo shaderStages[] = {vShaderStageInfo, fShaderStageInfo};
     auto vAttDesc = Vertex::getAttributeDescriptions();
@@ -207,7 +198,7 @@ void GraphicsPipeline::CreatePipeline(VkShaderModule vertexShaderModule, VkShade
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
     pipelineInfo.basePipelineIndex = -1;			  // Optional
 
-    if (vkCreateGraphicsPipelines(_device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline) != VK_SUCCESS)
+    if (vkCreateGraphicsPipelines(_instance->GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create graphics pipeline!");
     }
@@ -218,30 +209,69 @@ void GraphicsPipeline::CreatePipeline(VkShaderModule vertexShaderModule, VkShade
 
 }
 
-GraphicsPipeline::GraphicsPipeline( const char*  vertexShaderPath, 
-                                    const char* fragShaderPath, 
+
+void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGenerationShader)
+{
+    std::vector<VkPipelineShaderStageCreateInfo> shaderStages(
+    {
+        GetPipelineStageInfo(VK_SHADER_STAGE_RAYGEN_BIT_NV, rayGenerationShader)
+    });
+
+    VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
+    pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
+    pipelineLayoutCreateInfo.pNext = nullptr;
+    pipelineLayoutCreateInfo.flags = 0;
+    pipelineLayoutCreateInfo.setLayoutCount = 1;
+    pipelineLayoutCreateInfo.pSetLayouts = _descriptorManager->GetDescriptorLayoutRT();
+    pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
+    pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
+
+    VkResult code = vkCreatePipelineLayout(_instance->GetDevice(), &pipelineLayoutCreateInfo, nullptr, &_pipelineLayout);
+    Utilities::CheckVkResult(code, "Failed to create RT pipeline layout!");
+
+    std::vector<VkRayTracingShaderGroupCreateInfoNV> shaderGroups({
+        // group0 = [ raygen ]
+        { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV,
+        0, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV }
+    });
+
+    VkRayTracingPipelineCreateInfoNV rayPipelineInfo;
+    rayPipelineInfo.sType = VK_STRUCTURE_TYPE_RAY_TRACING_PIPELINE_CREATE_INFO_NV;
+    rayPipelineInfo.pNext = nullptr;
+    rayPipelineInfo.flags = 0;
+    rayPipelineInfo.stageCount = (uint32_t)shaderStages.size();
+    rayPipelineInfo.pStages = shaderStages.data();
+    rayPipelineInfo.groupCount = (uint32_t)shaderGroups.size();
+    rayPipelineInfo.pGroups = shaderGroups.data();
+    rayPipelineInfo.maxRecursionDepth = 1;
+    rayPipelineInfo.layout = _pipelineLayout;
+    rayPipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
+    rayPipelineInfo.basePipelineIndex = 0;
+
+    code = RTUtilities::GetInstance()->vkCreateRayTracingPipelinesNV(_instance->GetDevice(), nullptr, 1, &rayPipelineInfo, nullptr, &_pipeline);
+    Utilities::CheckVkResult(code, "Failed to create RT pipeline!");
+
+}
+
+GraphicsPipeline::GraphicsPipeline( ShaderInfo vertexShader, 
+                                    ShaderInfo fragmentShader,
                                     VkExtent2D swapChainExtent, 
-                                    VkDescriptorSetLayout layout, 
-                                    VkDevice device, 
+                                    DescriptorManager *descriptorManager, 
+                                    Instance *instance, 
                                     RenderPass* renderPass) 
 {
     _swapChainExtent = swapChainExtent;
-    _descriptorSetLayout = layout;
-    _device = device;
+    _descriptorManager = descriptorManager;
+    _instance = instance;
     _renderPass = renderPass;
 
-    VkShaderModule vertexShaderModule = Utilities::CreateShaderModule(Utilities::ReadEngineAsset(vertexShaderPath), device);
-    VkShaderModule fragShaderModule = Utilities::CreateShaderModule(Utilities::ReadEngineAsset(fragShaderPath), device);
-
-    CreatePipeline(vertexShaderModule, fragShaderModule);
-    vkDestroyShaderModule(device, vertexShaderModule, nullptr);
-    vkDestroyShaderModule(device, fragShaderModule, nullptr);
+    CreatePipeline(vertexShader, fragmentShader);
 }
 
 GraphicsPipeline::~GraphicsPipeline()
 {
-    vkDestroyPipeline(_device, _pipeline, nullptr);
-    vkDestroyPipelineLayout(_device, _pipelineLayout, nullptr);
+    vkDestroyPipeline(_instance->GetDevice(), _pipeline, nullptr);
+    vkDestroyPipelineLayout(_instance->GetDevice(), _pipelineLayout, nullptr);
 }
 
 VkPipeline GraphicsPipeline::GetHandle()
