@@ -52,8 +52,7 @@ public:
         static RTUtilities *_instance = nullptr;
         if(device == nullptr && _instance == nullptr)
         {
-            //TODO: Throw some proper exception
-            throw "U done goofd";
+            throw RTEException("Cannot create a RTUtilities instance!");
         }
         if(_instance == nullptr)
         {

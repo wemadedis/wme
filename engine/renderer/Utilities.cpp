@@ -77,6 +77,11 @@ ShaderInfo GetStandardFragmentShader(VkDevice device)
     return {ShaderType::FRAGMENT, CreateShaderModule(ReadEngineAsset("shaders/frag.spv"), device)};
 }
 
+ShaderInfo GetStandardRayGenShader(VkDevice device)
+{
+    return {ShaderType::RAYGEN, CreateShaderModule(ReadEngineAsset("shaders/rgen.spv"), device)};
+}
+
 bool HasStencilComponent(VkFormat format) {
     	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 }

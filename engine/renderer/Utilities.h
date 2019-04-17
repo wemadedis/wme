@@ -44,6 +44,7 @@ std::vector<char> ReadEngineAsset(const char* filePath);
 VkShaderModule CreateShaderModule(const std::vector<char> &code, VkDevice device);
 ShaderInfo GetStandardVertexShader(VkDevice device);
 ShaderInfo GetStandardFragmentShader(VkDevice device);
+ShaderInfo GetStandardRayGenShader(VkDevice device);
 
 
 bool HasStencilComponent(VkFormat format);

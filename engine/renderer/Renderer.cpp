@@ -35,10 +35,23 @@ void Renderer::Initialize()
     _renderPass = new RenderPass(_instance, _swapChain);
     _descriptorManager = new DescriptorManager(_instance);
     _descriptorManager->CreateDescriptorSetLayout();
-
+    _descriptorManager->CreateDescriptorSetLayoutRT();
     auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
     auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
-
+    auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
+    
+    if(RTXon)
+    {
+        VkDevice device = _instance->GetDevice();
+        RTUtilities::GetInstance(&device);
+    }
+    
+    _pipeline = new GraphicsPipeline(   rayGen, 
+                                        _swapChain->GetSwapChainExtent(), 
+                                        _descriptorManager, 
+                                        _instance, 
+                                        _renderPass);
+    delete _pipeline;
     _pipeline = new GraphicsPipeline(   vertexShader, 
                                         fragmentShader, 
                                         _swapChain->GetSwapChainExtent(), 
@@ -51,8 +64,6 @@ void Renderer::Initialize()
     
     if(RTXon)
     {
-        VkDevice device = _instance->GetDevice();
-        RTUtilities::GetInstance(&device);
         _accelerationStructure = new AccelerationStructure(_instance, _deviceMemoryManager, _commandBufferManager);
     }
 

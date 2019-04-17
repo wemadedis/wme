@@ -268,6 +268,20 @@ GraphicsPipeline::GraphicsPipeline( ShaderInfo vertexShader,
     CreatePipeline(vertexShader, fragmentShader);
 }
 
+GraphicsPipeline::GraphicsPipeline( ShaderInfo rayGen, 
+                                    VkExtent2D swapChainExtent, 
+                                    DescriptorManager *descriptorManager, 
+                                    Instance *instance, 
+                                    RenderPass* renderPass)
+{
+    _swapChainExtent = swapChainExtent;
+    _descriptorManager = descriptorManager;
+    _instance = instance;
+    _renderPass = renderPass;
+
+    CreatePipelineRT(rayGen);
+}
+
 GraphicsPipeline::~GraphicsPipeline()
 {
     vkDestroyPipeline(_instance->GetDevice(), _pipeline, nullptr);
