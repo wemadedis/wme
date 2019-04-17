@@ -49,7 +49,7 @@ void Renderer::Initialize()
     {
         VkDevice device = _instance->GetDevice();
         RTUtilities::GetInstance(&device);
-        _accelerationStructure = new AccelerationStructure(_instance, _deviceMemoryManager);
+        _accelerationStructure = new AccelerationStructure(_instance, _deviceMemoryManager, _commandBufferManager);
     }
 
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);

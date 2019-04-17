@@ -102,7 +102,9 @@ public:
 
 	uint32_t GetMemoryType(VkMemoryRequirements& memoryRequiriments, VkMemoryPropertyFlags memoryProperties);
 
-	void AllocateAccelerationStructureMemory(VkAccelerationStructureNV& AS);
+	void AllocateAccelerationStructureMemory(VkAccelerationStructureNV &AS);
+
+	void CreateScratchBuffer(VkAccelerationStructureNV &bot, VkAccelerationStructureNV &top, BufferInformation &buffer);
 
 	/*
 	Returns a pointer to a char array describing the current state of memory in JSON format.

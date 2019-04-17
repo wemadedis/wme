@@ -1,31 +1,37 @@
 #pragma once
 
+#include <string>
+
 #include "vulkan/vulkan.h"
+#include "RTEException.h"
+
+#define GET_FUNCTION_NAME(function) ""#function
 
 namespace RTE::Rendering
 {
 
-#define NVVK_RESOLVE_INSTANCE_FUNCTION_ADDRESS(instance, funcName) \
-{ \
-    funcName = reinterpret_cast<PFN_##funcName>(vkGetInstanceProcAddr(instance, ""#funcName)); \
-    if (funcName == nullptr) \
-    { \
-        const std::string name = #funcName; \
-        /*ExitError(std::wstring(L"Can't get instance function address: ") + std::wstring(name.begin(), name.end()));*/ \
-    } \
-}
-
-#define NVVK_RESOLVE_DEVICE_FUNCTION_ADDRESS(device, funcName) \
-{ \
-    funcName = reinterpret_cast<PFN_##funcName>(vkGetDeviceProcAddr(device, ""#funcName)); \
-    if (funcName == nullptr) \
-    { \
-        const std::string name = #funcName; \
-        /*ExitError(std::wstring(L"Can't get device function address: ") + std::wstring(name.begin(), name.end()));*/ \
-    } \
-}
 class RTUtilities
 {
+
+    #define NVVK_RESOLVE_DEVICE_FUNCTION_ADDRESS(device, funcName) \
+    { \
+        funcName = reinterpret_cast<PFN_##funcName>(vkGetDeviceProcAddr(device, ""#funcName)); \
+        if (funcName == nullptr) \
+        { \
+            throw RTEException((std::string("Could not resolve function address: ")+std::string(""#funcName)).c_str()); \
+        } \
+    }
+/*
+    PFN_vkVoidFunction ResolveFuntionAddress(VkDevice device, const char *functionName)
+    {
+        auto func = vkGetDeviceProcAddr(device, functionName);
+        if(func == nullptr)
+        {
+            throw RTEException((std::string("Could not resolve function address: ")+std::string(functionName)).c_str());
+        }
+        return func;
+    }
+*/
     RTUtilities(VkDevice device)
     {
         NVVK_RESOLVE_DEVICE_FUNCTION_ADDRESS(device, vkCreateAccelerationStructureNV);

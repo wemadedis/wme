@@ -70,4 +70,14 @@ struct MeshInstance
 	BufferInformation uniformBuffer = {};
 };
 
+struct VkGeometryInstance
+{
+    float transform[12];
+    uint32_t instanceId : 24;
+    uint32_t mask : 8;
+    uint32_t instanceOffset : 24;
+    uint32_t flags : 8;
+    uint64_t accelerationStructureHandle;
+};
+
 };

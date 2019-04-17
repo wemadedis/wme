@@ -201,7 +201,7 @@ void DeviceMemoryManager::DestroyImage(ImageInformation& imageInfo){
 }
 
 
-void DeviceMemoryManager::AllocateAccelerationStructureMemory(VkAccelerationStructureNV& AS)
+void DeviceMemoryManager::AllocateAccelerationStructureMemory(VkAccelerationStructureNV &AS)
 {
     VkAccelerationStructureMemoryRequirementsInfoNV memoryRequirementsInfo;
     memoryRequirementsInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV;
@@ -235,6 +235,28 @@ void DeviceMemoryManager::AllocateAccelerationStructureMemory(VkAccelerationStru
 
     code = rtutil->vkBindAccelerationStructureMemoryNV(_instance->GetDevice(), 1, &bindInfo);
     _accelerationStructures.insert(pair<VkAccelerationStructureNV, VkDeviceMemory>(AS, memory));
+}
+
+void DeviceMemoryManager::CreateScratchBuffer(VkAccelerationStructureNV &bot, VkAccelerationStructureNV &top, BufferInformation &buffer)
+{
+    auto GetScratchBufferSize = [&](VkAccelerationStructureNV handle)
+    {
+        VkAccelerationStructureMemoryRequirementsInfoNV memoryRequirementsInfo;
+        memoryRequirementsInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV;
+        memoryRequirementsInfo.pNext = nullptr;
+        memoryRequirementsInfo.accelerationStructure = handle;
+        memoryRequirementsInfo.type = VK_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_TYPE_BUILD_SCRATCH_NV;
+
+        VkMemoryRequirements2 memoryRequirements;
+        RTUtilities::GetInstance()->vkGetAccelerationStructureMemoryRequirementsNV(_instance->GetDevice(), &memoryRequirementsInfo, &memoryRequirements);
+
+        VkDeviceSize result = memoryRequirements.memoryRequirements.size;
+        return result;
+    };
+    VkDeviceSize botSize = GetScratchBufferSize(bot);
+    VkDeviceSize topSize = GetScratchBufferSize(top);
+    CreateBuffer(VK_BUFFER_USAGE_RAY_TRACING_BIT_NV, MemProps::DEVICE, std::max(botSize,topSize), buffer);
+
 }
 
 char* DeviceMemoryManager::GetMemoryState()
