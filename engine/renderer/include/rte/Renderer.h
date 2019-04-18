@@ -41,7 +41,7 @@ struct TextureInfo;
 struct RendererInitInfo
 {
     std::vector<const char*> extensions;
-    int Width, Height;
+    uint32_t Width, Height;
     SurfaceBindingFunc BindingFunc;
     int MaxFPS = 60;
     bool RayTracingOn = false;
@@ -90,13 +90,18 @@ private:
     bool RTXon = false;
     VkPhysicalDeviceRayTracingPropertiesNV _rtProperties = {};
     AccelerationStructure *_accelerationStructure;
+    GraphicsPipeline *_pipelineRT;
     BufferInformation _shaderBindingTable;
+    ImageInformation _offScreenImageRT;
+    VkImageView _offScreenImageView;
 
     const float _minFrameTime;
     TimePoint _lastFrameEnd;
     
     void Initialize();
     void RecordRenderPass();
+    void RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32_t frameIndex);
+    void RecordCommandBuffersRT();
     void CreateSyncObjects();
     void CleanupSwapChain();
     void RecreateSwapChain();

@@ -184,4 +184,14 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
     FillOutStructure(geometries,instances);
 }
 
+VkAccelerationStructureNV AccelerationStructure::GetTopStructure()
+{
+    return _top;
+}
+
+VkAccelerationStructureNV AccelerationStructure::GetBotStructure()
+{
+    return _bot;
+}
+
 }
