@@ -89,9 +89,13 @@ struct Texture
     uint16_t Width, Height;
 };
 
+enum class ShaderType { VERTEX, FRAGMENT, RAYGEN };
+
 // Soon™
 struct Shader
 {
+    ShaderType Type;
+    const char *FilePath;
 };
 
 struct Material
@@ -100,6 +104,7 @@ struct Material
     float Specular;
     float Shininess;
     float Reflectivity;
+    float Transparency;
 
     glm::vec4 Color;
 
@@ -121,7 +126,7 @@ struct Transform
     glm::vec3 Scale;
     glm::vec3 Rot;
 
-    Transform() : Transform(glm::vec3(0), glm::vec3(0), glm::vec3(0))
+    Transform() : Transform(glm::vec3(0), glm::vec3(1), glm::vec3(0))
     {
     }
 

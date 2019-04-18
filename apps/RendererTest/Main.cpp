@@ -2,9 +2,14 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_ENABLE_EXPERIMENTAL
 
+#define VK_PROTOTYPES
+#define VK_USE_PLATFORM_WIN32_KHR
+
 #include "rte/Renderer.h"
 #include "rte/Primitives.h"
 #include "rte/WindowManager.h"
+#include "rte/ModelImporter.h"
+
 #include <iostream>
 #include <vector>
 #include "stb_image.h"
@@ -12,10 +17,19 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 
+
+#include "rte/HighLevelRenderer.h"
+
 using namespace RTE::Rendering;
+
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::time_point<std::chrono::steady_clock> TimePoint;
+using FpSeconds = std::chrono::duration<float, std::chrono::seconds::period>;
+
 
 int main()
 {
+    
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
     auto quad = Primitives::MakeQuad();
@@ -24,6 +38,9 @@ int main()
     info.Width = 800;
     info.Height = 600;
     info.extensions = winMan->GetRequiredExtensions();
+    info.MaxFPS = 144;
+    info.RayTracingOn = true;
+    
     info.BindingFunc = [winMan](VkSurfaceKHR &surface, VkInstance instance) {
 			winMan->CreateSurface(instance, surface);
     };
@@ -42,7 +59,8 @@ int main()
         throw std::runtime_error("failed to load texture image!");
     }
     Camera cam;
-    cam.ViewMatrix = glm::lookAt(glm::vec3(2.5f, 2.5f, 20.0f), glm::vec3(2.5f, 2.5f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::vec3 pos = {0.0f, 2.5f, 10.0f};
+    cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
 
@@ -55,9 +73,9 @@ int main()
 
     std::vector<MeshInstanceHandle> meshes = {};
 
-    int width = 5;
-    int height = 5;
-    int depth = 5;
+    int width = 0;
+    int height = 0;
+    int depth = 0;
 
     for(int x = 0; x < width; x++)
     {
@@ -72,95 +90,86 @@ int main()
         }
     }
 
-    /*
-    auto cylinderhandle1 = renderer.CreateMeshInstance(cylinderMeshHandle);
-    auto cylinderhandle2 = renderer.CreateMeshInstance(cylinderMeshHandle);
-    auto cylinderhandle3 = renderer.CreateMeshInstance(cylinderMeshHandle);
-    auto cylinderhandle4 = renderer.CreateMeshInstance(cylinderMeshHandle);
+    std::ostringstream stringStream;
+    stringStream << ENGINE_ASSET_DIR << "models/monkey.ply";
+    std::string monkeyPath = stringStream.str();
 
-    auto texture = renderer.UploadTexture(tex);
-    
-    renderer.BindTexture(texture, quadInstance);
-    //renderer.BindTexture(texture,cylinderhandle1);
-    //renderer.BindTexture(texture,cylinderhandle2);
-    //renderer.BindTexture(texture,cylinderhandle3);
-    //renderer.BindTexture(texture,cylinderhandle4);
+    auto monkey = RTE::Importing::ModelImporter::ImportMesh(monkeyPath.c_str());
 
-    renderer.SetMeshTransform(cylinderhandle1, glm::vec3(2.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-    renderer.SetMeshTransform(cylinderhandle2, glm::vec3(0.0f, 0.0f, 2.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-    renderer.SetMeshTransform(cylinderhandle3, glm::vec3(0.0f, 0.0f, -2.5f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-    renderer.SetMeshTransform(cylinderhandle4, glm::vec3(-2.5f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f));
-    */
+    auto monkeyHandle = renderer.UploadMesh(&monkey);
+    auto monkeyInstance = renderer.CreateMeshInstance(monkeyHandle);
+    renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f,1.0f,0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
+
     renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(10.0f));
     renderer.SetCamera(cam);
 
     PointLight p;
     p.Color = glm::vec4(0.5f);
-    p.PositionRadius = glm::vec4(2.5f, -0.5f, 2.5f, 3.25f);
+    p.PositionRadius = glm::vec4(2.5f, 1.5f, 2.5f, 4.25f);
     PointLightHandle pl = renderer.AddPointLight(p);
     p.Color = glm::vec4(1.0f,0.0f,0.0f,0.0f);
-    p.PositionRadius = glm::vec4(-2.5f, -0.5f, -2.5f, 2.5f);
+    p.PositionRadius = glm::vec4(-2.5f, 1.5f, -2.5f, 4.25f);
     PointLightHandle pl2 = renderer.AddPointLight(p);
 
     p.Color = glm::vec4(0.0f,1.0f,0.0f,0.0f);
-    p.PositionRadius = glm::vec4(2.5f, -0.5f, -2.5f, 3.25f);
+    p.PositionRadius = glm::vec4(2.5f, 1.5f, -2.5f, 4.25f);
     PointLightHandle pl3 = renderer.AddPointLight(p);
 
     p.Color = glm::vec4(0.0f,0.0f,1.0f,0.0f);
-    p.PositionRadius = glm::vec4(-2.5f, -0.5f, 2.5f, 3.25f);
+    p.PositionRadius = glm::vec4(-2.5f, 1.5f, 2.5f, 4.25f);
     PointLightHandle pl4 = renderer.AddPointLight(p);
 
-    //Heck yes!
-/*
-    DirectionalLight dirLight;
-    dirLight.Color = glm::vec4(0.5f);
-    dirLight.Direction = glm::normalize(glm::vec4(0.0f, -0.5f, 1.0f, 0.0f));
-    auto dirLightHandle = renderer.AddDirectionalLight(dirLight);
 
-    dirLight.Color = glm::vec4(1.0f);
-    dirLight.Direction = glm::normalize(glm::vec4(0.0f, 0.5f, -1.0f, 0.0f));
-    auto dirLightHandle2 = renderer.AddDirectionalLight(dirLight);
-*/
     renderer.SetAmbientLight(glm::vec4(0.1f));
     renderer.Finalize();
-
+    TimePoint now = Clock::now();
+    float deltaTime = 0.0f;
     while(!RTE::Platform::ShouldClose(window))
     {
         RTE::Platform::PollEvents();
-        /*renderer.SetDirectionalLightProperties(dirLightHandle, [](DirectionalLight &light){
-            light.Direction = glm::rotateX(light.Direction, glm::radians(0.05f));
-        });
-        renderer.SetDirectionalLightProperties(dirLightHandle2, [](DirectionalLight &light){
-            light.Direction = glm::rotateX(light.Direction, glm::radians(0.05f));
-        });*/
-        renderer.SetPointLightProperties(pl, [](PointLight &light){
+        int aresult = RTE::Platform::WindowManager::GetKey(GLFW_KEY_A);
+        if(aresult == GLFW_PRESS)
+        {
+            pos = glm::rotateY(pos, glm::radians(-25.0f)*deltaTime);
+            cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        } else if(RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
+        {
+            pos = glm::rotateY(pos, glm::radians(25.0f)*deltaTime);
+            cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            
+        }
+        
+        renderer.SetPointLightProperties(pl, [deltaTime](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(0.05f));
+            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
-        renderer.SetPointLightProperties(pl2, [](PointLight &light){
+        renderer.SetPointLightProperties(pl2, [deltaTime](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(0.05f));
+            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
-        renderer.SetPointLightProperties(pl3, [](PointLight &light){
+        renderer.SetPointLightProperties(pl3, [deltaTime](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(0.05f));
+            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
-        renderer.SetPointLightProperties(pl4, [](PointLight &light){
+        renderer.SetPointLightProperties(pl4, [deltaTime](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(0.05f));
+            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
+        renderer.SetCamera(cam);
         renderer.Draw();
+        deltaTime = std::chrono::duration_cast<FpSeconds>(Clock::now() - now).count();
+        now = Clock::now();
     }
 }

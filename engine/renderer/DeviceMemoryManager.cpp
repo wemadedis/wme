@@ -1,19 +1,42 @@
 #include "DeviceMemoryManager.h"
 #define VMA_IMPLEMENTATION
+
 #include <vk_mem_alloc.h>
+
+#include "RTUtilities.h"
+
 using namespace std;
+
 namespace RTE::Rendering
 {
+
+uint32_t DeviceMemoryManager::GetMemoryType(VkMemoryRequirements& memoryRequiriments, VkMemoryPropertyFlags memoryProperties)
+{
+    uint32_t result = 0;
+    for (uint32_t memoryTypeIndex = 0; memoryTypeIndex < VK_MAX_MEMORY_TYPES; ++memoryTypeIndex)
+    {
+        if (memoryRequiriments.memoryTypeBits & (1 << memoryTypeIndex))
+        {
+            if ((_physicalDeviceMemoryProperties.memoryTypes[memoryTypeIndex].propertyFlags & memoryProperties) == memoryProperties)
+            {
+                result = memoryTypeIndex;
+                break;
+            }
+        }
+    }
+    return result;
+}
     
 DeviceMemoryManager::DeviceMemoryManager(Instance *instance, CommandBufferManager *commandBufferManager)
 {
     //FIX THIS MALLOC PLS <--------------------------------------------------------------------------------------------------------
-    alloc = (VmaAllocator *)malloc(sizeof(VmaAllocator));
+    _allocator = (VmaAllocator *)malloc(sizeof(VmaAllocator));
     VmaAllocatorCreateInfo info = {};
     _instance = instance;
     info.physicalDevice = _instance->GetPhysicalDevice();
     info.device = _instance->GetDevice();
-    vmaCreateAllocator(&info, alloc);
+    vmaCreateAllocator(&info, _allocator);
+    vkGetPhysicalDeviceMemoryProperties(_instance->GetPhysicalDevice(), &_physicalDeviceMemoryProperties);
 }
 
 void DeviceMemoryManager::CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, BufferInformation& bufferInformation)
@@ -38,12 +61,12 @@ void DeviceMemoryManager::CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps 
     VkBuffer buffer;
     VmaAllocation allocation;
 
-    VkResult result = vmaCreateBuffer(*alloc, &bufferInfo, &allocInfo, &buffer, &allocation, nullptr);
+    VkResult result = vmaCreateBuffer(*_allocator, &bufferInfo, &allocInfo, &buffer, &allocation, nullptr);
     if (result != VK_SUCCESS)
     {
         throw std::runtime_error("(DeviceMemoryManager) Failed to create buffer!");
     }
-    buffers.insert(pair<VkBuffer, VmaAllocation>(buffer, allocation));
+    _buffers.insert(pair<VkBuffer, VmaAllocation>(buffer, allocation));
     
     bufferInformation.bufferUsage = bufferUsage;
     bufferInformation.memoryProperties = props;
@@ -53,10 +76,10 @@ void DeviceMemoryManager::CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps 
 
 void DeviceMemoryManager::CopyDataToBuffer(BufferInformation& bufferInfo, void* data){
     void *mapping = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
-    VmaAllocation& allocation = buffers[bufferInfo.buffer];
-    vmaMapMemory(*alloc, allocation, &mapping);    
+    VmaAllocation& allocation = _buffers[bufferInfo.buffer];
+    vmaMapMemory(*_allocator, allocation, &mapping);    
     memcpy(mapping, data, bufferInfo.size);
-    vmaUnmapMemory(*alloc, allocation);
+    vmaUnmapMemory(*_allocator, allocation);
     
 }
 
@@ -102,9 +125,9 @@ void DeviceMemoryManager::CopyBuffer(BufferInformation& srcBuffer, BufferInforma
 
 void DeviceMemoryManager::DestroyBuffer(BufferInformation& bufferInfo)
 {
-    VmaAllocation allocation = buffers[bufferInfo.buffer];
-    vmaDestroyBuffer(*alloc, bufferInfo.buffer, allocation);
-    buffers.erase(bufferInfo.buffer);
+    VmaAllocation allocation = _buffers[bufferInfo.buffer];
+    vmaDestroyBuffer(*_allocator, bufferInfo.buffer, allocation);
+    _buffers.erase(bufferInfo.buffer);
 }
 
 ImageInformation DeviceMemoryManager::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage){
@@ -132,13 +155,13 @@ ImageInformation DeviceMemoryManager::CreateImage(uint32_t width, uint32_t heigh
     VmaAllocation vmaAlloc = {};
     VmaAllocationInfo allocInfo = {};
 
-    vmaCreateImage(*alloc, &createInfo, &vmaAllocCreateInfo, &imgInfo.image, &vmaAlloc, nullptr);
+    vmaCreateImage(*_allocator, &createInfo, &vmaAllocCreateInfo, &imgInfo.image, &vmaAlloc, nullptr);
 
     imgInfo.memoryProperties = MemProps::DEVICE;
     imgInfo.width = width;
     imgInfo.height = height;
 
-    images.insert(pair<VkImage, VmaAllocation>(imgInfo.image, vmaAlloc));
+    _images.insert(pair<VkImage, VmaAllocation>(imgInfo.image, vmaAlloc));
     return imgInfo;
 }
 
@@ -172,9 +195,68 @@ void DeviceMemoryManager::CopyBufferToImage(BufferInformation &srcBuffer, ImageI
 }
 
 void DeviceMemoryManager::DestroyImage(ImageInformation& imageInfo){
-    VmaAllocation allocation = images[imageInfo.image];
-    vmaDestroyImage(*alloc, imageInfo.image, allocation);
-    images.erase(imageInfo.image);
+    VmaAllocation allocation = _images[imageInfo.image];
+    vmaDestroyImage(*_allocator, imageInfo.image, allocation);
+    _images.erase(imageInfo.image);
+}
+
+
+void DeviceMemoryManager::AllocateAccelerationStructureMemory(VkAccelerationStructureNV &AS)
+{
+    VkAccelerationStructureMemoryRequirementsInfoNV memoryRequirementsInfo;
+    memoryRequirementsInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV;
+    memoryRequirementsInfo.pNext = nullptr;
+    memoryRequirementsInfo.accelerationStructure = AS;
+    memoryRequirementsInfo.type = VK_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_TYPE_OBJECT_NV;
+
+    VkMemoryRequirements2 memoryRequirements;
+    auto rtutil = RTUtilities::GetInstance();
+    rtutil->vkGetAccelerationStructureMemoryRequirementsNV(_instance->GetDevice(), &memoryRequirementsInfo, &memoryRequirements);
+
+    VkMemoryAllocateInfo memoryAllocateInfo;
+    memoryAllocateInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    memoryAllocateInfo.pNext = nullptr;
+    memoryAllocateInfo.allocationSize = memoryRequirements.memoryRequirements.size;
+    memoryAllocateInfo.memoryTypeIndex = GetMemoryType(memoryRequirements.memoryRequirements, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT);
+
+    VkDeviceMemory memory;
+
+    VkResult code = vkAllocateMemory(_instance->GetDevice(), &memoryAllocateInfo, nullptr, &memory);
+    //NVVK_CHECK_ERROR(code, L"rt AS vkAllocateMemory");
+
+    VkBindAccelerationStructureMemoryInfoNV bindInfo;
+    bindInfo.sType = VK_STRUCTURE_TYPE_BIND_ACCELERATION_STRUCTURE_MEMORY_INFO_NV;
+    bindInfo.pNext = nullptr;
+    bindInfo.accelerationStructure = AS;
+    bindInfo.memory = memory;
+    bindInfo.memoryOffset = 0;
+    bindInfo.deviceIndexCount = 0;
+    bindInfo.pDeviceIndices = nullptr;
+
+    code = rtutil->vkBindAccelerationStructureMemoryNV(_instance->GetDevice(), 1, &bindInfo);
+    _accelerationStructures.insert(pair<VkAccelerationStructureNV, VkDeviceMemory>(AS, memory));
+}
+
+void DeviceMemoryManager::CreateScratchBuffer(VkAccelerationStructureNV &bot, VkAccelerationStructureNV &top, BufferInformation &buffer)
+{
+    auto GetScratchBufferSize = [&](VkAccelerationStructureNV handle)
+    {
+        VkAccelerationStructureMemoryRequirementsInfoNV memoryRequirementsInfo;
+        memoryRequirementsInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_INFO_NV;
+        memoryRequirementsInfo.pNext = nullptr;
+        memoryRequirementsInfo.accelerationStructure = handle;
+        memoryRequirementsInfo.type = VK_ACCELERATION_STRUCTURE_MEMORY_REQUIREMENTS_TYPE_BUILD_SCRATCH_NV;
+
+        VkMemoryRequirements2 memoryRequirements;
+        RTUtilities::GetInstance()->vkGetAccelerationStructureMemoryRequirementsNV(_instance->GetDevice(), &memoryRequirementsInfo, &memoryRequirements);
+
+        VkDeviceSize result = memoryRequirements.memoryRequirements.size;
+        return result;
+    };
+    VkDeviceSize botSize = GetScratchBufferSize(bot);
+    VkDeviceSize topSize = GetScratchBufferSize(top);
+    CreateBuffer(VK_BUFFER_USAGE_RAY_TRACING_BIT_NV, MemProps::DEVICE, std::max(botSize,topSize), buffer);
+
 }
 
 char* DeviceMemoryManager::GetMemoryState()

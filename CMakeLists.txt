@@ -29,4 +29,5 @@ target_link_libraries(rte INTERFACE
     wave
     ModelImporter
     AudioEmitter
+    bullet
 )

@@ -4,6 +4,7 @@
 #include <string>
 #include <stdexcept>
 #include <vector>
+#include <chrono>
 
 #include "RenderStructs.h"
 #include "Utilities.h"
@@ -15,6 +16,9 @@
 #include "CommandBufferManager.hpp"
 #include "ImageManager.hpp"
 #include "DescriptorManager.hpp"
+
+//RT
+#include "AccelerationStructureRT.h"
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -39,13 +43,19 @@ struct RendererInitInfo
     std::vector<const char*> extensions;
     int Width, Height;
     SurfaceBindingFunc BindingFunc;
+    int MaxFPS = 60;
+    bool RayTracingOn = false;
+    glm::vec4 ClearColor = glm::vec4(0.0f);
 };
-
-
 
 
 class Renderer
 {
+
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::time_point<std::chrono::steady_clock> TimePoint;
+using FpSeconds = std::chrono::duration<float, std::chrono::seconds::period>;
+
 private:
     RendererInitInfo _initInfo;
     GraphicsPipeline *_pipeline;
@@ -59,6 +69,9 @@ private:
 
     GlobalUniformData _globalUniform;
     BufferInformation _globalUniformBuffer;
+
+    std::vector<ShaderInfo> _shaders;
+
     std::vector<MeshInfo*> _meshes;
     std::vector<TextureInfo> _textures;
     std::vector<MeshInstance> _meshInstances;
@@ -72,7 +85,15 @@ private:
     size_t _currentFrame = 0;
 
     TextureHandle _emptyTexture;
-    
+
+
+    bool RTXon = false;
+    VkPhysicalDeviceRayTracingPropertiesNV _rtProperties = {};
+    AccelerationStructure *_accelerationStructure;
+    BufferInformation _shaderBindingTable;
+
+    const float _minFrameTime;
+    TimePoint _lastFrameEnd;
     
     void Initialize();
     void RecordRenderPass();
@@ -81,6 +102,10 @@ private:
     void RecreateSwapChain();
     void UploadGlobalUniform();
     void CreateEmptyTexture();
+
+    void InitRT();
+    void CreateShaderBindingTable();
+
 public:
 /*
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.
@@ -138,7 +163,7 @@ void SetAmbientLight(glm::vec4 color);
 
 void SetCamera(Camera camera);
 
-void UploadShader(Shader shader);
+ShaderHandle UploadShader(Shader shader);
 
 };
 

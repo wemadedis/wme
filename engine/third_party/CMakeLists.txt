@@ -36,6 +36,19 @@ set(GLFW_VULKAN_STATIC OFF CACHE BOOL "" FORCE)
 add_subdirectory(glfw)
 ###</GLFW>
 
+###<BULLET>
+add_library(bullet INTERFACE)
+target_include_directories(bullet INTERFACE bullet/include)
+target_link_libraries(bullet INTERFACE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/Bullet3Collision.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/Bullet3Dynamics.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/BulletSoftBody.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/LinearMath.lib
+)
+
+###</BULLET>
+
+
 ###<OpenAL>
 add_library(openal INTERFACE)
 target_include_directories(openal INTERFACE openal/include)
@@ -67,4 +80,6 @@ add_library(wave
 )
 
 target_include_directories(wave INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/wave/src/")
+
+
 
