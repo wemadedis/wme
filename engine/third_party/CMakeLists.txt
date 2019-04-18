@@ -35,3 +35,16 @@ set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(GLFW_VULKAN_STATIC OFF CACHE BOOL "" FORCE)
 add_subdirectory(glfw)
 ###</GLFW>
+
+
+###<BULLET>
+add_library(bullet INTERFACE)
+target_include_directories(bullet INTERFACE bullet/include)
+target_link_libraries(bullet INTERFACE 
+    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/Bullet3Collision.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/Bullet3Dynamics.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/BulletSoftBody.lib
+    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/LinearMath.lib
+)
+
+###</BULLET>
