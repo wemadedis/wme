@@ -3,9 +3,17 @@
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #define GLM_ENABLE_EXPERIMENTAL
 #include "DeviceMemoryManager.h"
-#include "RendererHandles.h"
+#include "rte/RendererHandles.h"
+#include "rte/RenderStructs.h"
+
 namespace RTE::Rendering
 {
+
+struct ShaderInfo
+{
+	ShaderType Type;
+	VkShaderModule Module;
+};
 
 struct ImageInfo
 {
@@ -68,6 +76,16 @@ struct MeshInstance
 	MeshHandle mesh;
 	TextureHandle texture;
 	BufferInformation uniformBuffer = {};
+};
+
+struct VkGeometryInstance
+{
+    float transform[12];
+    uint32_t instanceId : 24;
+    uint32_t mask : 8;
+    uint32_t instanceOffset : 24;
+    uint32_t flags : 8;
+    uint64_t accelerationStructureHandle;
 };
 
 };

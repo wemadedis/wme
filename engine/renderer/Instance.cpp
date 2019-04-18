@@ -178,6 +178,7 @@ Instance::Instance(std::vector<const char*> &extensions, std::function<void(VkSu
     if(isRayTracing)
     {
         _rayTracingCapable = isRayTracing;
+        _neededDeviceExtensions.push_back(VK_NV_RAY_TRACING_EXTENSION_NAME);
     }
     CreateInstance(extensions);
     surfaceBindingFunction(_surface, _instance);

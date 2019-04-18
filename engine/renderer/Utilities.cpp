@@ -5,8 +5,9 @@
 #include<set>
 #include<string>
 
-
+#include "RTEException.h"
 #include "DeviceMemoryManager.h"
+#include "RenderLogicStructs.h"
 
 namespace RTE::Rendering::Utilities 
 {
@@ -63,6 +64,22 @@ VkShaderModule CreateShaderModule(const std::vector<char> &code, VkDevice device
     }
 
     return shaderModule;
+}
+
+ShaderInfo GetStandardVertexShader(VkDevice device)
+{
+    
+    return {ShaderType::VERTEX, CreateShaderModule(ReadEngineAsset("shaders/vert.spv"), device)};
+}
+
+ShaderInfo GetStandardFragmentShader(VkDevice device)
+{
+    return {ShaderType::FRAGMENT, CreateShaderModule(ReadEngineAsset("shaders/frag.spv"), device)};
+}
+
+ShaderInfo GetStandardRayGenShader(VkDevice device)
+{
+    return {ShaderType::RAYGEN, CreateShaderModule(ReadEngineAsset("shaders/rgen.spv"), device)};
 }
 
 bool HasStencilComponent(VkFormat format) {
@@ -144,6 +161,15 @@ void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT
 	{
 		func(instance, callback, pAllocator);
 	}
+}
+
+void CheckVkResult(VkResult code, const char* errorMessage)
+{
+    if(code != VK_SUCCESS)
+    {
+        errorMessage = (std::string(errorMessage)+ std::string(" Code: ") +std::to_string(code)).c_str();
+        throw RTEException(errorMessage);
+    }
 }
 
 }; //namespace Utilities

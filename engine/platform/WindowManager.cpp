@@ -113,6 +113,12 @@ void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int
     win->WindowResized = true;
 }
 
+int WindowManager::GetKey(int key)
+{
+    WindowManager* manager = GetInstance();
+    return glfwGetKey(manager->_window->GLFWWindow, key);
+}
+
 WindowManager *WindowManager::GetInstance()
 {
     if (WindowManager::_instance == nullptr)

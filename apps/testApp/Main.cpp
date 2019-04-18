@@ -21,7 +21,7 @@ void Initialize()
 {
     CreateScene();
     std::ostringstream stringStream;
-    stringStream << ENGINE_ASSET_DIR << "models/dragon.ply";
+    stringStream << ENGINE_ASSET_DIR << "models/monkey.ply";
     std::string cubePath = stringStream.str();
     RTE::Rendering::Mesh cube_raw = RTE::Importing::ModelImporter::ImportMesh(cubePath.c_str());
     RTE::Rendering::Mesh *quad = &cube_raw;
@@ -53,7 +53,9 @@ void Initialize()
         throw std::runtime_error("failed to load texture image!");
     }
     Camera cam;
-    cam.ViewMatrix = glm::lookAt(glm::vec3(0.0f, -40.0f, -2.0f), glm::vec3(0.0f, -10.0f, -40.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::vec3 monkeyPosition = glm::vec3(0.0f, -10.0f, -40.0f);
+    cam.ViewMatrix = glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), monkeyPosition, glm::vec3(0.0f, 1.0f, 0.0f));
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
     
@@ -63,7 +65,7 @@ void Initialize()
     auto texture = renderer.UploadTexture(tex);
     renderer.SetCamera(cam);
 
-    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, -10.0f, -40.0f), glm::vec3(glm::radians(0.0f), glm::radians(0.0f), 0.0f), glm::vec3(0.2f));
+    renderer.SetMeshTransform(quadInstance, monkeyPosition, glm::vec3(glm::radians(-90.0f), glm::radians(0.0f), 0.0f), glm::vec3(4));
     
     DirectionalLight dl;
     dl.Color = glm::vec4(0.5f, 0.5f, 0.5f, 1);

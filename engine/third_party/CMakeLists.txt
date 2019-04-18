@@ -15,11 +15,11 @@ target_include_directories(vulkan INTERFACE ${Vulkan_INCLUDE_DIR})
 target_link_libraries(vulkan INTERFACE ${Vulkan_LIBRARY})
 ###</VULKAN>
 
-###<ASSIMP> 💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀💀
+###<ASSIMP>
 
-set(ZLIB_LIBRARIES zlibstatic)
-set(ENABLE_BOOST_WORKAROUND ON)
-set(BUILD_ASSIMP_TOOLS  ON)
+#set(ZLIB_LIBRARIES zlibstatic)
+#set(ENABLE_BOOST_WORKAROUND ON)
+#set(BUILD_ASSIMP_TOOLS  ON)
 set(ASSIMP_BUILD_STATIC_LIB ON)
 
 add_subdirectory("assimp-4.1.0")

@@ -1,5 +1,7 @@
 #include "DescriptorManager.hpp"
 
+#include "Utilities.h"
+
 #include <array>
 
 
@@ -92,6 +94,35 @@ void DescriptorManager::CreateDescriptorSetLayout()
     }
 }
 
+void DescriptorManager::CreateDescriptorSetLayoutRT()
+{
+    VkDescriptorSetLayoutBinding accelerationStructureLayoutBinding;
+    accelerationStructureLayoutBinding.binding = 0;
+    accelerationStructureLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV;
+    accelerationStructureLayoutBinding.descriptorCount = 1;
+    accelerationStructureLayoutBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV;
+    accelerationStructureLayoutBinding.pImmutableSamplers = nullptr;
+
+    VkDescriptorSetLayoutBinding outputImageLayoutBinding;
+    outputImageLayoutBinding.binding = 1;
+    outputImageLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+    outputImageLayoutBinding.descriptorCount = 1;
+    outputImageLayoutBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV;
+    outputImageLayoutBinding.pImmutableSamplers = nullptr;
+
+    std::vector<VkDescriptorSetLayoutBinding> bindings({ accelerationStructureLayoutBinding, outputImageLayoutBinding });
+
+    VkDescriptorSetLayoutCreateInfo layoutInfo;
+    layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+    layoutInfo.pNext = nullptr;
+    layoutInfo.flags = 0;
+    layoutInfo.bindingCount = (uint32_t)(bindings.size());
+    layoutInfo.pBindings = bindings.data();
+
+    VkResult code = vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layoutRT);
+    Utilities::CheckVkResult(code, "Failed to create descriptor set layout (RT)!");
+}
+
 void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData)
 {
     size_t setCount = instances.size();
@@ -156,9 +187,14 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instance
     }
 }
 
-VkDescriptorSetLayout DescriptorManager::GetDescriptorLayout()
+VkDescriptorSetLayout* DescriptorManager::GetDescriptorLayout()
 {
-    return _layout;
+    return &_layout;
+}
+
+VkDescriptorSetLayout* DescriptorManager::GetDescriptorLayoutRT()
+{
+    return &_layoutRT;
 }
 
 VkDescriptorPool DescriptorManager::GetDescriptorPool()

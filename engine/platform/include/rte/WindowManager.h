@@ -31,6 +31,7 @@ public:
     VkInstance instance,
     VkSurfaceKHR &surface);
   std::vector<const char *> GetRequiredExtensions();
+  static int GetKey(int key);
 private:
   // Instance for singleton pattern
   static WindowManager *_instance;

@@ -7,8 +7,10 @@ class HighLevelRenderer
 {
     Rendering::Renderer *_lowrenderer;
     
+
 public:
     HighLevelRenderer();
+
     
     
 };

@@ -16,6 +16,7 @@
 #include "RenderLogicStructs.h"
 
 #include "Instance.hpp"
+#include "RTUtilities.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -29,20 +30,45 @@ void Renderer::Initialize()
 {
     _instance = new Instance(_initInfo.extensions, _initInfo.BindingFunc, _initInfo.RayTracingOn);
     RTXon = _instance->IsRayTracingCapable();
+    
     _swapChain = new SwapChain(_instance, _initInfo.Width, _initInfo.Height);
     _renderPass = new RenderPass(_instance, _swapChain);
     _descriptorManager = new DescriptorManager(_instance);
     _descriptorManager->CreateDescriptorSetLayout();
-    _pipeline = new GraphicsPipeline(   "shaders/vert.spv", 
-                                        "shaders/frag.spv", 
+    _descriptorManager->CreateDescriptorSetLayoutRT();
+    auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
+    auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
+    auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
+    
+    if(RTXon)
+    {
+        InitRT();
+    }
+    
+    _pipeline = new GraphicsPipeline(   rayGen, 
                                         _swapChain->GetSwapChainExtent(), 
-                                        _descriptorManager->GetDescriptorLayout(), 
-                                        _instance->GetDevice(), 
+                                        _descriptorManager, 
+                                        _instance, 
+                                        _renderPass);
+    //COMMENT THIS OUT
+    delete _pipeline;
+    _pipeline = new GraphicsPipeline(   vertexShader, 
+                                        fragmentShader, 
+                                        _swapChain->GetSwapChainExtent(), 
+                                        _descriptorManager, 
+                                        _instance, 
                                         _renderPass);
     _commandBufferManager = new CommandBufferManager(_instance, (uint32_t)_swapChain->GetSwapChainImageCount());
     _deviceMemoryManager = new DeviceMemoryManager(_instance, _commandBufferManager);
     _imageManager = new ImageManager(_instance, _commandBufferManager, _deviceMemoryManager);
     
+    if(RTXon)
+    {
+        _accelerationStructure = new AccelerationStructure(_instance, _deviceMemoryManager, _commandBufferManager);
+        //UNCOMMENT THIS
+        //CreateShaderBindingTable();
+    }
+
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
 
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(GlobalUniformData), _globalUniformBuffer);
@@ -185,11 +211,15 @@ void Renderer::RecreateSwapChain()
     _commandBufferManager->AllocateCommandBuffers();
     _swapChain = new SwapChain(_instance, width, height);
     _renderPass = new RenderPass(_instance, _swapChain);
-    _pipeline = new GraphicsPipeline(   "shaders/vert.spv", 
-                                        "shaders/frag.spv", 
+    auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
+    auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
+
+    _pipeline = new GraphicsPipeline(   vertexShader, 
+                                        fragmentShader,
                                         _swapChain->GetSwapChainExtent(), 
-                                        _descriptorManager->GetDescriptorLayout()
-                                        , _instance->GetDevice(), _renderPass);
+                                        _descriptorManager,
+                                        _instance, 
+                                        _renderPass);
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
     RecordRenderPass();
 }
@@ -217,6 +247,37 @@ void Renderer::CreateEmptyTexture()
     tex.Width = 1;
     tex.Pixels = pixels;
     _emptyTexture = UploadTexture(tex);
+}
+
+void Renderer::InitRT()
+{
+    VkDevice device = _instance->GetDevice();
+    RTUtilities::GetInstance(&device);
+    
+    _rtProperties.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PROPERTIES_NV;
+    _rtProperties.pNext = nullptr;
+    _rtProperties.maxRecursionDepth = 0;
+    _rtProperties.shaderGroupHandleSize = 0;
+    
+    VkPhysicalDeviceProperties2 props;
+    props.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2;
+    props.pNext = &_rtProperties;
+    props.properties = { };
+
+    vkGetPhysicalDeviceProperties2(_instance->GetPhysicalDevice(), &props);
+}
+
+void Renderer::CreateShaderBindingTable()
+{
+    const uint32_t groupNum = 1; // 1 group is listed in pGroupNumbers in VkRayTracingPipelineCreateInfoNV
+    const uint32_t shaderBindingTableSize = _rtProperties.shaderGroupHandleSize * groupNum;
+
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, shaderBindingTableSize, _shaderBindingTable);
+    
+    _deviceMemoryManager->ModifyBufferData<void*>(_shaderBindingTable, [&](void* data){
+        VkResult code = RTUtilities::GetInstance()->vkGetRayTracingShaderGroupHandlesNV(_instance->GetDevice(), _pipeline->GetHandle(), 0, groupNum, shaderBindingTableSize, data);
+        Utilities::CheckVkResult(code, "Failed to get RT shader group handles!");
+    });
 }
 
 Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f/info.MaxFPS)
@@ -365,6 +426,7 @@ void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::
 
 void Renderer::SetPointLightProperties(PointLightHandle light, std::function<void(PointLight&)> mutator)
 {   
+    mutator(_pointLights[light]);
     _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData & data){
         mutator(data.PointLights[light]);
     });
@@ -380,11 +442,16 @@ void Renderer::SetCamera(Camera camera)
 {
     _globalUniform.ViewMatrix = camera.ViewMatrix;
     _globalUniform.ProjectionMatrix = camera.ProjectionMatrix;
+    UploadGlobalUniform();
 }
 
-void Renderer::UploadShader(Shader shader)
+ShaderHandle Renderer::UploadShader(Shader shader)
 {
-    
+    ShaderInfo info = {};
+    info.Type = shader.Type;
+    info.Module = Utilities::CreateShaderModule(Utilities::ReadEngineAsset(shader.FilePath), _instance->GetDevice());
+    _shaders.push_back(info);
+    return (ShaderHandle)_shaders.size()-1;
 }
 
 
