@@ -45,6 +45,8 @@ VkShaderModule CreateShaderModule(const std::vector<char> &code, VkDevice device
 ShaderInfo GetStandardVertexShader(VkDevice device);
 ShaderInfo GetStandardFragmentShader(VkDevice device);
 ShaderInfo GetStandardRayGenShader(VkDevice device);
+ShaderInfo GetStandardRayHitShader(VkDevice device);
+ShaderInfo GetStandardRayMissShader(VkDevice device);
 
 
 bool HasStencilComponent(VkFormat format);
