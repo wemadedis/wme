@@ -41,10 +41,20 @@ add_subdirectory(glfw)
 add_library(bullet INTERFACE)
 target_include_directories(bullet INTERFACE bullet/include)
 target_link_libraries(bullet INTERFACE 
-    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/Bullet3Collision.lib
-    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/Bullet3Dynamics.lib
-    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/BulletSoftBody.lib
-    ${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/LinearMath.lib
+${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/Bullet3Collision.lib
+${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/Bullet3Dynamics.lib
+${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/BulletSoftBody.lib
+${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/LinearMath.lib
 )
+get_target_property(BULLET_LIBS bullet INTERFACE_LINK_LIBRARIES)
+
+message("VULKAN LIBS: ${Vulkan_LIBRARY}")
+message("Bullet LIBS: ${BULLET_LIBS}")
 
 ###</BULLET>
+
+
+###<DEAR IMGUI>
+add_library(imgui imgui/imgui/imgui.cpp)
+target_include_directories(imgui PUBLIC imgui)
+###</DEAR IMGUI>
