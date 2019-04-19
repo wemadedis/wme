@@ -3,4 +3,3 @@ cmake-build-debug/
 .vscode/
 .vs/
 .idea/
-SFML/
