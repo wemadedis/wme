@@ -55,3 +55,15 @@ target_link_libraries(bullet INTERFACE
 add_library(imgui imgui/imgui/imgui.cpp imgui/imgui/imgui_draw.cpp imgui/imgui/imgui_widgets.cpp imgui/imgui/imgui_demo.cpp)
 target_include_directories(imgui PUBLIC imgui)
 ###</DEAR IMGUI>
+
+### <SFML>
+set(SFML_BUILD_EXAMPLES OFF)
+set(SFML_BUILD_DOC OFF)
+set(SFML_BUILD_GRAPHICS OFF)
+set(SFML_BUILD_WINDOW OFF)
+set(SFML_BUILD_NETWORK OFF)
+set(SFML_USE_STATIC_STD_LIBS OFF)
+
+set(SFML_BUILD_AUDIO ON)
+add_subdirectory(SFML)
+### </SFML>

@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 3.4.0)
+cmake_minimum_required(VERSION 3.7.0)
+
 
 set( CMAKE_VERBOSE_MAKEFILE off )
 set( CMAKE_CXX_STANDARD 17)
@@ -28,4 +29,6 @@ target_link_libraries(rte INTERFACE
     model_importer 
     bullet
     imgui
+    sfml-audio
+    AudioEmitter
 )
