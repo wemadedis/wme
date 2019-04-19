@@ -4,7 +4,6 @@
 #include <set>
 #include <unordered_map>
 
-#include "Defs.h"
 #include "rte/ComponentPool.h"
 #include "rte/GameObjectPool.h"
 #include "rte/GameObject.h"
@@ -20,7 +19,7 @@ class Scene
     GameObject *CreateGameObject();
 
     template <typename TComp>
-    u64 DefineComponent()
+    uint64_t DefineComponent()
     {
         ComponentPool *compPool = new ComponentPoolInstance<TComp>();
         _componentPools.push_back(compPool);
@@ -28,7 +27,7 @@ class Scene
     }
 
     template <typename TComp>
-    TComp *AddComponent(u64 compId, GameObject *go)
+    TComp *AddComponent(uint64_t compId, GameObject *go)
     {
         Component *comp = _componentPools[compId]->AddComponent(go->GetId());
         comp->SetEnabled(true);

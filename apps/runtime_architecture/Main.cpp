@@ -11,7 +11,7 @@ void Initialize()
 {
     Scene *scene = CreateScene();
 
-    u64 floatCompIndex = scene->DefineComponent<FloatComponent>();
+    uint64_t floatCompIndex = scene->DefineComponent<FloatComponent>();
 
     GameObject *go = scene->CreateGameObject();
 

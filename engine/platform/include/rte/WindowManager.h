@@ -1,19 +1,32 @@
 #pragma once
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
+
 #include <vector>
 #include <string>
 
-#include "rte/Platform.h"
 
 namespace RTE::Platform
 {
 
+struct RTEWindow
+{
+    int Handle;
+    int Width;
+    int Height;
+    std::string Title;
+    bool WindowResized;
+    GLFWwindow* window;
+    VkInstance* instance;
+    VkSurfaceKHR* surface;
+};
+
 void DestroyWindow(RTEWindow *window);
 void Terminate();
-
 void WaitEvents();
 void PollEvents();
+
 bool ShouldClose(RTEWindow *window);
 
 struct WindowBinding
@@ -21,6 +34,7 @@ struct WindowBinding
   RTEWindow *RTEWindow;
   GLFWwindow *GLFWWindow;
 };
+
 
 class WindowManager
 {
