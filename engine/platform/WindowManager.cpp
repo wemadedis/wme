@@ -1,6 +1,7 @@
-#include "rte/WindowManager.h"
 #include <iostream>
 #include <vector>
+
+#include "rte/WindowManager.h"
 #include "rte/Renderer.h"
 
 namespace RTE::Platform

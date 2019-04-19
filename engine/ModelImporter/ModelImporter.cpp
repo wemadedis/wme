@@ -2,12 +2,15 @@
 
 #include <vector>
 #include <iostream>
+#include <cstdint>
+
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/euler_angles.hpp>
 #include <glm/gtx/quaternion.hpp>
+
 #include <assimp/Importer.hpp>
+
 #include "rte/RenderStructs.h"
-#include "Defs.h"
 #include "rte/ImportException.h"
 
 namespace RTE::Importing
@@ -90,13 +93,13 @@ MissingImportData ModelImporter::HandleNode(
     RTE::Rendering::Transform newTransform = t + GetTransform(node);
 
     // Handle all meshes in the node
-    for (u32 meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++)
+    for (uint32_t meshIndex = 0; meshIndex < node->mNumMeshes; meshIndex++)
     {
         missingInfo |= HandleMesh(mesh, scene->mMeshes[node->mMeshes[meshIndex]], newTransform);
     }
 
     // Recursively handle child nodes
-    for (u32 childIndex = 0; childIndex < node->mNumChildren; childIndex++)
+    for (uint32_t childIndex = 0; childIndex < node->mNumChildren; childIndex++)
     {
         missingInfo |= HandleNode(mesh, scene, node->mChildren[childIndex], newTransform);
     }
@@ -118,7 +121,7 @@ inline glm::vec4 ConvertColor(aiColor4D *aiC)
     return glm::vec4(aiC->r, aiC->g, aiC->b, aiC->a);
 }
 
-RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, u32 vertexIndex, MissingImportData &data, glm::mat4 toGlobal)
+RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, uint32_t vertexIndex, MissingImportData &data, glm::mat4 toGlobal)
 {
     RTE::Rendering::Vertex v;
     if (mesh->HasPositions())

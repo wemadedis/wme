@@ -11,7 +11,7 @@
 #include <GLFW/glfw3.h>
 
 #include "rte/EntryPoint.h"
-#include "RTE.h"
+#include "rte/RTEProjectProperties.h"
 #include "rte/ModelImporter.h"
 
 using namespace RTE::Rendering;

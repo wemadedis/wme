@@ -4,6 +4,4 @@
 
 void Initialize()
 {
-    ImGui::Begin("EGGS!");
-    btDbvtBroadphase *world = new btDbvtBroadphase();
 }

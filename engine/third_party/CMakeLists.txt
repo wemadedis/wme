@@ -21,7 +21,10 @@ target_link_libraries(vulkan INTERFACE ${Vulkan_LIBRARY})
 #set(ENABLE_BOOST_WORKAROUND ON)
 #set(BUILD_ASSIMP_TOOLS  ON)
 set(ASSIMP_BUILD_STATIC_LIB ON)
+set(ASSIMP_BUILD_ZLIB ON)
 
+set(BUILD_NO_EXPORT ON)
+set(ASSIMP_BUILD_TESTS OFF)
 add_subdirectory("assimp-4.1.0")
 target_include_directories(assimp PUBLIC assimp-4.1.0/include)
 
@@ -36,29 +39,15 @@ set(GLFW_VULKAN_STATIC OFF CACHE BOOL "" FORCE)
 add_subdirectory(glfw)
 ###</GLFW>
 
-
-###<BULLET>
-set(BULLET_COLLISION_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletCollision_vs2010_x64_debug.lib")
-set(BULLET_DYNAMICS_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletDynamics_vs2010_x64_debug.lib")
-set(BULLET_MATH_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/LinearMath_vs2010_x64_debug.lib")
-set(BULLET_SOFTBODY_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletSoftBody_vs2010_x64_debug.lib")
-set(BULLET_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bullet/include")
-#find_package(Bullet REQUIRED)
-
 add_library(bullet INTERFACE)
 target_link_options(bullet INTERFACE "/NODEFAULTLIB:LIBCMTD")
-target_include_directories(bullet INTERFACE ${BULLET_INCLUDE_DIR})
+target_include_directories(bullet INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/bullet/include")
 target_link_libraries(bullet INTERFACE 
-    ${BULLET_COLLISION_LIBRARY} 
-    ${BULLET_DYNAMICS_LIBRARY} 
-    ${BULLET_MATH_LIBRARY} 
-    ${BULLET_SOFTBODY_LIBRARY}
+    "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletCollision_vs2010_x64_debug.lib" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletDynamics_vs2010_x64_debug.lib"
+    "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/LinearMath_vs2010_x64_debug.lib" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletSoftBody_vs2010_x64_debug.lib"
 )
-
-if(TARGET bullet)
-    get_target_property(BULLET_TARGET_LIBS bullet INTERFACE_LINK_LIBRARIES)
-    message("Bullet target libs: ${BULLET_TARGET_LIBS}")
-endif()
 ###</BULLET>
 
 

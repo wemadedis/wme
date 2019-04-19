@@ -3,7 +3,7 @@
 #include <string>
 
 #include "vulkan/vulkan.h"
-#include "RTEException.h"
+#include "rte/RTEException.h"
 
 #define GET_FUNCTION_NAME(function) ""#function
 
