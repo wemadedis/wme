@@ -2,7 +2,7 @@
 
 namespace RTE::Physics
 {
-
+/*
 class RigidBody;
 
 // based on https://github.com/kripken/ammo.js/issues/82#issuecomment-426429129
@@ -13,6 +13,7 @@ bool contactUpdatedCallback(btManifoldPoint &cp, void *body0, void *body1)
     auto btRigidBody1 = static_cast<btRigidBody *>(body1);
     auto rigidBody0 = static_cast<RigidBody *>(btRigidBody0->getUserPointer());
     auto rigidBody1 = static_cast<RigidBody *>(btRigidBody1->getUserPointer());
+    /*
     if (collisionBegin)
     {
         static size_t collisionId = 0;
@@ -35,6 +36,7 @@ bool contactUpdatedCallback(btManifoldPoint &cp, void *body0, void *body1)
 
 bool contactDestroyedCallback(void *data)
 {
+    
     CollisionId *id = (CollisionId *)data;
     if (sceneContains(id->bodyA))
     {
@@ -104,19 +106,19 @@ void BulletPhysics::debugDraw(sre::RenderPass &renderPass)
 {
     debugDrawObj.render(renderPass);
 }
-
+*/
 PhysicsManager::PhysicsManager() : RTEModule()
 {
-    gContactProcessedCallback = contactUpdatedCallback;
-    gContactDestroyedCallback = contactDestroyedCallback;
+    //gContactProcessedCallback = contactUpdatedCallback;
+    //gContactDestroyedCallback = contactDestroyedCallback;
     // gContactDestroyedCallback = contactDestroyedCallback;
     broadphase = new btDbvtBroadphase();
     collisionConfiguration = new btDefaultCollisionConfiguration();
     dispatcher = new btCollisionDispatcher(collisionConfiguration);
-    solver = new btSequentialImpulseConstraintSolver();
-    world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-    world->setDebugDrawer(&debugDrawObj);
-    setGravity(gravity);
+    //solver = new btSequentialImpulseConstraintSolver();
+    //world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
+    //world->setDebugDrawer(&debugDrawObj);
+    //setGravity(gravity);
 }
 
 PhysicsManager::~PhysicsManager()

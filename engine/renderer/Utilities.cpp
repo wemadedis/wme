@@ -5,7 +5,7 @@
 #include<set>
 #include<string>
 
-#include "rte/RTEProjectProperties.h"
+#include "rte/RTEProjectProperties.hpp"
 #include "rte/RTEException.h"
 #include "DeviceMemoryManager.h"
 #include "RenderLogicStructs.h"
