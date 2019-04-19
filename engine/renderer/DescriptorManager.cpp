@@ -123,7 +123,7 @@ void DescriptorManager::CreateDescriptorSetLayoutRT()
     Utilities::CheckVkResult(code, "Failed to create descriptor set layout (RT)!");
 }
 
-void DescriptorManager::CreateDescriptorSetRT(VkAccelerationStructureNV &_topAS, VkImageView imageViewRT)
+void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT)
 {
     std::vector<VkDescriptorPoolSize> poolSizes
     ({
@@ -142,6 +142,8 @@ void DescriptorManager::CreateDescriptorSetRT(VkAccelerationStructureNV &_topAS,
     VkResult code = vkCreateDescriptorPool(_instance->GetDevice(), &descriptorPoolCreateInfo, nullptr, &_poolRT);
     Utilities::CheckVkResult(code, "Failed to create RT descriptor pool!");
 
+    
+
     VkDescriptorSetAllocateInfo descriptorSetAllocateInfo;
     descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     descriptorSetAllocateInfo.pNext = nullptr;
@@ -152,12 +154,13 @@ void DescriptorManager::CreateDescriptorSetRT(VkAccelerationStructureNV &_topAS,
     code = vkAllocateDescriptorSets(_instance->GetDevice(), &descriptorSetAllocateInfo, &_descriptorsetRT);
     Utilities::CheckVkResult(code, "Failed to allocate RT descriptor sets!");
 
+    auto topStructure = AS->GetTopStructure();
 
     VkWriteDescriptorSetAccelerationStructureNV descriptorAccelerationStructureInfo;
     descriptorAccelerationStructureInfo.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV;
     descriptorAccelerationStructureInfo.pNext = nullptr;
     descriptorAccelerationStructureInfo.accelerationStructureCount = 1;
-    descriptorAccelerationStructureInfo.pAccelerationStructures = &_topAS;
+    descriptorAccelerationStructureInfo.pAccelerationStructures = &topStructure;
 
     VkWriteDescriptorSet accelerationStructureWrite;
     accelerationStructureWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
