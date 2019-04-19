@@ -74,6 +74,8 @@ void Instance::ChoosePhysicalDevice()
     bool supportsRT = false;
     for (const auto &device : devices)
     {
+        //VkPhysicalDeviceProperties props;
+        //vkGetPhysicalDeviceProperties(device, &props);
         if (DeviceMeetsRequirements(device))
         {
             _physicalDevice = device;
@@ -91,6 +93,7 @@ void Instance::ChoosePhysicalDevice()
             
         }
     }
+    
     _rayTracingCapable = supportsRT;
     if (_physicalDevice == VK_NULL_HANDLE)
     {

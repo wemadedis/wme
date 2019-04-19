@@ -33,7 +33,8 @@ class AccelerationStructure
 
 public:
     AccelerationStructure(Instance *instance, DeviceMemoryManager *deviceMemoryManager, CommandBufferManager *commandBufferManager);
-
+    VkAccelerationStructureNV GetTopStructure();
+    VkAccelerationStructureNV GetBotStructure();
 };
 
 
