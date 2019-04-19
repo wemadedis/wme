@@ -39,13 +39,17 @@ void Renderer::Initialize()
     auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
     auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
     auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
-    
+    //TODO: Change name to GetStandardRayClosestHitShader
+    auto rchit = Utilities::GetStandardRayHitShader(_instance->GetDevice());
+    auto rmiss = Utilities::GetStandardRayMissShader(_instance->GetDevice());
     if(RTXon)
     {
         InitRT();
     }
     
-    _pipelineRT = new GraphicsPipeline(   rayGen, 
+    _pipelineRT = new GraphicsPipeline( rayGen, 
+                                        rchit,
+                                        rmiss,
                                         _swapChain->GetSwapChainExtent(), 
                                         _descriptorManager, 
                                         _instance, 
@@ -184,8 +188,8 @@ void Renderer::RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32
 
     RTUtilities::GetInstance()->vkCmdTraceRaysNV(commandBuffer,
         _shaderBindingTable.buffer, 0,
-        _shaderBindingTable.buffer, 0, _rtProperties.shaderGroupHandleSize,
-        _shaderBindingTable.buffer, 0, _rtProperties.shaderGroupHandleSize,
+        _shaderBindingTable.buffer, 2 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
+        _shaderBindingTable.buffer, 1 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
         VK_NULL_HANDLE, 0, 0,
         _initInfo.Width, _initInfo.Height, 1);
 }
@@ -347,7 +351,7 @@ void Renderer::InitRT()
 
 void Renderer::CreateShaderBindingTable()
 {
-    const uint32_t groupNum = 1; // 1 group is listed in pGroupNumbers in VkRayTracingPipelineCreateInfoNV
+    const uint32_t groupNum = 3; // 1 group is listed in pGroupNumbers in VkRayTracingPipelineCreateInfoNV
     const uint32_t shaderBindingTableSize = _rtProperties.shaderGroupHandleSize * groupNum;
 
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, shaderBindingTableSize, _shaderBindingTable);

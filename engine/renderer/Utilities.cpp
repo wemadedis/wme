@@ -84,12 +84,12 @@ ShaderInfo GetStandardRayGenShader(VkDevice device)
 
 ShaderInfo GetStandardRayHitShader(VkDevice device)
 {
-    return {ShaderType::RAYGEN, CreateShaderModule(ReadEngineAsset("shaders/rchit.spv"), device)};
+    return {ShaderType::RCHIT, CreateShaderModule(ReadEngineAsset("shaders/rchit.spv"), device)};
 }
 
 ShaderInfo GetStandardRayMissShader(VkDevice device)
 {
-    return {ShaderType::RAYGEN, CreateShaderModule(ReadEngineAsset("shaders/rmiss.spv"), device)};
+    return {ShaderType::RMISS, CreateShaderModule(ReadEngineAsset("shaders/rmiss.spv"), device)};
 }
 
 bool HasStencilComponent(VkFormat format) {

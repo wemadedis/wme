@@ -210,11 +210,13 @@ void GraphicsPipeline::CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragme
 }
 
 
-void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGenerationShader)
+void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, ShaderInfo rmiss)
 {
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages(
     {
-        GetPipelineStageInfo(VK_SHADER_STAGE_RAYGEN_BIT_NV, rayGenerationShader)
+        GetPipelineStageInfo(VK_SHADER_STAGE_RAYGEN_BIT_NV, rayGen),
+        GetPipelineStageInfo(VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV, rchit),
+        GetPipelineStageInfo(VK_SHADER_STAGE_MISS_BIT_NV, rmiss)
     });
 
     VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
@@ -231,8 +233,11 @@ void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGenerationShader)
 
     std::vector<VkRayTracingShaderGroupCreateInfoNV> shaderGroups({
         // group0 = [ raygen ]
-        { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV,
-        0, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV }
+        { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV, 0, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV },
+        // group1 = [ chit ]
+        { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_NV, VK_SHADER_UNUSED_NV, 1, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV },
+        // group2 = [ miss ]
+        { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV, 2, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV },
     });
 
     VkRayTracingPipelineCreateInfoNV rayPipelineInfo;
@@ -269,6 +274,8 @@ GraphicsPipeline::GraphicsPipeline( ShaderInfo vertexShader,
 }
 
 GraphicsPipeline::GraphicsPipeline( ShaderInfo rayGen, 
+                                    ShaderInfo rchit, 
+                                    ShaderInfo rmiss,
                                     VkExtent2D swapChainExtent, 
                                     DescriptorManager *descriptorManager, 
                                     Instance *instance, 
@@ -278,8 +285,8 @@ GraphicsPipeline::GraphicsPipeline( ShaderInfo rayGen,
     _descriptorManager = descriptorManager;
     _instance = instance;
     _renderPass = renderPass;
-
-    CreatePipelineRT(rayGen);
+    //TODO: Check shader type!
+    CreatePipelineRT(rayGen, rchit, rmiss);
 }
 
 GraphicsPipeline::~GraphicsPipeline()
