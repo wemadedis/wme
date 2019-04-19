@@ -2,9 +2,8 @@
 #include <imgui/imgui.h>
 #include "RTE/EntryPoint.h"
 
-
 void Initialize()
 {
     ImGui::Begin("EGGS!");
-    //btDbvtBroadphase *world = new btDbvtBroadphase();
+    btDbvtBroadphase *world = new btDbvtBroadphase();
 }

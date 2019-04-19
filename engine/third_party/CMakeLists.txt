@@ -38,19 +38,27 @@ add_subdirectory(glfw)
 
 
 ###<BULLET>
+set(BULLET_COLLISION_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletCollision_vs2010_x64_debug.lib")
+set(BULLET_DYNAMICS_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletDynamics_vs2010_x64_debug.lib")
+set(BULLET_MATH_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/LinearMath_vs2010_x64_debug.lib")
+set(BULLET_SOFTBODY_LIBRARY "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletSoftBody_vs2010_x64_debug.lib")
+set(BULLET_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/bullet/include")
+#find_package(Bullet REQUIRED)
+
 add_library(bullet INTERFACE)
-target_include_directories(bullet INTERFACE bullet/include)
+target_link_options(bullet INTERFACE "/NODEFAULTLIB:LIBCMTD")
+target_include_directories(bullet INTERFACE ${BULLET_INCLUDE_DIR})
 target_link_libraries(bullet INTERFACE 
-${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/Bullet3Collision.lib
-${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/Bullet3Dynamics.lib
-${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/BulletSoftBody.lib
-${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/LinearMath.lib
+    ${BULLET_COLLISION_LIBRARY} 
+    ${BULLET_DYNAMICS_LIBRARY} 
+    ${BULLET_MATH_LIBRARY} 
+    ${BULLET_SOFTBODY_LIBRARY}
 )
-get_target_property(BULLET_LIBS bullet INTERFACE_LINK_LIBRARIES)
 
-message("VULKAN LIBS: ${Vulkan_LIBRARY}")
-message("Bullet LIBS: ${BULLET_LIBS}")
-
+if(TARGET bullet)
+    get_target_property(BULLET_TARGET_LIBS bullet INTERFACE_LINK_LIBRARIES)
+    message("Bullet target libs: ${BULLET_TARGET_LIBS}")
+endif()
 ###</BULLET>
 
 
