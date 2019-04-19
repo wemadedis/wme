@@ -6,6 +6,8 @@
 #include "Instance.hpp"
 #include "SwapChain.hpp"
 #include "RenderLogicStructs.h"
+#include "AccelerationStructureRT.h"
+
 namespace RTE::Rendering
 {
 
@@ -26,7 +28,7 @@ public:
     void CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInstance> &meshes);
     void CreateDescriptorSetLayout();
     void CreateDescriptorSetLayoutRT();
-    void CreateDescriptorSetRT(VkAccelerationStructureNV &_topAS, VkImageView imageViewRT);
+    void CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT);
     void CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData);
     VkDescriptorSetLayout* GetDescriptorLayout();
     VkDescriptorSetLayout* GetDescriptorLayoutRT();

@@ -73,8 +73,7 @@ void Renderer::Initialize()
         CreateShaderBindingTable();
         _offScreenImageRT = _deviceMemoryManager->CreateImage(_initInfo.Width, _initInfo.Height, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
         _offScreenImageView = _imageManager->CreateImageView(_offScreenImageRT, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_ASPECT_COLOR_BIT);
-        auto top = _accelerationStructure->GetTopStructure();
-        _descriptorManager->CreateDescriptorSetRT(top, _offScreenImageView);
+        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _offScreenImageView);
         //RecordCommandBuffersRT();
     }
 

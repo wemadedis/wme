@@ -237,7 +237,7 @@ void DeviceMemoryManager::AllocateAccelerationStructureMemory(VkAccelerationStru
     _accelerationStructures.insert(pair<VkAccelerationStructureNV, VkDeviceMemory>(AS, memory));
 }
 
-void DeviceMemoryManager::CreateScratchBuffer(VkAccelerationStructureNV &bot, VkAccelerationStructureNV &top, BufferInformation &buffer)
+void DeviceMemoryManager::CreateScratchBuffer(std::vector<VkAccelerationStructureNV> &bot, VkAccelerationStructureNV &top, BufferInformation &buffer)
 {
     auto GetScratchBufferSize = [&](VkAccelerationStructureNV handle)
     {
@@ -253,9 +253,13 @@ void DeviceMemoryManager::CreateScratchBuffer(VkAccelerationStructureNV &bot, Vk
         VkDeviceSize result = memoryRequirements.memoryRequirements.size;
         return result;
     };
-    VkDeviceSize botSize = GetScratchBufferSize(bot);
-    VkDeviceSize topSize = GetScratchBufferSize(top);
-    CreateBuffer(VK_BUFFER_USAGE_RAY_TRACING_BIT_NV, MemProps::DEVICE, std::max(botSize,topSize), buffer);
+    uint64_t size = GetScratchBufferSize(top);
+    for(uint32_t botIndex = 0; botIndex < bot.size(); botIndex++)
+    {
+        uint64_t newSize = GetScratchBufferSize(bot[botIndex]);
+        if(newSize > size) size = newSize;
+    }
+    CreateBuffer(VK_BUFFER_USAGE_RAY_TRACING_BIT_NV, MemProps::DEVICE, size, buffer);
 
 }
 

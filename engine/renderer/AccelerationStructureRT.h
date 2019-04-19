@@ -18,7 +18,7 @@ class AccelerationStructure
     CommandBufferManager *_commandBufferManager = nullptr;
     RTUtilities *_rtUtil = nullptr;
     VkAccelerationStructureNV _top = VK_NULL_HANDLE;
-    VkAccelerationStructureNV _bot = VK_NULL_HANDLE;
+    std::vector<VkAccelerationStructureNV> _bot = { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
 
     //Is this one necessary to keep track of?
     BufferInformation _scratchBuffer; 
@@ -34,7 +34,7 @@ class AccelerationStructure
 public:
     AccelerationStructure(Instance *instance, DeviceMemoryManager *deviceMemoryManager, CommandBufferManager *commandBufferManager);
     VkAccelerationStructureNV GetTopStructure();
-    VkAccelerationStructureNV GetBotStructure();
+    std::vector<VkAccelerationStructureNV> GetBotStructures();
 };
 
 
