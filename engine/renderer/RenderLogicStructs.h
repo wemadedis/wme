@@ -66,6 +66,7 @@ struct GlobalUniformData
 
 struct MeshInfo
 {
+	uint64_t VertexCount;
     uint64_t IndexCount;
 	BufferInformation vertexBuffer  = {};
 	BufferInformation indexBuffer = {};

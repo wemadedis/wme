@@ -93,14 +93,42 @@ void AccelerationStructure::FillOutStructure(std::vector<VkGeometryNV> geometrie
     vkQueueWaitIdle(_instance->GetGraphicsQueue());
 }
 
-AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryManager *deviceMemoryManager, CommandBufferManager *commandBufferManager)
+AccelerationStructure::AccelerationStructure(   Instance *instance, DeviceMemoryManager *deviceMemoryManager, 
+                                                CommandBufferManager *commandBufferManager, std::vector<MeshInfo*> &meshes,
+                                                std::vector<MeshInstance> &meshInstances)
 {
+    _bot.resize(meshes.size(), VK_NULL_HANDLE);
     _rtUtil = RTUtilities::GetInstance();
     _instance = instance;
     _memoryManager = deviceMemoryManager; 
     _commandBufferManager = commandBufferManager;
     std::vector<VkGeometryNV> geometries;
+    for(uint32_t meshIndex = 0; meshIndex < meshes.size(); meshIndex++)
     {
+        VkGeometryNV geometry;
+        geometry.sType = VK_STRUCTURE_TYPE_GEOMETRY_NV;
+        geometry.pNext = nullptr;
+        geometry.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_NV;
+        geometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_GEOMETRY_TRIANGLES_NV;
+        geometry.geometry.triangles.pNext = nullptr;
+        geometry.geometry.triangles.vertexData = meshes[meshIndex]->vertexBuffer.buffer;
+        geometry.geometry.triangles.vertexOffset = 0;
+        geometry.geometry.triangles.vertexCount = meshes[meshIndex]->VertexCount;
+        geometry.geometry.triangles.vertexStride = sizeof(Vertex);
+        geometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
+        geometry.geometry.triangles.indexData = meshes[meshIndex]->indexBuffer.buffer;
+        geometry.geometry.triangles.indexOffset = 0;
+        geometry.geometry.triangles.indexCount = meshes[meshIndex]->IndexCount;
+        geometry.geometry.triangles.indexType = VK_INDEX_TYPE_UINT16;
+        geometry.geometry.triangles.transformData = VK_NULL_HANDLE;
+        geometry.geometry.triangles.transformOffset = 0;
+        geometry.geometry.aabbs = { };
+        geometry.geometry.aabbs.sType = VK_STRUCTURE_TYPE_GEOMETRY_AABB_NV;
+        geometry.flags = 0;
+        geometries.emplace_back(geometry);
+
+    }
+    /*{
         const float scale = 0.25f;
         const float d = (1.0f + sqrt(5.0f)) * 0.5f * scale;
 
@@ -206,7 +234,7 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
         geometry.geometry.triangles.vertexCount = 12;
         geometry.geometry.triangles.indexCount = 60;
         geometries.emplace_back(geometry);
-    }
+    }*/
 
 
 
@@ -248,7 +276,24 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
             0.0f, 0.0f, 1.0f, 0.0f,
         };
 
-        // Insert 3 instances of the bottom level AS #1
+        for(uint32_t instanceIndex = 0; instanceIndex < meshInstances.size(); instanceIndex++)
+        {
+            MeshInstance &meshInstance = meshInstances[instanceIndex];
+            glm::mat4 model;
+            _memoryManager->ModifyBufferData<MeshUniformData>(meshInstance.uniformBuffer, [&](MeshUniformData *data){
+                model = data->ModelMatrix;
+            });
+            for(uint32_t colIndex = 0; colIndex < 4; colIndex++)
+            {
+                for(uint32_t rowIndex = 0; rowIndex < 3; rowIndex++)
+                {
+                    transform[(rowIndex)*4+colIndex] = model[colIndex][rowIndex];
+                }    
+            }
+            instances.push_back(FillInstance(accelerationStructureHandles[meshInstance.mesh], instanceIndex, transform));
+        }
+
+        /*// Insert 3 instances of the bottom level AS #1
         instances.push_back(FillInstance(accelerationStructureHandles[0], 0, transform));
         transform[3] = 1.5f; // move geometry along X axis
         transform[11] = 0.5f; // move geometry along Z axis
@@ -270,7 +315,7 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
         transform[3] = 3.0f;
         transform[11] = 0.5f;
         instances.push_back(FillInstance(accelerationStructureHandles[2], 4, transform));
-
+        */
         instanceNum = (uint32_t)instances.size();
 
         uint32_t instanceBufferSize = instanceNum * sizeof(VkGeometryInstance);

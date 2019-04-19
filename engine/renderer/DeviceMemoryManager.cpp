@@ -84,8 +84,6 @@ void DeviceMemoryManager::CopyDataToBuffer(BufferInformation& bufferInfo, void* 
 }
 
 void DeviceMemoryManager::CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue) {
-		//May need to create a seperate command buffer pool for these short lived buffers
-        cout << "keks butter" << endl;
 		VkCommandBufferAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
