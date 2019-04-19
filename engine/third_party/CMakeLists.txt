@@ -63,6 +63,6 @@ endif()
 
 
 ###<DEAR IMGUI>
-add_library(imgui imgui/imgui/imgui.cpp)
+add_library(imgui imgui/imgui/imgui.cpp imgui/imgui/imgui_draw.cpp imgui/imgui/imgui_widgets.cpp imgui/imgui/imgui_demo.cpp)
 target_include_directories(imgui PUBLIC imgui)
 ###</DEAR IMGUI>
