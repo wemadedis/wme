@@ -1,7 +1,6 @@
-#include <Bullet/btBulletDynamicsCommon.h>
-#include <imgui/imgui.h>
-#include "RTE/EntryPoint.h"
+#include "rte/RTE.hpp"
 
 void Initialize()
 {
+    
 }

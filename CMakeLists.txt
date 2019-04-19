@@ -8,7 +8,6 @@ set( BUILD_SHARED_LIBS OFF)
 add_library(rte INTERFACE)
 
 target_compile_definitions(rte INTERFACE ENGINE_ASSET_DIR="${ENGINE_ASSETS}/")
-target_include_directories(rte INTERFACE engine/include)
 
 
 add_subdirectory(engine)
@@ -16,6 +15,8 @@ add_subdirectory(apps)
 
 
 target_link_libraries(rte INTERFACE
+    core
+    physics
     glm 
     vma 
     vulkan 
@@ -24,7 +25,7 @@ target_link_libraries(rte INTERFACE
     platform 
     glfw 
     runtime_architecture 
-    ModelImporter 
+    model_importer 
     bullet
     imgui
 )

@@ -17,7 +17,7 @@ class Component
      * @details
      *      A default constructor is required to initialize object pools for the different components
      *      
-     *      To initialize a custom component-subclass, use an initialization function.
+     *      To initialize a custom component-subclass with non-zero arguments, use an initialization function.
      */
     Component() = default;
 
@@ -40,11 +40,6 @@ class Component
      *      The new enabled state of the #Compenent
      */
     void SetEnabled(bool enabled);
-
-
-    ~Component()
-    {
-    }
 
     /**
      * @brief 

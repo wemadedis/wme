@@ -10,8 +10,8 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <GLFW/glfw3.h>
 
-#include "rte/EntryPoint.h"
-#include "rte/RTEProjectProperties.h"
+#include "rte/EntryPoint.hpp"
+#include "rte/RTEProjectProperties.hpp"
 #include "rte/ModelImporter.h"
 
 using namespace RTE::Rendering;

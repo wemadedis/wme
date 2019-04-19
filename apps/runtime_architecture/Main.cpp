@@ -1,6 +1,6 @@
 #include <iostream>
 
-#include "rte/EntryPoint.h"
+#include "rte/EntryPoint.hpp"
 #include "rte/Scene.h"
 #include "rte/GameObject.h"
 #include "rte/Component.h"

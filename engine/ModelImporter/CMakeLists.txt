@@ -1,3 +1,3 @@
-add_library(ModelImporter ModelImporter.cpp)
-target_include_directories(ModelImporter PUBLIC include .)
-target_link_libraries(ModelImporter PUBLIC rte)
+add_library(model_importer ModelImporter.cpp)
+target_include_directories(model_importer PUBLIC include .)
+target_link_libraries(model_importer PUBLIC rte)
