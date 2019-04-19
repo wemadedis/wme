@@ -19,6 +19,10 @@ public:
     VkSampler CreateSampler();
     ImageInfo CreateDepthImage(uint32_t width, uint32_t height);
 
+    //RT
+    void ImageBarrier(VkCommandBuffer commandBuffer, VkImage image, VkImageSubresourceRange& subresourceRange,
+    VkAccessFlags srcAccessMask, VkAccessFlags dstAccessMask, VkImageLayout oldLayout, VkImageLayout newLayout);
+
     ImageManager(Instance *instance, CommandBufferManager *cmdbManager, DeviceMemoryManager *memoryManager);
 };
 

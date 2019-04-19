@@ -33,10 +33,10 @@ private:
     void CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader);
 
     
-    void CreatePipelineRT(ShaderInfo rayGenerationShader);
+    void CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, ShaderInfo rmiss);
 public:
     GraphicsPipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader, VkExtent2D swapChainExtent, DescriptorManager *descriptorManager, Instance *instance, RenderPass* renderPass);
-    GraphicsPipeline(ShaderInfo rayGen, VkExtent2D swapChainExtent, DescriptorManager *descriptorManager, Instance *instance, RenderPass* renderPass);
+    GraphicsPipeline(ShaderInfo rayGen, ShaderInfo rchit, ShaderInfo rmiss, VkExtent2D swapChainExtent, DescriptorManager *descriptorManager, Instance *instance, RenderPass* renderPass);
     ~GraphicsPipeline();
     VkPipeline GetHandle();
     VkPipelineLayout GetLayout();

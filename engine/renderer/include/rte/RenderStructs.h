@@ -89,7 +89,7 @@ struct Texture
     uint16_t Width, Height;
 };
 
-enum class ShaderType { VERTEX, FRAGMENT, RAYGEN };
+enum class ShaderType { VERTEX, FRAGMENT, RAYGEN, RCHIT, RMISS };
 
 // Soon™
 struct Shader

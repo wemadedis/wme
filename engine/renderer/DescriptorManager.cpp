@@ -123,6 +123,80 @@ void DescriptorManager::CreateDescriptorSetLayoutRT()
     Utilities::CheckVkResult(code, "Failed to create descriptor set layout (RT)!");
 }
 
+void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT)
+{
+    std::vector<VkDescriptorPoolSize> poolSizes
+    ({
+        { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1 },
+        { VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV, 1 }
+    });
+
+    VkDescriptorPoolCreateInfo descriptorPoolCreateInfo;
+    descriptorPoolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+    descriptorPoolCreateInfo.pNext = nullptr;
+    descriptorPoolCreateInfo.flags = 0;
+    descriptorPoolCreateInfo.maxSets = 1;
+    descriptorPoolCreateInfo.poolSizeCount = (uint32_t)poolSizes.size();
+    descriptorPoolCreateInfo.pPoolSizes = poolSizes.data();
+
+    VkResult code = vkCreateDescriptorPool(_instance->GetDevice(), &descriptorPoolCreateInfo, nullptr, &_poolRT);
+    Utilities::CheckVkResult(code, "Failed to create RT descriptor pool!");
+
+    
+
+    VkDescriptorSetAllocateInfo descriptorSetAllocateInfo;
+    descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
+    descriptorSetAllocateInfo.pNext = nullptr;
+    descriptorSetAllocateInfo.descriptorPool = _poolRT;
+    descriptorSetAllocateInfo.descriptorSetCount = 1;
+    descriptorSetAllocateInfo.pSetLayouts = &_layoutRT;
+
+    code = vkAllocateDescriptorSets(_instance->GetDevice(), &descriptorSetAllocateInfo, &_descriptorsetRT);
+    Utilities::CheckVkResult(code, "Failed to allocate RT descriptor sets!");
+
+    auto topStructure = AS->GetTopStructure();
+
+    VkWriteDescriptorSetAccelerationStructureNV descriptorAccelerationStructureInfo;
+    descriptorAccelerationStructureInfo.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV;
+    descriptorAccelerationStructureInfo.pNext = nullptr;
+    descriptorAccelerationStructureInfo.accelerationStructureCount = 1;
+    descriptorAccelerationStructureInfo.pAccelerationStructures = &topStructure;
+
+    VkWriteDescriptorSet accelerationStructureWrite;
+    accelerationStructureWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    accelerationStructureWrite.pNext = &descriptorAccelerationStructureInfo; // Notice that pNext is assigned here!
+    accelerationStructureWrite.dstSet = _descriptorsetRT;
+    accelerationStructureWrite.dstBinding = 0;
+    accelerationStructureWrite.dstArrayElement = 0;
+    accelerationStructureWrite.descriptorCount = 1;
+    accelerationStructureWrite.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV;
+    accelerationStructureWrite.pImageInfo = nullptr;
+    accelerationStructureWrite.pBufferInfo = nullptr;
+    accelerationStructureWrite.pTexelBufferView = nullptr;
+
+
+    VkDescriptorImageInfo descriptorOutputImageInfo;
+    descriptorOutputImageInfo.sampler = nullptr;
+    descriptorOutputImageInfo.imageView = imageViewRT;
+    descriptorOutputImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+    VkWriteDescriptorSet outputImageWrite;
+    outputImageWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    outputImageWrite.pNext = nullptr;
+    outputImageWrite.dstSet = _descriptorsetRT;
+    outputImageWrite.dstBinding = 1;
+    outputImageWrite.dstArrayElement = 0;
+    outputImageWrite.descriptorCount = 1;
+    outputImageWrite.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
+    outputImageWrite.pImageInfo = &descriptorOutputImageInfo;
+    outputImageWrite.pBufferInfo = nullptr;
+    outputImageWrite.pTexelBufferView = nullptr;
+
+
+    std::vector<VkWriteDescriptorSet> descriptorWrites({ accelerationStructureWrite, outputImageWrite });
+    vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+}
+
 void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData)
 {
     size_t setCount = instances.size();
@@ -205,6 +279,11 @@ VkDescriptorPool DescriptorManager::GetDescriptorPool()
 std::vector<VkDescriptorSet> DescriptorManager::GetDescriptorSets()
 {
     return _descriptorSets;
+}
+
+VkDescriptorSet DescriptorManager::GetDescriptorSetRT()
+{
+    return _descriptorsetRT;
 }
 
 };

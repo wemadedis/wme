@@ -30,8 +30,10 @@ void AccelerationStructure::CreateStructure(VkAccelerationStructureTypeNV type, 
 
 void AccelerationStructure::CreateBotTopStructures(std::vector<VkGeometryNV> geometries)
 {
-    CreateStructure(VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_NV, (uint32_t)geometries.size(), geometries.data(), 0, _bot);
-    int i = 0;
+    for(uint32_t botIndex = 0; botIndex < _bot.size(); botIndex++)
+    {
+        CreateStructure(VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_NV, (uint32_t)geometries.size(), geometries.data(), 0, _bot[botIndex]);
+    }
     CreateStructure(VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_NV, 0, nullptr, 1, _top);
 }
 
@@ -46,6 +48,7 @@ void AccelerationStructure::FillOutStructure(std::vector<VkGeometryNV> geometrie
     memoryBarrier.srcAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_NV | VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_NV;
     memoryBarrier.dstAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_NV | VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_NV;
 
+    for(uint32_t botIndex = 0; botIndex < _bot.size(); botIndex++)
     {
         VkAccelerationStructureInfoNV asInfo;
         asInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_INFO_NV;
@@ -53,20 +56,20 @@ void AccelerationStructure::FillOutStructure(std::vector<VkGeometryNV> geometrie
         asInfo.type = VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_NV;
         asInfo.flags = 0;
         asInfo.instanceCount = 0;
-        asInfo.geometryCount = (uint32_t)geometries.size();
-        asInfo.pGeometries = &geometries[0];
+        asInfo.geometryCount = 1;
+        asInfo.pGeometries = &geometries[botIndex];
 
-        _rtUtil->vkCmdBuildAccelerationStructureNV(commandBuffer, &asInfo, VK_NULL_HANDLE, 0, VK_FALSE, _bot, VK_NULL_HANDLE, _scratchBuffer.buffer , 0);
+        _rtUtil->vkCmdBuildAccelerationStructureNV(commandBuffer, &asInfo, VK_NULL_HANDLE, 0, VK_FALSE, _bot[botIndex], VK_NULL_HANDLE, _scratchBuffer.buffer , 0);
+        vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV, VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV, 0, 1, &memoryBarrier, 0, 0, 0, 0);
     }
-    vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV, VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV, 0, 1, &memoryBarrier, 0, 0, 0, 0);
-    
+      
     {
         VkAccelerationStructureInfoNV asInfo;
         asInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_INFO_NV;
         asInfo.pNext = NULL;
         asInfo.type = VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_NV;
         asInfo.flags = 0;
-        asInfo.instanceCount = 1;
+        asInfo.instanceCount = instances.size();
         asInfo.geometryCount = 0;
         asInfo.pGeometries = nullptr;
         _rtUtil->vkCmdBuildAccelerationStructureNV(commandBuffer, &asInfo, _instanceBuffer.buffer, 0, VK_FALSE, _top, VK_NULL_HANDLE, _scratchBuffer.buffer, 0);
@@ -98,24 +101,61 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
     _commandBufferManager = commandBufferManager;
     std::vector<VkGeometryNV> geometries;
     {
+        const float scale = 0.25f;
+        const float d = (1.0f + sqrt(5.0f)) * 0.5f * scale;
+
         struct Vertex
         {
             float X, Y, Z;
         };
-
         std::vector<Vertex> vertices
         {
+            // Triangle vertices
             { -0.5f, -0.5f, 0.0f },
             { +0.0f, +0.5f, 0.0f },
-            { +0.5f, -0.5f, 0.0f }
+            { +0.5f, -0.5f, 0.0f },
+
+            // Tutorial 07 vertices
+            { -10.0f, .0f, +10.0f },
+            { +10.0f, .0f, +10.0f },
+            { +10.0f, .0f, -10.0f },
+            { -10.0f, .0f, -10.0f },
+
+            // Icosahedron vertices
+            { -scale, +d, 0 },
+            { +scale, +d, 0 },
+            { -scale, -d, 0 },
+            { +scale, -d, 0 },
+
+            { 0, -scale, +d },
+            { 0, +scale, +d },
+            { 0, -scale, -d },
+            { 0, +scale, -d },
+
+            { +d, 0, -scale },
+            { +d, 0, +scale },
+            { -d, 0, -scale },
+            { -d, 0, +scale },
         };
+
         const uint32_t vertexCount = (uint32_t)vertices.size();
         const VkDeviceSize vertexSize = sizeof(Vertex);
         const VkDeviceSize vertexBufferSize = vertexCount * vertexSize;
 
         std::vector<uint16_t> indices
         {
-            { 0, 1, 2 }
+            {
+                // Triangle indices
+                0, 1, 2,
+                // Tutorial 07 indices
+                // Quad indices
+                0, 1, 2, 2, 3, 0,
+                // Icosahedron indices
+                0, 11, 5, 0, 5, 1, 0, 1, 7, 0, 7, 10, 0, 10, 11,
+                1, 5, 9, 5, 11, 4, 11, 10, 2, 10, 7, 6, 7, 1, 8,
+                3, 9, 4, 3, 4, 2, 3, 2, 6, 3, 6, 8, 3, 8, 9,
+                4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7, 9, 8, 1
+            }
         };
         const uint32_t indexCount = (uint32_t)indices.size();
         const VkDeviceSize indexSize = sizeof(uint16_t);
@@ -148,16 +188,58 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
         geometry.geometry.aabbs.sType = VK_STRUCTURE_TYPE_GEOMETRY_AABB_NV;
         geometry.flags = 0;
 
+        // Insert single triangle
+        geometry.geometry.triangles.vertexCount = 3;
+        geometry.geometry.triangles.indexCount = 3;
+        geometries.emplace_back(geometry);
+
+        // Insert bottom quad, use data from same vertex/index buffers, but with offset
+        geometry.geometry.triangles.vertexOffset = 3 * vertexSize; // offset in bytes
+        geometry.geometry.triangles.indexOffset = 3 * indexSize; // offset in bytes
+        geometry.geometry.triangles.vertexCount = 4;
+        geometry.geometry.triangles.indexCount = 6;
+        geometries.emplace_back(geometry);
+
+        // Insert icosahedron, use data from same vertex/index buffers, but with offset
+        geometry.geometry.triangles.vertexOffset = 7 * vertexSize; // offset in bytes
+        geometry.geometry.triangles.indexOffset = 9 * indexSize; // offset in bytes
+        geometry.geometry.triangles.vertexCount = 12;
+        geometry.geometry.triangles.indexCount = 60;
         geometries.emplace_back(geometry);
     }
 
 
-    CreateBotTopStructures(geometries);
+
+    for(uint32_t botIndex = 0; botIndex < _bot.size(); botIndex++)
+    {
+        CreateStructure(VK_ACCELERATION_STRUCTURE_TYPE_BOTTOM_LEVEL_NV, (uint32_t)geometries.size(), geometries.data(), 0, _bot[botIndex]);
+    }
+    //CreateStructure(VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_NV, 0, nullptr, 1, _top);
+
+    uint32_t instanceNum;
+
+    auto FillInstance = [&](uint64_t bottomAShandle, uint32_t instanceId, float transform[12])
+    {
+        VkGeometryInstance instance;
+        memcpy(instance.transform, transform, sizeof(instance.transform));
+        instance.instanceId = instanceId;
+        instance.mask = 0xff;
+        instance.instanceOffset = 0;
+        instance.flags = VK_GEOMETRY_INSTANCE_TRIANGLE_CULL_DISABLE_BIT_NV;
+        instance.accelerationStructureHandle = bottomAShandle;
+        return instance;
+    };
 
     std::vector<VkGeometryInstance> instances;
     {
-        uint64_t accelerationStructureHandle;
-        VkResult code = _rtUtil->vkGetAccelerationStructureHandleNV(_instance->GetDevice(), _bot, sizeof(uint64_t), &accelerationStructureHandle);
+        std::vector<uint64_t> accelerationStructureHandles;
+        accelerationStructureHandles.resize(_bot.size());
+        for(uint32_t botIndex = 0; botIndex < _bot.size(); botIndex++)
+        {
+            VkResult code = _rtUtil->vkGetAccelerationStructureHandleNV(_instance->GetDevice(), _bot[botIndex], sizeof(uint64_t), &accelerationStructureHandles[botIndex]);
+            Utilities::CheckVkResult(code, "Could not get the bot acceleration structure handle!");
+        }
+        
 
         float transform[12] =
         {
@@ -166,22 +248,49 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
             0.0f, 0.0f, 1.0f, 0.0f,
         };
 
-        VkGeometryInstance instance;
-        memcpy(instance.transform, transform, sizeof(instance.transform));
-        instance.instanceId = 0;
-        instance.mask = 0xff;
-        instance.instanceOffset = 0;
-        instance.flags = VK_GEOMETRY_INSTANCE_TRIANGLE_CULL_DISABLE_BIT_NV;
-        instance.accelerationStructureHandle = accelerationStructureHandle;
+        // Insert 3 instances of the bottom level AS #1
+        instances.push_back(FillInstance(accelerationStructureHandles[0], 0, transform));
+        transform[3] = 1.5f; // move geometry along X axis
+        transform[11] = 0.5f; // move geometry along Z axis
+        instances.push_back(FillInstance(accelerationStructureHandles[0], 1, transform));
+        transform[3] = -1.5f;
+        transform[11] = -0.5f;
+        instances.push_back(FillInstance(accelerationStructureHandles[0], 2, transform));
 
-        uint32_t instanceBufferSize = (uint32_t)sizeof(VkGeometryInstance);
+        // Insert 1 instance of the bottom level AS #2
+        float transform2[12] =
+        {
+            2.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 2.0f, 0.0f, -9.0f,
+            0.0f, 0.0f, 2.0f, 0.0f,
+        };
+        instances.push_back(FillInstance(accelerationStructureHandles[1], 3, transform2));
+
+        // Insert 1 instance of the bottom level AS #3
+        transform[3] = 3.0f;
+        transform[11] = 0.5f;
+        instances.push_back(FillInstance(accelerationStructureHandles[2], 4, transform));
+
+        instanceNum = (uint32_t)instances.size();
+
+        uint32_t instanceBufferSize = instanceNum * sizeof(VkGeometryInstance);
 
         _memoryManager->CreateBuffer(VK_BUFFER_USAGE_RAY_TRACING_BIT_NV, MemProps::HOST, instanceBufferSize, _instanceBuffer);
-        _memoryManager->CopyDataToBuffer(_instanceBuffer, &instance);
+        _memoryManager->CopyDataToBuffer(_instanceBuffer, instances.data());
 
     }
-
+    CreateStructure(VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_NV, 0, nullptr, instanceNum, _top);
     FillOutStructure(geometries,instances);
+}
+
+VkAccelerationStructureNV AccelerationStructure::GetTopStructure()
+{
+    return _top;
+}
+
+std::vector<VkAccelerationStructureNV> AccelerationStructure::GetBotStructures()
+{
+    return _bot;
 }
 
 }

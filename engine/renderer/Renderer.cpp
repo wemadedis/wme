@@ -39,19 +39,23 @@ void Renderer::Initialize()
     auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
     auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
     auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
-    
+    //TODO: Change name to GetStandardRayClosestHitShader
+    auto rchit = Utilities::GetStandardRayHitShader(_instance->GetDevice());
+    auto rmiss = Utilities::GetStandardRayMissShader(_instance->GetDevice());
     if(RTXon)
     {
         InitRT();
     }
     
-    _pipeline = new GraphicsPipeline(   rayGen, 
+    _pipelineRT = new GraphicsPipeline( rayGen, 
+                                        rchit,
+                                        rmiss,
                                         _swapChain->GetSwapChainExtent(), 
                                         _descriptorManager, 
                                         _instance, 
                                         _renderPass);
     //COMMENT THIS OUT
-    delete _pipeline;
+    //delete _pipeline;
     _pipeline = new GraphicsPipeline(   vertexShader, 
                                         fragmentShader, 
                                         _swapChain->GetSwapChainExtent(), 
@@ -66,7 +70,11 @@ void Renderer::Initialize()
     {
         _accelerationStructure = new AccelerationStructure(_instance, _deviceMemoryManager, _commandBufferManager);
         //UNCOMMENT THIS
-        //CreateShaderBindingTable();
+        CreateShaderBindingTable();
+        _offScreenImageRT = _deviceMemoryManager->CreateImage(_initInfo.Width, _initInfo.Height, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
+        _offScreenImageView = _imageManager->CreateImageView(_offScreenImageRT, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_ASPECT_COLOR_BIT);
+        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _offScreenImageView);
+        //RecordCommandBuffersRT();
     }
 
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
@@ -135,8 +143,8 @@ TextureHandle Renderer::UploadTexture(Texture &texture)
 void Renderer::BindTexture(TextureHandle texture, MeshInstanceHandle mesh)
 {
     _meshInstances[mesh].texture = texture;
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [](MeshUniformData &data){
-        data.HasTexture = true;
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [](MeshUniformData *data){
+        data->HasTexture = true;
     });
 }
 
@@ -162,6 +170,79 @@ void Renderer::RecordRenderPass()
         }
 
         _renderPass->EndRenderPass(cmdBuffer);
+    }
+}
+
+
+void Renderer::RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32_t frameIndex)
+{
+    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetHandle());
+    auto dset = _descriptorManager->GetDescriptorSetRT();
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, 1, &dset, 0, 0);
+
+    // Here's how the shader binding table looks like in this tutorial:
+    // |[ raygen shader ]|
+    // |                 |
+    // | 0               | 1
+
+    RTUtilities::GetInstance()->vkCmdTraceRaysNV(commandBuffer,
+        _shaderBindingTable.buffer, 0,
+        _shaderBindingTable.buffer, 2 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
+        _shaderBindingTable.buffer, 1 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
+        VK_NULL_HANDLE, 0, 0,
+        _initInfo.Width, _initInfo.Height, 1);
+}
+
+void Renderer::RecordCommandBuffersRT()
+{
+    VkCommandBufferBeginInfo commandBufferBeginInfo;
+    commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+    commandBufferBeginInfo.pNext = nullptr;
+    commandBufferBeginInfo.flags = 0;
+    commandBufferBeginInfo.pInheritanceInfo = nullptr;
+
+    VkImageSubresourceRange subresourceRange;
+    subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
+    subresourceRange.baseMipLevel = 0;
+    subresourceRange.levelCount = 1;
+    subresourceRange.baseArrayLayer = 0;
+    subresourceRange.layerCount = 1;
+
+    for (uint32_t bufferIndex = 0; bufferIndex < _commandBufferManager->GetCommandBufferCount(); bufferIndex++)
+    {
+        const VkCommandBuffer commandBuffer = _commandBufferManager->GetCommandBuffer(bufferIndex);
+
+        VkResult code = vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
+        Utilities::CheckVkResult(code, "Could not begin RT command buffer!");
+        
+        _imageManager->ImageBarrier(commandBuffer, _offScreenImageRT.image, subresourceRange,
+            0, VK_ACCESS_SHADER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
+
+        RecordCommandBufferForFrame(commandBuffer, bufferIndex); // user draw code
+
+        auto swapChainImage = _swapChain->GetSwapChainImages()[bufferIndex].imageInfo.image;
+
+
+         _imageManager->ImageBarrier(commandBuffer, swapChainImage, subresourceRange,
+            0, VK_ACCESS_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
+
+         _imageManager->ImageBarrier(commandBuffer, _offScreenImageRT.image, subresourceRange,
+            VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
+
+        VkImageCopy copyRegion;
+        copyRegion.srcSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
+        copyRegion.srcOffset = { 0, 0, 0 };
+        copyRegion.dstSubresource = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
+        copyRegion.dstOffset = { 0, 0, 0 };
+        copyRegion.extent = { _initInfo.Width, _initInfo.Height, 1 };
+        vkCmdCopyImage(commandBuffer, _offScreenImageRT.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
+            swapChainImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
+
+         _imageManager->ImageBarrier(commandBuffer, swapChainImage, subresourceRange,
+            VK_ACCESS_TRANSFER_WRITE_BIT, 0, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+
+        code = vkEndCommandBuffer(commandBuffer);
+        Utilities::CheckVkResult(code, "Could not end RT command buffer!");
     }
 }
 
@@ -269,13 +350,13 @@ void Renderer::InitRT()
 
 void Renderer::CreateShaderBindingTable()
 {
-    const uint32_t groupNum = 1; // 1 group is listed in pGroupNumbers in VkRayTracingPipelineCreateInfoNV
+    const uint32_t groupNum = 3; // 1 group is listed in pGroupNumbers in VkRayTracingPipelineCreateInfoNV
     const uint32_t shaderBindingTableSize = _rtProperties.shaderGroupHandleSize * groupNum;
 
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, shaderBindingTableSize, _shaderBindingTable);
     
     _deviceMemoryManager->ModifyBufferData<void*>(_shaderBindingTable, [&](void* data){
-        VkResult code = RTUtilities::GetInstance()->vkGetRayTracingShaderGroupHandlesNV(_instance->GetDevice(), _pipeline->GetHandle(), 0, groupNum, shaderBindingTableSize, data);
+        VkResult code = RTUtilities::GetInstance()->vkGetRayTracingShaderGroupHandlesNV(_instance->GetDevice(), _pipelineRT->GetHandle(), 0, groupNum, shaderBindingTableSize, data);
         Utilities::CheckVkResult(code, "Failed to get RT shader group handles!");
     });
 }
@@ -294,6 +375,7 @@ void Renderer::Finalize()
     _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
     UploadGlobalUniform();
     RecordRenderPass();
+    //RecordCommandBuffersRT();
     CreateSyncObjects();
 }
 
@@ -356,10 +438,8 @@ void Renderer::Draw()
 
     vkResetFences(_instance->GetDevice(), 1, &_inFlightFences[_currentFrame]);
 
-    if (vkQueueSubmit(_instance->GetGraphicsQueue(), 1, &submitInfo, _inFlightFences[_currentFrame]) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to submit draw command buffer!");
-    }
+    VkResult code = vkQueueSubmit(_instance->GetGraphicsQueue(), 1, &submitInfo, _inFlightFences[_currentFrame]);
+    Utilities::CheckVkResult(code, "Failed to submit draw command buffer!");
 
     VkPresentInfoKHR presentInfo = {};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
@@ -399,8 +479,8 @@ void Renderer::SetMeshTransform(MeshInstanceHandle mesh, glm::vec3 pos, glm::vec
     glm::mat4 translation = glm::translate(pos);
     glm::mat4 scale = glm::scale(scl);
     auto modelMatrix = translation * rotation * scale;
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [modelMatrix](MeshUniformData &data){
-        data.ModelMatrix = modelMatrix;
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [modelMatrix](MeshUniformData *data){
+        data->ModelMatrix = modelMatrix;
     });
 }
 
@@ -418,8 +498,8 @@ PointLightHandle Renderer::AddPointLight(PointLight light)
 
 void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::function<void(DirectionalLight&)> mutator)
 {
-    _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData &data){
-        mutator(data.DirectionalLights[light]);
+    _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData *data){
+        mutator(data->DirectionalLights[light]);
     });
     
 }
@@ -427,8 +507,8 @@ void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::
 void Renderer::SetPointLightProperties(PointLightHandle light, std::function<void(PointLight&)> mutator)
 {   
     mutator(_pointLights[light]);
-    _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData & data){
-        mutator(data.PointLights[light]);
+    _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData *data){
+        mutator(data->PointLights[light]);
     });
     
 }

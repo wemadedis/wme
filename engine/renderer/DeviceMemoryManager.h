@@ -68,13 +68,13 @@ public:
 	void CopyDataToBuffer(BufferInformation& bufferInfo, void* data);
 
 	template<typename T>
-	void ModifyBufferData(BufferInformation& bufferInfo, std::function<void(T&)> Mutator)
+	void ModifyBufferData(BufferInformation& bufferInfo, std::function<void(T*)> Mutator)
 	{
-		void *mapping = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
+		void* mapping = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
 		VmaAllocation& allocation = _buffers[bufferInfo.buffer];
-		vmaMapMemory(*_allocator, allocation, &mapping);
-		T* before = reinterpret_cast<T*>(mapping);
-		Mutator(*before);
+		vmaMapMemory(*_allocator, allocation, (void**)&mapping);
+		T* before = (T*)mapping;
+		Mutator(before);
 		vmaUnmapMemory(*_allocator, allocation);
 	}
 
@@ -104,7 +104,7 @@ public:
 
 	void AllocateAccelerationStructureMemory(VkAccelerationStructureNV &AS);
 
-	void CreateScratchBuffer(VkAccelerationStructureNV &bot, VkAccelerationStructureNV &top, BufferInformation &buffer);
+	void CreateScratchBuffer(std::vector<VkAccelerationStructureNV> &bot, VkAccelerationStructureNV &top, BufferInformation &buffer);
 
 	/*
 	Returns a pointer to a char array describing the current state of memory in JSON format.
