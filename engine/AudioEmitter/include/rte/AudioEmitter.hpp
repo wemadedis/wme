@@ -1,13 +1,8 @@
 #pragma once
 
-#include <al.h>
-#include <alc.h>
-// #include <alc
-
 #include <string>
 #include <iostream>
-#include <wave/file.h>
-// #include <file.h>
+#include <SFML/Audio.hpp>
 
 class AudioEmitter 
 {

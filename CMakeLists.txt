@@ -25,9 +25,8 @@ target_link_libraries(rte INTERFACE
     platform
     glfw
     runtime_architecture
-    openal
-    wave
     ModelImporter
-    AudioEmitter
     bullet
+    sfml-audio
+    AudioEmitter
 )
