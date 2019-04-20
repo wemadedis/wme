@@ -86,8 +86,8 @@ private:
 
     TextureHandle _emptyTexture;
 
-
-    bool RTXon = false;
+    RenderMode _renderMode;
+    bool RTXon = false; //TODO: Apply coding style
     VkPhysicalDeviceRayTracingPropertiesNV _rtProperties = {};
     AccelerationStructure *_accelerationStructure;
     GraphicsPipeline *_pipelineRT;

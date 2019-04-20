@@ -24,7 +24,7 @@
 namespace RTE::Rendering
 {
 
-const int MAX_FRAMES_IN_FLIGHT = 1;
+const int MAX_FRAMES_IN_FLIGHT = 2;
 
 void Renderer::Initialize()
 {
@@ -45,15 +45,14 @@ void Renderer::Initialize()
     if(RTXon)
     {
         InitRT();
+        _pipelineRT = new GraphicsPipeline( rayGen, 
+                                            rchit,
+                                            rmiss,
+                                            _swapChain->GetSwapChainExtent(), 
+                                            _descriptorManager, 
+                                            _instance, 
+                                            _renderPass);
     }
-    
-    _pipelineRT = new GraphicsPipeline( rayGen, 
-                                        rchit,
-                                        rmiss,
-                                        _swapChain->GetSwapChainExtent(), 
-                                        _descriptorManager, 
-                                        _instance, 
-                                        _renderPass);
     //COMMENT THIS OUT
     //delete _pipeline;
     _pipeline = new GraphicsPipeline(   vertexShader, 
@@ -199,7 +198,7 @@ void Renderer::RecordCommandBuffersRT()
 
     for (uint32_t bufferIndex = 0; bufferIndex < _commandBufferManager->GetCommandBufferCount(); bufferIndex++)
     {
-        const VkCommandBuffer commandBuffer = _commandBufferManager->GetCommandBuffer(bufferIndex);
+        const VkCommandBuffer commandBuffer = _commandBufferManager->GetCommandBufferRT(bufferIndex);
 
         VkResult code = vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
         Utilities::CheckVkResult(code, "Could not begin RT command buffer!");
@@ -262,7 +261,11 @@ void Renderer::CreateSyncObjects()
 void Renderer::CleanupSwapChain()
 {
     _commandBufferManager->DeallocateCommandBuffers();
-
+    if(RTXon)
+    {
+        _commandBufferManager->DeallocateCommandBuffersRT();
+    }
+    
     delete _pipeline;
     
     delete _renderPass;
@@ -279,6 +282,11 @@ void Renderer::RecreateSwapChain()
 
     CleanupSwapChain();
     _commandBufferManager->AllocateCommandBuffers();
+    if(RTXon)
+    {
+        _commandBufferManager->AllocateCommandBuffersRT();
+    }
+    
     _swapChain = new SwapChain(_instance, width, height);
     _renderPass = new RenderPass(_instance, _swapChain);
     auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
@@ -354,6 +362,14 @@ Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f/info.MaxFPS)
     _initInfo = info;
     _lastFrameEnd = Clock::now();
     Initialize();
+    if(RTXon)
+    {
+        _renderMode = RenderMode::RAYTRACE;
+    } 
+    else 
+    {
+        _renderMode = RenderMode::RASTERIZE;
+    }
 }
 
 void Renderer::Finalize()
@@ -374,14 +390,23 @@ void Renderer::Finalize()
     _descriptorManager->CreateDescriptorPool(_swapChain, _meshInstances);
     _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
     UploadGlobalUniform();
-    RecordRenderPass();
-    //RecordCommandBuffersRT();
+    if(RTXon)
+    {
+        RecordCommandBuffersRT();
+        RecordRenderPass();
+    } 
+    else 
+    {
+        RecordRenderPass();
+    }
+    
+    
     CreateSyncObjects();
 }
 
 void Renderer::SetRenderMode(RenderMode mode)
 {
-
+    _renderMode = mode;
 }
 
 void Renderer::ClearAllMeshData()
@@ -428,9 +453,17 @@ void Renderer::Draw()
     submitInfo.pWaitSemaphores = waitSemaphores;
     submitInfo.pWaitDstStageMask = waitStages;
 
-    VkCommandBuffer cmbBuffer = _commandBufferManager->GetCommandBuffer(imageIndex);
+    VkCommandBuffer cmdBuffer;
+    if(_renderMode == RenderMode::RASTERIZE)
+    {
+        cmdBuffer = _commandBufferManager->GetCommandBuffer(imageIndex);
+    } 
+    else 
+    {
+        cmdBuffer = _commandBufferManager->GetCommandBufferRT(imageIndex);
+    }
     submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &cmbBuffer;
+    submitInfo.pCommandBuffers = &cmdBuffer;
 
     VkSemaphore signalSemaphores[] = {_renderFinishedSemaphores[_currentFrame]};
     submitInfo.signalSemaphoreCount = 1;
@@ -520,6 +553,7 @@ void Renderer::SetAmbientLight(glm::vec4 color)
 
 void Renderer::SetCamera(Camera camera)
 {
+    _globalUniform.Position = glm::vec4(camera.Position,1.0f);
     _globalUniform.ViewMatrix = camera.ViewMatrix;
     _globalUniform.ProjectionMatrix = camera.ProjectionMatrix;
     UploadGlobalUniform();

@@ -1,6 +1,7 @@
 #include "CommandBufferManager.hpp"
 #include "Utilities.h"
 #include "Instance.hpp"
+#include "rte/RTEException.h"
 
 namespace RTE::Rendering
 {
@@ -14,10 +15,8 @@ void CommandBufferManager::CreateCommandPool()
     poolInfo.queueFamilyIndex = queueFamilyIndices.GraphicsFamily.value();
     poolInfo.flags = 0;
 
-    if (vkCreateCommandPool(_instance->GetDevice(), &poolInfo, nullptr, &_commandPool) != VK_SUCCESS)
-    {
-        throw std::runtime_error("Failed to create command pool!");
-    }
+    VkResult code = vkCreateCommandPool(_instance->GetDevice(), &poolInfo, nullptr, &_commandPool);
+    Utilities::CheckVkResult(code, "Failed to create a command pool!");
 }
 
 
@@ -31,7 +30,21 @@ void CommandBufferManager::AllocateCommandBuffers()
 
     if (vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, _commandBuffers.data()) != VK_SUCCESS)
     {
-        throw std::runtime_error("Failed to allocate command buffers!");
+        throw RTEException("Failed to allocate command buffers!");
+    }
+}
+
+void CommandBufferManager::AllocateCommandBuffersRT()
+{
+    VkCommandBufferAllocateInfo allocInfo = {};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool = _commandPool;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = _commandBufferCount;
+
+    if (vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, _commandBuffersRT.data()) != VK_SUCCESS)
+    {
+        throw RTEException("Failed to allocate RT command buffers!");
     }
 }
 
@@ -39,6 +52,11 @@ void CommandBufferManager::AllocateCommandBuffers()
 void CommandBufferManager::DeallocateCommandBuffers()
 {
     vkFreeCommandBuffers(_instance->GetDevice(), _commandPool, static_cast<uint32_t>(_commandBuffers.size()), _commandBuffers.data());
+}
+
+void CommandBufferManager::DeallocateCommandBuffersRT()
+{
+    vkFreeCommandBuffers(_instance->GetDevice(), _commandPool, static_cast<uint32_t>(_commandBuffersRT.size()), _commandBuffersRT.data());
 }
 
 VkCommandBuffer CommandBufferManager::BeginCommandBufferInstance()
@@ -83,8 +101,10 @@ CommandBufferManager::CommandBufferManager(Instance *instance, uint32_t commandB
     _instance = instance;
     _commandBufferCount = commandBufferCount;
     _commandBuffers.resize(_commandBufferCount);
+    _commandBuffersRT.resize(_commandBufferCount);
     CreateCommandPool();
     AllocateCommandBuffers();
+    AllocateCommandBuffersRT();
 }
 
 CommandBufferManager::~CommandBufferManager()
@@ -101,9 +121,20 @@ VkCommandBuffer CommandBufferManager::GetCommandBuffer(uint32_t index)
     }
     else 
     {
-        throw std::runtime_error("CommandBufferManager: Index out of range!");
+        throw RTEException("CommandBufferManager: Index out of range!");
+    }   
+}
+
+VkCommandBuffer CommandBufferManager::GetCommandBufferRT(uint32_t index)
+{
+    if(index < _commandBufferCount)
+    {
+        return _commandBuffersRT[index];
     }
-    
+    else 
+    {
+        throw RTEException("CommandBufferManager: Index out of range!");
+    }   
 }
 
 uint32_t CommandBufferManager::GetCommandBufferCount()

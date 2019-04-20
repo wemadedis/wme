@@ -206,7 +206,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     globalBuffer.offset = 0;
     globalBuffer.range = sizeof(GlobalUniformData);
 
-    VkWriteDescriptorSet cameraUniform;
+    VkWriteDescriptorSet cameraUniform = {}; //<--------------- FUNNY MOMENT. BROKE WITHOUT THE "= {}" #RIP
     cameraUniform.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     cameraUniform.dstSet = _descriptorsetRT;
     cameraUniform.dstBinding = 2;
@@ -215,13 +215,9 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     cameraUniform.descriptorCount = 1;
     cameraUniform.pBufferInfo = &globalBuffer;
 
-
     std::vector<VkWriteDescriptorSet> descriptorWrites({ accelerationStructureWrite, outputImageWrite, cameraUniform });
-    for(uint32_t index = 0; index < 2; index++)
-    {
-        vkUpdateDescriptorSets(_instance->GetDevice(), 1, &descriptorWrites[index], 0, nullptr);
-    }
-    //vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+
+    vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
 }
 
 void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData)
