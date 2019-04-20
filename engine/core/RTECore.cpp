@@ -1,13 +1,11 @@
 #pragma once
 
 #include "rte/RTECore.hpp"
-
 #include "rte/RTE.hpp"
+#include "rte/Scene.h"
 
 #include <cstdint>
 #include <vector>
-
-#include "rte/Scene.h"
 
 using namespace RTE;
 
@@ -20,13 +18,21 @@ Scene *CreateScene()
 
 static RequiredManagers Managers;
 
-void InitEngine(RTEConfig &config)
+void RTECore::InitEngine(RTEConfig &config)
 {
     Managers.PhysicsManager = new Physics::PhysicsManager(config);
     Managers.SceneManager = new Runtime::SceneManager();
 }
 
-int main(int argc, char const *argv[])
+void RTECore::RunUpdateLoop()
+{
+    while (true)
+    {
+        scene.UpdateComponents();
+    }
+}
+
+RTECore::RTECore()
 {
     RTEConfig config;
     if (ConfigureGame != nullptr)
@@ -41,10 +47,12 @@ int main(int argc, char const *argv[])
         OnGameStart(*Managers.SceneManager);
     }
 
-    while (true)
-    {
-        scene.UpdateComponents();
-    }
+    RunUpdateLoop();
+}
+
+int main(int argc, char const *argv[])
+{
+    RTECore core;
 
     return 0;
 }

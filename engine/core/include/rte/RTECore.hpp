@@ -10,6 +10,16 @@
 extern void (*ConfigureGame)(RTEConfig &config) = nullptr;
 extern void (*OnGameStart)(RTE::Runtime::SceneManager &sceneManager) = nullptr;
 
+class RTECore
+{
+  private:
+    void InitEngine(RTEConfig &config);
+    void RunUpdateLoop();
+
+  public:
+    RTECore();
+};
+
 struct RequiredManagers
 {
     RTE::Physics::PhysicsManager *PhysicsManager;
