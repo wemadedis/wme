@@ -28,7 +28,7 @@ public:
     void CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInstance> &meshes);
     void CreateDescriptorSetLayout();
     void CreateDescriptorSetLayoutRT();
-    void CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT);
+    void CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform);
     void CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData);
     VkDescriptorSetLayout* GetDescriptorLayout();
     VkDescriptorSetLayout* GetDescriptorLayoutRT();
