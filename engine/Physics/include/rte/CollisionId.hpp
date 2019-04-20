@@ -10,9 +10,7 @@ namespace Physics
 {
 struct CollisionId
 {
-    uint32_t collisionId;
-    GameObject *rb1;
-    GameObject *rb2;
+    uint32_t CollisionId;
 };
 } // namespace Physics
-}; // namespace RTE
+} // namespace RTE
