@@ -1,8 +1,8 @@
 #pragma once
 
 #include <assimp/cimport.h>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 #include <glm/glm.hpp>
 
 #include "rte/RenderStructs.h"
@@ -65,7 +65,15 @@ class ModelImporter
         aiMesh *mesh,
         RTE::Rendering::Transform t);
 
-    static RTE::Rendering::Transform GetTransform(aiNode *);
+    /**
+     * @brief 
+     *  Extracts the position, scalar, and rotation information from this node, and converts it 
+     *  into a #RTE::Rendering::Transform. 
+     * 
+     * @param node Source of transformation data
+     * @return #RTE::Rendering::Transform Produced by extracting information from @p node.
+     */
+    static RTE::Rendering::Transform GetTransform(aiNode *node);
 
     ModelImporter() = default;
 

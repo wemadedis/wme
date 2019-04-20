@@ -1,6 +1,5 @@
 #pragma once
 
-
 class Component
 {
   private:
@@ -38,7 +37,7 @@ class Component
      *      Set the enabled state of this #Component 
      * 
      * @param enabled
-     *      The new enabled state of the #Compenent
+     *      The new enabled state of the #Component
      */
     void SetEnabled(bool enabled);
 
@@ -46,5 +45,5 @@ class Component
      * @brief 
      *      Virtual update function, called every frame unless #GetEnabled returns false.
      */
-    virtual void Update() = 0; 
+    virtual void Update() = 0;
 };
