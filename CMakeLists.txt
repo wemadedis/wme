@@ -18,17 +18,19 @@ add_subdirectory(apps)
 target_link_libraries(rte INTERFACE
     core
     physics
+    renderer 
+    scene_manager
+    runtime_architecture 
+    model_importer 
+    platform 
+    AudioEmitter
     glm 
     vma 
     vulkan 
     assimp 
-    renderer 
-    platform 
     glfw 
-    runtime_architecture 
-    model_importer 
     bullet
     imgui
     sfml-audio
-    AudioEmitter
+    
 )
