@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rte/RTEModule.hpp"
+#include "rte/Scene.h"
 
 namespace RTE
 {
@@ -10,7 +10,7 @@ class SceneManager
 {
   public:
     Scene *MakeScene();
-}
-} // namespace Runtime
+};
 
+} // namespace Runtime
 } // namespace RTE

@@ -1,20 +1,21 @@
 #pragma once
 
-#include "rte/Physics.hpp"
+#include <Bullet/btBulletDynamicsCommon.h>
 
-namespace RTE::Physics
+namespace RTE
 {
-
+namespace Physics
+{
 class RigidBody
 {
-private:
+  private:
     /**
      * @brief The Bullet Physics rigid body
      * 
      */
     btRigidBody *_rigidBody;
 
-public:
+  public:
     /**
      * @brief Construct a new Rigid Body object from a Bullet physics body
      * 
@@ -23,4 +24,5 @@ public:
      */
     RigidBody(btRigidBody *rigidBody);
 };
-}; // namespace RTE::Physics
+} // namespace Physics
+} // namespace RTE

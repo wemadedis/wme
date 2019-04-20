@@ -1,10 +1,12 @@
 #include "rte/RigidBody.hpp"
 
-namespace RTE::Physics
+namespace RTE
+{
+namespace Physics
 {
 RigidBody::RigidBody(btRigidBody *body)
 {
     _rigidBody = body;
 }
-
-}; // namespace RTE::Physics
+} // namespace Physics
+}; // namespace RTE

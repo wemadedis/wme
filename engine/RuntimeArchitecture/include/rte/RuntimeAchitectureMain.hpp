@@ -4,4 +4,4 @@
 #include "rte/ComponentPool.h"
 #include "rte/GameObject.h"
 #include "rte/Scene.h"
-#include "rte/SceneManager.h"
+#include "rte/SceneManager.hpp"
