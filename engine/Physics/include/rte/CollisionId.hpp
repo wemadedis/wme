@@ -2,12 +2,14 @@
 
 #include "rte/RTE.hpp"
 
-struct CollisionId {
-    /*
-    size_t collisionId;
-    GameObject* bodyA;
-    GameObject* bodyB;
+#include <cstdint>
 
-    CollisionId(size_t collisionId, GameObject *bodyA, GameObject *bodyB) : collisionId(collisionId), bodyA(bodyA),
-                                                                            bodyB(bodyB) {}*/
+namespace RTE::Physics
+{
+struct CollisionId
+{
+    uint32_t collisionId;
+    GameObject *rb1;
+    GameObject *rb2;
 };
+}; // namespace RTE::Physics

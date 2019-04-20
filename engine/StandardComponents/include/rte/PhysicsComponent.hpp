@@ -7,6 +7,5 @@ namespace RTE::StandardComponents
 class PhysicsComponent : public Component
 {
     void Update() override;
-        
 };
 }; // namespace RTE::StandardComponents
