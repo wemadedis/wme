@@ -29,12 +29,10 @@ static void ContactEndedCallback(btPersistentManifold *const &manifold)
     throw NotImplementedException();
 }
 
-PhysicsManager::PhysicsManager(uint32_t framesPerSecond)
-    : RTEModule()
+PhysicsManager::PhysicsManager(RTEConfig &config)
 {
     _physicsWorld = CreateDefaultDynamicsWorld();
-    _framesPerSecond = framesPerSecond;
-    _fixedTimeStep = 1 / (float)framesPerSecond;
+    SetFramesPerSecond(config.FramesPerSecond);
 }
 
 btDiscreteDynamicsWorld *PhysicsManager::CreateDefaultDynamicsWorld()

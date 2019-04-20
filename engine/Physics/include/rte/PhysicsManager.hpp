@@ -6,55 +6,25 @@
 #include <glm/glm.hpp>
 
 #include "rte/CollisionId.hpp"
-#include "rte/RTEModule.hpp"
+#include "rte/RTEConfig.hpp"
 #include "rte/RigidBody.hpp"
 
-/**
- * @brief This namespace holds classes, structs, and functions related to RTE's Physics module
- * 
- */
-namespace RTE::Physics
+namespace RTE
 {
-
 /**
- * @brief Bullet Physics callback for contact started
- * 
- * @param manifold The persistent manifold for this contact
+ * @brief This namespace holds classes, structs, and functions 
+ * related to RTE's Physics module
  */
-static void ContactStartedCallback(btPersistentManifold *const &manifold);
-
-/**
- * @brief Bullet Physics callback for contact destroyed
- * 
- * @param data Whatever data passed to it
- * @return true Dunno their documentation doesn't specify
- * @return false Dunno their documentation doesn't specify
- */
-static bool ContactDestroyedCallback(void *data);
-
-/**
- * @brief Bullet Physics callback for contact destroyed
- * 
- * @param data ManifoldPoint 
- * @return true Dunno their documentation doesn't specify
- * @return false Dunno their documentation doesn't specify
- */
-static bool ContactProcessedCallback(btManifoldPoint &cp, void *body0, void *body1);
-
-/**
- * @brief Bullet physics callback for contact ended
- * 
- * @param manifold 
- */
-static void ContactEndedCallback(btPersistentManifold *const &manifold);
+namespace Physics
+{
 
 /**
  * @brief Manages physics
  * 
  */
-class PhysicsManager : public RTEModule
+class PhysicsManager
 {
-private:
+  private:
     /**
      * @brief PhysicsWorld instance
      * 
@@ -63,7 +33,7 @@ private:
 
     /**
      * @brief Create a Default Dynamics World object
-     * @detail
+     * @details
      *  A default dynamics world uses:
      *   - btDbvtBroadphase
      *   - btDefaultCollisionConfiguration
@@ -90,22 +60,30 @@ private:
      * @brief The number of frames per second used for the physics system
      *  Changed by the default constructor, or via setter method #PhysicsManager(uint32_t)
      */
-    uint32_t _framesPerSecond = 60;
+    uint32_t _framesPerSecond = -1;
 
     /**
      * @brief The fixed time step used for physics simulation
      * 
      */
-    float _fixedTimeStep = 1 / (float)_framesPerSecond;
-    //! Control this value
-    uint32_t _maxSubSteps = 10;
+    float _fixedTimeStep = -1;
 
-public:
+    //! Control this value
+    /**
+     * @brief Maximum number of substeps
+     * @details 
+     * In the case that time since last frame is larger than #_fixedTimeStep 
+     * then bullet will split it into multiple substeps. This value represents the
+     * maximum number of sub steps it will be split into.
+     */
+    uint32_t _maxSubSteps = 1;
+
+  public:
     /**
      * @brief Construct a new Physics Manager object
      * 
      */
-    PhysicsManager(uint32_t framesPerSecond);
+    PhysicsManager(RTEConfig &config);
 
     /**
      * @brief Destroy the Physics Manager object
@@ -114,7 +92,7 @@ public:
     ~PhysicsManager();
 
     /**
-     * @brief Step the physics world by @param deltaTime seconds
+     * @brief Step the physics world by /p deltaTime seconds
      * 
      * @param deltaTime Time to step in seconds
      */
@@ -136,4 +114,5 @@ public:
     uint32_t GetFramesPerSecond();
     void SetFramesPerSecond(uint32_t framesPerSecond);
 };
-}; // namespace RTE::Physics
+} // namespace Physics
+} // namespace RTE

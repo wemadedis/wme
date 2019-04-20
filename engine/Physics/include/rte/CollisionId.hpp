@@ -4,7 +4,9 @@
 
 #include <cstdint>
 
-namespace RTE::Physics
+namespace RTE
+{
+namespace Physics
 {
 struct CollisionId
 {
@@ -12,4 +14,5 @@ struct CollisionId
     GameObject *rb1;
     GameObject *rb2;
 };
-}; // namespace RTE::Physics
+} // namespace Physics
+}; // namespace RTE
