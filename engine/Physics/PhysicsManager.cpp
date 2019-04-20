@@ -1,127 +1,111 @@
 #include "rte/PhysicsManager.hpp"
 
+#include <glm/glm.hpp>
+
+#include "rte/NotImplementedException.hpp"
+
+// TODO: (danh 20/04 13:35): Make this use custom allocator
+
 namespace RTE::Physics
 {
-/*
-class RigidBody;
 
-// based on https://github.com/kripken/ammo.js/issues/82#issuecomment-426429129
-bool contactUpdatedCallback(btManifoldPoint &cp, void *body0, void *body1)
+static void ContactStartedCallback(btPersistentManifold *const &manifold)
 {
-    bool collisionBegin = cp.m_userPersistentData == nullptr;
-    auto btRigidBody0 = static_cast<btRigidBody *>(body0);
-    auto btRigidBody1 = static_cast<btRigidBody *>(body1);
-    auto rigidBody0 = static_cast<RigidBody *>(btRigidBody0->getUserPointer());
-    auto rigidBody1 = static_cast<RigidBody *>(btRigidBody1->getUserPointer());
-    /*
-    if (collisionBegin)
-    {
-        static size_t collisionId = 0;
-        collisionId++;
-        //cp.m_userPersistentData = new CollisionId(collisionId, rigidBody0->getGameObject(), rigidBody1->getGameObject());
-    }
-    CollisionId *id = (CollisionId *)cp.m_userPersistentData;
-    glm::vec3 pointOnA(cp.getPositionWorldOnA().x(), cp.getPositionWorldOnA().y(), cp.getPositionWorldOnA().z());
-    glm::vec3 pointOnB(cp.getPositionWorldOnB().x(), cp.getPositionWorldOnB().y(), cp.getPositionWorldOnB().z());
-    for (auto ph : rigidBody0->getGameObject()->getCollisionHandlers())
-    {
-        ph->onCollision(id->collisionId, rigidBody1, pointOnA, collisionBegin);
-    }
-    for (auto ph : rigidBody1->getGameObject()->getCollisionHandlers())
-    {
-        ph->onCollision(id->collisionId, rigidBody0, pointOnB, collisionBegin);
-    }
-    return true;
+    throw NotImplementedException();
 }
 
-bool contactDestroyedCallback(void *data)
+static bool ContactProcessedCallback(btManifoldPoint &cp, void *body0, void *body1)
 {
-    
-    CollisionId *id = (CollisionId *)data;
-    if (sceneContains(id->bodyA))
-    {
-        for (auto ph : id->bodyA->getCollisionHandlers())
-        {
-            ph->onCollisionEnd(id->collisionId);
-        }
-    }
-    if (sceneContains(id->bodyB))
-    {
-        for (auto ph : id->bodyB->getCollisionHandlers())
-        {
-            ph->onCollisionEnd(id->collisionId);
-        }
-    }
-    delete id;
-    return true;
+    throw NotImplementedException();
 }
 
-BulletPhysics::BulletPhysics()
+static bool ContactDestroyedCallback(void *data)
 {
-    gContactProcessedCallback = contactUpdatedCallback;
-    gContactDestroyedCallback = contactDestroyedCallback;
-    // gContactDestroyedCallback = contactDestroyedCallback;
-    broadphase = new btDbvtBroadphase();
-    collisionConfiguration = new btDefaultCollisionConfiguration();
-    dispatcher = new btCollisionDispatcher(collisionConfiguration);
-    solver = new btSequentialImpulseConstraintSolver();
-    world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-    world->setDebugDrawer(&debugDrawObj);
-    setGravity(gravity);
+    throw NotImplementedException();
 }
 
-BulletPhysics::~BulletPhysics()
+static void ContactEndedCallback(btPersistentManifold *const &manifold)
 {
-    delete world;
-    delete solver;
-    delete collisionConfiguration;
-    delete dispatcher;
-    delete broadphase;
+    throw NotImplementedException();
 }
 
-const glm::vec3 &BulletPhysics::getGravity() const
+PhysicsManager::PhysicsManager(uint32_t framesPerSecond)
+    : RTEModule()
 {
-    return gravity;
+    _physicsWorld = CreateDefaultDynamicsWorld();
+    _framesPerSecond = framesPerSecond;
+    _fixedTimeStep = 1 / (float)framesPerSecond;
 }
 
-void BulletPhysics::setGravity(const glm::vec3 &gravity)
+btDiscreteDynamicsWorld *PhysicsManager::CreateDefaultDynamicsWorld()
 {
-    BulletPhysics::gravity = gravity;
-    world->setGravity(btVector3(gravity.x, gravity.y, gravity.z));
+    SetupBulletCallbacks();
+    //! Make this configurable
+    //? Make default world configurable too?
+    auto broadphase = new btDbvtBroadphase();
+    auto colConfig = new btDefaultCollisionConfiguration();
+    auto dispatcher = new btCollisionDispatcher(colConfig);
+    auto solver = new btSequentialImpulseConstraintSolver();
+    auto world = new btDiscreteDynamicsWorld(
+        dispatcher,
+        broadphase,
+        solver,
+        colConfig);
+    SetGravity(_defaultGravity);
+    return world;
 }
 
-void BulletPhysics::step(Scene *scene_)
+void PhysicsManager::SetupBulletCallbacks()
 {
-    scene = scene_;
-    world->stepSimulation(timeStep, maxSubSteps);
-}
-
-void BulletPhysics::debugDrawNewFrame()
-{
-    debugDrawObj.newFrame();
-    world->debugDrawWorld();
-}
-
-void BulletPhysics::debugDraw(sre::RenderPass &renderPass)
-{
-    debugDrawObj.render(renderPass);
-}
-*/
-PhysicsManager::PhysicsManager() : RTEModule()
-{
-    //gContactProcessedCallback = contactUpdatedCallback;
-    //gContactDestroyedCallback = contactDestroyedCallback;
-    // gContactDestroyedCallback = contactDestroyedCallback;
-    broadphase = new btDbvtBroadphase();
-    collisionConfiguration = new btDefaultCollisionConfiguration();
-    dispatcher = new btCollisionDispatcher(collisionConfiguration);
-    //solver = new btSequentialImpulseConstraintSolver();
-    //world = new btDiscreteDynamicsWorld(dispatcher, broadphase, solver, collisionConfiguration);
-    //world->setDebugDrawer(&debugDrawObj);
-    //setGravity(gravity);
+    gContactStartedCallback = ContactStartedCallback;
+    gContactProcessedCallback = ContactProcessedCallback;
+    gContactEndedCallback = ContactEndedCallback;
+    gContactDestroyedCallback = ContactDestroyedCallback;
 }
 
 PhysicsManager::~PhysicsManager()
 {
+    delete _physicsWorld;
 }
+
+void PhysicsManager::Step(float deltaTime)
+{
+    _physicsWorld->stepSimulation(deltaTime, _maxSubSteps, _fixedTimeStep);
+}
+
+RigidBody CreateRigidBody()
+{
+    btMotionState *motionState = new btDefaultMotionState();
+    btBoxShape *boxShape = new btBoxShape({10, 10, 10});
+    btRigidBody::btRigidBodyConstructionInfo info = btRigidBody::btRigidBodyConstructionInfo(0.0f, motionState, boxShape);
+    btRigidBody *bulletRigidBody = new btRigidBody(info);
+    return RigidBody(bulletRigidBody);
+}
+
+glm::vec3 PhysicsManager::GetGravity()
+{
+    const btVector3 gravity = _physicsWorld->getGravity();
+    return glm::vec3(gravity.getX(), gravity.getY(), gravity.getZ());
+}
+void PhysicsManager::SetGravity(float x, float y, float z)
+{
+    _physicsWorld->setGravity({x, y, z});
+}
+
+void PhysicsManager::SetGravity(glm::vec3 gravity)
+{
+    SetGravity(gravity.x, gravity.y, gravity.z);
+}
+
+uint32_t PhysicsManager::GetFramesPerSecond()
+{
+    return _framesPerSecond;
+}
+
+void PhysicsManager::SetFramesPerSecond(uint32_t framesPerSecond)
+{
+    _framesPerSecond = framesPerSecond;
+    _fixedTimeStep = 1 / (float)framesPerSecond;
+}
+
 }; // namespace RTE::Physics

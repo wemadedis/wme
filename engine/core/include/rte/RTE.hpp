@@ -1,4 +1,5 @@
 #pragma once
 
-#include "rte/Physics.hpp"
 #include "rte/EntryPoint.hpp"
+#include "rte/Physics.hpp"
+#undef APIENTRY
