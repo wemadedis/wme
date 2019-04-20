@@ -1,5 +1,4 @@
 add_subdirectory(testApp)
-add_subdirectory(runtime_architecture)
 add_subdirectory(RendererTest)
 add_subdirectory(physicsTest)
 add_subdirectory(audioTest)
