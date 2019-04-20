@@ -40,7 +40,6 @@ add_subdirectory(glfw)
 ###</GLFW>
 
 add_library(bullet INTERFACE)
-target_link_options(bullet INTERFACE "/NODEFAULTLIB:LIBCMTD")
 target_include_directories(bullet INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/bullet/include")
 target_link_libraries(bullet INTERFACE 
     "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletCollision_vs2010_x64_debug.lib" 
