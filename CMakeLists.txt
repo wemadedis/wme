@@ -18,8 +18,8 @@ add_subdirectory(apps)
 target_link_libraries(rte INTERFACE
     core
     physics
-    renderer 
-    scene_manager
+    renderer
+    HighLevelRenderer
     runtime_architecture 
     model_importer 
     platform 
