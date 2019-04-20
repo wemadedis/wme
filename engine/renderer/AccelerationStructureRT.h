@@ -18,7 +18,7 @@ class AccelerationStructure
     CommandBufferManager *_commandBufferManager = nullptr;
     RTUtilities *_rtUtil = nullptr;
     VkAccelerationStructureNV _top = VK_NULL_HANDLE;
-    std::vector<VkAccelerationStructureNV> _bot = { VK_NULL_HANDLE, VK_NULL_HANDLE, VK_NULL_HANDLE };
+    std::vector<VkAccelerationStructureNV> _bot;
 
     //Is this one necessary to keep track of?
     BufferInformation _scratchBuffer; 
@@ -29,10 +29,12 @@ class AccelerationStructure
 
     void CreateStructure(VkAccelerationStructureTypeNV type, uint32_t geometryCount, VkGeometryNV* geometries, uint32_t instanceCount, VkAccelerationStructureNV& AS);
     void CreateBotTopStructures(std::vector<VkGeometryNV> geometries);
-    void FillOutStructure(std::vector<VkGeometryNV> geometries, std::vector<VkGeometryInstance> instances);
+    void FillOutStructure(std::vector<VkGeometryNV> geometries, std::vector<VkGeometryInstance> meshInstances);
 
 public:
-    AccelerationStructure(Instance *instance, DeviceMemoryManager *deviceMemoryManager, CommandBufferManager *commandBufferManager);
+    AccelerationStructure(  Instance *instance, DeviceMemoryManager *deviceMemoryManager, 
+                            CommandBufferManager *commandBufferManager, std::vector<MeshInfo*> &meshes,
+                            std::vector<MeshInstance> &instances);
     VkAccelerationStructureNV GetTopStructure();
     std::vector<VkAccelerationStructureNV> GetBotStructures();
 };

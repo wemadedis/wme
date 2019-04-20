@@ -59,7 +59,7 @@ int main()
         throw std::runtime_error("failed to load texture image!");
     }
     Camera cam;
-    glm::vec3 pos = {0.0f, 2.5f, 10.0f};
+    glm::vec3 pos = {0.0f, 2.5f, 25.0f};
     cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
@@ -73,9 +73,9 @@ int main()
 
     std::vector<MeshInstanceHandle> meshes = {};
 
-    int width = 0;
-    int height = 0;
-    int depth = 0;
+    int width = 10;
+    int height = 10;
+    int depth = 10;
 
     for(int x = 0; x < width; x++)
     {

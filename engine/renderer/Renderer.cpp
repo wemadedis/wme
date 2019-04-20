@@ -65,18 +65,6 @@ void Renderer::Initialize()
     _commandBufferManager = new CommandBufferManager(_instance, (uint32_t)_swapChain->GetSwapChainImageCount());
     _deviceMemoryManager = new DeviceMemoryManager(_instance, _commandBufferManager);
     _imageManager = new ImageManager(_instance, _commandBufferManager, _deviceMemoryManager);
-    
-    if(RTXon)
-    {
-        _accelerationStructure = new AccelerationStructure(_instance, _deviceMemoryManager, _commandBufferManager);
-        //UNCOMMENT THIS
-        CreateShaderBindingTable();
-        _offScreenImageRT = _deviceMemoryManager->CreateImage(_initInfo.Width, _initInfo.Height, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
-        _offScreenImageView = _imageManager->CreateImageView(_offScreenImageRT, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_ASPECT_COLOR_BIT);
-        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _offScreenImageView);
-        //RecordCommandBuffersRT();
-    }
-
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
 
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(GlobalUniformData), _globalUniformBuffer);
@@ -87,6 +75,7 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
 {
     MeshInfo* info = new MeshInfo();
     info->IndexCount = mesh->Indices.size();
+    info->VertexCount = mesh->Vertices.size();
     size_t bufferSize = (size_t)(sizeof(mesh->Indices[0]) * info->IndexCount);
     
     if(bufferSize == 0)
@@ -314,7 +303,6 @@ void Renderer::UploadGlobalUniform()
         if(lightIndex < _directionalLights.size()) _globalUniform.DirectionalLights[lightIndex] = _directionalLights[lightIndex];
         if(lightIndex < _pointLights.size()) {
             _globalUniform.PointLights[lightIndex] = _pointLights[lightIndex];
-            std::cout << lightIndex << std::endl;
         }
     }
     _deviceMemoryManager->CopyDataToBuffer(_globalUniformBuffer, &_globalUniform);
@@ -370,6 +358,18 @@ Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f/info.MaxFPS)
 
 void Renderer::Finalize()
 {
+
+    if(RTXon)
+    {
+        _accelerationStructure = new AccelerationStructure( _instance, _deviceMemoryManager, 
+                                                            _commandBufferManager, _meshes, _meshInstances);
+        //UNCOMMENT THIS
+        CreateShaderBindingTable();
+        _offScreenImageRT = _deviceMemoryManager->CreateImage(_initInfo.Width, _initInfo.Height, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
+        _offScreenImageView = _imageManager->CreateImageView(_offScreenImageRT, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_ASPECT_COLOR_BIT);
+        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _offScreenImageView, _globalUniformBuffer);
+        //RecordCommandBuffersRT();
+    }
     
     _descriptorManager->CreateDescriptorPool(_swapChain, _meshInstances);
     _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);

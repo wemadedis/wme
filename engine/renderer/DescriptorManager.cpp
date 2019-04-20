@@ -110,7 +110,14 @@ void DescriptorManager::CreateDescriptorSetLayoutRT()
     outputImageLayoutBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV;
     outputImageLayoutBinding.pImmutableSamplers = nullptr;
 
-    std::vector<VkDescriptorSetLayoutBinding> bindings({ accelerationStructureLayoutBinding, outputImageLayoutBinding });
+    VkDescriptorSetLayoutBinding cameraDataBinding;
+    cameraDataBinding.binding = 2;
+    cameraDataBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    cameraDataBinding.descriptorCount = 1;
+    cameraDataBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV;
+    cameraDataBinding.pImmutableSamplers = nullptr;
+
+    std::vector<VkDescriptorSetLayoutBinding> bindings({ accelerationStructureLayoutBinding, outputImageLayoutBinding, cameraDataBinding });
 
     VkDescriptorSetLayoutCreateInfo layoutInfo;
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -123,12 +130,13 @@ void DescriptorManager::CreateDescriptorSetLayoutRT()
     Utilities::CheckVkResult(code, "Failed to create descriptor set layout (RT)!");
 }
 
-void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT)
+void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform)
 {
     std::vector<VkDescriptorPoolSize> poolSizes
     ({
         { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1 },
-        { VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV, 1 }
+        { VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV, 1 },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 }
     });
 
     VkDescriptorPoolCreateInfo descriptorPoolCreateInfo;
@@ -193,8 +201,27 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     outputImageWrite.pTexelBufferView = nullptr;
 
 
-    std::vector<VkWriteDescriptorSet> descriptorWrites({ accelerationStructureWrite, outputImageWrite });
-    vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
+    VkDescriptorBufferInfo globalBuffer = {};
+    globalBuffer.buffer = globalUniform.buffer;
+    globalBuffer.offset = 0;
+    globalBuffer.range = sizeof(GlobalUniformData);
+
+    VkWriteDescriptorSet cameraUniform;
+    cameraUniform.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    cameraUniform.dstSet = _descriptorsetRT;
+    cameraUniform.dstBinding = 2;
+    cameraUniform.dstArrayElement = 0;
+    cameraUniform.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    cameraUniform.descriptorCount = 1;
+    cameraUniform.pBufferInfo = &globalBuffer;
+
+
+    std::vector<VkWriteDescriptorSet> descriptorWrites({ accelerationStructureWrite, outputImageWrite, cameraUniform });
+    for(uint32_t index = 0; index < 2; index++)
+    {
+        vkUpdateDescriptorSets(_instance->GetDevice(), 1, &descriptorWrites[index], 0, nullptr);
+    }
+    //vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
 }
 
 void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData)

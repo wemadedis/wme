@@ -6,6 +6,30 @@ layout(binding = 1, rgba8) uniform image2D image;
 
 layout(location = 0) rayPayloadNV vec3 hitValue;
 
+#define MAX_LIGHTS 10
+
+struct DirectionalLight
+{
+	vec4 Color;
+	vec4 Direction;
+};
+
+struct PointLight
+{
+    vec4 Color;
+    vec4 PositionRadius;
+};
+
+layout(binding = 2) uniform GlobalUniformData
+{
+	mat4 ViewMatrix;
+	mat4 ProjectionMatrix;
+    vec4 AmbientColor;
+    vec4 LightCounts;
+    PointLight PointLights[MAX_LIGHTS];
+    DirectionalLight DirectionalLights[MAX_LIGHTS];
+} GlobalUniform;
+
 void main() 
 {
     const vec2 pixelCenter = vec2(gl_LaunchIDNV.xy) + vec2(0.5);
