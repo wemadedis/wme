@@ -56,6 +56,7 @@ struct PointLight
 
 struct GlobalUniformData
 {
+	glm::vec4 Position;
 	glm::mat4 ViewMatrix;
 	glm::mat4 ProjectionMatrix;
     glm::vec4 AmbientColor;

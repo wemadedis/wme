@@ -13,6 +13,14 @@
 #include <iostream>
 #include <vector>
 #include "stb_image.h"
+
+
+#define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtx/euler_angles.hpp>
+
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
@@ -58,8 +66,11 @@ int main()
     if (!pixels) {
         throw std::runtime_error("failed to load texture image!");
     }
+
+
     Camera cam;
-    glm::vec3 pos = {0.0f, 2.5f, 25.0f};
+    glm::vec3 pos = {0.0f, 0.0f, -10.0f};
+    cam.Position = pos;
     cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
@@ -73,9 +84,9 @@ int main()
 
     std::vector<MeshInstanceHandle> meshes = {};
 
-    int width = 10;
-    int height = 10;
-    int depth = 10;
+    int width = 0;
+    int height = 0;
+    int depth = 0;
 
     for(int x = 0; x < width; x++)
     {
@@ -118,12 +129,18 @@ int main()
     p.Color = glm::vec4(0.0f,0.0f,1.0f,0.0f);
     p.PositionRadius = glm::vec4(-2.5f, 1.5f, 2.5f, 4.25f);
     PointLightHandle pl4 = renderer.AddPointLight(p);
+    
+    p.Color = glm::vec4(1.0f,1.0f,1.0f,0.0f);
+    p.PositionRadius = glm::vec4(0.0f, 5.5f, 0.0f, 10.25f);
+    PointLightHandle pl5 = renderer.AddPointLight(p);
 
 
     renderer.SetAmbientLight(glm::vec4(0.1f));
     renderer.Finalize();
     TimePoint now = Clock::now();
     float deltaTime = 0.0f;
+    bool rt = true;
+    int lastPressed = 214;
     while(!RTE::Platform::ShouldClose(window))
     {
         RTE::Platform::PollEvents();
@@ -135,8 +152,23 @@ int main()
         } else if(RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
         {
             pos = glm::rotateY(pos, glm::radians(25.0f)*deltaTime);
-            cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            
+            cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));   
+        }
+        int currentPressed = RTE::Platform::WindowManager::GetKey(GLFW_KEY_R);
+        if(currentPressed == GLFW_PRESS)
+        {
+            int wut = 0;
+            if(lastPressed != GLFW_PRESS)
+            {
+                rt = !rt;
+                if(rt) renderer.SetRenderMode(RenderMode::RAYTRACE);
+                else renderer.SetRenderMode(RenderMode::RASTERIZE);
+                lastPressed = GLFW_PRESS;
+            }
+        }
+        else
+        {
+            lastPressed = 0;
         }
         
         renderer.SetPointLightProperties(pl, [deltaTime](PointLight &light){

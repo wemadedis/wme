@@ -23,6 +23,7 @@ layout(binding = 0) uniform MeshUniformData {
 
 layout(binding = 1) uniform GlobalUniformData
 {
+    vec4 Position;
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
     vec4 AmbientColor;
