@@ -374,8 +374,8 @@ void Renderer::Finalize()
     _descriptorManager->CreateDescriptorPool(_swapChain, _meshInstances);
     _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
     UploadGlobalUniform();
-    //RecordRenderPass();
-    RecordCommandBuffersRT();
+    RecordRenderPass();
+    //RecordCommandBuffersRT();
     CreateSyncObjects();
 }
 

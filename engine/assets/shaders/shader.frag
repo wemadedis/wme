@@ -82,6 +82,6 @@ vec4 CalculatePerLightShading()
 
 void main() 
 {
-    //outColor =  CalculatePerLightShading();   
-    outColor = vec4(abs(N),0);
+    outColor =  CalculatePerLightShading();   
+    //outColor = vec4(abs(N),0);
 }
