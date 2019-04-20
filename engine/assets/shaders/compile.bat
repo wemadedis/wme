@@ -1,6 +1,7 @@
-glslangValidator -V shader.vert
-glslangValidator -V shader.frag
-glslangValidator -V rt_shader.rgen
-glslangValidator -V rt_shader.rchit
-glslangValidator -V rt_shader.rmiss
+%~dp0glslangValidator -V %~dp0shader.vert
+%~dp0glslangValidator -V %~dp0shader.frag
+%~dp0glslangValidator -V %~dp0rt_shader.rgen
+%~dp0glslangValidator -V %~dp0rt_shader.rchit
+%~dp0glslangValidator -V %~dp0rt_shader.rmiss
 pause
+

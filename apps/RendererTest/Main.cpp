@@ -69,7 +69,7 @@ int main()
 
 
     Camera cam;
-    glm::vec3 pos = {0.0f, 0.0f, -10.0f};
+    glm::vec3 pos = {0.0f, 0.0f, 10.0f};
     cam.Position = pos;
     cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
@@ -148,10 +148,12 @@ int main()
         if(aresult == GLFW_PRESS)
         {
             pos = glm::rotateY(pos, glm::radians(-25.0f)*deltaTime);
+            cam.Position = pos;
             cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         } else if(RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
         {
             pos = glm::rotateY(pos, glm::radians(25.0f)*deltaTime);
+            cam.Position = pos;
             cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));   
         }
         int currentPressed = RTE::Platform::WindowManager::GetKey(GLFW_KEY_R);
