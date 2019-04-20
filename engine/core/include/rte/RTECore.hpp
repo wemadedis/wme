@@ -5,12 +5,13 @@
 
 #include "rte/PhysicsManager.hpp"
 #include "rte/RTEConfig.hpp"
-#include "rte/Scene.h"
+#include "rte/SceneManager.hpp"
 
-// Entry point for
-extern void OnGameStart(RTEConfig &config, SceneManager &SceneManager);
+extern void (*ConfigureGame)(RTEConfig &config) = nullptr;
+extern void (*OnGameStart)(RTE::Runtime::SceneManager &sceneManager) = nullptr;
 
 struct RequiredManagers
 {
     RTE::Physics::PhysicsManager *PhysicsManager;
+    RTE::Runtime::SceneManager *SceneManager;
 };

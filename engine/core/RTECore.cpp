@@ -23,16 +23,23 @@ static RequiredManagers Managers;
 void InitEngine(RTEConfig &config)
 {
     Managers.PhysicsManager = new Physics::PhysicsManager(config);
+    Managers.SceneManager = new Runtime::SceneManager();
 }
 
 int main(int argc, char const *argv[])
 {
     RTEConfig config;
+    if (ConfigureGame != nullptr)
+    {
+        ConfigureGame(config);
+    }
+    InitEngine(config);
 
     // Call the client initialize function
-    OnGameStart(config);
-
-    InitEngine(config);
+    if (OnGameStart != nullptr)
+    {
+        OnGameStart(*Managers.SceneManager);
+    }
 
     while (true)
     {
