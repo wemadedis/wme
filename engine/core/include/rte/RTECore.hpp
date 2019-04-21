@@ -3,12 +3,12 @@
 #include <cstdint>
 #include <vector>
 
-#include "rte/PhysicsManager.hpp"
+#include "rte/PhysicsMain.hpp"
 #include "rte/RTEConfig.hpp"
 #include "rte/SceneManager.hpp"
 
-extern void (*ConfigureGame)(RTEConfig &config) = nullptr;
-extern void (*OnGameStart)(RTE::Runtime::SceneManager &sceneManager) = nullptr;
+extern void(ConfigureGame)(RTEConfig &config);
+extern void(OnGameStart)(RTE::Runtime::SceneManager &sceneManager);
 
 class RTECore
 {
@@ -18,10 +18,4 @@ class RTECore
 
   public:
     RTECore();
-};
-
-struct RequiredManagers
-{
-    RTE::Physics::PhysicsManager *PhysicsManager;
-    RTE::Runtime::SceneManager *SceneManager;
 };

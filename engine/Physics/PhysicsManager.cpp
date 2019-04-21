@@ -31,24 +31,31 @@ static void ContactEndedCallback(btPersistentManifold *const &manifold)
 
 PhysicsManager::PhysicsManager(RTEConfig &config)
 {
-    _physicsWorld = CreateDefaultDynamicsWorld();
     SetFramesPerSecond(config.FramesPerSecond);
+    _physicsWorld = CreateDefaultDynamicsWorld();
 }
+
+static btDbvtBroadphase *Broadphase;
+static btDefaultCollisionConfiguration *CollisionConfiguration;
+static btCollisionDispatcher *CollisionDispatcher;
+static btSequentialImpulseConstraintSolver *ConstraintSolver;
 
 btDiscreteDynamicsWorld *PhysicsManager::CreateDefaultDynamicsWorld()
 {
     SetupBulletCallbacks();
+
     //! Make this configurable
     //? Make default world configurable too?
-    auto broadphase = new btDbvtBroadphase();
-    auto colConfig = new btDefaultCollisionConfiguration();
-    auto dispatcher = new btCollisionDispatcher(colConfig);
-    auto solver = new btSequentialImpulseConstraintSolver();
+    Broadphase = new btDbvtBroadphase();
+    CollisionConfiguration = new btDefaultCollisionConfiguration();
+    CollisionDispatcher = new btCollisionDispatcher(CollisionConfiguration);
+    ConstraintSolver = new btSequentialImpulseConstraintSolver();
+    perror("malloc failed");
     auto world = new btDiscreteDynamicsWorld(
-        dispatcher,
-        broadphase,
-        solver,
-        colConfig);
+        CollisionDispatcher,
+        Broadphase,
+        ConstraintSolver,
+        CollisionConfiguration);
     SetGravity(_defaultGravity);
     return world;
 }
