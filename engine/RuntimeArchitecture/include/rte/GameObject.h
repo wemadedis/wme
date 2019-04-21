@@ -5,24 +5,27 @@
 
 #include "rte/Component.h"
 
+namespace RTE::Runtime
+{
+
 /**
  * @brief Represents an object in the game
  * 
  */
 class GameObject
 {
-  private:
+private:
     /// @brief The ID of this GameObject
     uint64_t _id = 0;
 
-    /// @brief std::vector of #Component's attached to this GameObject
+    /// @brief std::vector of #RTE::Runtime::Component's attached to this GameObject
 
     std::vector<Component *> *_components = nullptr;
 
     /// @brief The enabled state of this GameObject
     bool _enabled = true;
 
-  public:
+public:
     /**
      * @brief Construct a new GameObject with the given ID 
      * 
@@ -31,13 +34,13 @@ class GameObject
     GameObject(uint64_t id);
 
     /**
-     * @brief Get the #Component's attachted to this GameObject
+     * @brief Get the #RTE::Runtime::Component's attachted to this GameObject
      * 
-     * @return std::vector<#Component*>* A pointer to the std::vector containing the attached #Component's.
+     * @return std::vector<#RTE::Runtime::Component*>* A pointer to the std::vector containing the attached #RTE::Runtime::Component's.
      */
     std::vector<Component *> *GetComponents();
 
-    /// @brief Destroys this GameObject and associated #Component's
+    /// @brief Destroys this GameObject and associated #RTE::Runtime::Component's
     void Destroy();
 
     /**
@@ -69,3 +72,5 @@ class GameObject
      */
     void SetEnabled(bool enabled);
 };
+
+} // namespace RTE::Runtime

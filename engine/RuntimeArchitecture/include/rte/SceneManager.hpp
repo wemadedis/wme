@@ -1,15 +1,20 @@
 #pragma once
 
+#include "rte/RTEModule.hpp"
 #include "rte/Scene.h"
 
-namespace RTE
+namespace RTE::Runtime
 {
-namespace Runtime
+class SceneManager : public RTEModule
 {
-class SceneManager
-{
-  public:
+private:
+    Scene *_activeScene;
+
+public:
+    SceneManager();
+    void Update(float deltaTime) override;
     Scene *MakeScene();
+    Scene *GetActiveScene();
+    void SetActiveScene(Scene *scene);
 };
-} // namespace Runtime
-} // namespace RTE
+} // namespace RTE::Runtime

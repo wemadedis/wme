@@ -2,10 +2,10 @@
 
 #include <iostream>
 
-void ConfigureGame(RTEConfig &config)
+void ConfigureGame(RTE::RTEConfig &config)
 {
     std::cout << "Configuring" << std::endl;
-    config.WindowName = "Banana";
+    config.WindowConfig.ApplicationName = "Banana";
 }
 
 void OnGameStart(RTE::Runtime::SceneManager &sceneManager)

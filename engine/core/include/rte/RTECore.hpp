@@ -5,17 +5,22 @@
 
 #include "rte/PhysicsMain.hpp"
 #include "rte/RTEConfig.hpp"
-#include "rte/SceneManager.hpp"
+#include "rte/RTEModule.hpp"
+#include "rte/RuntimeAchitectureMain.hpp"
 
-extern void(ConfigureGame)(RTEConfig &config);
+extern void(ConfigureGame)(RTE::RTEConfig &config);
 extern void(OnGameStart)(RTE::Runtime::SceneManager &sceneManager);
 
+namespace RTE
+{
 class RTECore
 {
-  private:
+private:
+    std::vector<RTEModule *> *Modules;
     void InitEngine(RTEConfig &config);
     void RunUpdateLoop();
 
-  public:
+public:
     RTECore();
 };
+} // namespace RTE

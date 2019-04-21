@@ -1,15 +1,18 @@
 #pragma once
 
+namespace RTE::Runtime
+{
+
 class Component
 {
-  private:
+private:
     /**
      * @brief 
      *      Whether or not this component is enabled. Disabled components will not have #Update() called on it.
      */
     bool _enabled = false;
 
-  public:
+public:
     /**
      * @brief 
      *      Default constructor for Components
@@ -47,3 +50,4 @@ class Component
      */
     virtual void Update() = 0;
 };
+}

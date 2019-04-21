@@ -2,13 +2,15 @@
 
 #include "rte/GameObject.h"
 
+namespace RTE::Runtime
+{
 
 GameObject::GameObject(uint64_t id)
 {
     SetId(id);
 }
 
-std::vector<Component*> *GameObject::GetComponents()
+std::vector<Component *> *GameObject::GetComponents()
 {
     return _components;
 }
@@ -21,7 +23,7 @@ uint64_t GameObject::GetId()
 void GameObject::SetId(uint64_t id)
 {
     _id = id;
-    _components = new std::vector<Component*>();
+    _components = new std::vector<Component *>();
 }
 
 bool GameObject::GetEnabled()
@@ -33,3 +35,5 @@ void GameObject::SetEnabled(bool enabled)
 {
     _enabled = enabled;
 }
+
+} // namespace RTE::Runtime

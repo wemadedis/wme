@@ -6,22 +6,12 @@
 /**
  * @brief Describes RTE project settings
  */
-struct RTEConfig
+namespace RTE
+{
+struct GraphicsConfig
 {
     /// @brief The maximum framerate for the engine
     uint32_t FramesPerSecond = 240;
-
-    /// @brief Window width in pixels
-    uint32_t WindowWidth = 1000;
-
-    /// @brief Window height in pixels
-    uint32_t WindowHeight = 1000;
-
-    /// @brief The title of the app
-    char *ApplicationName = "RTEGame";
-
-    /// @brief The Title of the main window, if null, #ApplicationName is used.
-    char *WindowName = nullptr;
 
     /** 
      * @brief Whether or not this application will try to use NVidia Raytracing.
@@ -32,3 +22,27 @@ struct RTEConfig
      */
     bool UseRaytracing = false;
 };
+
+struct WindowConfig
+{
+    /// @brief Window width in pixels
+    uint32_t WindowWidth = 1000;
+
+    /// @brief Window height in pixels
+    uint32_t WindowHeight = 1000;
+
+    bool Fullscreen = false;
+
+    /// @brief The title of the app
+    char *ApplicationName = "RTEGame";
+
+    /// @brief The Title of the main window, if null, #ApplicationName is used.
+    char *WindowName = nullptr;
+};
+
+struct RTEConfig
+{
+    GraphicsConfig GraphicsConfig;
+    WindowConfig WindowConfig;
+};
+} // namespace RTE

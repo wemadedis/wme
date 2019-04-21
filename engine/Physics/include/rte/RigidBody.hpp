@@ -2,20 +2,18 @@
 
 #include <Bullet/btBulletDynamicsCommon.h>
 
-namespace RTE
-{
-namespace Physics
+namespace RTE::Physics
 {
 class RigidBody
 {
-  private:
+private:
     /**
      * @brief The Bullet Physics rigid body
      * 
      */
     btRigidBody *_rigidBody;
 
-  public:
+public:
     /**
      * @brief Construct a new Rigid Body object from a Bullet physics body
      * 
@@ -24,5 +22,4 @@ class RigidBody
      */
     RigidBody(btRigidBody *rigidBody);
 };
-} // namespace Physics
-} // namespace RTE
+} // namespace RTE::Physics
