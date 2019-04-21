@@ -8,21 +8,14 @@ void log(std::string message){
 
 int AudioEmitter::PlaySound(const std::string& path)
 {
-
     sf::SoundBuffer buffer;
     buffer.loadFromFile(path);
    
     sf::Sound sound;
     sound.setBuffer(buffer);
-    while(true)
-    {
-        if (sound.getStatus() != sf::Sound::Playing)
-        {
-            sound.play();
-        }
-    }
-
-    log(path);
+    sound.setPosition(0.f, 0.f, 0.f);
+    sound.play();
+    while(sound.getStatus() == sf::Sound::Playing){}
 
     return 0;
 

@@ -4,7 +4,7 @@
 
 int main()
 {
-    const std::string path = "E:\\projects\\rte\\engine\\assets\\audio\\testSound.wav";
+    const std::string path = "E:\\projects\\rte\\engine\\assets\\audio\\mono.wav";
     AudioEmitter audio;
     audio.PlaySound(path);
 }
