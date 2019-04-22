@@ -10,8 +10,20 @@
 #include "rte/RTEModule.hpp"
 #include "rte/RigidBody.hpp"
 
+// Forward declaration
+class RigidBody;
 namespace RTE::Physics
 {
+static inline glm::vec3 Convert(btVector3 vec)
+{
+    return glm::vec3(vec.getX(), vec.getY(), vec.getZ());
+}
+
+static inline btVector3 Convert(glm::vec3 vec)
+{
+    return btVector3(vec.x, vec.y, vec.z);
+}
+
 /**
  * @brief Bullet Physics callback for contact started
  * 
@@ -50,6 +62,7 @@ static void ContactEndedCallback(btPersistentManifold *const &manifold);
 class PhysicsManager : public RTEModule
 {
 private:
+    static PhysicsManager *_instance;
     /**
      * @brief PhysicsWorld instance
      * 
@@ -138,6 +151,8 @@ public:
     void SetGravity(float x, float y, float z);
 
     void SetGravity(glm::vec3 gravity);
+
+    static PhysicsManager *GetInstance();
 
     uint32_t GetFramesPerSecond();
     void SetFramesPerSecond(uint32_t framesPerSecond);
