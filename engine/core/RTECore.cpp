@@ -56,10 +56,6 @@ RTECore::RTECore()
         throw RTEException("Tried to use Raytracing when not available");
     }
 
-    Debug("Hello there");
-    Warning("Hello where?");
-    Error("STFU");
-
     InitEngine(Config);
 
     Runtime::SceneManager *sceneManager = new Runtime::SceneManager();
@@ -80,6 +76,5 @@ RTECore::RTECore()
 int main(int argc, char const *argv[])
 {
     RTE::RTECore core;
-
     return 0;
 }
