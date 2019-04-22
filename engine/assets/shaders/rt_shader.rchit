@@ -2,13 +2,20 @@
 #extension GL_NV_ray_tracing : require
 #extension GL_EXT_nonuniform_qualifier : require
 
-layout(location = 0) rayPayloadInNV vec3 hitValue;
-layout(location = 1) hitAttributeNV vec3 attribs;
 
+#define MAX_LIGHTS 10
 
-layout(binding = 3) uniform usamplerBuffer InstanceMapping;
-layout(set = 0, binding = 4) uniform usamplerBuffer IndexBuffers[];
-layout(set = 1, binding = 4) uniform samplerBuffer VertexBuffers[];
+struct DirectionalLight
+{
+	vec4 Color;
+	vec4 Direction;
+};
+
+struct PointLight
+{
+    vec4 Color;
+    vec4 PositionRadius;
+};
 
 struct Vertex
 {
@@ -17,6 +24,25 @@ struct Vertex
     vec3 normal;
     vec2 texCoord;
 };
+
+layout(location = 0) rayPayloadInNV vec3 hitValue;
+layout(location = 1) hitAttributeNV vec3 attribs;
+
+layout(binding = 2) uniform GlobalUniformData
+{
+    vec4 Position;
+	mat4 ViewMatrix;
+	mat4 ProjectionMatrix;
+    vec4 AmbientColor;
+    vec4 LightCounts;
+    PointLight PointLights[MAX_LIGHTS];
+    DirectionalLight DirectionalLights[MAX_LIGHTS];
+} GlobalUniform;
+
+layout(binding = 3) uniform usamplerBuffer InstanceMapping;
+layout(set = 0, binding = 4) uniform usamplerBuffer IndexBuffers[];
+layout(set = 1, binding = 4) uniform samplerBuffer VertexBuffers[];
+
 
 float FetchFloat(uint meshIndex, int floatPlacement)
 {
@@ -41,18 +67,59 @@ Vertex GetVertex(uint meshIndex, int vertexIndex)
     return vert;
 }
 
+vec4 Phong(vec3 L, vec3 R, vec3 N)
+{
+    float diff = max(0.0f, dot(L,N));
+    float spec = max(0.0f, dot(gl_WorldRayDirectionNV,R));
+    return vec4(0.5f) * diff;
+}
+
+vec4 CalculatePointLightShading(PointLight light, vec3 hitPosition, vec3 hitNormal)
+{
+    vec3 lightPosition = light.PositionRadius.xyz;
+    vec3 direction = lightPosition - hitPosition;
+    vec3 L = normalize(direction);
+    vec3 R = reflect(L,hitNormal);
+    float distance = length(direction);
+    //if(distance > light.Radius) return Phong(L,N);
+    return Phong(L,R, hitNormal) * light.Color * light.PositionRadius.w / (distance*distance);
+}
+/*
+vec4 CalculateDirectionalLightShading(DirectionalLight light, vec3 N)
+{
+    vec3 L = light.Direction.xyz;
+    vec3 R = reflect(L, N);
+    return Phong(L,R) * light.Color;
+}
+*/
+vec4 CalculatePerLightShading(vec3 hitPosition, vec3 hitNormal)
+{
+    vec4 color = vec4(0.5f) * GlobalUniform.AmbientColor;
+    for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
+    {
+        color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex], hitPosition, hitNormal);
+    }
+    /*for(uint directionalLightIndex = 0; directionalLightIndex < GlobalUniform.LightCounts.x; directionalLightIndex++)
+    {
+        color += CalculateDirectionalLightShading(GlobalUniform.DirectionalLights[directionalLightIndex]);
+    }*/
+    return color;
+}
+
 void main()
 {
     const vec3 barycentrics = vec3(1.0 - attribs.x - attribs.y, attribs.x, attribs.y);
-    hitValue = barycentrics;
 
     uint meshIndex = texelFetch(InstanceMapping, gl_InstanceCustomIndexNV).r;
     uvec3 indices = texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID).rgb;
     Vertex v1 = GetVertex(meshIndex, int(indices.x));
     Vertex v2 = GetVertex(meshIndex, int(indices.y));
     Vertex v3 = GetVertex(meshIndex, int(indices.z));
-    //vec3 position = 
-    vec3 col = v1.color.rgb * barycentrics.x + v2.color.rgb * barycentrics.y + v3.color.rgb * barycentrics.z;
-    hitValue = col;
+    vec3 position = v1.pos * barycentrics.x + v2.pos * barycentrics.y + v3.pos * barycentrics.z;
+    vec3 normal = v1.normal * barycentrics.x + v2.normal * barycentrics.y + v3.normal * barycentrics.z;
+    if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
+    hitValue = CalculatePerLightShading(position, normal).rgb;
+    //vec3 col = v1.color.rgb * barycentrics.x + v2.color.rgb * barycentrics.y + v3.color.rgb * barycentrics.z;
+    //hitValue = col;
 
 }

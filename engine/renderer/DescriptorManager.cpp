@@ -115,7 +115,7 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
     cameraDataBinding.binding = 2;
     cameraDataBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     cameraDataBinding.descriptorCount = 1;
-    cameraDataBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV;
+    cameraDataBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV | VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV;
     cameraDataBinding.pImmutableSamplers = nullptr;
 
     VkDescriptorSetLayoutBinding instanceMappingBinding = {};
