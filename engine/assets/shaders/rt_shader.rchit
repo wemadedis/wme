@@ -111,13 +111,19 @@ void main()
     const vec3 barycentrics = vec3(1.0 - attribs.x - attribs.y, attribs.x, attribs.y);
 
     uint meshIndex = texelFetch(InstanceMapping, gl_InstanceCustomIndexNV).r;
-    uvec3 indices = texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID).rgb;
-    Vertex v1 = GetVertex(meshIndex, int(indices.x));
-    Vertex v2 = GetVertex(meshIndex, int(indices.y));
-    Vertex v3 = GetVertex(meshIndex, int(indices.z));
+    ivec3 indices = ivec3(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID).rgb);
+    Vertex v1 = GetVertex(meshIndex, indices.x);
+    Vertex v2 = GetVertex(meshIndex, indices.y);
+    Vertex v3 = GetVertex(meshIndex, indices.z);
     vec3 position = v1.pos * barycentrics.x + v2.pos * barycentrics.y + v3.pos * barycentrics.z;
-    vec3 normal = v1.normal * barycentrics.x + v2.normal * barycentrics.y + v3.normal * barycentrics.z;
-    if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
+    vec3 normal = normalize(v1.normal * barycentrics.x + v2.normal * barycentrics.y + v3.normal * barycentrics.z);
+
+    vec3 dir1 = v2.pos - v1.pos;
+    vec3 dir2 = v3.pos - v1.pos;
+    //vec3 normal = cross(dir1,dir2);
+
+    //if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
+    hitValue = normal;
     hitValue = CalculatePerLightShading(position, normal).rgb;
     //vec3 col = v1.color.rgb * barycentrics.x + v2.color.rgb * barycentrics.y + v3.color.rgb * barycentrics.z;
     //hitValue = col;
