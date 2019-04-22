@@ -1,5 +1,7 @@
 #pragma once
 
+#include "rte/Colors.hpp"
+#include "rte/GlmWrapper.hpp"
 #include "rte/RTEProjectProperties.hpp"
 
 #include <cstdint>
@@ -11,6 +13,12 @@ struct GraphicsConfig
 {
     /// @brief The maximum framerate for the engine
     uint32_t FramesPerSecond = 240;
+
+    /**
+     * @brief Color of a ray miss OR rasterized clear color
+     * Alpha value is ignored
+     */
+    Colors::Color BackgroundColor = Colors::Cyan;
 
     /** 
      * @brief Whether or not this application will try to use NVidia Raytracing.
