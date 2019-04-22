@@ -122,9 +122,15 @@ void Instance::CreateLogicalDevice()
     VkPhysicalDeviceFeatures deviceFeatures = {};
     deviceFeatures.samplerAnisotropy = VK_TRUE;
 
+
+    //TODO: FIRST CHECK IF THE FEATURE IS AVAILABLE?
+    VkPhysicalDeviceDescriptorIndexingFeaturesEXT ext = {};
+    ext.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
+    ext.descriptorBindingVariableDescriptorCount = true;
+
     VkDeviceCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    createInfo.pNext = nullptr;
+    createInfo.pNext = &ext;
     createInfo.flags = 0;
     createInfo.queueCreateInfoCount = static_cast<uint32_t>(queueCreateInfos.size());
     createInfo.pQueueCreateInfos = queueCreateInfos.data();
@@ -141,11 +147,8 @@ void Instance::CreateLogicalDevice()
     {
         createInfo.enabledLayerCount = 0;
     }
-    VkResult result = vkCreateDevice(_physicalDevice, &createInfo, nullptr, &_device);
-    if (result != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create logical device!");
-    }
+    VkResult code = vkCreateDevice(_physicalDevice, &createInfo, nullptr, &_device);
+    Utilities::CheckVkResult(code, "Failed to create logical device!");
     vkGetDeviceQueue(_device, indices.GraphicsFamily.value(), 0, &_graphicsQueue);
     vkGetDeviceQueue(_device, indices.PresentFamily.value(), 0, &_presentQueue);
 }
