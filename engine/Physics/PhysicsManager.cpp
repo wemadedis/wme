@@ -94,8 +94,7 @@ RigidBody CreateRigidBody()
 
 glm::vec3 PhysicsManager::GetGravity()
 {
-    const btVector3 gravity = _physicsWorld->getGravity();
-    return glm::vec3(gravity.getX(), gravity.getY(), gravity.getZ());
+    return Convert(_physicsWorld->getGravity());
 }
 
 void PhysicsManager::SetGravity(float x, float y, float z)

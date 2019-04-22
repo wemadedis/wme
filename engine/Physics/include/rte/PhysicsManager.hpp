@@ -12,13 +12,26 @@
 
 // Forward declaration
 class RigidBody;
+
 namespace RTE::Physics
 {
+/**
+ * @brief Converts a bullet vector3 to a glm vector3 
+ * 
+ * @param vec Vector to convert
+ * @return glm::vec3 Converted vector
+ */
 static inline glm::vec3 Convert(btVector3 vec)
 {
     return glm::vec3(vec.getX(), vec.getY(), vec.getZ());
 }
 
+/**
+ * @brief Converts a glm vector to a bullet vector
+ * 
+ * @param vec Vector to convert
+ * @return btVector3 Converted vector
+ */
 static inline btVector3 Convert(glm::vec3 vec)
 {
     return btVector3(vec.x, vec.y, vec.z);
@@ -137,6 +150,11 @@ public:
      */
     void Step(float deltaTime);
 
+    /**
+     * @brief Updates the physics world
+     * 
+     * @param deltaTime Time since last frame
+     */
     void Update(float deltaTime) override;
 
     /**
@@ -146,15 +164,48 @@ public:
      */
     RigidBody *CreateRigidBody();
 
+    /**
+     * @brief Get the Gravity of the physics world
+     * 
+     * @return glm::vec3 Gravity
+     */
     glm::vec3 GetGravity();
 
+    /**
+     * @brief Set the world gravity using individual x, y, z components.
+     * 
+     * @param x Gravity X
+     * @param y Gravity Y
+     * @param z Gravity Z
+     */
     void SetGravity(float x, float y, float z);
 
+    /**
+     * @brief Set the world gravity using a glm vector 
+     * 
+     * @param gravity The new gravity 
+     */
     void SetGravity(glm::vec3 gravity);
 
+    /**
+     * @brief Get a reference to the instance
+     * 
+     * @return PhysicsManager* Pointer 
+     */
     static PhysicsManager *GetInstance();
 
+    /**
+     * @brief Get the Frames Per Second
+     * 
+     * @return uint32_t Frames per second
+     */
     uint32_t GetFramesPerSecond();
+
+    /**
+     * @brief Set the Frames Per Second. This also updates the fixed time step.
+     * 
+     * @param framesPerSecond 
+     */
     void SetFramesPerSecond(uint32_t framesPerSecond);
 };
 } // namespace RTE::Physics
