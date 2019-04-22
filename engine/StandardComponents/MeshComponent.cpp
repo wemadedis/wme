@@ -5,23 +5,18 @@ namespace RTE::StandardComponents
 
 MeshComponent::MeshComponent()
 {
-    
 }
 
 void MeshComponent::Initialize(MeshHandle mesh)
 {
-    
 }
 
 void MeshComponent::SetTexture(TextureHandle texture)
 {
-
 }
 
-void MeshComponent::Update()
+void MeshComponent::Update(float deltaTime)
 {
-
 }
 
-
-};
+}; // namespace RTE::StandardComponents

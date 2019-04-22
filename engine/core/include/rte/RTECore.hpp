@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <sstream>
 #include <vector>
 
 #include "rte/PhysicsMain.hpp"
@@ -15,12 +16,14 @@ namespace RTE
 {
 class RTECore
 {
+
 private:
-    std::vector<RTEModule *> *Modules;
+    std::vector<RTEModule *> *Modules = nullptr;
     void InitEngine(RTEConfig &config);
     void RunUpdateLoop();
 
 public:
+    static RTEConfig Config;
     RTECore();
 };
 } // namespace RTE

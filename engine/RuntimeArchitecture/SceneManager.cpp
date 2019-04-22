@@ -21,6 +21,10 @@ Scene *SceneManager::GetActiveScene()
 
 void SceneManager::Update(float deltaTime)
 {
+    if (_activeScene != nullptr)
+    {
+        _activeScene->UpdateComponents(deltaTime);
+    }
     //throw NotImplementedException();
 }
 

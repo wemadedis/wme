@@ -2,8 +2,7 @@
 
 namespace RTE::StandardComponents
 {
-    void PhysicsComponent::Update()
-    {
-        
-    }  
+void PhysicsComponent::Update(float deltaTime)
+{
+}
 }; // namespace RTE::StandardComponents

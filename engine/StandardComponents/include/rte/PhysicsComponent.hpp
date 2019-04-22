@@ -1,11 +1,15 @@
 #pragma once
 
-#include "rte/RTE.hpp"
+#include "rte/Component.h"
+#include "rte/PhysicsManager.hpp"
 
 namespace RTE::StandardComponents
 {
-class PhysicsComponent : public Component
+class PhysicsComponent : public Runtime::Component
 {
-    void Update() override;
+private:
+public:
+    void Update(float deltaTime) override;
+    friend class PhysicsManager;
 };
 }; // namespace RTE::StandardComponents

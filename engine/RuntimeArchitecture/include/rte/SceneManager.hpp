@@ -8,7 +8,7 @@ namespace RTE::Runtime
 class SceneManager : public RTEModule
 {
 private:
-    Scene *_activeScene;
+    Scene *_activeScene = nullptr;
 
 public:
     SceneManager();

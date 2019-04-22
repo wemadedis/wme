@@ -1,11 +1,10 @@
 #pragma once
 
+#include "rte/RTEProjectProperties.hpp"
+
 #include <cstdint>
 #include <string>
 
-/**
- * @brief Describes RTE project settings
- */
 namespace RTE
 {
 struct GraphicsConfig
@@ -40,9 +39,22 @@ struct WindowConfig
     char *WindowName = nullptr;
 };
 
+struct AssetConfig
+{
+    /**
+     * @brief Path to the root of the asset directory
+     * 
+     */
+    char *AssetRootDir = ENGINE_ASSET_DIR;
+};
+
+/**
+ * @brief Describes RTE project settings
+ */
 struct RTEConfig
 {
     GraphicsConfig GraphicsConfig;
     WindowConfig WindowConfig;
+    AssetConfig AssetConfig;
 };
 } // namespace RTE

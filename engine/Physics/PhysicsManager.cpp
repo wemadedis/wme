@@ -4,8 +4,6 @@
 
 #include "rte/NotImplementedException.hpp"
 
-// TODO: (danh 20/04 13:35): Make this use custom allocator
-
 namespace RTE::Physics
 {
 

@@ -20,7 +20,7 @@ private:
     GameObjectPool _gameObjectPool;
 
 public:
-    void UpdateComponents();
+    void UpdateComponents(float deltaTime);
     GameObject *CreateGameObject();
 
     template <typename TComp>
