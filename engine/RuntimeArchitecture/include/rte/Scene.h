@@ -1,20 +1,25 @@
 #pragma once
 
-#include <vector>
 #include <set>
 #include <unordered_map>
+#include <vector>
 
 #include "rte/ComponentPool.h"
-#include "rte/GameObjectPool.h"
 #include "rte/GameObject.h"
+#include "rte/GameObjectPool.h"
+
+namespace RTE
+{
+namespace Runtime
+{
 
 class Scene
 {
-  private:
+private:
     std::vector<ComponentPool *> _componentPools;
     GameObjectPool _gameObjectPool;
 
-  public:
+public:
     void UpdateComponents();
     GameObject *CreateGameObject();
 
@@ -31,8 +36,10 @@ class Scene
     {
         Component *comp = _componentPools[compId]->AddComponent(go->GetId());
         comp->SetEnabled(true);
-        TComp *tp = static_cast<TComp*>(comp);
+        TComp *tp = static_cast<TComp *>(comp);
         go->GetComponents()->push_back(tp);
         return tp;
     }
 };
+} // namespace Runtime
+} // namespace RTE

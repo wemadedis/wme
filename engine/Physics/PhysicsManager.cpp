@@ -29,10 +29,16 @@ static void ContactEndedCallback(btPersistentManifold *const &manifold)
     throw NotImplementedException();
 }
 
-PhysicsManager::PhysicsManager(RTEConfig &config)
+void PhysicsManager::Update(float deltaTime)
 {
-    SetFramesPerSecond(config.FramesPerSecond);
+    Step(deltaTime);
+}
+
+PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
+{
+    SetFramesPerSecond(config.GraphicsConfig.FramesPerSecond);
     _physicsWorld = CreateDefaultDynamicsWorld();
+    SetGravity(_defaultGravity);
 }
 
 static btDbvtBroadphase *Broadphase;
@@ -50,13 +56,11 @@ btDiscreteDynamicsWorld *PhysicsManager::CreateDefaultDynamicsWorld()
     CollisionConfiguration = new btDefaultCollisionConfiguration();
     CollisionDispatcher = new btCollisionDispatcher(CollisionConfiguration);
     ConstraintSolver = new btSequentialImpulseConstraintSolver();
-    perror("malloc failed");
     auto world = new btDiscreteDynamicsWorld(
         CollisionDispatcher,
         Broadphase,
         ConstraintSolver,
         CollisionConfiguration);
-    SetGravity(_defaultGravity);
     return world;
 }
 

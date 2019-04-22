@@ -4,20 +4,21 @@
 #include <vector>
 
 #include "rte/Component.h"
+namespace RTE::Runtime
+{
 
 class ComponentPool
 {
-  private:
-  public:
+private:
+public:
     virtual void UpdateAll() = 0;
     virtual Component *AddComponent(uint64_t goId) = 0;
-
 };
 
 template <typename TComp>
 class ComponentPoolInstance : public ComponentPool
 {
-  public:
+public:
     static_assert(std::is_base_of<Component, TComp>::value, "TComp must inherit from Component");
     std::vector<TComp> Components = std::vector<TComp>();
     std::map<uint64_t, uint64_t> _goIdToComponentIndex;
@@ -49,3 +50,4 @@ class ComponentPoolInstance : public ComponentPool
         return &Components[componentIndex];
     }
 };
+} // namespace RTE::Runtime

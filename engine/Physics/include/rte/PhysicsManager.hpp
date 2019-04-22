@@ -7,15 +7,10 @@
 
 #include "rte/CollisionId.hpp"
 #include "rte/RTEConfig.hpp"
+#include "rte/RTEModule.hpp"
 #include "rte/RigidBody.hpp"
 
-namespace RTE
-{
-/**
- * @brief This namespace holds classes, structs, and functions 
- * related to RTE's Physics module
- */
-namespace Physics
+namespace RTE::Physics
 {
 /**
  * @brief Bullet Physics callback for contact started
@@ -52,13 +47,9 @@ static bool ContactProcessedCallback(btManifoldPoint &manifoldPoint, void *body0
  */
 static void ContactEndedCallback(btPersistentManifold *const &manifold);
 
-/**
- * @brief Manages physics
- * 
- */
-class PhysicsManager
+class PhysicsManager : public RTEModule
 {
-  private:
+private:
     /**
      * @brief PhysicsWorld instance
      * 
@@ -92,7 +83,8 @@ class PhysicsManager
 
     /**
      * @brief The number of frames per second used for the physics system
-     *  Changed by the default constructor, or via setter method #PhysicsManager(uint32_t)
+     *  Changed by the default constructor, or via setter 
+     * method RTE::Physics::PhysicsManager(RTEConfig &config)
      */
     uint32_t _framesPerSecond = -1;
 
@@ -112,7 +104,7 @@ class PhysicsManager
      */
     uint32_t _maxSubSteps = 1;
 
-  public:
+public:
     /**
      * @brief Construct a new Physics Manager object
      * 
@@ -132,6 +124,8 @@ class PhysicsManager
      */
     void Step(float deltaTime);
 
+    void Update(float deltaTime) override;
+
     /**
      * @brief Create a Rigid Body object and add it to the physics world
      * 
@@ -148,5 +142,4 @@ class PhysicsManager
     uint32_t GetFramesPerSecond();
     void SetFramesPerSecond(uint32_t framesPerSecond);
 };
-} // namespace Physics
-} // namespace RTE
+} // namespace RTE::Physics

@@ -1,10 +1,14 @@
 #include <vector>
 
-#include "rte/Scene.h"
 #include "rte/Component.h"
 #include "rte/ComponentPool.h"
 #include "rte/GameObject.h"
+#include "rte/Scene.h"
 
+namespace RTE
+{
+namespace Runtime
+{
 void Scene::UpdateComponents()
 {
     for (int32_t componentPoolIndex = 0; componentPoolIndex < _componentPools.size(); componentPoolIndex++)
@@ -13,7 +17,11 @@ void Scene::UpdateComponents()
     }
 }
 
-GameObject* Scene::CreateGameObject()
+GameObject *Scene::CreateGameObject()
 {
-   return new GameObject(0); 
+    // todo: (danh) Mon 22/04 - 01:26: Fix this
+    return new GameObject(0);
 }
+
+} // namespace Runtime
+} // namespace RTE

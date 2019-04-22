@@ -2,45 +2,47 @@
 
 #include "rte/RTECore.hpp"
 #include "rte/RTEException.h"
-#include "rte/Scene.h"
+#include "rte/RTEModule.hpp"
 
+#include <chrono>
 #include <cstdint>
 #include <vector>
 
-using namespace RTE;
-
-// TODO: (danh 21/04 00:25): Redo this
-static Scene scene;
-Scene *CreateScene()
+namespace RTE
 {
-    return &scene;
-}
-
-// todo: (danh) Sun 21/04 - 12:05: This into a struct or something.
-static Physics::PhysicsManager *PhysicsManager;
-static Runtime::SceneManager *SceneManager;
+typedef std::chrono::high_resolution_clock Clock;
+typedef std::chrono::time_point<std::chrono::steady_clock> TimePoint;
+using FpSeconds = std::chrono::duration<float, std::chrono::seconds::period>;
 
 void RTECore::InitEngine(RTEConfig &config)
 {
-    //PhysicsManager = new Physics::PhysicsManager(config);
-    SceneManager = new Runtime::SceneManager();
+    Modules = new std::vector<RTEModule *>();
+    Modules->push_back(new Physics::PhysicsManager(config));
 }
 
 void RTECore::RunUpdateLoop()
 {
+
+    TimePoint now = Clock::now();
+    float deltaTime = 0.0f;
     while (true)
     {
-        scene.UpdateComponents();
+        for (int32_t moduleIndex = 0; moduleIndex < Modules->size(); moduleIndex++)
+        {
+            Modules->at(moduleIndex)->Update(deltaTime);
+        }
+        deltaTime = std::chrono::duration_cast<FpSeconds>(Clock::now() - now).count();
+        now = Clock::now();
     }
 }
 
 RTECore::RTECore()
 {
-    RTEConfig config;
+    RTE::RTEConfig config;
 
     // todo: (danh) Sun 21/04 - 11:46: Add raytrace check
     bool raytracingAvailable = true;
-    config.UseRaytracing = raytracingAvailable;
+    config.GraphicsConfig.UseRaytracing = raytracingAvailable;
 
     if (ConfigureGame != nullptr)
     {
@@ -48,25 +50,30 @@ RTECore::RTECore()
     }
 
     // If the user requests raytracing while it is not available, crash
-    if (config.UseRaytracing == true && raytracingAvailable == false)
+    if (config.GraphicsConfig.UseRaytracing == true && raytracingAvailable == false)
     {
         throw RTEException("Tried to use Raytracing when not available");
     }
 
     InitEngine(config);
 
+    Runtime::SceneManager *sceneManager = new Runtime::SceneManager();
+
+    Modules->push_back(sceneManager);
+
     // Call the client initialize function
     if (OnGameStart != nullptr)
     {
-        OnGameStart(*SceneManager);
+        OnGameStart(*sceneManager);
     }
 
     RunUpdateLoop();
 }
+} // namespace RTE
 
 int main(int argc, char const *argv[])
 {
-    RTECore core;
+    RTE::RTECore core;
 
     return 0;
 }
