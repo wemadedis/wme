@@ -1,9 +1,7 @@
 #include "rte/SceneManager.hpp"
 #include "rte/NotImplementedException.hpp"
 
-namespace RTE
-{
-namespace Runtime
+namespace RTE::Runtime
 {
 SceneManager::SceneManager()
 {
@@ -32,5 +30,4 @@ void SceneManager::SetActiveScene(Scene *scene)
 {
     _activeScene = scene;
 }
-} // namespace Runtime
-} // namespace RTE
+} // namespace RTE::Runtime
