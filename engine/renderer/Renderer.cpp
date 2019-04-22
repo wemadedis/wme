@@ -139,7 +139,7 @@ void Renderer::RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetHandle());
     auto dset = _descriptorManager->GetDescriptorSetRT();
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, 1, &dset, 0, 0);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, dset.size(), dset.data(), 0, 0);
 
     // Here's how the shader binding table looks like in this tutorial:
     // |[ raygen shader ]|

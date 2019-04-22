@@ -19,9 +19,9 @@ class DescriptorManager
     std::vector<VkDescriptorPool> _pools;
     std::vector<VkDescriptorSet> _descriptorSets;
 
-    VkDescriptorSetLayout _layoutRT;
+    std::vector<VkDescriptorSetLayout> _layoutsRT;
     VkDescriptorPool _poolRT;
-    VkDescriptorSet _descriptorsetRT;
+    std::vector<VkDescriptorSet> _descriptorsetsRT;
 
 public:
     DescriptorManager(Instance *instance);
@@ -31,9 +31,9 @@ public:
     void CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo*> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer);
     void CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData);
     VkDescriptorSetLayout* GetDescriptorLayout();
-    VkDescriptorSetLayout* GetDescriptorLayoutRT();
+    std::vector<VkDescriptorSetLayout> GetDescriptorLayoutRT();
     VkDescriptorPool GetDescriptorPool();
     std::vector<VkDescriptorSet> GetDescriptorSets();
-    VkDescriptorSet GetDescriptorSetRT();
+    std::vector<VkDescriptorSet> GetDescriptorSetRT();
 };
 };

@@ -219,12 +219,14 @@ void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, Sha
         GetPipelineStageInfo(VK_SHADER_STAGE_MISS_BIT_NV, rmiss)
     });
 
+    auto descriptorLayout = _descriptorManager->GetDescriptorLayoutRT();
+
     VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
     pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutCreateInfo.pNext = nullptr;
     pipelineLayoutCreateInfo.flags = 0;
-    pipelineLayoutCreateInfo.setLayoutCount = 1;
-    pipelineLayoutCreateInfo.pSetLayouts = _descriptorManager->GetDescriptorLayoutRT();
+    pipelineLayoutCreateInfo.setLayoutCount = descriptorLayout.size();
+    pipelineLayoutCreateInfo.pSetLayouts = descriptorLayout.data();
     pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
     pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
 
