@@ -1,7 +1,7 @@
 // TODO: (danh 22/02 09:57): Place this in appropriate Renderer-library when it exists
 #pragma once
-#include <glm\glm.hpp>
 #include <array>
+#include <glm\glm.hpp>
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -89,9 +89,17 @@ struct Texture
     uint16_t Width, Height;
 };
 
-enum class ShaderType { VERTEX, FRAGMENT, RAYGEN, RCHIT, RMISS };
+enum class ShaderType
+{
+    VERTEX,
+    FRAGMENT,
+    RAYGEN,
+    RCHIT,
+    RMISS
+};
 
-// Soon™
+// Soon™¨
+
 struct Shader
 {
     ShaderType Type;
@@ -109,7 +117,6 @@ struct Material
     glm::vec4 Color;
 
     Texture *Texture;
-
 };
 
 struct Mesh
@@ -154,4 +161,4 @@ struct RenderPassInfo
 struct RendererSettings
 {
 };
-}; // namespace RTE::Renderer
+}; // namespace RTE::Rendering

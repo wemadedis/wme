@@ -94,23 +94,24 @@ void DescriptorManager::CreateDescriptorSetLayout()
     }
 }
 
-void DescriptorManager::CreateDescriptorSetLayoutRT()
+void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount)
 {
-    VkDescriptorSetLayoutBinding accelerationStructureLayoutBinding;
+    _layoutsRT.resize(1);
+    VkDescriptorSetLayoutBinding accelerationStructureLayoutBinding = {};
     accelerationStructureLayoutBinding.binding = 0;
     accelerationStructureLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV;
     accelerationStructureLayoutBinding.descriptorCount = 1;
     accelerationStructureLayoutBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV;
     accelerationStructureLayoutBinding.pImmutableSamplers = nullptr;
 
-    VkDescriptorSetLayoutBinding outputImageLayoutBinding;
+    VkDescriptorSetLayoutBinding outputImageLayoutBinding = {};
     outputImageLayoutBinding.binding = 1;
     outputImageLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
     outputImageLayoutBinding.descriptorCount = 1;
     outputImageLayoutBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV;
     outputImageLayoutBinding.pImmutableSamplers = nullptr;
 
-    VkDescriptorSetLayoutBinding cameraDataBinding;
+    VkDescriptorSetLayoutBinding cameraDataBinding = {};
     cameraDataBinding.binding = 2;
     cameraDataBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     cameraDataBinding.descriptorCount = 1;
@@ -126,17 +127,17 @@ void DescriptorManager::CreateDescriptorSetLayoutRT()
     layoutInfo.bindingCount = (uint32_t)(bindings.size());
     layoutInfo.pBindings = bindings.data();
 
-    VkResult code = vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layoutRT);
+    VkResult code = vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layoutsRT[0]);
     Utilities::CheckVkResult(code, "Failed to create descriptor set layout (RT)!");
 }
 
-void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform)
+void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo*> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer)
 {
     std::vector<VkDescriptorPoolSize> poolSizes
     ({
         { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1 },
         { VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV, 1 },
-        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 }
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 },
     });
 
     VkDescriptorPoolCreateInfo descriptorPoolCreateInfo;
@@ -150,30 +151,30 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     VkResult code = vkCreateDescriptorPool(_instance->GetDevice(), &descriptorPoolCreateInfo, nullptr, &_poolRT);
     Utilities::CheckVkResult(code, "Failed to create RT descriptor pool!");
 
-    
+    _descriptorsetsRT.resize(1);
 
     VkDescriptorSetAllocateInfo descriptorSetAllocateInfo;
     descriptorSetAllocateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
     descriptorSetAllocateInfo.pNext = nullptr;
     descriptorSetAllocateInfo.descriptorPool = _poolRT;
     descriptorSetAllocateInfo.descriptorSetCount = 1;
-    descriptorSetAllocateInfo.pSetLayouts = &_layoutRT;
+    descriptorSetAllocateInfo.pSetLayouts = &_layoutsRT[0];
 
-    code = vkAllocateDescriptorSets(_instance->GetDevice(), &descriptorSetAllocateInfo, &_descriptorsetRT);
+    code = vkAllocateDescriptorSets(_instance->GetDevice(), &descriptorSetAllocateInfo, &_descriptorsetsRT[0]);
     Utilities::CheckVkResult(code, "Failed to allocate RT descriptor sets!");
 
     auto topStructure = AS->GetTopStructure();
 
-    VkWriteDescriptorSetAccelerationStructureNV descriptorAccelerationStructureInfo;
+    VkWriteDescriptorSetAccelerationStructureNV descriptorAccelerationStructureInfo = {};
     descriptorAccelerationStructureInfo.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV;
     descriptorAccelerationStructureInfo.pNext = nullptr;
     descriptorAccelerationStructureInfo.accelerationStructureCount = 1;
     descriptorAccelerationStructureInfo.pAccelerationStructures = &topStructure;
 
-    VkWriteDescriptorSet accelerationStructureWrite;
+    VkWriteDescriptorSet accelerationStructureWrite = {};
     accelerationStructureWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     accelerationStructureWrite.pNext = &descriptorAccelerationStructureInfo; // Notice that pNext is assigned here!
-    accelerationStructureWrite.dstSet = _descriptorsetRT;
+    accelerationStructureWrite.dstSet = _descriptorsetsRT[0];
     accelerationStructureWrite.dstBinding = 0;
     accelerationStructureWrite.dstArrayElement = 0;
     accelerationStructureWrite.descriptorCount = 1;
@@ -183,15 +184,15 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     accelerationStructureWrite.pTexelBufferView = nullptr;
 
 
-    VkDescriptorImageInfo descriptorOutputImageInfo;
+    VkDescriptorImageInfo descriptorOutputImageInfo = {};
     descriptorOutputImageInfo.sampler = nullptr;
     descriptorOutputImageInfo.imageView = imageViewRT;
     descriptorOutputImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 
-    VkWriteDescriptorSet outputImageWrite;
+    VkWriteDescriptorSet outputImageWrite = {};
     outputImageWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     outputImageWrite.pNext = nullptr;
-    outputImageWrite.dstSet = _descriptorsetRT;
+    outputImageWrite.dstSet = _descriptorsetsRT[0];
     outputImageWrite.dstBinding = 1;
     outputImageWrite.dstArrayElement = 0;
     outputImageWrite.descriptorCount = 1;
@@ -208,7 +209,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
 
     VkWriteDescriptorSet cameraUniform = {}; //<--------------- FUNNY MOMENT. BROKE WITHOUT THE "= {}" #RIP
     cameraUniform.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    cameraUniform.dstSet = _descriptorsetRT;
+    cameraUniform.dstSet = _descriptorsetsRT[0];
     cameraUniform.dstBinding = 2;
     cameraUniform.dstArrayElement = 0;
     cameraUniform.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -289,9 +290,9 @@ VkDescriptorSetLayout* DescriptorManager::GetDescriptorLayout()
     return &_layout;
 }
 
-VkDescriptorSetLayout* DescriptorManager::GetDescriptorLayoutRT()
+std::vector<VkDescriptorSetLayout> DescriptorManager::GetDescriptorLayoutRT()
 {
-    return &_layoutRT;
+    return _layoutsRT;
 }
 
 VkDescriptorPool DescriptorManager::GetDescriptorPool()
@@ -304,9 +305,9 @@ std::vector<VkDescriptorSet> DescriptorManager::GetDescriptorSets()
     return _descriptorSets;
 }
 
-VkDescriptorSet DescriptorManager::GetDescriptorSetRT()
+std::vector<VkDescriptorSet> DescriptorManager::GetDescriptorSetRT()
 {
-    return _descriptorsetRT;
+    return _descriptorsetsRT;
 }
 
 };

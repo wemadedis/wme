@@ -43,6 +43,12 @@ int main()
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
     auto quad = Primitives::MakeQuad();
+
+    quad->Vertices[0].color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+    quad->Vertices[1].color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+    quad->Vertices[2].color = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
+
+
     auto cylinder = Primitives::MakeCylinder(0.25f, 0.75f, 32);
     RendererInitInfo info;
     info.Width = 800;
@@ -82,7 +88,7 @@ int main()
     auto renderer = Renderer(info);
     auto quadhandle = renderer.UploadMesh(quad);
     auto quadInstance = renderer.CreateMeshInstance(quadhandle);
-    auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
+    //auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
 
 
     std::vector<MeshInstanceHandle> meshes = {};
@@ -90,7 +96,7 @@ int main()
     int width = 0;
     int height = 0;
     int depth = 0;
-
+/*
     for(int x = 0; x < width; x++)
     {
         for(int y = 0; y < height; y++)
@@ -103,7 +109,7 @@ int main()
             }
         }
     }
-
+*/
     std::ostringstream stringStream;
     stringStream << ENGINE_ASSET_DIR << "models/monkey.ply";
     std::string monkeyPath = stringStream.str();

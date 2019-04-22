@@ -11,7 +11,7 @@ class ComponentPool
 {
 private:
 public:
-    virtual void UpdateAll() = 0;
+    virtual void UpdateAll(float deltaTime) = 0;
     virtual Component *AddComponent(uint64_t goId) = 0;
 };
 
@@ -23,13 +23,13 @@ public:
     std::vector<TComp> Components = std::vector<TComp>();
     std::map<uint64_t, uint64_t> _goIdToComponentIndex;
 
-    void UpdateAll() override
+    void UpdateAll(float deltaTime) override
     {
         for (int32_t componentIndex = 0; componentIndex < Components.size(); componentIndex++)
         {
             if (Components[componentIndex].GetEnabled())
             {
-                Components[componentIndex].Update();
+                Components[componentIndex].Update(deltaTime);
             }
         }
     }

@@ -33,34 +33,7 @@ void Renderer::Initialize()
     
     _swapChain = new SwapChain(_instance, _initInfo.Width, _initInfo.Height);
     _renderPass = new RenderPass(_instance, _swapChain);
-    _descriptorManager = new DescriptorManager(_instance);
-    _descriptorManager->CreateDescriptorSetLayout();
-    _descriptorManager->CreateDescriptorSetLayoutRT();
-    auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
-    auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
-    auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
-    //TODO: Change name to GetStandardRayClosestHitShader
-    auto rchit = Utilities::GetStandardRayHitShader(_instance->GetDevice());
-    auto rmiss = Utilities::GetStandardRayMissShader(_instance->GetDevice());
-    if(RTXon)
-    {
-        InitRT();
-        _pipelineRT = new GraphicsPipeline( rayGen, 
-                                            rchit,
-                                            rmiss,
-                                            _swapChain->GetSwapChainExtent(), 
-                                            _descriptorManager, 
-                                            _instance, 
-                                            _renderPass);
-    }
-    //COMMENT THIS OUT
-    //delete _pipeline;
-    _pipeline = new GraphicsPipeline(   vertexShader, 
-                                        fragmentShader, 
-                                        _swapChain->GetSwapChainExtent(), 
-                                        _descriptorManager, 
-                                        _instance, 
-                                        _renderPass);
+
     _commandBufferManager = new CommandBufferManager(_instance, (uint32_t)_swapChain->GetSwapChainImageCount());
     _deviceMemoryManager = new DeviceMemoryManager(_instance, _commandBufferManager);
     _imageManager = new ImageManager(_instance, _commandBufferManager, _deviceMemoryManager);
@@ -86,14 +59,14 @@ MeshHandle Renderer::UploadMesh(Mesh* mesh)
     BufferInformation stagingBuffer = {};
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, bufferSize, stagingBuffer);
     _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, (void*)mesh->Indices.data());
-    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT, MemProps::DEVICE, bufferSize, info->indexBuffer);
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::DEVICE, bufferSize, info->indexBuffer);
     _deviceMemoryManager->CopyBuffer(stagingBuffer, info->indexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
     _deviceMemoryManager->DestroyBuffer(stagingBuffer);
     //Vertices
     bufferSize = sizeof(mesh->Vertices[0]) * mesh->Vertices.size();
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, bufferSize, stagingBuffer);
     _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, (void*)mesh->Vertices.data());
-    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, MemProps::DEVICE, bufferSize, info->vertexBuffer);
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::DEVICE, bufferSize, info->vertexBuffer);
     _deviceMemoryManager->CopyBuffer(stagingBuffer, info->vertexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
 
     _deviceMemoryManager->DestroyBuffer(stagingBuffer);
@@ -166,7 +139,7 @@ void Renderer::RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32
 {
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetHandle());
     auto dset = _descriptorManager->GetDescriptorSetRT();
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, 1, &dset, 0, 0);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, dset.size(), dset.data(), 0, 0);
 
     // Here's how the shader binding table looks like in this tutorial:
     // |[ raygen shader ]|
@@ -375,15 +348,53 @@ Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f/info.MaxFPS)
 void Renderer::Finalize()
 {
 
+    _descriptorManager = new DescriptorManager(_instance);
+    _descriptorManager->CreateDescriptorSetLayout();
+
+    auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
+    auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
+    auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
+    //TODO: Change name to GetStandardRayClosestHitShader
+    auto rchit = Utilities::GetStandardRayHitShader(_instance->GetDevice());
+    auto rmiss = Utilities::GetStandardRayMissShader(_instance->GetDevice());
+
+    _pipeline = new GraphicsPipeline(   vertexShader, 
+                                        fragmentShader, 
+                                        _swapChain->GetSwapChainExtent(), 
+                                        _descriptorManager, 
+                                        _instance, 
+                                        _renderPass);
+
     if(RTXon)
     {
+        InitRT();
+        _descriptorManager->CreateDescriptorSetLayoutRT((uint32_t)_meshes.size(), (uint32_t)_meshInstances.size());
+        _pipelineRT = new GraphicsPipeline( rayGen, 
+                                            rchit,
+                                            rmiss,
+                                            _swapChain->GetSwapChainExtent(), 
+                                            _descriptorManager, 
+                                            _instance, 
+                                            _renderPass);
+
         _accelerationStructure = new AccelerationStructure( _instance, _deviceMemoryManager, 
                                                             _commandBufferManager, _meshes, _meshInstances);
-        //UNCOMMENT THIS
+
         CreateShaderBindingTable();
         _offScreenImageRT = _deviceMemoryManager->CreateImage(_initInfo.Width, _initInfo.Height, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
         _offScreenImageView = _imageManager->CreateImageView(_offScreenImageRT, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_ASPECT_COLOR_BIT);
-        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _offScreenImageView, _globalUniformBuffer);
+
+        
+        //instance buffer maps an instance to the mesh
+        _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::HOST, sizeof(uint32_t)*_meshInstances.size(), _instanceBuffer);
+        _deviceMemoryManager->ModifyBufferData<uint32_t>(_instanceBuffer, [&](uint32_t* data){
+            for(uint32_t instanceIndex = 0; instanceIndex < _meshInstances.size(); instanceIndex++)
+            {
+                data[instanceIndex] = _meshInstances[instanceIndex].mesh;
+            }
+        });
+        
+        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _offScreenImageView, _globalUniformBuffer, _meshes, _meshInstances, _instanceBuffer);
         //RecordCommandBuffersRT();
     }
     

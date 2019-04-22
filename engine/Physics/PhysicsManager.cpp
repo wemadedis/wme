@@ -4,8 +4,6 @@
 
 #include "rte/NotImplementedException.hpp"
 
-// TODO: (danh 20/04 13:35): Make this use custom allocator
-
 namespace RTE::Physics
 {
 
@@ -36,6 +34,7 @@ void PhysicsManager::Update(float deltaTime)
 
 PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
 {
+    _instance = this;
     SetFramesPerSecond(config.GraphicsConfig.FramesPerSecond);
     _physicsWorld = CreateDefaultDynamicsWorld();
     SetGravity(_defaultGravity);
@@ -82,6 +81,8 @@ void PhysicsManager::Step(float deltaTime)
     _physicsWorld->stepSimulation(deltaTime, _maxSubSteps, _fixedTimeStep);
 }
 
+PhysicsManager *PhysicsManager::_instance = nullptr;
+
 RigidBody CreateRigidBody()
 {
     btMotionState *motionState = new btDefaultMotionState();
@@ -93,9 +94,9 @@ RigidBody CreateRigidBody()
 
 glm::vec3 PhysicsManager::GetGravity()
 {
-    const btVector3 gravity = _physicsWorld->getGravity();
-    return glm::vec3(gravity.getX(), gravity.getY(), gravity.getZ());
+    return Convert(_physicsWorld->getGravity());
 }
+
 void PhysicsManager::SetGravity(float x, float y, float z)
 {
     _physicsWorld->setGravity({x, y, z});
@@ -115,6 +116,11 @@ void PhysicsManager::SetFramesPerSecond(uint32_t framesPerSecond)
 {
     _framesPerSecond = framesPerSecond;
     _fixedTimeStep = 1 / (float)framesPerSecond;
+}
+
+PhysicsManager *PhysicsManager::GetInstance()
+{
+    return _instance;
 }
 
 }; // namespace RTE::Physics

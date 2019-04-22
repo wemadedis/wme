@@ -3,9 +3,12 @@
 #include "rte/RTECore.hpp"
 #include "rte/RTEException.h"
 #include "rte/RTEModule.hpp"
+#include "rte/Utility.hpp"
 
 #include <chrono>
 #include <cstdint>
+#include <iostream>
+#include <string>
 #include <vector>
 
 namespace RTE
@@ -22,7 +25,6 @@ void RTECore::InitEngine(RTEConfig &config)
 
 void RTECore::RunUpdateLoop()
 {
-
     TimePoint now = Clock::now();
     float deltaTime = 0.0f;
     while (true)
@@ -36,26 +38,25 @@ void RTECore::RunUpdateLoop()
     }
 }
 
+RTEConfig RTECore::Config;
 RTECore::RTECore()
 {
-    RTE::RTEConfig config;
-
     // todo: (danh) Sun 21/04 - 11:46: Add raytrace check
     bool raytracingAvailable = true;
-    config.GraphicsConfig.UseRaytracing = raytracingAvailable;
+    Config.GraphicsConfig.UseRaytracing = raytracingAvailable;
 
     if (ConfigureGame != nullptr)
     {
-        ConfigureGame(config);
+        ConfigureGame(Config);
     }
 
     // If the user requests raytracing while it is not available, crash
-    if (config.GraphicsConfig.UseRaytracing == true && raytracingAvailable == false)
+    if (Config.GraphicsConfig.UseRaytracing == true && raytracingAvailable == false)
     {
         throw RTEException("Tried to use Raytracing when not available");
     }
 
-    InitEngine(config);
+    InitEngine(Config);
 
     Runtime::SceneManager *sceneManager = new Runtime::SceneManager();
 
@@ -71,9 +72,9 @@ RTECore::RTECore()
 }
 } // namespace RTE
 
+//? Do something with command line arguments?
 int main(int argc, char const *argv[])
 {
     RTE::RTECore core;
-
     return 0;
 }

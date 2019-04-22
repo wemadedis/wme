@@ -21,7 +21,8 @@ struct BufferInformation {
 	VkBufferUsageFlags bufferUsage;
 	MemProps memoryProperties;
 	size_t size;
-	VkBuffer buffer;
+	VkBuffer buffer = VK_NULL_HANDLE;
+	VkBufferView BufferView = VK_NULL_HANDLE;
 };
 
 /*

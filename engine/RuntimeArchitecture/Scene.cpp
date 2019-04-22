@@ -9,11 +9,11 @@ namespace RTE
 {
 namespace Runtime
 {
-void Scene::UpdateComponents()
+void Scene::UpdateComponents(float deltaTime)
 {
     for (int32_t componentPoolIndex = 0; componentPoolIndex < _componentPools.size(); componentPoolIndex++)
     {
-        _componentPools[componentPoolIndex]->UpdateAll();
+        _componentPools[componentPoolIndex]->UpdateAll(deltaTime);
     }
 }
 

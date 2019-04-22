@@ -48,6 +48,6 @@ public:
      * @brief 
      *      Virtual update function, called every frame unless #GetEnabled returns false.
      */
-    virtual void Update() = 0;
+    virtual void Update(float deltaTime) = 0;
 };
-}
+} // namespace RTE::Runtime

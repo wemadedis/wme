@@ -1,6 +1,8 @@
 add_library(StandardComponents
-    MeshComponent.cpp
-    AudioComponent.cpp
+    MeshComponent
+    TransformComponent
+    PhysicsComponent
+    AudioComponent
 )
 target_include_directories(StandardComponents PUBLIC include .)
 target_link_libraries(StandardComponents PUBLIC rte)

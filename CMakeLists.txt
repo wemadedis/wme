@@ -27,6 +27,7 @@ target_link_libraries(rte INTERFACE
     model_importer 
     platform 
     Audio
+    utilities
     glm 
     vma 
     vulkan 

@@ -4,18 +4,16 @@
 
 namespace RTE::StandardComponents
 {
-    using namespace RTE::Rendering;
-class MeshComponent : public Component
+using namespace RTE::Rendering;
+class MeshComponent : public Runtime::Component
 {
     MeshInstanceHandle mesh;
-
 
 public:
     MeshComponent();
     void Initialize(MeshHandle mesh);
     void SetTexture(TextureHandle texture);
-    virtual void Update() override;
+    virtual void Update(float deltaTime) override;
 };
 
-
-};
+}; // namespace RTE::StandardComponents
