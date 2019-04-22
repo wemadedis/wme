@@ -2,24 +2,22 @@
 
 #include <string>
 #include <iostream>
-#include <glm/glm.hpp>
-#include <SFML/Audio.hpp>
+
+#include "glm/glm.hpp"
+#include "SFML/Audio.hpp"
 
 #include "rte/RTEException.h"
 
 namespace RTE::Audio{
-
-class AudioEmitter 
-{
-public:
     enum State
     {
         Stopped, ///< Sound is not playing
         Paused,  ///< Sound is paused
         Playing  ///< Sound is playing
     };
-    
-    // AudioEmitter();
+class AudioEmitter 
+{
+public:
 
     void TEST(const std::string& path);
     
@@ -28,7 +26,7 @@ public:
     void SetPosition(glm::vec3);
     void SetLoop(bool);
     void SetPlayingOffset(float);
-    State getState();
+    RTE::Audio::State GetState();
     void Play();
     void Pause();
     void Stop();
@@ -39,7 +37,7 @@ private:
 
     sf::SoundBuffer soundBuffer;
     sf::Sound sound;
-    State state;
+    RTE::Audio::State state;
 };
 
 }

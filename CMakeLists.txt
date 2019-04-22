@@ -26,7 +26,7 @@ target_link_libraries(rte INTERFACE
     runtime_architecture 
     model_importer 
     platform 
-    AudioEmitter
+    Audio
     glm 
     vma 
     vulkan 

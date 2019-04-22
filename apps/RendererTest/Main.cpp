@@ -9,6 +9,8 @@
 #include "rte/Primitives.h"
 #include "rte/WindowManager.h"
 #include "rte/ModelImporter.h"
+#include "rte/AudioListener.hpp"
+#include "rte/AudioEmitter.hpp"
 
 #include <iostream>
 #include <vector>
@@ -75,6 +77,7 @@ int main()
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
 
+    RTE::Audio::AudioListener::SetPosition(pos);
 
     auto renderer = Renderer(info);
     auto quadhandle = renderer.UploadMesh(quad);
@@ -141,6 +144,12 @@ int main()
     float deltaTime = 0.0f;
     bool rt = true;
     int lastPressed = 214;
+
+    const std::string path = "E:\\projects\\rte\\engine\\assets\\audio\\mono.wav";
+    RTE::Audio::AudioEmitter ae;
+    ae.LoadSoundFromFile(path);
+    ae.SetLoop(true);
+
     while(!RTE::Platform::ShouldClose(window))
     {
         RTE::Platform::PollEvents();
@@ -148,11 +157,15 @@ int main()
         if(aresult == GLFW_PRESS)
         {
             pos = glm::rotateY(pos, glm::radians(-25.0f)*deltaTime);
+            RTE::Audio::AudioListener::SetPosition(pos);
+            RTE::Audio::AudioListener::SetDirection(glm::vec3(0.0f, 1.0f, 0.0f));
             cam.Position = pos;
             cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
         } else if(RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
         {
             pos = glm::rotateY(pos, glm::radians(25.0f)*deltaTime);
+            RTE::Audio::AudioListener::SetPosition(pos);
+            RTE::Audio::AudioListener::SetDirection(glm::vec3(0.0f, 1.0f, 0.0f));
             cam.Position = pos;
             cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));   
         }
@@ -173,12 +186,15 @@ int main()
             lastPressed = 0;
         }
         
-        renderer.SetPointLightProperties(pl, [deltaTime](PointLight &light){
+        renderer.SetPointLightProperties(pl, [&](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
             pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
+
+            ae.SetPosition(pos);
+            if (ae.GetState() != RTE::Audio::Playing) ae.Play();
         });
         renderer.SetPointLightProperties(pl2, [deltaTime](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);

@@ -1,4 +1,4 @@
-#include <rte/AudioEmitter.hpp>
+#include "rte/AudioEmitter.hpp"
 
 void log(std::string message){
     std::cout << message << std::endl;
@@ -11,20 +11,23 @@ namespace RTE::Audio{
 
 // }
 
-void AudioEmitter::setState(State _state)
+void AudioEmitter::setState(RTE::Audio::State _state)
 {
     state = _state;
 }
 
-AudioEmitter::State AudioEmitter::getState()
+
+RTE::Audio::State AudioEmitter::GetState()
 {
     sf::Sound::Status status = sound.getStatus();
     switch (status)
     {
-        case sf::Sound::Stopped : return Stopped;
-        case sf::Sound::Paused :  return Paused;
-        case sf::Sound::Playing : return Playing;
+        case sf::Sound::Stopped : return RTE::Audio::Stopped;
+        case sf::Sound::Paused :  return RTE::Audio::Paused;
+        case sf::Sound::Playing : return RTE::Audio::Playing;
     }
+
+    return RTE::Audio::Stopped;
 }
 
 void AudioEmitter::TEST(const std::string& path)
