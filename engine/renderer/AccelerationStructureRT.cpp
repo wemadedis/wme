@@ -18,14 +18,8 @@ void AccelerationStructure::CreateStructure(VkAccelerationStructureTypeNV type, 
     accelerationStructureInfo.info.pGeometries = geometries;
 
     VkResult code = _rtUtil->vkCreateAccelerationStructureNV(_instance->GetDevice(), &accelerationStructureInfo, nullptr, &AS);
-    if(code != VK_SUCCESS)
-    {
-        auto errorMessage = (std::string("Could not create acceleration structure! Error: ")+std::to_string(code)).c_str();
-        throw RTEException(errorMessage);
-    }
+    Utilities::CheckVkResult(code, "Could not create acceleration structure!");
     _memoryManager->AllocateAccelerationStructureMemory(AS);
-    
-    //NVVK_CHECK_ERROR(code, L"vkBindAccelerationStructureMemoryNV");
 }
 
 void AccelerationStructure::CreateBotTopStructures(std::vector<VkGeometryNV> geometries)

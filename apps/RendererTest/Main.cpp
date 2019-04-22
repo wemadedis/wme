@@ -41,6 +41,12 @@ int main()
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
     auto quad = Primitives::MakeQuad();
+
+    quad->Vertices[0].color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+    quad->Vertices[1].color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+    quad->Vertices[2].color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
+
+
     auto cylinder = Primitives::MakeCylinder(0.25f, 0.75f, 32);
     RendererInitInfo info;
     info.Width = 800;

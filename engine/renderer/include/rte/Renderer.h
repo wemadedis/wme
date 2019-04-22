@@ -94,6 +94,7 @@ private:
     BufferInformation _shaderBindingTable;
     ImageInformation _offScreenImageRT;
     VkImageView _offScreenImageView;
+    BufferInformation _instanceBuffer;
 
     const float _minFrameTime;
     TimePoint _lastFrameEnd;
