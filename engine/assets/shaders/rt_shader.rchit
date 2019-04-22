@@ -6,6 +6,7 @@ layout(location = 0) rayPayloadInNV vec3 hitValue;
 layout(location = 1) hitAttributeNV vec3 attribs;
 
 layout(binding = 3) uniform usamplerBuffer InstanceMapping;
+layout(binding = 4) uniform usamplerBuffer IndexBuffers[];
 
 
 
@@ -15,6 +16,9 @@ void main()
     hitValue = barycentrics;
 
     uint meshIndex = texelFetch(InstanceMapping, gl_InstanceCustomIndexNV).r;
+    uvec3 indices = texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID).rgb;
+
+    /*
     if(meshIndex == 0)
     {
         hitValue = vec3(1.0f,0.0f,0.0f);
@@ -27,4 +31,6 @@ void main()
     {
         hitValue = vec3(0.0,0.0f,1.0f);
     }
+    */
+    hitValue = ind1;
 }
