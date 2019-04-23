@@ -4,6 +4,7 @@
 #include "rte/RTEException.h"
 #include "rte/RTEModule.hpp"
 #include "rte/Utility.hpp"
+#include "rte/WindowManager.h"
 
 #include <chrono>
 #include <cstdint>
@@ -13,32 +14,37 @@
 
 namespace RTE
 {
-typedef std::chrono::high_resolution_clock Clock;
-typedef std::chrono::time_point<std::chrono::steady_clock> TimePoint;
-using FpSeconds = std::chrono::duration<float, std::chrono::seconds::period>;
+using namespace std::chrono;
+typedef high_resolution_clock Clock;
+typedef time_point<steady_clock> TimePoint;
+using FpSeconds = duration<float, seconds::period>;
 
-void RTECore::InitEngine(RTEConfig &config)
+void RTECore::InitEngine()
 {
     Modules = new std::vector<RTEModule *>();
-    Modules->push_back(new Physics::PhysicsManager(config));
+    Modules->push_back(new Physics::PhysicsManager(Config));
 }
 
 void RTECore::RunUpdateLoop()
 {
+    using namespace Platform;
     TimePoint now = Clock::now();
     float deltaTime = 0.0f;
-    while (true)
+    while (_windowManager->ShouldClose() == false)
     {
-        for (int32_t moduleIndex = 0; moduleIndex < Modules->size(); moduleIndex++)
+        for (int32_t moduleIndex = 0;
+             moduleIndex < Modules->size();
+             moduleIndex++)
         {
             Modules->at(moduleIndex)->Update(deltaTime);
         }
-        deltaTime = std::chrono::duration_cast<FpSeconds>(Clock::now() - now).count();
+        deltaTime = duration_cast<FpSeconds>(Clock::now() - now).count();
         now = Clock::now();
     }
 }
-
+//! Init static field
 RTEConfig RTECore::Config;
+
 RTECore::RTECore()
 {
     // todo: (danh) Sun 21/04 - 11:46: Add raytrace check
@@ -51,13 +57,22 @@ RTECore::RTECore()
     }
 
     // If the user requests raytracing while it is not available, crash
-    if (Config.GraphicsConfig.UseRaytracing == true && raytracingAvailable == false)
+    if (
+        Config.GraphicsConfig.UseRaytracing && raytracingAvailable == false)
     {
         throw RTEException("Tried to use Raytracing when not available");
     }
 
-    InitEngine(Config);
+    if (Config.WindowConfig.WindowName == nullptr)
+    {
+        Config.WindowConfig.WindowName = Config.WindowConfig.ApplicationName;
+    }
 
+    InitEngine();
+
+    _windowManager = new Platform::WindowManager(Config);
+
+    Modules->push_back(_windowManager);
     Runtime::SceneManager *sceneManager = new Runtime::SceneManager();
 
     Modules->push_back(sceneManager);

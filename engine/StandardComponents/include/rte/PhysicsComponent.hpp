@@ -6,6 +6,7 @@
 #include "rte/TransformComponent.hpp"
 
 namespace RTE::StandardComponents
+
 {
 
 /**
@@ -35,7 +36,10 @@ public:
      * 
      * @param transformComp Transform to sync physics world with
      */
-    void Initialize(TransformComponent *transformComp);
+    void Initialize(
+        TransformComponent *transformComp,
+        float mass,
+        std::vector<Physics::Collider> colliders);
 
     /**
      * @brief Updates this component's transformation related to the physics

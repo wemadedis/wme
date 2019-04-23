@@ -1,7 +1,7 @@
 // TODO: (danh 22/02 09:57): Place this in appropriate Renderer-library when it exists
 #pragma once
+#include "rte/GlmWrapper.hpp"
 #include <array>
-#include <glm\glm.hpp>
 #include <vector>
 #include <vulkan/vulkan.h>
 
@@ -129,12 +129,20 @@ struct Mesh
 
 struct Transform
 {
-    glm::vec3 Pos;
-    glm::vec3 Scale;
-    glm::vec3 Rot;
+    glm::vec3 Pos = glm::vec3(0);
+    glm::vec3 Rot = glm::vec3(0);
+    glm::vec3 Scale = glm::vec3(1);
 
     Transform() : Transform(glm::vec3(0), glm::vec3(1), glm::vec3(0))
     {
+    }
+
+    glm::mat4 Transform::RotationMatrix()
+    {
+        glm::mat4 rotZ = glm::eulerAngleZ(glm::radians(Rot.z));
+        glm::mat4 rotY = glm::eulerAngleY(glm::radians(Rot.y));
+        glm::mat4 rotX = glm::eulerAngleX(glm::radians(Rot.x));
+        return rotZ * rotY * rotX;
     }
 
     Transform(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot)

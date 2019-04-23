@@ -39,16 +39,23 @@ std::string GetTimestamp()
     time_t now_c = system_clock::to_time_t(now - hours(24));
     tm local_tm = *localtime(&now_c);
     std::ostringstream ss;
-    ss << MinTwoWide(local_tm.tm_hour) << ":" << MinTwoWide(local_tm.tm_min) << ":" << local_tm.tm_sec;
+    ss << MinTwoWide(local_tm.tm_hour) << ":"
+       << MinTwoWide(local_tm.tm_min) << ":"
+       << MinTwoWide(local_tm.tm_sec);
     return ss.str();
 }
 
 // PrintDebug("This is good!");
 // Debug(14:10:20): RTEThis is good!
-void PrintWithTimestamp(std::string warningType, std::string toPrint, const char *file, uint32_t line)
+void PrintWithTimestamp(std::string warningType,
+                        std::string toPrint,
+                        const char *file, uint32_t line)
 {
     std::string timestamp = GetTimestamp();
-    std::cout << warningType << "(" << timestamp << ")" << file << ": " << line << ": " << toPrint << std::endl;
+    std::cout << warningType
+              << "(" << timestamp << ")"
+              << file << ": " << line << ": "
+              << toPrint << std::endl;
 }
 
 void PrintDebug(std::string toPrint, const char *file, uint32_t line)

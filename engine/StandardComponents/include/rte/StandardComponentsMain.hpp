@@ -2,6 +2,7 @@
 
 #include "rte/MeshComponent.h"
 #include "rte/PhysicsComponent.hpp"
+#include "rte/TransformComponent.hpp"
 
 namespace RTE
 {

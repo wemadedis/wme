@@ -2,8 +2,7 @@
 
 namespace RTE::StandardComponents
 {
-    void AudioComponent::Update()
-    {
-        
-    }  
+void AudioComponent::Update(float deltaTime)
+{
+}
 }; // namespace RTE::StandardComponents
