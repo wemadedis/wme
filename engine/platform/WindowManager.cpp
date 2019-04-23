@@ -23,14 +23,10 @@ void PollEvents()
 
 void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
 {
-    auto fn = *WindowManager::GetInstance()->GetFrameResizeCallback();
+    auto fn = WindowManager::GetInstance()->GetFrameResizeCallback();
     fn(width, height);
 }
 
-void RetrieveFrameBufferChangedCallback(FrameResizeCallback *fcb)
-{
-    WindowManager::GetInstance()->SetFrameResizeCallback(fcb);
-}
 
 bool WindowManager::ShouldClose()
 {
@@ -95,12 +91,12 @@ void WindowManager::OpenWindow(
     glfwSetFramebufferSizeCallback(Window, FramebufferResizeCallback);
 }
 
-void WindowManager::SetFrameResizeCallback(FrameResizeCallback *fcb)
+void WindowManager::SetFrameResizeCallback(FrameResizeCallback fcb)
 {
     _frameResizeCallback = fcb;
 }
 
-FrameResizeCallback *WindowManager::GetFrameResizeCallback()
+FrameResizeCallback WindowManager::GetFrameResizeCallback()
 {
     return _frameResizeCallback;
 }

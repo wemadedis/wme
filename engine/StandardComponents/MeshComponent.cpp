@@ -7,11 +7,11 @@ MeshComponent::MeshComponent()
 {
 }
 
-void MeshComponent::Initialize(MeshHandle mesh)
+void MeshComponent::Initialize(std::string meshFilePath)
 {
 }
 
-void MeshComponent::SetTexture(TextureHandle texture)
+void MeshComponent::SetTexture(std::string meshFilePath)
 {
 }
 

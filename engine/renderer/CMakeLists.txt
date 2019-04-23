@@ -11,6 +11,7 @@ add_library(renderer
     DescriptorManager.cpp
     Primitives.cpp
     AccelerationStructureRT.cpp
+    RenderingManager.cpp
 )
 target_include_directories(renderer PUBLIC include .)
 target_link_libraries(renderer PUBLIC rte)

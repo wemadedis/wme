@@ -1,46 +1,43 @@
 #include "Utilities.h"
 
-
+#include <set>
+#include <string>
 #include <vector>
-#include<set>
-#include<string>
 
-#include "rte/RTEProjectProperties.hpp"
-#include "rte/RTEException.h"
 #include "DeviceMemoryManager.h"
 #include "RenderLogicStructs.h"
+#include "rte/RTEException.h"
+#include "rte/RTEProjectProperties.hpp"
 
-namespace RTE::Rendering::Utilities 
+namespace RTE::Rendering::Utilities
 {
-
 
 std::vector<char> ReadFile(const std::string &filename)
 {
-	std::ifstream file(filename, std::ios::ate | std::ios::binary);
+    std::ifstream file(filename, std::ios::ate | std::ios::binary);
 
-	if (!file.is_open())
-	{
-		throw std::runtime_error("failed to open file!");
-	}
+    if (!file.is_open())
+    {
+        throw std::runtime_error("failed to open file!");
+    }
 
-	size_t fileSize = (size_t)file.tellg();
-	std::vector<char> buffer(fileSize);
+    size_t fileSize = (size_t)file.tellg();
+    std::vector<char> buffer(fileSize);
 
-	file.seekg(0);
-	file.read(buffer.data(), fileSize);
+    file.seekg(0);
+    file.read(buffer.data(), fileSize);
 
-	file.close();
+    file.close();
 
-	return buffer;
+    return buffer;
 }
 
-std::vector<char> ReadEngineAsset(const char* filePath)
+std::vector<char> ReadEngineAsset(const char *filePath)
 {
     std::ostringstream ss;
     ss << ENGINE_ASSET_DIR << filePath;
     return Utilities::ReadFile(ss.str().c_str());
 }
-
 
 VkShaderModule CreateShaderModule(const std::vector<char> &code, VkDevice device)
 {
@@ -69,7 +66,7 @@ VkShaderModule CreateShaderModule(const std::vector<char> &code, VkDevice device
 
 ShaderInfo GetStandardVertexShader(VkDevice device)
 {
-    
+
     return {ShaderType::VERTEX, CreateShaderModule(ReadEngineAsset("shaders/vert.spv"), device)};
 }
 
@@ -93,12 +90,10 @@ ShaderInfo GetStandardRayMissShader(VkDevice device)
     return {ShaderType::RMISS, CreateShaderModule(ReadEngineAsset("shaders/rmiss.spv"), device)};
 }
 
-bool HasStencilComponent(VkFormat format) {
-    	return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
+bool HasStencilComponent(VkFormat format)
+{
+    return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
 }
-
-
-
 
 QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
@@ -135,7 +130,7 @@ QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surfa
     return indices;
 }
 
-bool DeviceSupportsExtensions(VkPhysicalDevice device, std::vector<const char*> extensions)
+bool DeviceSupportsExtensions(VkPhysicalDevice device, std::vector<const char *> extensions)
 {
     uint32_t extensionCount;
     vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, nullptr);
@@ -143,7 +138,7 @@ bool DeviceSupportsExtensions(VkPhysicalDevice device, std::vector<const char*> 
     std::vector<VkExtensionProperties> availableExtensions(extensionCount);
     vkEnumerateDeviceExtensionProperties(device, nullptr, &extensionCount, availableExtensions.data());
     std::set<std::string> requiredExtensions(extensions.begin(), extensions.end());
-    
+
     for (const auto &extension : availableExtensions)
     {
         requiredExtensions.erase(extension.extensionName);
@@ -154,33 +149,33 @@ bool DeviceSupportsExtensions(VkPhysicalDevice device, std::vector<const char*> 
 
 VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo, const VkAllocationCallbacks *pAllocator, VkDebugUtilsMessengerEXT *pCallback)
 {
-	auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-	if (func != nullptr)
-	{
-		return func(instance, pCreateInfo, pAllocator, pCallback);
-	}
-	else
-	{
-		return VK_ERROR_EXTENSION_NOT_PRESENT;
-	}
+    auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
+    if (func != nullptr)
+    {
+        return func(instance, pCreateInfo, pAllocator, pCallback);
+    }
+    else
+    {
+        return VK_ERROR_EXTENSION_NOT_PRESENT;
+    }
 }
 
 void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT callback, const VkAllocationCallbacks *pAllocator)
 {
-	auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
-	if (func != nullptr)
-	{
-		func(instance, callback, pAllocator);
-	}
+    auto func = (PFN_vkDestroyDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT");
+    if (func != nullptr)
+    {
+        func(instance, callback, pAllocator);
+    }
 }
 
-void CheckVkResult(VkResult code, const char* errorMessage)
+void CheckVkResult(VkResult code, const char *errorMessage)
 {
-    if(code != VK_SUCCESS)
+    if (code != VK_SUCCESS)
     {
-        errorMessage = (std::string(errorMessage)+ std::string(" Code: ") +std::to_string(code)).c_str();
+        errorMessage = (std::string(errorMessage) + std::string(" Code: ") + std::to_string(code)).c_str();
         throw RTEException(errorMessage);
     }
 }
 
-}; //namespace Utilities
+}; // namespace RTE::Rendering::Utilities

@@ -15,11 +15,11 @@ class MeshComponent : public Runtime::Component
 
 public:
     MeshComponent();
-    
+
     void Initialize(std::string meshFilePath);
-    
+
     void SetTexture(std::string textureFilePath);
-    
+
     virtual void Update(float deltaTime) override;
 };
 

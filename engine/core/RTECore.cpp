@@ -3,6 +3,7 @@
 #include "rte/RTECore.hpp"
 #include "rte/RTEException.h"
 #include "rte/RTEModule.hpp"
+#include "rte/RenderingManager.h"
 #include "rte/Utility.hpp"
 #include "rte/WindowManager.h"
 
@@ -32,6 +33,7 @@ void RTECore::RunUpdateLoop()
     float deltaTime = 0.0f;
     while (_windowManager->ShouldClose() == false)
     {
+        Platform::PollEvents();
         for (int32_t moduleIndex = 0;
              moduleIndex < Modules->size();
              moduleIndex++)
@@ -71,12 +73,13 @@ RTECore::RTECore()
     InitEngine();
 
     _windowManager = new Platform::WindowManager(Config);
+    Rendering::RenderingManager rm(*_windowManager, Config);
 
     Modules->push_back(_windowManager);
     Runtime::SceneManager *sceneManager = new Runtime::SceneManager();
 
     Modules->push_back(sceneManager);
-
+    Modules->push_back(&rm);
     // Call the client initialize function
     if (OnGameStart != nullptr)
     {

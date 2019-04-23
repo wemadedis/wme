@@ -15,6 +15,9 @@ extern void(OnGameStart)(RTE::Runtime::SceneManager &sceneManager);
 
 namespace RTE
 {
+typedef std::function<void(int width, int height)> FrameResizeCallback;
+typedef std::function<void(FrameResizeCallback)> SetFrameResizeCallback;
+
 class RTECore
 {
 

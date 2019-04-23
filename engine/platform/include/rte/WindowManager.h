@@ -6,14 +6,14 @@
 #include "rte/RTEConfig.hpp"
 #include "rte/RTEModule.hpp"
 
+#include "rte/FrameCallbackFunctions.hpp"
+
 #include <functional>
 #include <string>
 #include <vector>
 
 namespace RTE::Platform
 {
-typedef std::function<void(int width, int height)> FrameResizeCallback;
-
 void Terminate();
 void WaitEvents();
 void PollEvents();
@@ -33,15 +33,15 @@ public:
     WindowManager(RTE::RTEConfig &config);
 
     GLFWwindow *Window;
-    void SetFrameResizeCallback(FrameResizeCallback *fcb);
-    FrameResizeCallback *GetFrameResizeCallback();
+    void SetFrameResizeCallback(FrameResizeCallback fcb);
+    FrameResizeCallback GetFrameResizeCallback();
 
 private:
     // Instance for singleton pattern
     static WindowManager *_instance;
     // Creates a Vulkan surface a given GLFW window
 
-    FrameResizeCallback *_frameResizeCallback = nullptr;
+    FrameResizeCallback _frameResizeCallback = nullptr;
 
     static void KeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
     // Returns the VulkanExtensions required for GLFW to operate
