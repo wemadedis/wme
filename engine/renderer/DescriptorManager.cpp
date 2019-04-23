@@ -96,7 +96,7 @@ void DescriptorManager::CreateDescriptorSetLayout()
 
 void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount)
 {
-    _layoutsRT.resize(2);
+    _layoutsRT.resize(3);
     VkDescriptorSetLayoutBinding accelerationStructureLayoutBinding = {};
     accelerationStructureLayoutBinding.binding = 0;
     accelerationStructureLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV;
@@ -176,11 +176,21 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
     VkResult code = vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layoutsRT[1]);
     Utilities::CheckVkResult(code, "Failed to create vertex descriptor set layout (RT)!");
 
+    VkDescriptorSetLayoutBinding instanceUniformLayout = {};
+    instanceUniformLayout.binding = 4;
+    instanceUniformLayout.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    instanceUniformLayout.descriptorCount = instanceCount;
+    instanceUniformLayout.stageFlags = VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV;
+
+    layoutInfo.pBindings = &instanceUniformLayout;
+
+    code = vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layoutsRT[2]);
+    Utilities::CheckVkResult(code, "Failed to create vertex descriptor set layout (RT)!");
 }
 
 void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo*> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer)
 {
-    _descriptorsetsRT.resize(2);
+    _descriptorsetsRT.resize(3);
 
 
     std::vector<VkDescriptorPoolSize> poolSizes
@@ -191,6 +201,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
         { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1 },
         { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, (uint32_t)meshes.size() },
         { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, (uint32_t)meshes.size() },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, (uint32_t)instances.size() },
     });
 
     VkDescriptorPoolCreateInfo descriptorPoolCreateInfo;
@@ -204,10 +215,11 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     VkResult code = vkCreateDescriptorPool(_instance->GetDevice(), &descriptorPoolCreateInfo, nullptr, &_poolRT);
     Utilities::CheckVkResult(code, "Failed to create RT descriptor pool!");
 
-    uint32_t variableDescriptorCounts[2] = 
+    uint32_t variableDescriptorCounts[3] = 
     {
         (uint32_t)meshes.size(),
         (uint32_t)meshes.size(),
+        (uint32_t)instances.size(),
     };
 
     VkDescriptorSetVariableDescriptorCountAllocateInfoEXT variableDescriptorCountInfo;
@@ -315,11 +327,20 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
         Utilities::CheckVkResult(code, "Could not create vertex buffer view!");
     }
 
+    std::vector<VkDescriptorBufferInfo> meshBufferInfos(instances.size());
+    for(uint32_t instanceIndex = 0; instanceIndex < instances.size(); instanceIndex++)
+    {
+        meshBufferInfos[instanceIndex].buffer = instances[instanceIndex].uniformBuffer.buffer;
+        meshBufferInfos[instanceIndex].offset = 0;
+        meshBufferInfos[instanceIndex].range = sizeof(MeshUniformData);
+    }
+
+
     VkWriteDescriptorSet indexBuffers = {};
     indexBuffers.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     indexBuffers.dstSet = _descriptorsetsRT[0];
     indexBuffers.dstBinding = 4;
-    indexBuffers.descriptorCount = (uint32_t)meshes.size();
+    indexBuffers.descriptorCount = (uint32_t)indexViews.size();
     indexBuffers.dstArrayElement = 0;
     indexBuffers.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
     indexBuffers.pTexelBufferView = indexViews.data();
@@ -328,13 +349,22 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     vertexBuffers.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     vertexBuffers.dstSet = _descriptorsetsRT[1];
     vertexBuffers.dstBinding = 4;
-    vertexBuffers.descriptorCount = (uint32_t)meshes.size();
+    vertexBuffers.descriptorCount = (uint32_t)vertexViews.size();
     vertexBuffers.dstArrayElement = 0;
     vertexBuffers.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
     vertexBuffers.pTexelBufferView = vertexViews.data();
 
+    VkWriteDescriptorSet instanceBuffers = {};
+    instanceBuffers.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    instanceBuffers.dstSet = _descriptorsetsRT[2];
+    instanceBuffers.dstBinding = 4;
+    instanceBuffers.descriptorCount = (uint32_t)meshBufferInfos.size();
+    instanceBuffers.dstArrayElement = 0;
+    instanceBuffers.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    instanceBuffers.pBufferInfo = meshBufferInfos.data();
 
-    std::vector<VkWriteDescriptorSet> descriptorWrites({ accelerationStructureWrite, outputImageWrite, cameraUniform, instanceMappingBuffer, indexBuffers, vertexBuffers });
+
+    std::vector<VkWriteDescriptorSet> descriptorWrites({ accelerationStructureWrite, outputImageWrite, cameraUniform, instanceMappingBuffer, indexBuffers, vertexBuffers, instanceBuffers });
 
     vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)descriptorWrites.size(), descriptorWrites.data(), 0, nullptr);
 }
