@@ -86,4 +86,13 @@ void AudioEmitter::Stop()
     setState(Stopped);
 }
 
+void AudioEmitter::PlaySpatialMonoTest(glm::vec3 pos)
+{
+    LoadSoundFromFile(mono);
+    SetVolume(100.f);
+    SetLoop(true);
+    SetPosition(pos);
+    Play();
+}
+
 }

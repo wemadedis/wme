@@ -1,4 +1,8 @@
+#pragma once
+
 #include "rte/Component.h"
+#include "rte/AudioListener.hpp"
+#include "rte/AudioComponent.hpp"
 
 namespace RTE::StandardComponents
 {

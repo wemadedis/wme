@@ -31,6 +31,8 @@ public:
     void Pause();
     void Stop();
 
+    void PlaySpatialMonoTest(glm::vec3 pos);
+
 private:
 
     void setState(State);
@@ -38,6 +40,10 @@ private:
     sf::SoundBuffer soundBuffer;
     sf::Sound sound;
     RTE::Audio::State state;
+
+    //Test variables
+    const std::string& stereo = "E:\\projects\\rte\\engine\\assets\\audio\\stereo.wav";
+    const std::string& mono = "E:\\projects\\rte\\engine\\assets\\audio\\mono.wav";
 };
 
 }

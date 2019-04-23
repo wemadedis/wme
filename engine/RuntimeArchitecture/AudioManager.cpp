@@ -1,9 +1,10 @@
 #include "rte/AudioManager.hpp"
 
-namespace RTE
-{
-namespace Runtime
+namespace RTE::Runtime
 {
 
-} // namespace Runtime
+RTE::Audio::AudioListener AudioManager::GetAudioListener(){
+    return Audio::AudioListener();
+}
+
 } // namespace RTE
