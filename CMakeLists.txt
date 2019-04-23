@@ -22,7 +22,6 @@ target_link_libraries(rte INTERFACE
     core
     physics
     renderer
-    HighLevelRenderer
     runtime_architecture 
     model_importer 
     platform 

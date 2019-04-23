@@ -26,8 +26,6 @@
 #include <glm/gtx/rotate_vector.hpp>
 
 
-#include "rte/HighLevelRenderer.h"
-
 using namespace RTE::Rendering;
 
 typedef std::chrono::high_resolution_clock Clock;
@@ -193,8 +191,8 @@ int main()
         {
             lastPressed = 0;
         }
-        monkeyRotation.y += deltaTime*10.0f;
-        renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f), monkeyRotation, glm::vec3(1.0f));
+        //monkeyRotation.y += deltaTime*10.0f;
+        //renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f), monkeyRotation, glm::vec3(1.0f));
         
         renderer.SetPointLightProperties(pl, [&](PointLight &light){
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);

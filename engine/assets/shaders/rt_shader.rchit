@@ -86,7 +86,7 @@ HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
     vec2 UV = v1.texCoord * barycentrics.x + v2.texCoord * barycentrics.y + v3.texCoord * barycentrics.z;
     normal = mat3(gl_ObjectToWorldNV ) * normal;
     if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
-    //position = mat3(gl_ObjectToWorldNV ) * position;
+    position = mat3(gl_ObjectToWorldNV ) * position;
 
     HitInfo info;
     info.Point = position;
