@@ -42,10 +42,6 @@ int main()
     auto winMan = new RTE::Platform::WindowManager(config);
     auto quad = Primitives::MakeQuad();
 
-    quad->Vertices[0].color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
-    quad->Vertices[1].color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
-    quad->Vertices[2].color = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
-
     auto cylinder = Primitives::MakeCylinder(0.25f, 0.75f, 32);
     RendererInitInfo info;
     info.Width = 800;
@@ -86,6 +82,7 @@ int main()
     //auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
     auto quadhandle = renderer.UploadMesh(quad);
     auto quadInstance = renderer.CreateMeshInstance(quadhandle);
+    auto quadInstance2 = renderer.CreateMeshInstance(quadhandle);
 
     MeshHandle cylinderMeshHandle = renderer.UploadMesh(cylinder);
     MeshInstanceHandle inst = renderer.CreateMeshInstance(cylinderMeshHandle);
@@ -125,7 +122,8 @@ int main()
     auto monkeyInstance = renderer.CreateMeshInstance(monkeyHandle);
     renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
 
-    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(10.0f));
+    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(0.0f), 0.0f, 0.0f), glm::vec3(10.0f));
+    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(180.0f), 0.0f, 0.0f), glm::vec3(10.0f));
     renderer.SetCamera(cam);
 
     PointLight p;
