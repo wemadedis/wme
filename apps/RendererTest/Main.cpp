@@ -86,6 +86,8 @@ int main()
     RTE::Audio::AudioListener::SetPosition(pos);
 
     auto renderer = Renderer(info);
+
+    //auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
     auto quadhandle = renderer.UploadMesh(quad);
     auto quadInstance = renderer.CreateMeshInstance(quadhandle);
 
@@ -130,6 +132,7 @@ int main()
     auto monkeyHandle = renderer.UploadMesh(&monkey);
     auto monkeyInstance = renderer.CreateMeshInstance(monkeyHandle);
     renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f,1.0f,0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
+
 
     renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(10.0f));
     renderer.SetCamera(cam);
