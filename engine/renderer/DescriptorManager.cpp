@@ -151,6 +151,7 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
         Utilities::CheckVkResult(code, "Failed to create descriptor set layout (RT)!");
     }
     //The vertex buffer binding need to be created in another set layout because of the dynamic size (there can be only one per layout)
+    //also, to get the variable descriptor size, we need to enable an extension when creating the logical device!
     VkDescriptorSetLayoutBinding vertexBufferBinding = {};
     vertexBufferBinding.binding = 4;
     vertexBufferBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER;
@@ -206,7 +207,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     uint32_t variableDescriptorCounts[2] = 
     {
         (uint32_t)meshes.size(),
-        (uint32_t)meshes.size()
+        (uint32_t)meshes.size(),
     };
 
     VkDescriptorSetVariableDescriptorCountAllocateInfoEXT variableDescriptorCountInfo;
@@ -304,7 +305,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     for(uint32_t meshIndex = 0; meshIndex < meshes.size(); meshIndex++)
     {
         bufferViewInfo.buffer = meshes[meshIndex]->indexBuffer.buffer;
-        bufferViewInfo.format = VK_FORMAT_R16G16B16A16_UINT;
+        bufferViewInfo.format = VK_FORMAT_R16_UINT;
         code = vkCreateBufferView(_instance->GetDevice(), &bufferViewInfo, nullptr, &indexViews[meshIndex]);
         Utilities::CheckVkResult(code, "Could not create index buffer view!");
 

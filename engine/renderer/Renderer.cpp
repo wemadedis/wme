@@ -137,9 +137,10 @@ void Renderer::RecordRenderPass()
 
 void Renderer::RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32_t frameIndex)
 {
+    _accelerationStructure->RebuildTopStructureCmd(commandBuffer);
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetHandle());
     auto dset = _descriptorManager->GetDescriptorSetRT();
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, dset.size(), dset.data(), 0, 0);
+    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, (uint32_t)dset.size(), dset.data(), 0, 0);
 
     // Here's how the shader binding table looks like in this tutorial:
     // |[ raygen shader ]|
@@ -526,6 +527,13 @@ void Renderer::SetMeshTransform(MeshInstanceHandle mesh, glm::vec3 pos, glm::vec
     _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [modelMatrix](MeshUniformData *data){
         data->ModelMatrix = modelMatrix;
     });
+
+    //Don't update the structure if it does not exist (2 cases: no ray tracing, or renderer not finalized)
+    if(_accelerationStructure != nullptr)
+    {
+        _accelerationStructure->UpdateInstanceTransform(mesh, modelMatrix);
+    }
+    
 }
 
 DirectionalLightHandle Renderer::AddDirectionalLight(DirectionalLight light)

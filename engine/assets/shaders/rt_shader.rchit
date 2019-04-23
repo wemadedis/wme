@@ -25,6 +25,13 @@ struct Vertex
     vec2 texCoord;
 };
 
+struct HitInfo
+{
+    vec3 Point;
+    vec3 Normal;
+    vec2 UV;
+};
+
 layout(location = 0) rayPayloadInNV vec3 hitValue;
 layout(location = 1) hitAttributeNV vec3 attribs;
 
@@ -49,40 +56,61 @@ float FetchFloat(uint meshIndex, int floatPlacement)
     return texelFetch(VertexBuffers[nonuniformEXT(meshIndex)], floatPlacement).r;
 }
 
+
+#define VERTEX_SIZE_FLOATS 12
+
 Vertex GetVertex(uint meshIndex, int vertexIndex)
 {
+    int baseOffset = 0;
     Vertex vert;
-    vert.pos.x = FetchFloat(meshIndex,  vertexIndex * 12);
-    vert.pos.x = FetchFloat(meshIndex,  vertexIndex * 12+1);
-    vert.pos.x = FetchFloat(meshIndex,  vertexIndex * 12+2);
-    vert.color.r = FetchFloat(meshIndex,  vertexIndex * 12+3);
-    vert.color.g = FetchFloat(meshIndex,  vertexIndex * 12+4);
-    vert.color.b = FetchFloat(meshIndex,  vertexIndex * 12+5);
-    vert.color.a = FetchFloat(meshIndex,  vertexIndex * 12+6);
-    vert.normal.x = FetchFloat(meshIndex,  vertexIndex * 12+7);
-    vert.normal.y = FetchFloat(meshIndex,  vertexIndex * 12+8);
-    vert.normal.z = FetchFloat(meshIndex,  vertexIndex * 12+9);
-    vert.texCoord.x = FetchFloat(meshIndex,  vertexIndex * 12+10);
-    vert.texCoord.y = FetchFloat(meshIndex,  vertexIndex * 12+11);
+    vert.pos.x =    FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS    );
+    vert.pos.x =    FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 1);
+    vert.pos.x =    FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 2);
+    vert.color.r =  FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 3);
+    vert.color.g =  FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 4);
+    vert.color.b =  FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 5);
+    vert.color.a =  FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 6);
+    vert.normal.x = FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 7);
+    vert.normal.y = FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 8);
+    vert.normal.z = FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 9);
+    vert.texCoord.x=FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 10);
+    vert.texCoord.y=FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 11);
     return vert;
+}
+
+HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
+{
+    
+    vec3 position = v1.pos * barycentrics.x + v2.pos * barycentrics.y + v3.pos * barycentrics.z;
+    vec3 normal = normalize(v1.normal * barycentrics.x + v2.normal * barycentrics.y + v3.normal * barycentrics.z);
+    vec2 UV = v1.texCoord * barycentrics.x + v2.texCoord * barycentrics.y + v3.texCoord * barycentrics.z;
+    normal = mat3(gl_ObjectToWorldNV ) * normal;
+    if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
+    //position = mat3(gl_ObjectToWorldNV ) * position;
+
+    HitInfo info;
+    info.Point = position;
+    info.Normal = normal;
+    info.UV = UV;
+    return info;
 }
 
 vec4 Phong(vec3 L, vec3 R, vec3 N)
 {
     float diff = max(0.0f, dot(L,N));
     float spec = max(0.0f, dot(-gl_WorldRayDirectionNV,R));
-    return vec4(0.5f) * diff;
+    return vec4(1.0f) * diff * spec;
 }
 
-vec4 CalculatePointLightShading(PointLight light, vec3 hitPosition, vec3 hitNormal)
+vec4 CalculatePointLightShading(PointLight light, HitInfo hitinfo)
 {
     vec3 lightPosition = light.PositionRadius.xyz;
-    vec3 direction = lightPosition - hitPosition;
-    vec3 L = normalize(direction);
-    vec3 R = reflect(L,hitNormal);
+    vec3 direction =  lightPosition - hitinfo.Point;
+    vec3 L = -normalize(direction);
+    vec3 R = reflect(L,hitinfo.Normal);
     float distance = length(direction);
     //if(distance > light.Radius) return Phong(L,N);
-    return Phong(L,R, hitNormal) * light.Color * light.PositionRadius.w / (distance*distance);
+    return Phong(L,R, hitinfo.Normal) * light.Color * light.PositionRadius.w / (distance*distance);
 }
 /*
 vec4 CalculateDirectionalLightShading(DirectionalLight light, vec3 N)
@@ -92,12 +120,15 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light, vec3 N)
     return Phong(L,R) * light.Color;
 }
 */
-vec4 CalculatePerLightShading(vec3 hitPosition, vec3 hitNormal)
+
+
+
+vec4 CalculatePerLightShading(HitInfo hitinfo)
 {
-    vec4 color = vec4(0.5f) * GlobalUniform.AmbientColor;
+    vec4 color = GlobalUniform.AmbientColor;
     for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
     {
-        color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex], hitPosition, hitNormal);
+        color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex], hitinfo);
     }
     /*for(uint directionalLightIndex = 0; directionalLightIndex < GlobalUniform.LightCounts.x; directionalLightIndex++)
     {
@@ -111,17 +142,14 @@ void main()
     const vec3 barycentrics = vec3(1.0 - attribs.x - attribs.y, attribs.x, attribs.y);
 
     uint meshIndex = texelFetch(InstanceMapping, gl_InstanceCustomIndexNV).r;
-    ivec3 indices = ivec3(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID).rgb);
-    Vertex v1 = GetVertex(meshIndex, indices.x);
-    Vertex v2 = GetVertex(meshIndex, indices.y);
-    Vertex v3 = GetVertex(meshIndex, indices.z);
-    vec3 position = v1.pos * barycentrics.x + v2.pos * barycentrics.y + v3.pos * barycentrics.z;
-    vec3 normal = normalize(v1.normal * barycentrics.x + v2.normal * barycentrics.y + v3.normal * barycentrics.z);
-    normal = mat3(gl_ObjectToWorldNV ) * normal;
-
-    //if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
-    hitValue = normal;
-    hitValue = CalculatePerLightShading(position, normal).rgb;
+    int index1 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3).r);
+    int index2 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3+1).r);
+    int index3 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3+2).r);
+    Vertex v1 = GetVertex(meshIndex, index1);
+    Vertex v2 = GetVertex(meshIndex, index2);
+    Vertex v3 = GetVertex(meshIndex, index3);
+    HitInfo hitinfo = GetHitInfo(v1, v2, v3, barycentrics);
+    hitValue = CalculatePerLightShading(hitinfo).rgb;
     //vec3 col = v1.color.rgb * barycentrics.x + v2.color.rgb * barycentrics.y + v3.color.rgb * barycentrics.z;
     //hitValue = col;
 

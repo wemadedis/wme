@@ -101,7 +101,7 @@ int main()
     );
 
     RTE::Audio::AudioEmitter audioEmitter;
-    audioEmitter.LoadSoundFromFile("E:\\projects\\rte\\engine\\assets\\audio\\mono.wav");
+    audioEmitter.LoadSoundFromFile("C:\\Users\\Svampex\\Documents\\Projects\\rte\\engine\\assets\\audio\\mono.wav");
     audioEmitter.SetPosition(glm::vec3(5.f, 0.f, 0.f));
     audioEmitter.SetLoop(true);
     audioEmitter.Play();

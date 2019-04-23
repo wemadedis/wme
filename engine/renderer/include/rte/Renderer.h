@@ -58,14 +58,14 @@ using FpSeconds = std::chrono::duration<float, std::chrono::seconds::period>;
 
 private:
     RendererInitInfo _initInfo;
-    GraphicsPipeline *_pipeline;
-	RenderPass *_renderPass;
-	Instance *_instance;
-	SwapChain *_swapChain;
-	CommandBufferManager *_commandBufferManager;
-	ImageManager *_imageManager;
-	DescriptorManager *_descriptorManager;
-    DeviceMemoryManager *_deviceMemoryManager;
+    GraphicsPipeline *_pipeline = nullptr;
+	RenderPass *_renderPass = nullptr;
+	Instance *_instance = nullptr;
+	SwapChain *_swapChain = nullptr;
+	CommandBufferManager *_commandBufferManager = nullptr;
+	ImageManager *_imageManager = nullptr;
+	DescriptorManager *_descriptorManager = nullptr;
+    DeviceMemoryManager *_deviceMemoryManager = nullptr;
 
     GlobalUniformData _globalUniform;
     BufferInformation _globalUniformBuffer;
@@ -89,8 +89,8 @@ private:
     RenderMode _renderMode;
     bool RTXon = false; //TODO: Apply coding style
     VkPhysicalDeviceRayTracingPropertiesNV _rtProperties = {};
-    AccelerationStructure *_accelerationStructure;
-    GraphicsPipeline *_pipelineRT;
+    AccelerationStructure *_accelerationStructure = nullptr;
+    GraphicsPipeline *_pipelineRT = nullptr;
     BufferInformation _shaderBindingTable;
     ImageInformation _offScreenImageRT;
     VkImageView _offScreenImageView;
