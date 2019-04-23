@@ -36,7 +36,7 @@ struct TextureInfo
 struct MeshUniformData
 {
 	glm::mat4 ModelMatrix;
-	glm::vec4 Color = glm::vec4(0.5, 0.5, 0.5, 1.0f);
+	glm::vec4 Color = glm::vec4(1.0f);
 	bool HasTexture;
 };
 

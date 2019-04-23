@@ -11,6 +11,10 @@
 #include "rte/Primitives.h"
 #include "rte/Renderer.h"
 #include "rte/WindowManager.h"
+<<<<<<< HEAD
+=======
+#include "rte/ModelImporter.h"
+>>>>>>> cd4ad56d41e13b0e6cd0f29bae124fab24501b62
 
 #include "stb_image.h"
 #include <iostream>
@@ -25,8 +29,6 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/transform.hpp>
-
-#include "rte/HighLevelRenderer.h"
 
 using namespace RTE::Rendering;
 
@@ -79,7 +81,6 @@ int main()
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
 
-    RTE::Audio::AudioListener::SetPosition(pos);
 
     auto renderer = Renderer(info);
 
@@ -93,6 +94,7 @@ int main()
         inst,
         glm::vec3(5.f, 0.f, 0.f),
         glm::vec3(0.0f),
+<<<<<<< HEAD
         glm::vec3(1.0f));
     RTE::Audio::AudioEmitter ae1;
     ae1.PlaySpatialMonoTest(glm::vec3(5.f, 0.f, 0.f));
@@ -103,6 +105,17 @@ int main()
     int height = 0;
     int depth = 0;
     /*
+=======
+        glm::vec3(1.0f)
+    );
+
+    std::vector<MeshInstanceHandle> meshes = {};
+
+    int width = 5;
+    int height = 5;
+    int depth = 5;
+
+>>>>>>> cd4ad56d41e13b0e6cd0f29bae124fab24501b62
     for(int x = 0; x < width; x++)
     {
         for(int y = 0; y < height; y++)
@@ -115,7 +128,7 @@ int main()
             }
         }
     }
-*/
+
     std::ostringstream stringStream;
     stringStream << ENGINE_ASSET_DIR << "models/monkey.ply";
     std::string monkeyPath = stringStream.str();
@@ -156,10 +169,7 @@ int main()
     bool rt = true;
     int lastPressed = 214;
 
-    const std::string path = "E:\\projects\\rte\\engine\\assets\\audio\\mono.wav";
-    RTE::Audio::AudioEmitter ae;
-    ae.LoadSoundFromFile(path);
-    ae.SetLoop(true);
+    glm::vec3 monkeyRotation = glm::vec3(0.0f);
 
     while (!RTE::Platform::ShouldClose(window))
     {
@@ -167,6 +177,7 @@ int main()
         int aresult = RTE::Platform::WindowManager::GetKey(GLFW_KEY_A);
         if (aresult == GLFW_PRESS)
         {
+<<<<<<< HEAD
             pos = glm::rotateY(pos, glm::radians(-25.0f) * deltaTime);
             RTE::Audio::AudioListener::SetPosition(pos);
             cam.Position = pos;
@@ -181,6 +192,17 @@ int main()
             cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
             ;
             RTE::Audio::AudioListener::SetDirection(glm::vec3(0.0f, 1.0f, 0.0f) - pos);
+=======
+            pos = glm::rotateY(pos, glm::radians(-50.0f)*deltaTime);
+            cam.Position = pos;
+            cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        } 
+        else if(RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
+        {
+            pos = glm::rotateY(pos, glm::radians(50.0f)*deltaTime);
+            cam.Position = pos;
+            cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));;
+>>>>>>> cd4ad56d41e13b0e6cd0f29bae124fab24501b62
         }
         int currentPressed = RTE::Platform::WindowManager::GetKey(GLFW_KEY_R);
         if (currentPressed == GLFW_PRESS)
@@ -200,8 +222,15 @@ int main()
         {
             lastPressed = 0;
         }
+<<<<<<< HEAD
 
         renderer.SetPointLightProperties(pl, [&](PointLight &light) {
+=======
+        //monkeyRotation.y += deltaTime*10.0f;
+        //renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f), monkeyRotation, glm::vec3(1.0f));
+        
+        renderer.SetPointLightProperties(pl, [&](PointLight &light){
+>>>>>>> cd4ad56d41e13b0e6cd0f29bae124fab24501b62
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
             pos = glm::rotateY(pos, glm::radians(30.0f) * deltaTime);
             light.PositionRadius.x = pos.x;

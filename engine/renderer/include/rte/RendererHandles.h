@@ -4,10 +4,10 @@
 
 namespace RTE::Rendering
 {
-    typedef uint16_t MeshHandle;
-    typedef uint16_t MeshInstanceHandle;
-    typedef uint16_t TextureHandle;
-    typedef uint16_t DirectionalLightHandle;
-    typedef uint16_t PointLightHandle;
-    typedef uint16_t ShaderHandle;
+    typedef uint32_t MeshHandle;
+    typedef uint32_t MeshInstanceHandle;
+    typedef uint32_t TextureHandle;
+    typedef uint32_t DirectionalLightHandle;
+    typedef uint32_t PointLightHandle;
+    typedef uint32_t ShaderHandle;
 }

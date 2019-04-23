@@ -19,8 +19,9 @@ class AccelerationStructure
     RTUtilities *_rtUtil = nullptr;
     VkAccelerationStructureNV _top = VK_NULL_HANDLE;
     std::vector<VkAccelerationStructureNV> _bot;
+    std::vector<MeshHandle> _instanceMeshMapping;
+    uint32_t _instanceCount = 0;
 
-    //Is this one necessary to keep track of?
     BufferInformation _scratchBuffer; 
     BufferInformation _instanceBuffer; 
     
@@ -37,6 +38,8 @@ public:
                             std::vector<MeshInstance> &instances);
     VkAccelerationStructureNV GetTopStructure();
     std::vector<VkAccelerationStructureNV> GetBotStructures();
+    void UpdateInstanceTransform(MeshInstanceHandle instanceHandle, glm::mat4 modelMatrix);
+    void RebuildTopStructureCmd(VkCommandBuffer commandBuffer);
 };
 
 

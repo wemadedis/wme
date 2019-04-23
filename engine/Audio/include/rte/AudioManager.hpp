@@ -2,14 +2,14 @@
 
 #include "rte/AudioListener.hpp"
 
-namespace RTE::Runtime
+namespace RTE::Audio
 {
 // Does this make even sense?[]
 class AudioManager
 {
 
 public:
-    static RTE::Audio::AudioListener GetAudioListener(); 
+    static AudioListener GetAudioListener(); 
 };
 
 } // namespace RTE
