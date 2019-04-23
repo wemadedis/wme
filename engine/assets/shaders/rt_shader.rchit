@@ -70,7 +70,7 @@ Vertex GetVertex(uint meshIndex, int vertexIndex)
 vec4 Phong(vec3 L, vec3 R, vec3 N)
 {
     float diff = max(0.0f, dot(L,N));
-    float spec = max(0.0f, dot(gl_WorldRayDirectionNV,R));
+    float spec = max(0.0f, dot(-gl_WorldRayDirectionNV,R));
     return vec4(0.5f) * diff;
 }
 
@@ -117,10 +117,7 @@ void main()
     Vertex v3 = GetVertex(meshIndex, indices.z);
     vec3 position = v1.pos * barycentrics.x + v2.pos * barycentrics.y + v3.pos * barycentrics.z;
     vec3 normal = normalize(v1.normal * barycentrics.x + v2.normal * barycentrics.y + v3.normal * barycentrics.z);
-
-    vec3 dir1 = v2.pos - v1.pos;
-    vec3 dir2 = v3.pos - v1.pos;
-    //vec3 normal = cross(dir1,dir2);
+    normal = mat3(gl_ObjectToWorldNV ) * normal;
 
     //if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
     hitValue = normal;
