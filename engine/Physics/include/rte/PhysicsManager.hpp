@@ -162,7 +162,7 @@ public:
      * 
      * @return RigidBody* A pointer to the created physics rigid body
      */
-    RigidBody *CreateRigidBody();
+    RigidBody *CreateRigidBody(Rendering::Transform &trans);
 
     /**
      * @brief Get the Gravity of the physics world

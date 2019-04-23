@@ -1,19 +1,18 @@
 #pragma once
 
-#include "rte/Component.h"
-#include "rte/AudioListener.hpp"
 #include "rte/AudioComponent.hpp"
+#include "rte/AudioListener.hpp"
+#include "rte/Component.h"
 
 namespace RTE::StandardComponents
 {
 
-class AudioComponent : public Component
+class AudioComponent : public Runtime::Component
 {
 public:
     AudioComponent();
-    virtual void Update() override;
-
+    virtual void Update(float deltaTime) override;
 };
 
 // End RTE::StandardComponents namespace
-};
+}; // namespace RTE::StandardComponents

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "rte/Component.h"
 #include "rte/RenderStructs.h"
 #include "rte/RendererHandles.h"

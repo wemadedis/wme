@@ -1,8 +1,9 @@
 #include "rte/PhysicsManager.hpp"
 
-#include <glm/glm.hpp>
-
+#include "rte/GlmWrapper.hpp"
 #include "rte/NotImplementedException.hpp"
+#include "rte/RenderStructs.h"
+#include "rte/Utility.hpp"
 
 namespace RTE::Physics
 {
@@ -78,18 +79,32 @@ PhysicsManager::~PhysicsManager()
 
 void PhysicsManager::Step(float deltaTime)
 {
+    Debug("Updating physics world");
     _physicsWorld->stepSimulation(deltaTime, _maxSubSteps, _fixedTimeStep);
 }
 
 PhysicsManager *PhysicsManager::_instance = nullptr;
 
-RigidBody CreateRigidBody()
+RigidBody *PhysicsManager::CreateRigidBody(Rendering::Transform &trans)
 {
-    btMotionState *motionState = new btDefaultMotionState();
+    glm::quat rotQ = glm::quat_cast(trans.RotationMatrix());
+    btMotionState *motionState =
+        new btDefaultMotionState(
+            btTransform(
+                btQuaternion(rotQ.x, rotQ.y, rotQ.z, rotQ.w),
+                btVector3(trans.Pos.x, trans.Pos.y, trans.Pos.z)));
+
     btBoxShape *boxShape = new btBoxShape({10, 10, 10});
-    btRigidBody::btRigidBodyConstructionInfo info = btRigidBody::btRigidBodyConstructionInfo(0.0f, motionState, boxShape);
+    btRigidBody::btRigidBodyConstructionInfo info =
+        btRigidBody::btRigidBodyConstructionInfo(0.0f, motionState, boxShape);
     btRigidBody *bulletRigidBody = new btRigidBody(info);
-    return RigidBody(bulletRigidBody);
+    bulletRigidBody->setUserPointer(this);
+
+    btVector3 fallInertia(0, 0, 0);
+    boxShape->calculateLocalInertia(1000, fallInertia);
+    _physicsWorld->addRigidBody(bulletRigidBody);
+
+    return new RigidBody(bulletRigidBody);
 }
 
 glm::vec3 PhysicsManager::GetGravity()

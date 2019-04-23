@@ -6,6 +6,7 @@
 #include "rte/TransformComponent.hpp"
 
 namespace RTE::StandardComponents
+
 {
 
 /**
