@@ -5,17 +5,16 @@
 #define VK_PROTOTYPES
 #define VK_USE_PLATFORM_WIN32_KHR
 
-#include "rte/Renderer.h"
-#include "rte/Primitives.h"
-#include "rte/WindowManager.h"
-#include "rte/ModelImporter.h"
-#include "rte/AudioListener.hpp"
 #include "rte/AudioEmitter.hpp"
+#include "rte/AudioListener.hpp"
+#include "rte/ModelImporter.h"
+#include "rte/Primitives.h"
+#include "rte/Renderer.h"
+#include "rte/WindowManager.h"
 
+#include "stb_image.h"
 #include <iostream>
 #include <vector>
-#include "stb_image.h"
-
 
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
@@ -24,9 +23,8 @@
 #include <glm/gtx/euler_angles.hpp>
 
 #include <glm/glm.hpp>
-#include <glm/gtx/transform.hpp>
 #include <glm/gtx/rotate_vector.hpp>
-
+#include <glm/gtx/transform.hpp>
 
 #include "rte/HighLevelRenderer.h"
 
@@ -36,10 +34,9 @@ typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::time_point<std::chrono::steady_clock> TimePoint;
 using FpSeconds = std::chrono::duration<float, std::chrono::seconds::period>;
 
-
 int main()
 {
-    
+
     auto winMan = RTE::Platform::WindowManager::GetInstance();
     auto window = winMan->OpenWindow(800, 600, "RendererTest");
     auto quad = Primitives::MakeQuad();
@@ -48,7 +45,6 @@ int main()
     quad->Vertices[1].color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
     quad->Vertices[2].color = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
 
-
     auto cylinder = Primitives::MakeCylinder(0.25f, 0.75f, 32);
     RendererInitInfo info;
     info.Width = 800;
@@ -56,25 +52,25 @@ int main()
     info.extensions = winMan->GetRequiredExtensions();
     info.MaxFPS = 144;
     info.RayTracingOn = true;
-    
+
     info.BindingFunc = [winMan](VkSurfaceKHR &surface, VkInstance instance) {
-			winMan->CreateSurface(instance, surface);
+        winMan->CreateSurface(instance, surface);
     };
 
     int texWidth, texHeight, texChannels;
     std::ostringstream ss;
     ss << ENGINE_ASSET_DIR << "textures/rte.png";
-    stbi_uc* pixels = stbi_load(ss.str().c_str() , &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
+    stbi_uc *pixels = stbi_load(ss.str().c_str(), &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
     uint32_t imageSize = texWidth * texHeight * 4;
     Texture tex;
     tex.Height = texHeight;
     tex.Width = texWidth;
     tex.Pixels = pixels;
 
-    if (!pixels) {
+    if (!pixels)
+    {
         throw std::runtime_error("failed to load texture image!");
     }
-
 
     Camera cam;
     glm::vec3 pos = {0.0f, 0.0f, 10.0f};
@@ -91,25 +87,22 @@ int main()
     auto quadhandle = renderer.UploadMesh(quad);
     auto quadInstance = renderer.CreateMeshInstance(quadhandle);
 
-
     MeshHandle cylinderMeshHandle = renderer.UploadMesh(cylinder);
     MeshInstanceHandle inst = renderer.CreateMeshInstance(cylinderMeshHandle);
     renderer.SetMeshTransform(
         inst,
         glm::vec3(5.f, 0.f, 0.f),
         glm::vec3(0.0f),
-        glm::vec3(1.0f)
-    );
+        glm::vec3(1.0f));
     RTE::Audio::AudioEmitter ae1;
     ae1.PlaySpatialMonoTest(glm::vec3(5.f, 0.f, 0.f));
-
 
     std::vector<MeshInstanceHandle> meshes = {};
 
     int width = 0;
     int height = 0;
     int depth = 0;
-/*
+    /*
     for(int x = 0; x < width; x++)
     {
         for(int y = 0; y < height; y++)
@@ -131,8 +124,7 @@ int main()
 
     auto monkeyHandle = renderer.UploadMesh(&monkey);
     auto monkeyInstance = renderer.CreateMeshInstance(monkeyHandle);
-    renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f,1.0f,0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
-
+    renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
 
     renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(10.0f));
     renderer.SetCamera(cam);
@@ -141,22 +133,21 @@ int main()
     p.Color = glm::vec4(0.5f);
     p.PositionRadius = glm::vec4(2.5f, 1.5f, 2.5f, 4.25f);
     PointLightHandle pl = renderer.AddPointLight(p);
-    p.Color = glm::vec4(1.0f,0.0f,0.0f,0.0f);
+    p.Color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
     p.PositionRadius = glm::vec4(-2.5f, 1.5f, -2.5f, 4.25f);
     PointLightHandle pl2 = renderer.AddPointLight(p);
 
-    p.Color = glm::vec4(0.0f,1.0f,0.0f,0.0f);
+    p.Color = glm::vec4(0.0f, 1.0f, 0.0f, 0.0f);
     p.PositionRadius = glm::vec4(2.5f, 1.5f, -2.5f, 4.25f);
     PointLightHandle pl3 = renderer.AddPointLight(p);
 
-    p.Color = glm::vec4(0.0f,0.0f,1.0f,0.0f);
+    p.Color = glm::vec4(0.0f, 0.0f, 1.0f, 0.0f);
     p.PositionRadius = glm::vec4(-2.5f, 1.5f, 2.5f, 4.25f);
     PointLightHandle pl4 = renderer.AddPointLight(p);
-    
-    p.Color = glm::vec4(1.0f,1.0f,1.0f,0.0f);
+
+    p.Color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
     p.PositionRadius = glm::vec4(0.0f, 5.5f, 0.0f, 10.25f);
     PointLightHandle pl5 = renderer.AddPointLight(p);
-
 
     renderer.SetAmbientLight(glm::vec4(0.1f));
     renderer.Finalize();
@@ -170,35 +161,38 @@ int main()
     ae.LoadSoundFromFile(path);
     ae.SetLoop(true);
 
-    while(!RTE::Platform::ShouldClose(window))
+    while (!RTE::Platform::ShouldClose(window))
     {
         RTE::Platform::PollEvents();
         int aresult = RTE::Platform::WindowManager::GetKey(GLFW_KEY_A);
-        if(aresult == GLFW_PRESS)
+        if (aresult == GLFW_PRESS)
         {
-            pos = glm::rotateY(pos, glm::radians(-25.0f)*deltaTime);
+            pos = glm::rotateY(pos, glm::radians(-25.0f) * deltaTime);
             RTE::Audio::AudioListener::SetPosition(pos);
             cam.Position = pos;
             cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-            RTE::Audio::AudioListener::SetDirection(glm::vec3(0.0f, 1.0f, 0.0f)-pos);
-        } 
-        else if(RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
+            RTE::Audio::AudioListener::SetDirection(glm::vec3(0.0f, 1.0f, 0.0f) - pos);
+        }
+        else if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
         {
-            pos = glm::rotateY(pos, glm::radians(25.0f)*deltaTime);
+            pos = glm::rotateY(pos, glm::radians(25.0f) * deltaTime);
             RTE::Audio::AudioListener::SetPosition(pos);
             cam.Position = pos;
-            cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));;
-            RTE::Audio::AudioListener::SetDirection(glm::vec3(0.0f, 1.0f, 0.0f)-pos);
+            cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            ;
+            RTE::Audio::AudioListener::SetDirection(glm::vec3(0.0f, 1.0f, 0.0f) - pos);
         }
         int currentPressed = RTE::Platform::WindowManager::GetKey(GLFW_KEY_R);
-        if(currentPressed == GLFW_PRESS)
+        if (currentPressed == GLFW_PRESS)
         {
             int wut = 0;
-            if(lastPressed != GLFW_PRESS)
+            if (lastPressed != GLFW_PRESS)
             {
                 rt = !rt;
-                if(rt) renderer.SetRenderMode(RenderMode::RAYTRACE);
-                else renderer.SetRenderMode(RenderMode::RASTERIZE);
+                if (rt)
+                    renderer.SetRenderMode(RenderMode::RAYTRACE);
+                else
+                    renderer.SetRenderMode(RenderMode::RASTERIZE);
                 lastPressed = GLFW_PRESS;
             }
         }
@@ -206,10 +200,10 @@ int main()
         {
             lastPressed = 0;
         }
-        
-        renderer.SetPointLightProperties(pl, [&](PointLight &light){
+
+        renderer.SetPointLightProperties(pl, [&](PointLight &light) {
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
+            pos = glm::rotateY(pos, glm::radians(30.0f) * deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
@@ -217,23 +211,23 @@ int main()
             // ae.SetPosition(pos);
             // if (ae.GetState() != RTE::Audio::Playing) ae.Play();
         });
-        renderer.SetPointLightProperties(pl2, [deltaTime](PointLight &light){
+        renderer.SetPointLightProperties(pl2, [deltaTime](PointLight &light) {
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
+            pos = glm::rotateY(pos, glm::radians(30.0f) * deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
-        renderer.SetPointLightProperties(pl3, [deltaTime](PointLight &light){
+        renderer.SetPointLightProperties(pl3, [deltaTime](PointLight &light) {
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
+            pos = glm::rotateY(pos, glm::radians(30.0f) * deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
         });
-        renderer.SetPointLightProperties(pl4, [deltaTime](PointLight &light){
+        renderer.SetPointLightProperties(pl4, [deltaTime](PointLight &light) {
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
-            pos = glm::rotateY(pos, glm::radians(30.0f)*deltaTime);
+            pos = glm::rotateY(pos, glm::radians(30.0f) * deltaTime);
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;

@@ -1,16 +1,12 @@
 #include <iostream>
 #include <vector>
 
-#include "rte/WindowManager.h"
 #include "rte/Renderer.h"
+#include "rte/WindowManager.h"
 
 namespace RTE::Platform
 {
 
-void DestroyWindow(RTEWindow* window)
-{
-    glfwDestroyWindow(window->window);
-}
 void Terminate()
 {
     glfwTerminate();
@@ -25,9 +21,20 @@ void PollEvents()
     glfwPollEvents();
 }
 
-bool ShouldClose(RTEWindow *window)
+void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
 {
-    return glfwWindowShouldClose(window->window);
+    auto fn = *WindowManager::GetInstance()->GetFrameResizeCallback();
+    fn(width, height);
+}
+
+void RetrieveFrameBufferChangedCallback(FrameResizeCallback *fcb)
+{
+    WindowManager::GetInstance()->SetFrameResizeCallback(fcb);
+}
+
+bool WindowManager::ShouldClose()
+{
+    return glfwWindowShouldClose(Window);
 }
 
 // Initialize WindowManager static instance
@@ -37,10 +44,24 @@ void WindowManager::CreateSurface(
     VkInstance instance,
     VkSurfaceKHR &surface)
 {
-    if (glfwCreateWindowSurface(instance, _window->GLFWWindow, nullptr, &surface) != VK_SUCCESS)
+    if (glfwCreateWindowSurface(instance, Window, nullptr, &surface) != VK_SUCCESS)
     {
-        throw std::runtime_error("failed to create window surface!");
+        throw RTEException("failed to create window surface!");
     }
+}
+
+WindowManager::WindowManager(RTEConfig &config)
+{
+    _instance = this;
+    OpenWindow(
+        config.WindowConfig.WindowWidth,
+        config.WindowConfig.WindowHeight,
+        config.WindowConfig.WindowName);
+}
+
+void WindowManager::Update(float deltaTime)
+{
+    glfwPollEvents();
 }
 
 std::vector<const char *> WindowManager::GetRequiredExtensions()
@@ -59,9 +80,9 @@ std::vector<const char *> WindowManager::GetRequiredExtensions()
     return extensions;
 }
 
-RTEWindow *WindowManager::OpenWindow(
-    int width, 
-    int height, 
+void WindowManager::OpenWindow(
+    int width,
+    int height,
     std::string title)
 {
     glfwInit();
@@ -69,66 +90,31 @@ RTEWindow *WindowManager::OpenWindow(
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
     glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
-    GLFWwindow *window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
-    glfwSetWindowUserPointer(window, this);
-
-    RTEWindow *rteWindow = new RTEWindow();
-
-    VkInstance *instance = new VkInstance;
-    VkSurfaceKHR *surface = new VkSurfaceKHR;
-    //RTE::Renderer::CreateInstance(title, instance, GetRequiredExtensions(), enableValidationLayers);
-    //RTE::Renderer::SetupDebugCallback(*instance);
-
-    rteWindow->Width = width;
-    rteWindow->Height = height;
-    rteWindow->Title = title;
-    rteWindow->WindowResized = false;
-    rteWindow->instance = instance;
-    rteWindow->window = window;
-
-    glfwSetKeyCallback(window, KeyCallback);
-    //CreateSurface(*instance, window, surface);
-    rteWindow->surface = surface;
-
-    WindowBinding *binding = new WindowBinding();
-    binding->GLFWWindow = window;
-    binding->RTEWindow = rteWindow;
-    //_activeWindows.push_back(binding);
-    _window = binding;
-    glfwSetWindowUserPointer(window, this);
-    glfwSetFramebufferSizeCallback(window, FramebufferResizeCallback);
-
-    return rteWindow;
+    Window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
+    glfwSetWindowUserPointer(Window, this);
+    glfwSetFramebufferSizeCallback(Window, FramebufferResizeCallback);
 }
 
-void WindowManager::KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void WindowManager::SetFrameResizeCallback(FrameResizeCallback *fcb)
 {
-
+    _frameResizeCallback = fcb;
 }
 
-void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
+FrameResizeCallback *WindowManager::GetFrameResizeCallback()
 {
-    auto win = GetInstance()->_window->RTEWindow;
-    win->Width = width;
-    win->Height = height;
-    win->WindowResized = true;
+    return _frameResizeCallback;
 }
 
 int WindowManager::GetKey(int key)
 {
-    WindowManager* manager = GetInstance();
-    return glfwGetKey(manager->_window->GLFWWindow, key);
+    WindowManager *manager = GetInstance();
+    return glfwGetKey(manager->Window, key);
 }
 
 WindowManager *WindowManager::GetInstance()
 {
-    if (WindowManager::_instance == nullptr)
-        _instance = new WindowManager();
+    assert(WindowManager::_instance);
     return WindowManager::_instance;
-}
-
-WindowManager::WindowManager()
-{
 }
 WindowManager::~WindowManager()
 {

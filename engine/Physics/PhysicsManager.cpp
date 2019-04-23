@@ -13,7 +13,9 @@ static void ContactStartedCallback(btPersistentManifold *const &manifold)
     throw NotImplementedException();
 }
 
-static bool ContactProcessedCallback(btManifoldPoint &cp, void *body0, void *body1)
+static bool ContactProcessedCallback(
+    btManifoldPoint &cp,
+    void *body0, void *body1)
 {
     throw NotImplementedException();
 }
@@ -41,21 +43,16 @@ PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
     SetGravity(_defaultGravity);
 }
 
-static btDbvtBroadphase *Broadphase;
-static btDefaultCollisionConfiguration *CollisionConfiguration;
-static btCollisionDispatcher *CollisionDispatcher;
-static btSequentialImpulseConstraintSolver *ConstraintSolver;
-
 btDiscreteDynamicsWorld *PhysicsManager::CreateDefaultDynamicsWorld()
 {
     SetupBulletCallbacks();
 
-    //! Make this configurable
-    //? Make default world configurable too?
-    Broadphase = new btDbvtBroadphase();
-    CollisionConfiguration = new btDefaultCollisionConfiguration();
-    CollisionDispatcher = new btCollisionDispatcher(CollisionConfiguration);
-    ConstraintSolver = new btSequentialImpulseConstraintSolver();
+    //* Extend: Make this extendable
+    auto Broadphase = new btDbvtBroadphase();
+    auto CollisionConfiguration = new btDefaultCollisionConfiguration();
+    auto CollisionDispatcher = new btCollisionDispatcher(CollisionConfiguration);
+    auto ConstraintSolver = new btSequentialImpulseConstraintSolver();
+
     auto world = new btDiscreteDynamicsWorld(
         CollisionDispatcher,
         Broadphase,
@@ -79,13 +76,36 @@ PhysicsManager::~PhysicsManager()
 
 void PhysicsManager::Step(float deltaTime)
 {
-    Debug("Updating physics world");
     _physicsWorld->stepSimulation(deltaTime, _maxSubSteps, _fixedTimeStep);
 }
 
 PhysicsManager *PhysicsManager::_instance = nullptr;
 
-RigidBody *PhysicsManager::CreateRigidBody(Rendering::Transform &trans)
+btCollisionShape *PhysicsManager::GetCollisionShapeFromColliderType(
+    ColliderType type,
+    ColliderData data)
+{
+    switch (type)
+    {
+    case ColliderType::BOX:
+        return new btBoxShape(Convert(data.Box.HalfExtents));
+    case ColliderType::CAPSULE:
+        return new btCapsuleShape(data.Capsule.Radius, data.Capsule.Height);
+    case ColliderType::CYLLINDER:
+        return new btCylinderShape(Convert(data.Cyllinder.HalfExtents));
+    case ColliderType::SPHERE:
+        return new btSphereShape(data.Sphere.Radius);
+    case ColliderType::PLANE:
+        return new btStaticPlaneShape(Convert(data.Plane.N), data.Plane.D);
+    default:
+        throw RTEException("Unsupported Collider Type");
+    }
+}
+
+RigidBody *PhysicsManager::CreateRigidBody(
+    Rendering::Transform &trans,
+    float mass,
+    std::vector<Collider> colliders)
 {
     glm::quat rotQ = glm::quat_cast(trans.RotationMatrix());
     btMotionState *motionState =
@@ -95,13 +115,13 @@ RigidBody *PhysicsManager::CreateRigidBody(Rendering::Transform &trans)
                 btVector3(trans.Pos.x, trans.Pos.y, trans.Pos.z)));
 
     btBoxShape *boxShape = new btBoxShape({10, 10, 10});
-    btRigidBody::btRigidBodyConstructionInfo info =
-        btRigidBody::btRigidBodyConstructionInfo(0.0f, motionState, boxShape);
-    btRigidBody *bulletRigidBody = new btRigidBody(info);
-    bulletRigidBody->setUserPointer(this);
 
+    btRigidBody::btRigidBodyConstructionInfo info =
+        btRigidBody::btRigidBodyConstructionInfo(1000, motionState, boxShape);
+    btRigidBody *bulletRigidBody = new btRigidBody(info);
     btVector3 fallInertia(0, 0, 0);
     boxShape->calculateLocalInertia(1000, fallInertia);
+
     _physicsWorld->addRigidBody(bulletRigidBody);
 
     return new RigidBody(bulletRigidBody);

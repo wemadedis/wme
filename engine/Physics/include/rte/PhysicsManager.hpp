@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 #include <Bullet/btBulletDynamicsCommon.h>
 #include <glm/glm.hpp>
@@ -72,6 +73,49 @@ static bool ContactProcessedCallback(btManifoldPoint &manifoldPoint, void *body0
  */
 static void ContactEndedCallback(btPersistentManifold *const &manifold);
 
+enum class ColliderType
+{
+    BOX = 0,
+    CYLLINDER,
+    CAPSULE,
+    PLANE,
+    SPHERE
+};
+
+union ColliderData {
+    struct
+    {
+        glm::vec3 HalfExtents;
+    } Box, Cyllinder;
+
+    struct
+    {
+        float Radius;
+    } Sphere;
+
+    struct
+    {
+        glm::vec3 N;
+        float D;
+    } Plane;
+    struct
+    {
+        float Radius;
+        float Height;
+    } Capsule;
+};
+
+struct Collider
+{
+    Rendering::Transform ColliderTransform;
+    ColliderType Type;
+    ColliderData Data;
+};
+
+/**
+ * @brief Manages physics
+ * 
+ */
 class PhysicsManager : public RTEModule
 {
 private:
@@ -157,12 +201,22 @@ public:
      */
     void Update(float deltaTime) override;
 
+    btCollisionShape *GetCollisionShapeFromColliderType(
+        ColliderType type,
+        ColliderData data);
+
     /**
      * @brief Create a Rigid Body object and add it to the physics world
      * 
+     * 
+     * @param trans Initial transform of the produced RigidBody
+     * @param mass The mass of this rigidbody
      * @return RigidBody* A pointer to the created physics rigid body
      */
-    RigidBody *CreateRigidBody(Rendering::Transform &trans);
+    RigidBody *CreateRigidBody(
+        Rendering::Transform &trans,
+        float mass,
+        std::vector<Collider> colliders);
 
     /**
      * @brief Get the Gravity of the physics world

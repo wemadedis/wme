@@ -8,6 +8,7 @@
 #include "rte/RTEConfig.hpp"
 #include "rte/RTEModule.hpp"
 #include "rte/RuntimeAchitectureMain.hpp"
+#include "rte/WindowManager.h"
 
 extern void(ConfigureGame)(RTE::RTEConfig &config);
 extern void(OnGameStart)(RTE::Runtime::SceneManager &sceneManager);
@@ -19,7 +20,8 @@ class RTECore
 
 private:
     std::vector<RTEModule *> *Modules = nullptr;
-    void InitEngine(RTEConfig &config);
+    Platform::WindowManager *_windowManager = nullptr;
+    void InitEngine();
     void RunUpdateLoop();
 
 public:
