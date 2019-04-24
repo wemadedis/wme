@@ -12,6 +12,7 @@ namespace RTE::Importing
 
 enum class MisssingMaterialData
 {
+
     NONE = 0,
     DIFFUSE = 1,
     SPECULAR = 2,
@@ -24,7 +25,6 @@ inline MisssingMaterialData operator|(MisssingMaterialData a, MisssingMaterialDa
 {
     return static_cast<MisssingMaterialData>(static_cast<int>(a) | static_cast<int>(b));
 }
-
 inline MisssingMaterialData operator|=(MisssingMaterialData a, MisssingMaterialData b)
 {
     return a | b;
@@ -51,7 +51,7 @@ inline MissingImportData operator|=(MissingImportData a, MissingImportData b)
 
 class ModelImporter
 {
-  private:
+private:
     static RTE::Rendering::Material ConvertMaterial(aiMaterial *material);
     static float ColorAverage(aiColor4D col, float numChannels = 4);
 
@@ -77,7 +77,7 @@ class ModelImporter
 
     ModelImporter() = default;
 
-  public:
+public:
     static RTE::Rendering::Mesh ImportMesh(const char *filename);
 };
 }; // namespace RTE::Importing
