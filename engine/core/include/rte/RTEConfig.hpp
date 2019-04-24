@@ -6,6 +6,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace RTE
 {
@@ -54,6 +55,10 @@ struct AssetConfig
      * 
      */
     char *AssetRootDir = ENGINE_ASSET_DIR;
+    /// @brief File paths to the textures
+    std::vector<std::string> *Textures;
+    /// @brief File paths to the mesh geometry data
+    std::vector<std::string> *Meshes;
 };
 
 /**
