@@ -17,7 +17,8 @@ void PhysicsComponent::Initialize(
     _transformComponent = transformComp;
     _rigidBody = physManager->CreateRigidBody(transformComp->Transform,
                                               mass,
-                                              colliders);
+                                              colliders,
+                                              this);
 }
 
 void PhysicsComponent::Update(float deltaTime)

@@ -6,7 +6,7 @@
 #include <Bullet/btBulletDynamicsCommon.h>
 #include <glm/glm.hpp>
 
-#include "rte/CollisionId.hpp"
+#include "rte/Collision.hpp"
 #include "rte/RTEConfig.hpp"
 #include "rte/RTEModule.hpp"
 #include "rte/RigidBody.hpp"
@@ -16,35 +16,6 @@ class RigidBody;
 
 namespace RTE::Physics
 {
-/**
- * @brief Converts a bullet vector3 to a glm vector3 
- * 
- * @param vec Vector to convert
- * @return glm::vec3 Converted vector
- */
-static inline glm::vec3 Convert(btVector3 vec)
-{
-    return glm::vec3(vec.getX(), vec.getY(), vec.getZ());
-}
-
-/**
- * @brief Converts a glm vector to a bullet vector
- * 
- * @param vec Vector to convert
- * @return btVector3 Converted vector
- */
-static inline btVector3 Convert(glm::vec3 vec)
-{
-    return btVector3(vec.x, vec.y, vec.z);
-}
-
-/**
- * @brief Bullet Physics callback for contact started
- * 
- * @param manifold The persistent manifold for this contact
- */
-static void ContactStartedCallback(btPersistentManifold *const &manifold);
-
 /**
  * @brief Bullet Physics callback for contact destroyed
  * 
@@ -67,11 +38,26 @@ static bool ContactDestroyedCallback(void *data);
 static bool ContactProcessedCallback(btManifoldPoint &manifoldPoint, void *body0, void *body1);
 
 /**
- * @brief Bullet physics callback for contact ended
+ * @brief Converts a bullet vector3 to a glm vector3 
  * 
- * @param manifold 
+ * @param vec Vector to convert
+ * @return glm::vec3 Converted vector
  */
-static void ContactEndedCallback(btPersistentManifold *const &manifold);
+static inline glm::vec3 Convert(btVector3 vec)
+{
+    return glm::vec3(vec.getX(), vec.getY(), vec.getZ());
+}
+
+/**
+ * @brief Converts a glm vector to a bullet vector
+ * 
+ * @param vec Vector to convert
+ * @return btVector3 Converted vector
+ */
+static inline btVector3 Convert(glm::vec3 vec)
+{
+    return btVector3(vec.x, vec.y, vec.z);
+}
 
 enum class ColliderType
 {
@@ -172,7 +158,7 @@ private:
      * then bullet will split it into multiple substeps. This value represents the
      * maximum number of sub steps it will be split into.
      */
-    uint32_t _maxSubSteps = 1;
+    uint32_t _maxSubSteps = 10;
 
 public:
     /**
@@ -196,7 +182,6 @@ public:
 
     /**
      * @brief Updates the physics world
-     * 
      * @param deltaTime Time since last frame
      */
     void Update(float deltaTime) override;
@@ -216,7 +201,8 @@ public:
     RigidBody *CreateRigidBody(
         Rendering::Transform &trans,
         float mass,
-        std::vector<Collider> colliders);
+        std::vector<Collider> colliders,
+        void *rigidBodyOwner);
 
     /**
      * @brief Get the Gravity of the physics world
@@ -250,7 +236,6 @@ public:
 
     /**
      * @brief Get the Frames Per Second
-     * 
      * @return uint32_t Frames per second
      */
     uint32_t GetFramesPerSecond();

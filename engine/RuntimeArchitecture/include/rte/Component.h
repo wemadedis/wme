@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 namespace RTE::Runtime
 {
 
@@ -23,6 +25,12 @@ public:
      *      To initialize a custom component-subclass with non-zero arguments, use an initialization function.
      */
     Component() = default;
+
+    /**
+     * @brief The Id of the gameobject that holds this component.
+     * 
+     */
+    uint64_t GameObjectID;
 
     /**
      * @brief 

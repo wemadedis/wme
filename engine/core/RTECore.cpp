@@ -86,6 +86,7 @@ RTECore::RTECore()
         OnGameStart(*sceneManager);
     }
 
+    // Here user is done setting up scene.
     RunUpdateLoop();
 }
 } // namespace RTE

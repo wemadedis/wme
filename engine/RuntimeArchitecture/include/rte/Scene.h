@@ -36,6 +36,7 @@ public:
     {
         Component *comp = _componentPools[compId]->AddComponent(go->GetId());
         comp->SetEnabled(true);
+        comp->GameObjectID = go->GetId();
         TComp *tp = static_cast<TComp *>(comp);
         go->GetComponents()->push_back(tp);
         return tp;

@@ -1,12 +1,14 @@
 #pragma once
 
+#include <queue>
+#include <vector>
+
 #include "rte/Component.h"
 #include "rte/PhysicsManager.hpp"
 #include "rte/RigidBody.hpp"
 #include "rte/TransformComponent.hpp"
 
 namespace RTE::StandardComponents
-
 {
 
 /**
@@ -30,6 +32,11 @@ private:
     Physics::RigidBody *_rigidBody;
 
 public:
+    // queue of collision starts
+    std::queue<Physics::OnCollisionData> *Collisions;
+    // queue of collision ends
+    std::queue<Physics::EndCollisionData> *CollisionEnds;
+
     /**
      * @brief Initializes this component using a TransformComponent* that will 
      * be synced
@@ -46,10 +53,11 @@ public:
      * world 
      * 
      * @param deltaTime Time since last frame 
-     */
+    */
     void Update(float deltaTime) override;
 
     /**
+     *
      * @brief Get the Rigid Body object for this component
      * 
      * @return Physics::RigidBody* Rigidbody to retuurn

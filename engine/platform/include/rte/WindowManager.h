@@ -7,8 +7,6 @@
 #include "rte/RTEModule.hpp"
 #include "rte/RenderingManager.h"
 
-#include "rte/FrameCallbackFunctions.hpp"
-
 #include <functional>
 #include <string>
 #include <vector>
@@ -43,8 +41,6 @@ private:
     static WindowManager *_instance;
     // Creates a Vulkan surface a given GLFW window
     Rendering::RenderingManager *_renderingManager;
-
-    FrameResizeCallback _frameResizeCallback = nullptr;
 
     // Callback function called when the size of the window is changed
     static void FramebufferResizeCallback(GLFWwindow *window, int width, int height);

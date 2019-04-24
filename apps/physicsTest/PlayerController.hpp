@@ -16,11 +16,11 @@ public:
     {
         _transform = trans;
         _physics = phys;
-        RTE::Platform::PollEvents();
     }
 
     void Update(float deltaTime)
     {
+
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_A) == GLFW_PRESS)
         {
             Debug("Called");

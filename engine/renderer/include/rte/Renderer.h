@@ -7,8 +7,6 @@
 #include <vector>
 #include <vulkan/vulkan.h>
 
-#include "rte/FrameCallbackFunctions.hpp"
-
 #include "CommandBufferManager.hpp"
 #include "DescriptorManager.hpp"
 #include "DeviceMemoryManager.h"

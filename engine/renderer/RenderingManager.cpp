@@ -1,5 +1,4 @@
 #include "rte/RenderingManager.h"
-#include "rte/FrameCallbackFunctions.hpp"
 #include "rte/WindowManager.h"
 
 namespace RTE::Rendering

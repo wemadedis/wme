@@ -1,33 +1,63 @@
 #include "rte/PhysicsManager.hpp"
-
+#include "rte/Collision.hpp"
 #include "rte/GlmWrapper.hpp"
 #include "rte/NotImplementedException.hpp"
+#include "rte/PhysicsComponent.hpp"
 #include "rte/RenderStructs.h"
 #include "rte/Utility.hpp"
 
 namespace RTE::Physics
 {
 
-static void ContactStartedCallback(btPersistentManifold *const &manifold)
-{
-    throw NotImplementedException();
-}
-
 static bool ContactProcessedCallback(
     btManifoldPoint &cp,
-    void *body0, void *body1)
+    void *bodyA, void *bodyB)
 {
-    throw NotImplementedException();
+    auto GetPhysicsComponent = [=](void *src) {
+        auto rb = static_cast<btRigidBody *>(src);
+        return static_cast<StandardComponents::PhysicsComponent *>(rb->getUserPointer());
+    };
+
+    auto compA = GetPhysicsComponent(bodyA);
+    auto compB = GetPhysicsComponent(bodyB);
+
+    bool collisionBegin = cp.m_userPersistentData == nullptr;
+
+    if (collisionBegin)
+    {
+        CollisionId *colId = new CollisionId;
+        static uint64_t collisionId = 0;
+        collisionId++;
+        colId->CollisionId = collisionId;
+        colId->Body1 = compA;
+        colId->Body2 = compB;
+
+        cp.m_userPersistentData = colId;
+    }
+
+    CollisionId *id = (CollisionId *)cp.m_userPersistentData;
+
+    OnCollisionData colDataA;
+    colDataA.CollisionId = id->CollisionId;
+    colDataA.OtherId = compB->GameObjectID;
+    colDataA.Point = Convert(cp.getPositionWorldOnA());
+    colDataA.NewCollision = collisionBegin;
+    compA->Collisions->push(colDataA);
+
+    OnCollisionData colDataB;
+    colDataB.CollisionId = id->CollisionId;
+    colDataB.OtherId = compA->GameObjectID;
+    colDataB.Point = Convert(cp.getPositionWorldOnB());
+    colDataB.NewCollision = collisionBegin;
+    compB->Collisions->push(colDataB);
+
+    return true;
 }
 
 static bool ContactDestroyedCallback(void *data)
 {
-    throw NotImplementedException();
-}
-
-static void ContactEndedCallback(btPersistentManifold *const &manifold)
-{
-    throw NotImplementedException();
+    Debug("ContactDestroyedCallback");
+    return true;
 }
 
 void PhysicsManager::Update(float deltaTime)
@@ -63,9 +93,7 @@ btDiscreteDynamicsWorld *PhysicsManager::CreateDefaultDynamicsWorld()
 
 void PhysicsManager::SetupBulletCallbacks()
 {
-    gContactStartedCallback = ContactStartedCallback;
     gContactProcessedCallback = ContactProcessedCallback;
-    gContactEndedCallback = ContactEndedCallback;
     gContactDestroyedCallback = ContactDestroyedCallback;
 }
 
@@ -105,7 +133,8 @@ btCollisionShape *PhysicsManager::GetCollisionShapeFromColliderType(
 RigidBody *PhysicsManager::CreateRigidBody(
     Rendering::Transform &trans,
     float mass,
-    std::vector<Collider> colliders)
+    std::vector<Collider> colliders,
+    void *rigidBodyOwner)
 {
     glm::quat rotQ = glm::quat_cast(trans.RotationMatrix());
     btMotionState *motionState =
@@ -113,15 +142,16 @@ RigidBody *PhysicsManager::CreateRigidBody(
             btTransform(
                 btQuaternion(rotQ.x, rotQ.y, rotQ.z, rotQ.w),
                 btVector3(trans.Pos.x, trans.Pos.y, trans.Pos.z)));
+    btVector3 fallInertia(0, 0, 0);
 
     btBoxShape *boxShape = new btBoxShape({10, 10, 10});
 
     btRigidBody::btRigidBodyConstructionInfo info =
         btRigidBody::btRigidBodyConstructionInfo(1000, motionState, boxShape);
     btRigidBody *bulletRigidBody = new btRigidBody(info);
-    btVector3 fallInertia(0, 0, 0);
     boxShape->calculateLocalInertia(1000, fallInertia);
 
+    bulletRigidBody->setUserPointer(rigidBodyOwner);
     _physicsWorld->addRigidBody(bulletRigidBody);
 
     return new RigidBody(bulletRigidBody);
