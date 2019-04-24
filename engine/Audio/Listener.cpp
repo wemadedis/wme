@@ -1,49 +1,47 @@
-#include "rte/AudioListener.hpp"
+#include "rte/Listener.hpp"
 
 
 namespace RTE::Audio
 {
 
-void AudioListener::SetPosition(glm::vec3 position)
+void Listener::SetPosition(glm::vec3 position)
 {
-    // _position = position;
     sf::Listener::setPosition(position.x, position.y, position.z);
 }
 
-glm::vec3 AudioListener::GetPosition()
+glm::vec3 Listener::GetPosition()
 {
     auto position = sf::Listener::getPosition();
     return glm::vec3{position.x, position.y, position.z};
 }
 
-void AudioListener::SetGlobalVolume(float volume)
+void Listener::SetGlobalVolume(float volume)
 {
     sf::Listener::setGlobalVolume(volume);
 }
 
-float AudioListener::GetGlobalVolume()
+float Listener::GetGlobalVolume()
 {
     return sf::Listener::getGlobalVolume();
 }
 
-void AudioListener::SetDirection(glm::vec3 direction)
+void Listener::SetDirection(glm::vec3 direction)
 {
     sf::Listener::setDirection(direction.x, direction.y, direction.z);
 }
 
-glm::vec3 AudioListener::GetDirection()
+glm::vec3 Listener::GetDirection()
 {
     auto direction = sf::Listener::getDirection();
-    // _direction = glm::vec3{direction.x, direction.y, direction.z};
     return glm::vec3{direction.x, direction.y, direction.z};
 }
 
-void AudioListener::SetUpVector(glm::vec3 up)
+void Listener::SetUpVector(glm::vec3 up)
 {
     sf::Listener::setUpVector(up.x, up.y, up.z);
 }
 
-glm::vec3 AudioListener::GetUpVector()
+glm::vec3 Listener::GetUpVector()
 {
     auto up = sf::Listener::getUpVector();
     return glm::vec3{up.x, up.y, up.z};

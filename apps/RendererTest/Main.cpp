@@ -5,8 +5,8 @@
 #define VK_PROTOTYPES
 #define VK_USE_PLATFORM_WIN32_KHR
 
-#include "rte/AudioEmitter.hpp"
-#include "rte/AudioListener.hpp"
+#include "rte/Emitter.hpp"
+#include "rte/Listener.hpp"
 #include "rte/ModelImporter.h"
 #include "rte/Primitives.h"
 #include "rte/Renderer.h"

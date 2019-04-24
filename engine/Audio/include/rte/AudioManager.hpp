@@ -1,15 +1,23 @@
 #pragma once
 
-#include "rte/AudioListener.hpp"
+#include "rte/Emitter.hpp"
 
 namespace RTE::Audio
 {
-// Does this make even sense?[]
+
 class AudioManager
 {
+private:
+    static AudioManager *_instance;
 
-public:
-    static AudioListener GetAudioListener(); 
+
+public:    
+    AudioManager();
+    ~AudioManager();
+    
+    static AudioManager *GetInstance();
+    Emitter* CreateEmitter();
+
 };
 
 } // namespace RTE
