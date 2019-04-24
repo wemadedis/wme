@@ -27,9 +27,25 @@ public:
      */
     RigidBody(btRigidBody *rigidBody);
 
+    glm::vec3 GetLinearVelocity();
     void SetLinearVelocity(glm::vec3 vel);
+
     void AddForce(glm::vec3 force);
+
     void AddTorque(glm::vec3 torque);
+
+    void SetKinematic(bool kinematic);
+    bool GetKinematic();
+    void SetStatic(bool isStatic);
+    bool GetStatic();
+    bool GetStaticOrKinematic();
+
+    glm::vec3 GetAngularFactor();
+    void SetAngularFactor(glm::vec3 fac);
+
+    glm::vec3 GetLinearFactor();
+    void SetLinearFactor(glm::vec3 fac);
+
     void SetMass(float mass, glm::vec3 inertia);
     void UpdateFromPhysicsWorld(Rendering::Transform &transform);
 };

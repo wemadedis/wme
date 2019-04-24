@@ -26,7 +26,7 @@ enum class CollisionType
     During,
     Ended
 };
-// uint32_t Flags = 00101
+
 struct OnCollisionData
 {
     uint64_t CollisionId;
