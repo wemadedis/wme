@@ -9,10 +9,12 @@ MeshComponent::MeshComponent()
 
 void MeshComponent::Initialize(std::string meshFilePath)
 {
+
 }
 
-void MeshComponent::SetTexture(std::string meshFilePath)
+void MeshComponent::SetTexture(std::string textureFilePath)
 {
+
 }
 
 void MeshComponent::Update(float deltaTime)

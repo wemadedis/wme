@@ -49,7 +49,12 @@ layout(binding = 2) uniform GlobalUniformData
 layout(binding = 3) uniform usamplerBuffer InstanceMapping;
 layout(set = 0, binding = 4) uniform usamplerBuffer IndexBuffers[];
 layout(set = 1, binding = 4) uniform samplerBuffer VertexBuffers[];
-
+layout(set = 2, binding = 4) uniform InstanceUniformData
+{
+    mat4 ModelMatrix;
+    vec4 Color;
+    bool HasTexture;
+} InstanceData[];
 
 float FetchFloat(uint meshIndex, int floatPlacement)
 {
@@ -61,32 +66,34 @@ float FetchFloat(uint meshIndex, int floatPlacement)
 
 Vertex GetVertex(uint meshIndex, int vertexIndex)
 {
-    int baseOffset = 0;
     Vertex vert;
-    vert.pos.x =    FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS    );
-    vert.pos.x =    FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 1);
-    vert.pos.x =    FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 2);
-    vert.color.r =  FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 3);
-    vert.color.g =  FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 4);
-    vert.color.b =  FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 5);
-    vert.color.a =  FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 6);
-    vert.normal.x = FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 7);
-    vert.normal.y = FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 8);
-    vert.normal.z = FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 9);
-    vert.texCoord.x=FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 10);
-    vert.texCoord.y=FetchFloat(meshIndex, baseOffset + vertexIndex * VERTEX_SIZE_FLOATS + 11);
+    vert.pos.x =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS    );
+    vert.pos.x =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 1);
+    vert.pos.x =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 2);
+    vert.color.r =  FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 3);
+    vert.color.g =  FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 4);
+    vert.color.b =  FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 5);
+    vert.color.a =  FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 6);
+    vert.normal.x = FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 7);
+    vert.normal.y = FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 8);
+    vert.normal.z = FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 9);
+    vert.texCoord.x=FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 10);
+    vert.texCoord.y=FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 11);
     return vert;
 }
 
 HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
 {
-    
+    mat4 modelMatrix = InstanceData[nonuniformEXT(gl_InstanceCustomIndexNV)].ModelMatrix;
     vec3 position = v1.pos * barycentrics.x + v2.pos * barycentrics.y + v3.pos * barycentrics.z;
     vec3 normal = normalize(v1.normal * barycentrics.x + v2.normal * barycentrics.y + v3.normal * barycentrics.z);
     vec2 UV = v1.texCoord * barycentrics.x + v2.texCoord * barycentrics.y + v3.texCoord * barycentrics.z;
-    normal = mat3(gl_ObjectToWorldNV ) * normal;
+    
+    
+    normal =vec3(modelMatrix * vec4(normal,0.0f));
     if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
-    position = mat3(gl_ObjectToWorldNV ) * position;
+    
+    position = vec3(modelMatrix * vec4(position,1.0f));
 
     HitInfo info;
     info.Point = position;
@@ -109,7 +116,6 @@ vec4 CalculatePointLightShading(PointLight light, HitInfo hitinfo)
     vec3 L = -normalize(direction);
     vec3 R = reflect(L,hitinfo.Normal);
     float distance = length(direction);
-    //if(distance > light.Radius) return Phong(L,N);
     return Phong(L,R, hitinfo.Normal) * light.Color * light.PositionRadius.w / (distance*distance);
 }
 /*
@@ -150,7 +156,4 @@ void main()
     Vertex v3 = GetVertex(meshIndex, index3);
     HitInfo hitinfo = GetHitInfo(v1, v2, v3, barycentrics);
     hitValue = CalculatePerLightShading(hitinfo).rgb;
-    //vec3 col = v1.color.rgb * barycentrics.x + v2.color.rgb * barycentrics.y + v3.color.rgb * barycentrics.z;
-    //hitValue = col;
-
 }
