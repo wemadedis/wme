@@ -22,13 +22,12 @@ target_link_libraries(rte INTERFACE
     core
     physics
     renderer
-    StandardComponents
     runtime_architecture 
     importer 
     platform 
     Audio
     utilities
-    StandardComponents
+    StdComponents
     glm 
     vma 
     vulkan 

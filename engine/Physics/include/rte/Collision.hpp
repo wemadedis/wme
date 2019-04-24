@@ -5,7 +5,7 @@
 
 #include "rte/GlmWrapper.hpp"
 
-namespace RTE::StandardComponents
+namespace RTE::StdComponents
 {
 class PhysicsComponent;
 }
@@ -15,8 +15,8 @@ namespace RTE::Physics
 struct CollisionId
 {
     uint32_t CollisionId;
-    StandardComponents::PhysicsComponent *Body1;
-    StandardComponents::PhysicsComponent *Body2;
+    StdComponents::PhysicsComponent *Body1;
+    StdComponents::PhysicsComponent *Body2;
 };
 
 enum class CollisionType

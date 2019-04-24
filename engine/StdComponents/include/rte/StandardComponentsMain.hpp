@@ -10,7 +10,7 @@ namespace RTE
      * @brief Hosts the RTE defined components
      * 
      */
-namespace StandardComponents
+namespace StdComponents
 {
-} // namespace StandardComponents
+} // namespace StdComponents
 } // namespace RTE

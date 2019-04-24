@@ -8,7 +8,7 @@
 #include "rte/RigidBody.hpp"
 #include "rte/TransformComponent.hpp"
 
-namespace RTE::StandardComponents
+namespace RTE::StdComponents
 {
 
 /**
@@ -72,4 +72,4 @@ public:
      */
     void UpdateFromPhysicsWorld(Rendering::Transform &transform);
 };
-} // namespace RTE::StandardComponents
+} // namespace RTE::StdComponents

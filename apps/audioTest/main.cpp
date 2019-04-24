@@ -20,7 +20,7 @@ int main()
 
     // AudioComponentTest
 
-    using namespace RTE::StandardComponents;
+    using namespace RTE::StdComponents;
     AudioComponent ac;
     TransformComponent tc;
     tc.Initialize(glm::vec3(0.f), glm::vec3(0.f), glm::vec3(0.f));

@@ -15,7 +15,7 @@ static bool ContactProcessedCallback(
 {
     auto GetPhysicsComponent = [=](void *src) {
         auto rb = static_cast<btRigidBody *>(src);
-        return static_cast<StandardComponents::PhysicsComponent *>(rb->getUserPointer());
+        return static_cast<StdComponents::PhysicsComponent *>(rb->getUserPointer());
     };
 
     auto compA = GetPhysicsComponent(bodyA);

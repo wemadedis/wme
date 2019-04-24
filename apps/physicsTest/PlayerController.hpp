@@ -6,13 +6,13 @@ class PlayerController : public RTE::Runtime::Component
 {
 
 private:
-    RTE::StandardComponents::TransformComponent *_transform;
-    RTE::StandardComponents::PhysicsComponent *_physics;
+    RTE::StdComponents::TransformComponent *_transform;
+    RTE::StdComponents::PhysicsComponent *_physics;
 
 public:
     void Initialize(
-        RTE::StandardComponents::TransformComponent *trans,
-        RTE::StandardComponents::PhysicsComponent *phys)
+        RTE::StdComponents::TransformComponent *trans,
+        RTE::StdComponents::PhysicsComponent *phys)
     {
         _transform = trans;
         _physics = phys;

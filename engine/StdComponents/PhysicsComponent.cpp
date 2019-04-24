@@ -4,7 +4,7 @@
 #include "rte/PhysicsComponent.hpp"
 #include "rte/Utility.hpp"
 
-namespace RTE::StandardComponents
+namespace RTE::StdComponents
 {
 
 void PhysicsComponent::Initialize(
@@ -36,4 +36,4 @@ Physics::RigidBody *PhysicsComponent::GetRigidBody()
 {
     return _rigidBody;
 }
-} // namespace RTE::StandardComponents
+} // namespace RTE::StdComponents

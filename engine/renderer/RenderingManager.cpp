@@ -37,7 +37,7 @@ void RenderingManager::Update(float deltaTime)
     //! Prolly do something maybe
 }
 
-void RenderingManager::RegisterMeshComponent(StandardComponents::MeshComponent *meshComponent)
+void RenderingManager::RegisterMeshComponent(StdComponents::MeshComponent *meshComponent)
 {
     MeshHandle mesh;
     std::string& meshPath = meshComponent->_meshPath;
@@ -55,7 +55,7 @@ void RenderingManager::RegisterMeshComponent(StandardComponents::MeshComponent *
     _instances.insert({meshComponent, instance});
 }
 
-void RenderingManager::UpdateMeshComponent(StandardComponents::MeshComponent *meshComponent)
+void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshComponent)
 {
     
     MeshHandle mesh;

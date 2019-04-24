@@ -1,7 +1,7 @@
 #include "rte/TransformComponent.hpp"
 #include "rte/Utility.hpp"
 
-namespace RTE::StandardComponents
+namespace RTE::StdComponents
 {
 
 void TransformComponent::Initialize(Rendering::Transform transform)
@@ -22,4 +22,4 @@ void TransformComponent::Update(float deltaTime)
 {
     //! Transforms should not do anything in update
 }
-} // namespace RTE::StandardComponents
+} // namespace RTE::StdComponents

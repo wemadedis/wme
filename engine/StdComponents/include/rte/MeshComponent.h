@@ -11,7 +11,7 @@ namespace RTE::Rendering
     class RenderingManager;
 }
 
-namespace RTE::StandardComponents
+namespace RTE::StdComponents
 {
 using namespace RTE::Rendering;
 class MeshComponent : public Runtime::Component
@@ -31,4 +31,4 @@ public:
     virtual void Update(float deltaTime) override;
 };
 
-}; // namespace RTE::StandardComponents
+}; // namespace RTE::StdComponents

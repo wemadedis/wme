@@ -1,6 +1,6 @@
 #include "rte/MeshComponent.h"
 
-namespace RTE::StandardComponents
+namespace RTE::StdComponents
 {
 
 MeshComponent::MeshComponent()
@@ -21,4 +21,4 @@ void MeshComponent::Update(float deltaTime)
 {
 }
 
-}; // namespace RTE::StandardComponents
+}; // namespace RTE::StdComponents

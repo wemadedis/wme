@@ -4,7 +4,7 @@
 #include "rte/GlmWrapper.hpp"
 #include "rte/RenderStructs.h"
 
-namespace RTE::StandardComponents
+namespace RTE::StdComponents
 {
 
 /**
@@ -43,4 +43,4 @@ public:
      */
     void Update(float deltaTime) override;
 };
-} // namespace RTE::StandardComponents
+} // namespace RTE::StdComponents

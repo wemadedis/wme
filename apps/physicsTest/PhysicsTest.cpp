@@ -17,7 +17,7 @@ void ConfigureGame(RTEConfig &config)
 void OnGameStart(Runtime::SceneManager &sceneManager)
 {
     using namespace Runtime;
-    using namespace StandardComponents;
+    using namespace StdComponents;
 
     Scene *scene = sceneManager.MakeScene();
     sceneManager.SetActiveScene(scene);

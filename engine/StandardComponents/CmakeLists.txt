@@ -1,8 +1,0 @@
-add_library(StandardComponents
-    MeshComponent
-    TransformComponent
-    PhysicsComponent
-    AudioComponent
-)
-target_include_directories(StandardComponents PUBLIC include .)
-target_link_libraries(StandardComponents PUBLIC rte)
