@@ -1,7 +1,8 @@
+#include "rte/PhysicsComponent.hpp"
+
 #include <sstream>
 #include <vector>
 
-#include "rte/PhysicsComponent.hpp"
 #include "rte/Utility.hpp"
 
 namespace RTE::StdComponents
@@ -15,6 +16,8 @@ void PhysicsComponent::Initialize(
     using namespace Physics;
     PhysicsManager *physManager = PhysicsManager::GetInstance();
     _transformComponent = transformComp;
+    Collisions = new std::queue<OnCollisionData>();
+    EndCollisions = new std::queue<EndCollisionData>();
     _rigidBody = physManager->CreateRigidBody(transformComp->Transform,
                                               mass,
                                               colliders,

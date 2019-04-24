@@ -21,21 +21,20 @@ static bool ContactProcessedCallback(
     auto compA = GetPhysicsComponent(bodyA);
     auto compB = GetPhysicsComponent(bodyB);
 
-    bool collisionBegin = cp.m_userPersistentData == nullptr;
+    CollisionId *id = (CollisionId *)cp.m_userPersistentData;
+    bool collisionBegin = id == nullptr;
 
+    // New collision
     if (collisionBegin)
     {
-        CollisionId *colId = new CollisionId;
+        id = new CollisionId;
         static uint64_t collisionId = 0;
         collisionId++;
-        colId->CollisionId = collisionId;
-        colId->Body1 = compA;
-        colId->Body2 = compB;
-
-        cp.m_userPersistentData = colId;
+        id->CollisionId = collisionId;
+        id->BodyA = compA;
+        id->BodyB = compB;
+        cp.m_userPersistentData = id;
     }
-
-    CollisionId *id = (CollisionId *)cp.m_userPersistentData;
 
     OnCollisionData colDataA;
     colDataA.CollisionId = id->CollisionId;
@@ -50,13 +49,20 @@ static bool ContactProcessedCallback(
     colDataB.Point = Convert(cp.getPositionWorldOnB());
     colDataB.NewCollision = collisionBegin;
     compB->Collisions->push(colDataB);
-
+    
     return true;
 }
 
 static bool ContactDestroyedCallback(void *data)
 {
-    Debug("ContactDestroyedCallback");
+    CollisionId *id = (CollisionId *)data;
+
+    EndCollisionData colDataA{id->CollisionId};
+    EndCollisionData colDataB{id->CollisionId};
+
+    id->BodyA->EndCollisions->push(colDataA);
+    id->BodyB->EndCollisions->push(colDataB);
+    delete id;
     return true;
 }
 

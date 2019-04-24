@@ -175,6 +175,7 @@ public:
 
     /**
      * @brief Step the physics world by /p deltaTime seconds
+     *
      * 
      * @param deltaTime Time to step in seconds
      */

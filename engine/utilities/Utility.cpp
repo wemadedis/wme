@@ -53,7 +53,7 @@ void PrintWithTimestamp(std::string warningType,
 {
     std::string timestamp = GetTimestamp();
     std::cout << warningType
-              << "(" << timestamp << ")"
+              << "(" << timestamp << ") "
               << file << ": " << line << ": "
               << toPrint << std::endl;
 }

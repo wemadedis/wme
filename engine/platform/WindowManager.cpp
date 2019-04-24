@@ -56,6 +56,7 @@ WindowManager::WindowManager(RTEConfig &config)
         config.WindowConfig.WindowWidth,
         config.WindowConfig.WindowHeight,
         config.WindowConfig.WindowName);
+    SetConsoleTitleA("Egg asdalsjdkasld");
 }
 
 void WindowManager::Update(float deltaTime)

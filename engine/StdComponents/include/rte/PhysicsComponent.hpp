@@ -35,7 +35,7 @@ public:
     // queue of collision starts
     std::queue<Physics::OnCollisionData> *Collisions;
     // queue of collision ends
-    std::queue<Physics::EndCollisionData> *CollisionEnds;
+    std::queue<Physics::EndCollisionData> *EndCollisions;
 
     /**
      * @brief Initializes this component using a TransformComponent* that will 

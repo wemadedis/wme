@@ -14,9 +14,9 @@ namespace RTE::Physics
 
 struct CollisionId
 {
-    uint32_t CollisionId;
-    StdComponents::PhysicsComponent *Body1;
-    StdComponents::PhysicsComponent *Body2;
+    uint64_t CollisionId;
+    StdComponents::PhysicsComponent *BodyA;
+    StdComponents::PhysicsComponent *BodyB;
 };
 
 enum class CollisionType
@@ -29,7 +29,7 @@ enum class CollisionType
 // uint32_t Flags = 00101
 struct OnCollisionData
 {
-    int32_t CollisionId;
+    uint64_t CollisionId;
     uint64_t OtherId;
     glm::vec3 Point;
     bool NewCollision;
