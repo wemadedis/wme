@@ -85,7 +85,7 @@ RTECore::RTECore()
     {
         OnGameStart(*sceneManager);
     }
-
+    rm->FinalizeRenderer();
     // Here user is done setting up scene.
     RunUpdateLoop();
 }

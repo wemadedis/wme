@@ -92,8 +92,6 @@ private:
     std::vector<VkFence> _inFlightFences;
     size_t _currentFrame = 0;
 
-    TextureHandle _emptyTexture;
-
     RenderMode _renderMode;
     bool RTXon = false; //TODO: Apply coding style
     VkPhysicalDeviceRayTracingPropertiesNV _rtProperties = {};
@@ -121,6 +119,7 @@ private:
     void CreateShaderBindingTable();
 
 public:
+    static TextureHandle EMPTY_TEXTURE;
     /*
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.
 */
@@ -137,11 +136,13 @@ Could be defined in RendererSettings but if we want to change rendering mode at 
 
     MeshInstanceHandle CreateMeshInstance(MeshHandle mesh);
 
+    void BindMeshToInstance(MeshHandle mesh, MeshInstanceHandle instance);
+
     void ClearAllMeshData();
 
     TextureHandle UploadTexture(Texture &texture);
 
-    void BindTexture(TextureHandle texture, MeshHandle mesh);
+    void BindTextureToMeshInstance(TextureHandle texture, MeshInstanceHandle instance);
 
     void Finalize();
     /*

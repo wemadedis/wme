@@ -16,17 +16,23 @@ namespace RTE::StdComponents
 using namespace RTE::Rendering;
 class MeshComponent : public Runtime::Component
 {
-friend class RenderingManager;
 private:
+    RenderingManager *_renderingManager;
     std::string _meshPath;
     std::string _texturePath;
 
 public:
     MeshComponent();
 
-    void Initialize(std::string meshFilePath);
+    void Initialize(std::string meshFilePath, std::string textureFilePath = std::string(""));
+
+    void SetMesh(std::string meshFilePath);
 
     void SetTexture(std::string textureFilePath);
+
+    std::string GetMesh();
+
+    std::string GetTexture();
 
     virtual void Update(float deltaTime) override;
 };

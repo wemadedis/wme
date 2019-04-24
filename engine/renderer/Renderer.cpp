@@ -23,7 +23,7 @@
 
 namespace RTE::Rendering
 {
-
+TextureHandle Renderer::EMPTY_TEXTURE;
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
 void Renderer::FrameResized(int32_t width, int32_t height)
@@ -92,7 +92,7 @@ MeshInstanceHandle Renderer::CreateMeshInstance(MeshHandle mesh)
     glm::mat4 trn = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
     glm::mat4 scl = glm::scale(glm::vec3(1.0f));
     meshUniform.ModelMatrix = trn * rot * scl;
-    instance.texture = _emptyTexture;
+    instance.texture = Renderer::EMPTY_TEXTURE;
     instance.mesh = mesh;
     meshUniform.HasTexture = false;
 
@@ -101,16 +101,21 @@ MeshInstanceHandle Renderer::CreateMeshInstance(MeshHandle mesh)
     return (MeshInstanceHandle)_meshInstances.size() - 1;
 }
 
+void Renderer::BindMeshToInstance(MeshHandle mesh, MeshInstanceHandle instance)
+{
+    _meshInstances[instance].mesh = mesh;
+}
+
 TextureHandle Renderer::UploadTexture(Texture &texture)
 {
     _textures.push_back(_imageManager->CreateTexture(texture.Width, texture.Height, texture.Pixels, texture.Width * texture.Height * 4));
     return (TextureHandle)_textures.size() - 1;
 }
 
-void Renderer::BindTexture(TextureHandle texture, MeshInstanceHandle mesh)
+void Renderer::BindTextureToMeshInstance(TextureHandle texture, MeshInstanceHandle instance)
 {
-    _meshInstances[mesh].texture = texture;
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [](MeshUniformData *data) {
+    _meshInstances[instance].texture = texture;
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [](MeshUniformData *data) {
         data->HasTexture = true;
     });
 }
@@ -304,7 +309,7 @@ void Renderer::CreateEmptyTexture()
     tex.Height = 1;
     tex.Width = 1;
     tex.Pixels = pixels;
-    _emptyTexture = UploadTexture(tex);
+    Renderer::EMPTY_TEXTURE = UploadTexture(tex);
 }
 
 void Renderer::InitRT()

@@ -37,9 +37,11 @@ public:
         RTEConfig &config,
         Platform::WindowManager &windowManager);
     ~RenderingManager();
+    void FinalizeRenderer();
+    static RenderingManager* GetInstance();
     void Update(float deltaTime) override;
     void FrameResized(int32_t width, int32_t height);
-    void ImportRenderingResources(std::vector<std::string> *textures, std::vector<std::string> *meshes);
+    void ImportRenderingResources(std::vector<std::string> &meshes, std::vector<std::string> &textures);
     void RegisterMeshComponent(StdComponents::MeshComponent *meshComponent);
     void UpdateMeshComponent(StdComponents::MeshComponent *meshComponent);
 };
