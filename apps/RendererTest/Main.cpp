@@ -77,13 +77,13 @@ int main()
     cam.ProjectionMatrix[1][1] *= -1;
 
     auto renderer = Renderer(info);
-
+    
     //auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
-    auto quadhandle = renderer.UploadMesh(quad);
+    auto quadhandle = renderer.UploadMesh(*quad);
     auto quadInstance = renderer.CreateMeshInstance(quadhandle);
     auto quadInstance2 = renderer.CreateMeshInstance(quadhandle);
 
-    MeshHandle cylinderMeshHandle = renderer.UploadMesh(cylinder);
+    MeshHandle cylinderMeshHandle = renderer.UploadMesh(*cylinder);
     MeshInstanceHandle inst = renderer.CreateMeshInstance(cylinderMeshHandle);
     renderer.SetMeshTransform(
         inst,
@@ -117,7 +117,7 @@ int main()
 
     auto monkey = RTE::Importing::ModelImporter::ImportMesh(monkeyPath.c_str());
 
-    auto monkeyHandle = renderer.UploadMesh(&monkey);
+    auto monkeyHandle = renderer.UploadMesh(monkey);
     auto monkeyInstance = renderer.CreateMeshInstance(monkeyHandle);
     renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
 

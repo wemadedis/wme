@@ -7,5 +7,9 @@ class ImportException : public RTEException
     ImportException() : RTEException("Failed to import")
     {
 
-    }   
+    }
+    ImportException(const char *message) : RTEException(message)
+    {
+
+    }
 };

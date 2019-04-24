@@ -27,15 +27,16 @@
  * 
  */
 #define Error(toPrint) RTE::Utilities::PrintError(toPrint, __FILE__, __LINE__)
+
+
+namespace RTE::Utilities
+{
 /**
  * @brief Get the absolute path to File From Assets folder
  * 
  * @param path The relative path to requested asset
  * @return std::string The absolute file path the requested asset
  */
-
-namespace RTE::Utilities
-{
 std::string GetFileFromAssets(std::string path);
 
 /**

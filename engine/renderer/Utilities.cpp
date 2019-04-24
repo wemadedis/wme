@@ -41,15 +41,6 @@ std::vector<char> ReadEngineAsset(const char *filePath)
 
 VkShaderModule CreateShaderModule(const std::vector<char> &code, VkDevice device)
 {
-
-    /*
-    IMPORTANT
-    we will need to cast the pointer with reinterpret_cast as shown below. 
-    When you perform a cast like this, you also need to ensure that the data 
-    satisfies the alignment requirements of uint32_t. Lucky for us, the data 
-    is stored in an std::vector where the default allocator already ensures 
-    that the data satisfies the worst case alignment requirements.*/
-
     VkShaderModuleCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = code.size();

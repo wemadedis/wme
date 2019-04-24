@@ -1,6 +1,7 @@
 #include "rte/RenderingManager.h"
 #include "rte/WindowManager.h"
-
+#include "rte/ModelImporter.h"
+#include "rte/ImportFunctions.h"
 namespace RTE::Rendering
 {
 
@@ -34,6 +35,56 @@ void RenderingManager::Update(float deltaTime)
 {
     _renderer->Draw();
     //! Prolly do something maybe
+}
+
+void RenderingManager::RegisterMeshComponent(StandardComponents::MeshComponent *meshComponent)
+{
+    MeshHandle mesh;
+    std::string& meshPath = meshComponent->_meshPath;
+    if(_meshes.find(meshPath) != _meshes.end())
+    {
+        mesh = _meshes[meshPath];
+    }
+    else
+    {
+        Mesh meshData = Importing::ModelImporter::ImportMesh(meshPath.c_str());
+        mesh = _renderer->UploadMesh(meshData);
+        _meshes.insert({meshPath, mesh});
+    }
+    MeshInstanceHandle instance = _renderer->CreateMeshInstance(mesh);
+    _instances.insert({meshComponent, instance});
+}
+
+void RenderingManager::UpdateMeshComponent(StandardComponents::MeshComponent *meshComponent)
+{
+    
+    MeshHandle mesh;
+    std::string& meshPath = meshComponent->_meshPath;
+    TextureHandle texture;
+    std::string& texPath = meshComponent->_texturePath;
+
+    if(_meshes.find(meshPath) != _meshes.end())
+    {
+        mesh = _meshes[meshPath];
+    }
+    else
+    {
+        Mesh meshData = Importing::ModelImporter::ImportMesh(meshPath.c_str());
+        mesh = _renderer->UploadMesh(meshData);
+        _meshes.insert({meshPath, mesh});
+    }
+    MeshInstanceHandle instance = _renderer->CreateMeshInstance(mesh);
+        
+    if(_textures.find(texPath) != _textures.end())
+    {
+        texture = _textures[texPath];
+    }
+    else
+    {
+        Texture texData = Importing::ImportTexture(texPath.c_str());
+        texture = _renderer->UploadTexture(texData);
+        _textures.insert({texPath, texture});
+    }
 }
 
 }; // namespace RTE::Rendering

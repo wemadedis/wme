@@ -6,12 +6,20 @@
 
 #include <string>
 
+namespace RTE::Rendering
+{
+    class RenderingManager;
+}
+
 namespace RTE::StandardComponents
 {
 using namespace RTE::Rendering;
 class MeshComponent : public Runtime::Component
 {
-    MeshInstanceHandle mesh;
+friend class RenderingManager;
+private:
+    std::string _meshPath;
+    std::string _texturePath;
 
 public:
     MeshComponent();

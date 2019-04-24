@@ -133,7 +133,7 @@ Could be defined in RendererSettings but if we want to change rendering mode at 
 */
     void SetRenderMode(RenderMode mode);
 
-    MeshHandle UploadMesh(Mesh *mesh);
+    MeshHandle UploadMesh(Mesh &mesh);
 
     MeshInstanceHandle CreateMeshInstance(MeshHandle mesh);
 

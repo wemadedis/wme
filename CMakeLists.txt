@@ -24,7 +24,7 @@ target_link_libraries(rte INTERFACE
     renderer
     StandardComponents
     runtime_architecture 
-    model_importer 
+    importer 
     platform 
     Audio
     utilities
