@@ -6,7 +6,7 @@
 
 namespace RTE::Audio
 {
-class AudioListener {
+class Listener {
     // static glm::vec3 _position;
     // static glm::vec3 _direction;
 public:
