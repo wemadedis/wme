@@ -73,13 +73,13 @@ RTECore::RTECore()
     InitEngine();
 
     _windowManager = new Platform::WindowManager(Config);
-    Rendering::RenderingManager rm(*_windowManager, Config);
-
+    Rendering::RenderingManager *rm = new Rendering::RenderingManager(Config, *_windowManager);
+    _windowManager->SetRenderingManager(rm);
     Modules->push_back(_windowManager);
     Runtime::SceneManager *sceneManager = new Runtime::SceneManager();
 
     Modules->push_back(sceneManager);
-    Modules->push_back(&rm);
+    Modules->push_back(rm);
     // Call the client initialize function
     if (OnGameStart != nullptr)
     {

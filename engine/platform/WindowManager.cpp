@@ -23,10 +23,8 @@ void PollEvents()
 
 void WindowManager::FramebufferResizeCallback(GLFWwindow *window, int width, int height)
 {
-    auto fn = WindowManager::GetInstance()->GetFrameResizeCallback();
-    fn(width, height);
+    GetInstance()->_renderingManager->FrameResized(width, height);
 }
-
 
 bool WindowManager::ShouldClose()
 {
@@ -44,6 +42,11 @@ void WindowManager::CreateSurface(
     {
         throw RTEException("failed to create window surface!");
     }
+}
+
+void WindowManager::SetRenderingManager(Rendering::RenderingManager *rm)
+{
+    _renderingManager = rm;
 }
 
 WindowManager::WindowManager(RTEConfig &config)
@@ -89,16 +92,6 @@ void WindowManager::OpenWindow(
     Window = glfwCreateWindow(width, height, title.c_str(), nullptr, nullptr);
     glfwSetWindowUserPointer(Window, this);
     glfwSetFramebufferSizeCallback(Window, FramebufferResizeCallback);
-}
-
-void WindowManager::SetFrameResizeCallback(FrameResizeCallback fcb)
-{
-    _frameResizeCallback = fcb;
-}
-
-FrameResizeCallback WindowManager::GetFrameResizeCallback()
-{
-    return _frameResizeCallback;
 }
 
 int WindowManager::GetKey(int key)

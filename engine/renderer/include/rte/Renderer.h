@@ -53,7 +53,6 @@ struct RendererInitInfo
     int MaxFPS = 60;
     bool RayTracingOn = false;
     glm::vec4 ClearColor = glm::vec4(0.0f);
-    SetFrameResizeCallback SetFrameResizeCB;
 };
 
 class Renderer
@@ -129,6 +128,7 @@ Used to bind the window surface to the vulkan instance. Remake into a contructor
 */
     Renderer(RendererInitInfo info);
 
+    void FrameResized(int32_t width, int32_t height);
     /*
 Sets the render mode to make the renderer use either rasterization or raytracing.
 Could be defined in RendererSettings but if we want to change rendering mode at run time, this is necessary.

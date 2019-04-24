@@ -8,10 +8,10 @@ using namespace RTE;
 
 void ConfigureGame(RTEConfig &config)
 {
-
-    config.GraphicsConfig.UseRaytracing = false;
-    std::cout << "Configuring" << std::endl;
+    config.WindowConfig.WindowHeight = 100;
     config.WindowConfig.ApplicationName = "Banana";
+    config.WindowConfig.WindowName = "Eggplant";
+    config.GraphicsConfig.UseRaytracing = false;
 }
 
 void OnGameStart(Runtime::SceneManager &sceneManager)
@@ -40,4 +40,4 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     physComp->Initialize(transComp, 100, {boxCollider});
 
     pcComp->Initialize(transComp, physComp);
-    }
+}

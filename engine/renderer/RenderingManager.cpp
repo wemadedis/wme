@@ -1,12 +1,13 @@
 #include "rte/RenderingManager.h"
 #include "rte/FrameCallbackFunctions.hpp"
+#include "rte/WindowManager.h"
 
 namespace RTE::Rendering
 {
 
 RenderingManager::RenderingManager(
-    Platform::WindowManager &windowManager,
-    RTEConfig &config)
+    RTEConfig &config,
+    Platform::WindowManager &windowManager)
 {
     RendererInitInfo info;
     info.Width = config.WindowConfig.WindowWidth;
@@ -16,9 +17,6 @@ RenderingManager::RenderingManager(
     info.BindingFunc = [&](VkSurfaceKHR &surface, VkInstance instance) {
         windowManager.CreateSurface(instance, surface);
     };
-    info.SetFrameResizeCB = [&](FrameResizeCallback fcb) {
-        windowManager.SetFrameResizeCallback(fcb);
-    };
 
     _renderer = new Renderer(info);
     _renderer->Finalize();
@@ -26,6 +24,11 @@ RenderingManager::RenderingManager(
 
 RenderingManager::~RenderingManager()
 {
+}
+
+void RenderingManager::FrameResized(int32_t width, int32_t height)
+{
+    _renderer->FrameResized(width, height);
 }
 
 void RenderingManager::Update(float deltaTime)

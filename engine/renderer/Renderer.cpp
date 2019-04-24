@@ -26,15 +26,17 @@ namespace RTE::Rendering
 
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
+void Renderer::FrameResized(int32_t width, int32_t height)
+{
+    _frameWidth = width;
+    _frameHeight = height;
+    _frameChanged = true;
+}
+
 void Renderer::Initialize()
 {
     _instance = new Instance(_initInfo.extensions, _initInfo.BindingFunc, _initInfo.RayTracingOn);
     RTXon = _instance->IsRayTracingCapable();
-    _initInfo.SetFrameResizeCB([&](int width, int height) {
-        _frameChanged = true;
-        _frameWidth = width;
-        _frameHeight = height;
-    });
 
     _swapChain = new SwapChain(_instance, _initInfo.Width, _initInfo.Height);
     _renderPass = new RenderPass(_instance, _swapChain);
