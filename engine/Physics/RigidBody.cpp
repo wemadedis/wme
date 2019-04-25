@@ -100,19 +100,34 @@ void RigidBody::SetMass(float mass, glm::vec3 inertia)
     _rigidBody->setMassProps(mass, Convert(inertia));
 }
 
-void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform)
+void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform, bool transformChanged)
 {
+    if (transformChanged)
+    {
+        UpdateToPhysicsWorld(transform.Pos, transform.Rot);
+    }
+
     btTransform physTransform;
     _rigidBody->getMotionState()->getWorldTransform(physTransform);
     glm::vec3 pos = Convert(physTransform.getOrigin());
     transform.Pos = pos;
     btQuaternion rot = physTransform.getRotation();
-    glm::highp_f64quat inputQuat(
-        rot.w(),
-        rot.x(),
-        rot.y(),
-        rot.z());
+    glm::quat inputQuat = Convert(rot);
     transform.Rot = glm::degrees(glm::eulerAngles(inputQuat));
 }
 
+void RigidBody::UpdateToPhysicsWorld(glm::vec3 position, glm::vec3 orientation)
+{
+    btTransform initialTransform;
+
+    initialTransform.setOrigin(Convert(position));
+
+    glm::quat rotation(glm::eulerAngleXYZ(orientation.x,
+                                          orientation.y,
+                                          orientation.z));
+    initialTransform.setRotation(Convert(rotation));
+
+    _rigidBody->setWorldTransform(initialTransform);
+    _rigidBody->getMotionState()->setWorldTransform(initialTransform);
+}
 } // namespace RTE::Physics

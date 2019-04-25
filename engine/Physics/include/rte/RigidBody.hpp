@@ -47,6 +47,9 @@ public:
     void SetLinearFactor(glm::vec3 fac);
 
     void SetMass(float mass, glm::vec3 inertia);
-    void UpdateFromPhysicsWorld(Rendering::Transform &transform);
+
+    // malloc(sizeof(TransformComponent*) * NumTransforms)
+    void UpdateFromPhysicsWorld(Rendering::Transform &trans, bool transformChanged);
+    void UpdateToPhysicsWorld(glm::vec3 position, glm::vec3 orientation);
 };
 } // namespace RTE::Physics

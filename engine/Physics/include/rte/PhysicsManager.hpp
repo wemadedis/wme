@@ -49,6 +49,28 @@ static inline glm::vec3 Convert(btVector3 vec)
 }
 
 /**
+ * @brief Converts a bullet vector3 to a glm vector3 
+ * 
+ * @param vec Vector to convert
+ * @return glm::vec3 Converted vector
+ */
+static inline btQuaternion Convert(glm::quat quat)
+{
+    return btQuaternion(quat.x, quat.y, quat.z, quat.w);
+}
+
+/**
+ * @brief Converts a bullet vector3 to a glm vector3 
+ * 
+ * @param vec Vector to convert
+ * @return glm::vec3 Converted vector
+ */
+static inline glm::quat Convert(btQuaternion quat)
+{
+    return glm::quat(quat.getX(), quat.getY(), quat.getZ(), quat.getW());
+}
+
+/**
  * @brief Converts a glm vector to a bullet vector
  * 
  * @param vec Vector to convert

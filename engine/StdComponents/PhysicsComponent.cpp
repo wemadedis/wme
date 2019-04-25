@@ -16,8 +16,10 @@ void PhysicsComponent::Initialize(
     using namespace Physics;
     PhysicsManager *physManager = PhysicsManager::GetInstance();
     _transformComponent = transformComp;
+
     Collisions = new std::queue<OnCollisionData>();
     EndCollisions = new std::queue<EndCollisionData>();
+
     _rigidBody = physManager->CreateRigidBody(transformComp->Transform,
                                               mass,
                                               colliders,
@@ -27,12 +29,8 @@ void PhysicsComponent::Initialize(
 void PhysicsComponent::Update(float deltaTime)
 {
     auto pos = _transformComponent->Transform.Pos;
-    std::ostringstream ss;
-    ss << "Position: "
-       << "(" << pos.x << ", " << pos.y << ", " << pos.z << ")";
-
-    //Debug(ss.str());
-    _rigidBody->UpdateFromPhysicsWorld(_transformComponent->Transform);
+    // TODO: (danh 25/04 14:30): Change this to use the things!
+    _rigidBody->UpdateFromPhysicsWorld(_transformComponent->Transform, false);
 }
 
 Physics::RigidBody *PhysicsComponent::GetRigidBody()
