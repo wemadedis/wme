@@ -3,7 +3,7 @@
 #include "rte/Component.h"
 #include "rte/RenderStructs.h"
 #include "rte/RendererHandles.h"
-
+#include "rte/TransformComponent.hpp"
 #include <string>
 
 namespace RTE::Rendering
@@ -20,11 +20,11 @@ private:
     RenderingManager *_renderingManager;
     std::string _meshPath;
     std::string _texturePath;
-
+    TransformComponent *_transform;
 public:
     MeshComponent();
 
-    void Initialize(std::string meshFilePath, std::string textureFilePath = std::string(""));
+    void Initialize(TransformComponent *transform, std::string meshFilePath, std::string textureFilePath = std::string(""));
 
     void SetMesh(std::string meshFilePath);
 
@@ -33,6 +33,8 @@ public:
     std::string GetMesh();
 
     std::string GetTexture();
+
+    TransformComponent* GetTransformComponent();
 
     virtual void Update(float deltaTime) override;
 };

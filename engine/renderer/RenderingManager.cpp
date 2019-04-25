@@ -2,6 +2,8 @@
 #include "rte/WindowManager.h"
 #include "rte/ModelImporter.h"
 #include "rte/ImportFunctions.h"
+#include "rte/TransformComponent.hpp"
+
 namespace RTE::Rendering
 {
 RenderingManager* RenderingManager::_instance = nullptr;
@@ -61,6 +63,14 @@ void RenderingManager::FrameResized(int32_t width, int32_t height)
 
 void RenderingManager::Update(float deltaTime)
 {
+    for(auto iter = _instances.begin(); iter != _instances.end(); iter++)
+    {
+        StdComponents::MeshComponent *comp = iter->first;
+        MeshInstanceHandle instance = iter->second;
+        Transform *t = &comp->GetTransformComponent()->Transform;
+        _renderer->SetMeshTransform(instance, t->Pos, t->Rot, t->Scale);
+    }
+
     _renderer->Draw();
 }
 
