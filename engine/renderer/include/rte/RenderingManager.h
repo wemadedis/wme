@@ -8,9 +8,12 @@
 #include "rte/RenderStructs.h"
 #include "rte/RendererHandles.h"
 
+//Rendering related components
 #include "rte/MeshComponent.hpp"
+#include "rte/CameraComponent.hpp"
 
 #include <unordered_map>
+#include <vector>
 #include <string>
 
 
@@ -31,6 +34,12 @@ private:
     std::unordered_map<std::string, TextureHandle> _textures;
     std::unordered_map<std::string, ShaderHandle> _shaders;
     std::unordered_map<StdComponents::MeshComponent*, MeshInstanceHandle> _instances;
+    std::unordered_map<StdComponents::CameraComponent*, Camera*> _cameras;
+
+
+    StdComponents::CameraComponent* _mainCamera = nullptr;
+
+    void UpdateMainCamera();
 
 public:
     RenderingManager(
@@ -44,6 +53,8 @@ public:
     void ImportRenderingResources(std::vector<std::string> &meshes, std::vector<std::string> &textures);
     void RegisterMeshComponent(StdComponents::MeshComponent *meshComponent);
     void UpdateMeshComponent(StdComponents::MeshComponent *meshComponent);
+    void RegisterCameraComponent(StdComponents::CameraComponent *cameraComponent);
+    void SetMainCameraComponent(StdComponents::CameraComponent *cameraComponent);
 };
 
 }; // namespace RTE::Rendering

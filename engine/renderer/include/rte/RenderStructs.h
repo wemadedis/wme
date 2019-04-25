@@ -145,6 +145,11 @@ struct Transform
         return rotZ * rotY * rotX;
     }
 
+    glm::mat4 Transform::TranslationMatrix()
+    {
+        return glm::translate(Pos);
+    }
+
     Transform(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot)
     {
         Pos = pos;

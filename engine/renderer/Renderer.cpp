@@ -33,6 +33,16 @@ void Renderer::FrameResized(int32_t width, int32_t height)
     _frameChanged = true;
 }
 
+uint32_t Renderer::GetFrameWidth()
+{
+    return _frameWidth;
+}
+
+uint32_t Renderer::GetFrameHeight()
+{
+    return _frameHeight;
+}
+
 void Renderer::Initialize()
 {
     _instance = new Instance(_initInfo.extensions, _initInfo.BindingFunc, _initInfo.RayTracingOn);

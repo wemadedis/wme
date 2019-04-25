@@ -32,7 +32,7 @@ namespace RTE::Rendering
 {
 
 typedef std::function<void(VkSurfaceKHR &surface, VkInstance instance)> SurfaceBindingFunc;
-enum RenderMode
+enum class RenderMode
 {
     RASTERIZE,
     RAYTRACE
@@ -126,6 +126,9 @@ Used to bind the window surface to the vulkan instance. Remake into a contructor
     Renderer(RendererInitInfo info);
 
     void FrameResized(int32_t width, int32_t height);
+
+    uint32_t GetFrameWidth();
+    uint32_t GetFrameHeight();
     /*
 Sets the render mode to make the renderer use either rasterization or raytracing.
 Could be defined in RendererSettings but if we want to change rendering mode at run time, this is necessary.

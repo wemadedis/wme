@@ -3,6 +3,7 @@ add_library(StdComponents
     TransformComponent
     PhysicsComponent
     AudioComponent
+    CameraComponent
 )
 target_include_directories(StdComponents PUBLIC include .)
 target_link_libraries(StdComponents PUBLIC rte)

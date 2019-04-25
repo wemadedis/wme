@@ -1,7 +1,7 @@
 #include <rte/RTE.hpp>
 
 #include "PlayerController.hpp"
-
+#include "rte/CameraComponent.hpp"
 #include <iostream>
 
 using namespace RTE;

@@ -138,4 +138,34 @@ void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshCom
     //TODO: Set transform as well
 }
 
+void RenderingManager::RegisterCameraComponent(StdComponents::CameraComponent *cc)
+{
+    Camera camera;
+    Transform &transform = cc->GetTransformComponent()->Transform;
+    camera.Position = transform.Pos;
+    camera.ViewMatrix = transform.RotationMatrix() * transform.TranslationMatrix();
+    camera.ProjectionMatrix = glm::perspective(cc->FieldOfView, (float)_renderer->GetFrameWidth() / (float)_renderer->GetFrameHeight(), cc->NearPlane, cc->FarPlane);
+    if(_mainCamera == nullptr)
+    {
+        _mainCamera = cc;
+        _renderer->SetCamera(camera);
+    }
+    //HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    
+}
+
+void RenderingManager::SetMainCameraComponent(StdComponents::CameraComponent *cc)
+{
+    if(cc == nullptr)
+    {
+        throw new RTEException("Main camera cannot be null!");
+    }
+    _mainCamera = cc;
+}
+
+void RenderingManager::UpdateMainCamera()
+{
+
+}
+
 }; // namespace RTE::Rendering
