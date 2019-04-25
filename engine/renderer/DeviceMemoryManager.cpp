@@ -75,12 +75,11 @@ void DeviceMemoryManager::CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps 
 }
 
 void DeviceMemoryManager::CopyDataToBuffer(BufferInformation& bufferInfo, void* data){
-    void *mapping = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
+	void* mapping;//= malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
     VmaAllocation& allocation = _buffers[bufferInfo.buffer];
     vmaMapMemory(*_allocator, allocation, &mapping);    
     memcpy(mapping, data, bufferInfo.size);
     vmaUnmapMemory(*_allocator, allocation);
-    
 }
 
 void DeviceMemoryManager::CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue) {
