@@ -45,7 +45,7 @@ void RenderingManager::FinalizeRenderer()
     p.Color = glm::vec4(0.5f);
     p.PositionRadius = glm::vec4(2.5f, 1.5f, 2.5f, 4.25f);
     PointLightHandle pl = _renderer->AddPointLight(p);
-
+    _renderer->SetAmbientLight(glm::vec4(0.1f));
     _renderer->Finalize();
 }
 
@@ -91,14 +91,14 @@ void RenderingManager::ImportRenderingResources(std::vector<std::string> &meshes
 
 void RenderingManager::RegisterMeshComponent(StdComponents::MeshComponent *meshComponent)
 {
-    //TRY CATCH THIS ?! .at can throw an exception
+    //TODO: TRY CATCH THIS ?! .at can throw an exception
     MeshHandle mesh = _meshes.at(meshComponent->GetMesh());
     TextureHandle texture = _textures.at(meshComponent->GetTexture());
 
-    //TODO: Set transform as well
     MeshInstanceHandle instance = _renderer->CreateMeshInstance(mesh);
     _renderer->BindTextureToMeshInstance(texture, instance);
     _instances.insert({meshComponent, instance});
+    //TODO: Set transform as well
     _renderer->SetMeshTransform(instance, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
 }
 
