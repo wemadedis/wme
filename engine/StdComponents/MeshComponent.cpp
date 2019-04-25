@@ -1,4 +1,4 @@
-#include "rte/MeshComponent.h"
+#include "rte/MeshComponent.hpp"
 
 #include "rte/RenderingManager.h"
 
@@ -14,15 +14,13 @@ void MeshComponent::Initialize(TransformComponent *transform, std::string meshFi
     _renderingManager = RenderingManager::GetInstance();
     _meshPath = meshFilePath;
     _texturePath = textureFilePath;
-    _renderingManager->RegisterMeshComponent(this);
     _transform = transform;
-    //TODO: Some assertions here?
+    _renderingManager->RegisterMeshComponent(this);
 }
 
 void MeshComponent::SetMesh(std::string meshFilePath)
 {
     _meshPath = meshFilePath;
-
 }
 
 void MeshComponent::SetTexture(std::string textureFilePath)

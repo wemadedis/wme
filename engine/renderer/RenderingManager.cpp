@@ -13,7 +13,7 @@ RenderingManager::RenderingManager(
 {
     RendererInitInfo info;
     info.Width = config.WindowConfig.WindowWidth;
-    info.Height = config.WindowConfig.WindowWidth;
+    info.Height = config.WindowConfig.WindowHeight;
     info.extensions = windowManager.GetRequiredExtensions();
     info.RayTracingOn = config.GraphicsConfig.UseRaytracing;
     info.BindingFunc = [&](VkSurfaceKHR &surface, VkInstance instance) {
@@ -101,15 +101,31 @@ void RenderingManager::ImportRenderingResources(std::vector<std::string> &meshes
 
 void RenderingManager::RegisterMeshComponent(StdComponents::MeshComponent *meshComponent)
 {
-    //TODO: TRY CATCH THIS ?! .at can throw an exception
-    MeshHandle mesh = _meshes.at(meshComponent->GetMesh());
-    TextureHandle texture = _textures.at(meshComponent->GetTexture());
+    MeshHandle mesh;
+    TextureHandle texture;
+    try
+    {
+        mesh = _meshes.at(meshComponent->GetMesh());
+    }
+    catch(const std::out_of_range)
+    {
+        throw RTEException("Mesh resource not found!");
+    }
+    try
+    {
+        texture = _textures.at(meshComponent->GetTexture());
+    }
+    catch(const std::out_of_range)
+    {
+        throw RTEException("Texture resource not found!");
+    }
 
     MeshInstanceHandle instance = _renderer->CreateMeshInstance(mesh);
     _renderer->BindTextureToMeshInstance(texture, instance);
     _instances.insert({meshComponent, instance});
     //TODO: Set transform as well
-    _renderer->SetMeshTransform(instance, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
+    auto& trans = meshComponent->GetTransformComponent()->Transform;
+    _renderer->SetMeshTransform(instance, trans.Pos, trans.Rot, trans.Scale);
 }
 
 void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshComponent)

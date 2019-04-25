@@ -8,7 +8,7 @@
 #include "rte/RenderStructs.h"
 #include "rte/RendererHandles.h"
 
-#include "rte/MeshComponent.h"
+#include "rte/MeshComponent.hpp"
 
 #include <unordered_map>
 #include <string>

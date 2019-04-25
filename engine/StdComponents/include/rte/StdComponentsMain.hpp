@@ -1,6 +1,6 @@
 #pragma once
 
-#include "rte/MeshComponent.h"
+#include "rte/MeshComponent.hpp"
 #include "rte/PhysicsComponent.hpp"
 #include "rte/TransformComponent.hpp"
 
