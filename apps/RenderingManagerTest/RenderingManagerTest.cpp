@@ -38,10 +38,10 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
 
 
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
-    meshComp->Initialize(monkey);
+    //meshComp->Initialize(monkey);
     GameObject *go2 = scene->CreateGameObject();
     MeshComponent *meshComp2 = scene->AddComponent<MeshComponent>(meshIndex, go2);
-    meshComp2->Initialize(monkey);
+    //meshComp2->Initialize(monkey);
     // Collider
     RTE::Physics::Collider boxCollider;
     boxCollider.Type = RTE::Physics::ColliderType::BOX;

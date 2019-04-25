@@ -56,9 +56,9 @@ layout(set = 2, binding = 4) uniform InstanceUniformData
     bool HasTexture;
 } InstanceData[];
 
-float FetchFloat(uint meshIndex, int floatPlacement)
+float FetchFloat(uint meshIndex, int offset)
 {
-    return texelFetch(VertexBuffers[nonuniformEXT(meshIndex)], floatPlacement).r;
+    return texelFetch(VertexBuffers[nonuniformEXT(meshIndex)], offset).r;
 }
 
 
