@@ -33,14 +33,9 @@ void Renderer::FrameResized(int32_t width, int32_t height)
     _frameChanged = true;
 }
 
-uint32_t Renderer::GetFrameWidth()
+glm::ivec2 Renderer::GetFrameSize()
 {
-    return _frameWidth;
-}
-
-uint32_t Renderer::GetFrameHeight()
-{
-    return _frameHeight;
+    return { _frameWidth, _frameHeight };
 }
 
 void Renderer::Initialize()
@@ -356,6 +351,8 @@ void Renderer::CreateShaderBindingTable()
 Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f / info.MaxFPS)
 {
     _initInfo = info;
+    _frameWidth = info.Width;
+    _frameHeight = info.Height;
     _lastFrameEnd = Clock::now();
     Initialize();
     if (RTXon)

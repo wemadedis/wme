@@ -35,6 +35,7 @@ RenderingManager::~RenderingManager()
 
 void RenderingManager::FinalizeRenderer()
 {
+    /*
     Camera cam;
     glm::vec3 pos = {0.0f, 0.0f, 10.0f};
     cam.Position = pos;
@@ -42,7 +43,7 @@ void RenderingManager::FinalizeRenderer()
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
     _renderer->SetCamera(cam);
-
+*/
     PointLight p;
     p.Color = glm::vec4(0.5f);
     p.PositionRadius = glm::vec4(2.5f, 1.5f, 2.5f, 4.25f);
@@ -63,12 +64,18 @@ void RenderingManager::FrameResized(int32_t width, int32_t height)
 
 void RenderingManager::Update(float deltaTime)
 {
+    
     for(auto iter = _instances.begin(); iter != _instances.end(); iter++)
     {
         StdComponents::MeshComponent *comp = iter->first;
         MeshInstanceHandle instance = iter->second;
         Transform *t = &comp->GetTransformComponent()->Transform;
         _renderer->SetMeshTransform(instance, t->Pos, t->Rot, t->Scale);
+    }
+
+    if(_mainCamera != nullptr)
+    {
+        UpdateMainCamera();
     }
 
     _renderer->Draw();
@@ -140,18 +147,12 @@ void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshCom
 
 void RenderingManager::RegisterCameraComponent(StdComponents::CameraComponent *cc)
 {
-    Camera camera;
-    Transform &transform = cc->GetTransformComponent()->Transform;
-    camera.Position = transform.Pos;
-    camera.ViewMatrix = transform.RotationMatrix() * transform.TranslationMatrix();
-    camera.ProjectionMatrix = glm::perspective(cc->FieldOfView, (float)_renderer->GetFrameWidth() / (float)_renderer->GetFrameHeight(), cc->NearPlane, cc->FarPlane);
     if(_mainCamera == nullptr)
     {
-        _mainCamera = cc;
-        _renderer->SetCamera(camera);
+        SetMainCameraComponent(cc);
+        UpdateMainCamera();
     }
-    //HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-    
+    _cameras.push_back(cc);
 }
 
 void RenderingManager::SetMainCameraComponent(StdComponents::CameraComponent *cc)
@@ -165,7 +166,17 @@ void RenderingManager::SetMainCameraComponent(StdComponents::CameraComponent *cc
 
 void RenderingManager::UpdateMainCamera()
 {
+    Camera camera;
+    Transform &transform = _mainCamera->GetTransformComponent()->Transform;
+    camera.Position = transform.Pos;
+    camera.ViewMatrix = _mainCamera->ViewMatrix();
+    camera.ProjectionMatrix = _mainCamera->ProjectionMatrix();
+    _renderer->SetCamera(camera);
+}
 
+glm::ivec2 RenderingManager::GetRendererFrameSize()
+{
+    return _renderer->GetFrameSize();
 }
 
 }; // namespace RTE::Rendering

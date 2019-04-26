@@ -149,8 +149,8 @@ void main()
 
     uint meshIndex = texelFetch(InstanceMapping, gl_InstanceCustomIndexNV).r;
     int index1 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3).r);
-    int index2 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3+1).r);
-    int index3 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3+2).r);
+    int index2 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3+2).r);
+    int index3 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3+3).r);
     Vertex v1 = GetVertex(meshIndex, index1);
     Vertex v2 = GetVertex(meshIndex, index2);
     Vertex v3 = GetVertex(meshIndex, index3);

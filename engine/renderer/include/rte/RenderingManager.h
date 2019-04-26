@@ -34,11 +34,10 @@ private:
     std::unordered_map<std::string, TextureHandle> _textures;
     std::unordered_map<std::string, ShaderHandle> _shaders;
     std::unordered_map<StdComponents::MeshComponent*, MeshInstanceHandle> _instances;
-    std::unordered_map<StdComponents::CameraComponent*, Camera*> _cameras;
+    std::vector<StdComponents::CameraComponent*> _cameras;
 
 
     StdComponents::CameraComponent* _mainCamera = nullptr;
-
     void UpdateMainCamera();
 
 public:
@@ -55,6 +54,7 @@ public:
     void UpdateMeshComponent(StdComponents::MeshComponent *meshComponent);
     void RegisterCameraComponent(StdComponents::CameraComponent *cameraComponent);
     void SetMainCameraComponent(StdComponents::CameraComponent *cameraComponent);
+    glm::ivec2 GetRendererFrameSize();
 };
 
 }; // namespace RTE::Rendering
