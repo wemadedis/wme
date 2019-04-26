@@ -49,5 +49,6 @@ public:
         {
             _camera->FieldOfView += 1.0f*deltaTime;
         }
+        std::cout << _camera->FieldOfView << std::endl;
     }
 };

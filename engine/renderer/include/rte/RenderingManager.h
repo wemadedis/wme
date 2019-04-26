@@ -54,6 +54,7 @@ public:
     void UpdateMeshComponent(StdComponents::MeshComponent *meshComponent);
     void RegisterCameraComponent(StdComponents::CameraComponent *cameraComponent);
     void SetMainCameraComponent(StdComponents::CameraComponent *cameraComponent);
+    glm::ivec2 GetRendererFrameSize();
 };
 
 }; // namespace RTE::Rendering

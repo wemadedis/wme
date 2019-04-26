@@ -149,13 +149,8 @@ void RenderingManager::RegisterCameraComponent(StdComponents::CameraComponent *c
 {
     if(_mainCamera == nullptr)
     {
-        _mainCamera = cc;
-        Camera camera;
-        Transform &transform = cc->GetTransformComponent()->Transform;
-        camera.Position = transform.Pos;
-        camera.ViewMatrix = transform.RotationMatrix() * transform.TranslationMatrix();
-        camera.ProjectionMatrix = glm::perspective(cc->FieldOfView, (float)_renderer->GetFrameWidth() / (float)_renderer->GetFrameHeight(), cc->NearPlane, cc->FarPlane);
-        _renderer->SetCamera(camera);
+        SetMainCameraComponent(cc);
+        UpdateMainCamera();
     }
     _cameras.push_back(cc);
 }
@@ -174,9 +169,14 @@ void RenderingManager::UpdateMainCamera()
     Camera camera;
     Transform &transform = _mainCamera->GetTransformComponent()->Transform;
     camera.Position = transform.Pos;
-    camera.ViewMatrix = transform.TranslationMatrix() * transform.RotationMatrix();
-    camera.ProjectionMatrix = glm::perspective(_mainCamera->FieldOfView, (float)_renderer->GetFrameWidth() / (float)_renderer->GetFrameHeight(), _mainCamera->NearPlane, _mainCamera->FarPlane);
+    camera.ViewMatrix = _mainCamera->ViewMatrix();
+    camera.ProjectionMatrix = _mainCamera->ProjectionMatrix();
     _renderer->SetCamera(camera);
+}
+
+glm::ivec2 RenderingManager::GetRendererFrameSize()
+{
+    return _renderer->GetFrameSize();
 }
 
 }; // namespace RTE::Rendering

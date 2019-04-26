@@ -22,12 +22,15 @@ private:
     
 public:
     ProjectionMode Projection = ProjectionMode::PERSPECTIVE;
-    float FieldOfView = 60.0f;
+    float FieldOfView = 45.0f;
     float NearPlane = 0.5f, FarPlane = 1000.0f;
     CameraComponent() = default;
     ~CameraComponent();
     void Initialize(TransformComponent *transformComponent);
     TransformComponent* GetTransformComponent();
+
+    glm::mat4 ViewMatrix();
+    glm::mat4 ProjectionMatrix();
     
     virtual void Update(float deltaTime) override;
 };
