@@ -2,6 +2,8 @@
 
 #include "PlayerController.hpp"
 #include "rte/CameraComponent.hpp"
+#include "rte/StdComponentsMain.hpp"
+
 #include <iostream>
 
 using namespace RTE;
@@ -28,6 +30,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     uint64_t meshIndex = scene->DefineComponent<MeshComponent>();
     uint64_t pcIndex = scene->DefineComponent<PlayerController>();
     uint64_t camIndex = scene->DefineComponent<CameraComponent>();
+    uint64_t plIndex = scene->DefineComponent<PointLightComponent>();
     // Setup our game object
     GameObject *go = scene->CreateGameObject();
     TransformComponent *transComp = scene->AddComponent<TransformComponent>(transIndex, go);
@@ -41,10 +44,16 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
 
     CameraComponent *camera = scene->AddComponent<CameraComponent>(camIndex, go2);
     camera->SetEnabled(true);
-    TransformComponent *trans2 = new TransformComponent();
+    TransformComponent *trans2 = scene->AddComponent<TransformComponent>(transIndex, go2);
     trans2->Transform.Pos = glm::vec3(0.0f, 0.0f, 10.0f);
-
     camera->Initialize(trans2);
+
+    GameObject *go3 = scene->CreateGameObject();
+    auto trans3 = scene->AddComponent<TransformComponent>(transIndex, go3);
+    auto pointLight = scene->AddComponent<PointLightComponent>(plIndex, go3);
+    trans3->Transform.Pos = glm::vec3(0.0f, 2.0f, 0.0f);
+    pointLight->Initialize(trans3, 5.0f);
+
 
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
     meshComp->Initialize(transComp, monkey);

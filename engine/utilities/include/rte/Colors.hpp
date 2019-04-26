@@ -14,7 +14,7 @@ namespace Colors
 {
 typedef glm::vec4 Color;
 static Color Black = glm::vec4(0, 0, 0, 1);
-static Color White = glm::vec4(0, 0, 0, 1);
+static Color White = glm::vec4(1, 1, 1, 1);
 static Color Red = glm::vec4(1, 0, 0, 1);
 static Color Green = glm::vec4(0, 1, 0, 1);
 static Color Blue = glm::vec4(0, 0, 1, 1);

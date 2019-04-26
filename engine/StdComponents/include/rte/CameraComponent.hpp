@@ -25,7 +25,7 @@ public:
     ProjectionMode Projection = ProjectionMode::PERSPECTIVE;
     float FieldOfView = 45.0f;
     float NearPlane = 0.5f, FarPlane = 1000.0f;
-    Colors::Color BackgroundColor = Colors::Yellow;
+    Colors::Color BackgroundColor = Colors::Black;
 
     CameraComponent() = default;
     ~CameraComponent();

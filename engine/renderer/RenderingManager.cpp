@@ -35,19 +35,6 @@ RenderingManager::~RenderingManager()
 
 void RenderingManager::FinalizeRenderer()
 {
-    /*
-    Camera cam;
-    glm::vec3 pos = {0.0f, 0.0f, 10.0f};
-    cam.Position = pos;
-    cam.ViewMatrix = glm::lookAt(pos, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-    cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
-    cam.ProjectionMatrix[1][1] *= -1;
-    _renderer->SetCamera(cam);
-*/
-    PointLight p;
-    p.Color = glm::vec4(0.5f);
-    p.PositionRadius = glm::vec4(2.5f, 1.5f, 2.5f, 4.25f);
-    PointLightHandle pl = _renderer->AddPointLight(p);
     _renderer->Finalize();
 }
 
@@ -67,10 +54,7 @@ void RenderingManager::Update(float deltaTime)
     for(auto iter = _instances.begin(); iter != _instances.end(); iter++)
     {
         StdComponents::MeshComponent *comp = iter->first;
-        MeshInstanceHandle instance = iter->second;
-        Transform *t = &comp->GetTransformComponent()->Transform;
-        _renderer->SetMeshTransform(instance, t->Pos, t->Rot, t->Scale);
-        _renderer->SetInstanceMaterial(instance, comp->Material);
+        UpdateMeshComponent(comp);
     }
 
     if(_mainCamera != nullptr)
@@ -128,11 +112,8 @@ void RenderingManager::RegisterMeshComponent(StdComponents::MeshComponent *meshC
     }
 
     MeshInstanceHandle instance = _renderer->CreateMeshInstance(mesh);
-    _renderer->BindTextureToMeshInstance(texture, instance);
     _instances.insert({meshComponent, instance});
-    //TODO: Set transform as well
-    auto& trans = meshComponent->GetTransformComponent()->Transform;
-    _renderer->SetMeshTransform(instance, trans.Pos, trans.Rot, trans.Scale);
+    UpdateMeshComponent(meshComponent);   
 }
 
 void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshComponent)
@@ -140,9 +121,11 @@ void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshCom
     MeshHandle mesh = _meshes.at(meshComponent->GetMesh());
     TextureHandle texture = _textures.at(meshComponent->GetTexture());
     MeshInstanceHandle instance = _instances.at(meshComponent);
+    Transform &trans = meshComponent->GetTransformComponent()->Transform;
     _renderer->BindMeshToInstance(mesh, instance);
     _renderer->BindTextureToMeshInstance(texture, instance);
-    //TODO: Set transform as well
+    _renderer->SetMeshTransform(instance, trans.Pos, trans.Rot, trans.Scale);
+    _renderer->SetInstanceMaterial(instance, meshComponent->Material);
 }
 
 void RenderingManager::RegisterCameraComponent(StdComponents::CameraComponent *cc)
@@ -173,6 +156,15 @@ void RenderingManager::UpdateMainCamera()
     camera.ProjectionMatrix = _mainCamera->ProjectionMatrix();
     _renderer->SetCamera(camera);
     _renderer->SetClearColor(_mainCamera->BackgroundColor);
+}
+
+void RenderingManager::RegisterPointLight(StdComponents::PointLightComponent *pointLight)
+{
+    PointLight pl;
+    pl.Color = pointLight->Color;
+    pl.PositionRadius = glm::vec4(pointLight->GetTransformComponent()->Transform.Pos, pointLight->Radius);
+    PointLightHandle light = _renderer->AddPointLight(pl);
+    _pointLights.insert({pointLight, light});
 }
 
 glm::ivec2 RenderingManager::GetRendererFrameSize()

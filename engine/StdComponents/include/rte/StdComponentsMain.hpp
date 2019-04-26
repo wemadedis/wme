@@ -5,6 +5,7 @@
 #include "rte/TransformComponent.hpp"
 #include "rte/MeshComponent.hpp"
 #include "rte/CameraComponent.hpp"
+#include "rte/PointLightComponent.hpp"
 
 namespace RTE
 {

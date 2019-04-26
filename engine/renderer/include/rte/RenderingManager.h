@@ -8,9 +8,8 @@
 #include "rte/RenderStructs.h"
 #include "rte/RendererHandles.h"
 
-//Rendering related components
-#include "rte/MeshComponent.hpp"
-#include "rte/CameraComponent.hpp"
+
+#include "rte/StdComponentsMain.hpp"
 
 #include <unordered_map>
 #include <vector>
@@ -23,6 +22,7 @@ class WindowManager;
 }
 namespace RTE::Rendering
 {
+using namespace StdComponents;
 class RenderingManager : public RTEModule
 {
 private:
@@ -33,12 +33,14 @@ private:
     std::unordered_map<std::string, MeshHandle> _meshes;
     std::unordered_map<std::string, TextureHandle> _textures;
     std::unordered_map<std::string, ShaderHandle> _shaders;
-    std::unordered_map<StdComponents::MeshComponent*, MeshInstanceHandle> _instances;
-    std::vector<StdComponents::CameraComponent*> _cameras;
+    std::unordered_map<MeshComponent*, MeshInstanceHandle> _instances;
+    std::unordered_map<PointLightComponent*, PointLightHandle> _pointLights;
+    std::vector<CameraComponent*> _cameras;
+    
 
-
-    StdComponents::CameraComponent* _mainCamera = nullptr;
+    CameraComponent* _mainCamera = nullptr;
     void UpdateMainCamera();
+    void UpdateMeshComponent(MeshComponent *meshComponent);
 
 public:
     RenderingManager(
@@ -50,10 +52,10 @@ public:
     void Update(float deltaTime) override;
     void FrameResized(int32_t width, int32_t height);
     void ImportRenderingResources(std::vector<std::string> &meshes, std::vector<std::string> &textures);
-    void RegisterMeshComponent(StdComponents::MeshComponent *meshComponent);
-    void UpdateMeshComponent(StdComponents::MeshComponent *meshComponent);
-    void RegisterCameraComponent(StdComponents::CameraComponent *cameraComponent);
-    void SetMainCamera(StdComponents::CameraComponent *cameraComponent);
+    void RegisterMeshComponent(MeshComponent *meshComponent);
+    void RegisterCameraComponent(CameraComponent *cameraComponent);
+    void SetMainCamera(CameraComponent *cameraComponent);
+    void RegisterPointLight(PointLightComponent *pointLight);
     glm::ivec2 GetRendererFrameSize();
 };
 
