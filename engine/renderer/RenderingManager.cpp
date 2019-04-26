@@ -57,6 +57,25 @@ void RenderingManager::Update(float deltaTime)
         UpdateMeshComponent(comp);
     }
 
+    for(auto iter = _pointLights.begin(); iter != _pointLights.end(); iter++)
+    {
+        auto pl = iter->first;
+        auto &trans = pl->GetTransformComponent()->Transform;
+        _renderer->SetPointLightProperties(iter->second, [&](PointLight &light){
+            light.Color = pl->Color;
+            light.PositionRadius = glm::vec4(trans.Pos, pl->Radius);
+        });
+    }
+
+    for(auto iter = _directionalLights.begin(); iter != _directionalLights.end(); iter++)
+    {
+        auto *comp = iter->first;
+        _renderer->SetDirectionalLightProperties(iter->second, [&](DirectionalLight &light){
+            light.Color = comp->Color;
+            light.Direction = glm::vec4(comp->Direction(),0.0f);
+        });
+    }
+
     if(_mainCamera != nullptr)
     {
         UpdateMainCamera();
@@ -165,6 +184,15 @@ void RenderingManager::RegisterPointLight(StdComponents::PointLightComponent *po
     pl.PositionRadius = glm::vec4(pointLight->GetTransformComponent()->Transform.Pos, pointLight->Radius);
     PointLightHandle light = _renderer->AddPointLight(pl);
     _pointLights.insert({pointLight, light});
+}
+
+void RenderingManager::RegisterDirectionalLight(DirectionalLightComponent *dirLight)
+{
+    DirectionalLight dl;
+    dl.Color = dirLight->Color;
+    dl.Direction = glm::vec4(dirLight->Direction(), 0.0f);
+    DirectionalLightHandle light = _renderer->AddDirectionalLight(dl);
+    _directionalLights.insert({dirLight, light});
 }
 
 glm::ivec2 RenderingManager::GetRendererFrameSize()

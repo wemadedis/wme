@@ -1,18 +1,29 @@
 #pragma once
+#include "rte/Component.h"
+#include "rte/StdComponentsMain.hpp"
 
-class DirectionalLightComponent
+namespace RTE::Rendering
 {
-private:
-    /* data */
-public:
-    DirectionalLightComponent(/* args */);
-    ~DirectionalLightComponent();
-};
-
-DirectionalLightComponent::DirectionalLightComponent(/* args */)
-{
+    class RenderingManager;
 }
 
-DirectionalLightComponent::~DirectionalLightComponent()
+namespace RTE::StdComponents
 {
+
+class DirectionalLightComponent : public Runtime::Component
+{
+private:
+    RenderingManager *_renderingManager;
+    TransformComponent *_transform;
+public:
+    Colors::Color Color = Colors::White;
+
+
+    DirectionalLightComponent() = default;
+    ~DirectionalLightComponent();
+    void Initialize(TransformComponent *transform, Colors::Color color);
+    glm::vec3 Direction();
+    virtual void Update(float deltaTime) override;
+};
+
 }

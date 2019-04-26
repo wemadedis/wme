@@ -5,6 +5,7 @@ add_library(StdComponents
     AudioComponent
     CameraComponent
     PointLightComponent
+    DirectionalLightComponent
 )
 target_include_directories(StdComponents PUBLIC include .)
 target_link_libraries(StdComponents PUBLIC rte)

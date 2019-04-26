@@ -35,6 +35,7 @@ private:
     std::unordered_map<std::string, ShaderHandle> _shaders;
     std::unordered_map<MeshComponent*, MeshInstanceHandle> _instances;
     std::unordered_map<PointLightComponent*, PointLightHandle> _pointLights;
+    std::unordered_map<DirectionalLightComponent*, DirectionalLightHandle> _directionalLights;
     std::vector<CameraComponent*> _cameras;
     
 
@@ -56,6 +57,7 @@ public:
     void RegisterCameraComponent(CameraComponent *cameraComponent);
     void SetMainCamera(CameraComponent *cameraComponent);
     void RegisterPointLight(PointLightComponent *pointLight);
+    void RegisterDirectionalLight(DirectionalLightComponent *dirLight);
     glm::ivec2 GetRendererFrameSize();
 };
 

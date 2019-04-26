@@ -575,6 +575,7 @@ PointLightHandle Renderer::AddPointLight(PointLight light)
 
 void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::function<void(DirectionalLight &)> mutator)
 {
+    mutator(_directionalLights[light]);
     _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData *data) {
         mutator(data->DirectionalLights[light]);
     });

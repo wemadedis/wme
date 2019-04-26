@@ -49,6 +49,5 @@ public:
         {
             _camera->GetTransformComponent()->Transform.Rot.y -= 50.0f*deltaTime;
         }
-        std::cout << _camera->FieldOfView << std::endl;
     }
 };
