@@ -53,7 +53,7 @@ public:
     void RegisterMeshComponent(StdComponents::MeshComponent *meshComponent);
     void UpdateMeshComponent(StdComponents::MeshComponent *meshComponent);
     void RegisterCameraComponent(StdComponents::CameraComponent *cameraComponent);
-    void SetMainCameraComponent(StdComponents::CameraComponent *cameraComponent);
+    void SetMainCamera(StdComponents::CameraComponent *cameraComponent);
     glm::ivec2 GetRendererFrameSize();
 };
 

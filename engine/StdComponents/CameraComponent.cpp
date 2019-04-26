@@ -58,6 +58,11 @@ glm::mat4 CameraComponent::ProjectionMatrix()
     return glm::ortho(-frameSize.x*0.5f, frameSize.x*0.5f, -frameSize.y*0.5f, frameSize.y*0.5f, NearPlane, FarPlane);
 }
 
+void CameraComponent::SetAsMain()
+{
+    _renderingManager->SetMainCamera(this);
+}
+
 void CameraComponent::Update(float deltaTime)
 {
 

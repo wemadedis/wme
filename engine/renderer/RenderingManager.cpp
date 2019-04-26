@@ -48,7 +48,6 @@ void RenderingManager::FinalizeRenderer()
     p.Color = glm::vec4(0.5f);
     p.PositionRadius = glm::vec4(2.5f, 1.5f, 2.5f, 4.25f);
     PointLightHandle pl = _renderer->AddPointLight(p);
-    _renderer->SetAmbientLight(glm::vec4(0.1f));
     _renderer->Finalize();
 }
 
@@ -149,13 +148,13 @@ void RenderingManager::RegisterCameraComponent(StdComponents::CameraComponent *c
 {
     if(_mainCamera == nullptr)
     {
-        SetMainCameraComponent(cc);
+        SetMainCamera(cc);
         UpdateMainCamera();
     }
     _cameras.push_back(cc);
 }
 
-void RenderingManager::SetMainCameraComponent(StdComponents::CameraComponent *cc)
+void RenderingManager::SetMainCamera(StdComponents::CameraComponent *cc)
 {
     if(cc == nullptr)
     {
@@ -172,6 +171,7 @@ void RenderingManager::UpdateMainCamera()
     camera.ViewMatrix = _mainCamera->ViewMatrix();
     camera.ProjectionMatrix = _mainCamera->ProjectionMatrix();
     _renderer->SetCamera(camera);
+    _renderer->SetClearColor(_mainCamera->BackgroundColor);
 }
 
 glm::ivec2 RenderingManager::GetRendererFrameSize()

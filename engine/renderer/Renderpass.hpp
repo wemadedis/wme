@@ -33,7 +33,7 @@ public:
     RenderPass(Instance *instance, SwapChain *swapChain);
     ~RenderPass();
     VkRenderPass GetHandle();
-    void BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer cmdBuffer, VkFramebuffer frameBuffer);
+    void BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer cmdBuffer, VkFramebuffer frameBuffer, glm::vec4 clearColor);
     void EndRenderPass(VkCommandBuffer cmdBuffer);
 };
 

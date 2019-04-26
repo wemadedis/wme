@@ -33,13 +33,16 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     TransformComponent *transComp = scene->AddComponent<TransformComponent>(transIndex, go);
     MeshComponent *meshComp = scene->AddComponent<MeshComponent>(meshIndex, go);
     PlayerController *pc = scene->AddComponent<PlayerController>(pcIndex, go);
-
+    transComp->SetEnabled(true);
+    meshComp->SetEnabled(true);
+    pc->SetEnabled(true);
     GameObject *go2 = scene->CreateGameObject();
-    //TransformComponent *trans2 = scene->AddComponent<TransformComponent>(transIndex, go2);
+
+
     CameraComponent *camera = scene->AddComponent<CameraComponent>(camIndex, go2);
+    camera->SetEnabled(true);
     TransformComponent *trans2 = new TransformComponent();
     trans2->Transform.Pos = glm::vec3(0.0f, 0.0f, 10.0f);
-    //trans2->Transform.Pos = glm::vec3(0.0f, 0.0f, 10.0f);
 
     camera->Initialize(trans2);
 

@@ -119,7 +119,7 @@ VkRenderPass RenderPass::GetHandle()
     return _vkrpHandle;
 }
 
-void RenderPass::BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer cmdBuffer, VkFramebuffer frameBuffer)
+void RenderPass::BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer cmdBuffer, VkFramebuffer frameBuffer, glm::vec4 clearColor)
 {
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
@@ -137,7 +137,7 @@ void RenderPass::BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer cmd
     renderPassInfo.renderArea.extent = _swapChain->GetSwapChainExtent();
 
     std::array<VkClearValue, 2> clearValues = {};
-    clearValues[0].color = {0.0f, 0.0f, 0.0f, 1.0f};
+    clearValues[0].color = {clearColor.r, clearColor.g, clearColor.b, clearColor.a};
     clearValues[1].depthStencil = {1.0f, 0};
 
     renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());

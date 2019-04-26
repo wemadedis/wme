@@ -17,7 +17,12 @@ struct PointLight
 
 layout(binding = 0) uniform MeshUniformData {
     mat4 ModelMatrix;
-    vec4 Color;
+    float Ambient;
+    float Diffuse;
+    float Specular;
+    float Shininess;
+    float Reflectivity;
+    float Transparency;
     bool HasTexture;
 } MeshUniform;
 
@@ -26,7 +31,7 @@ layout(binding = 1) uniform GlobalUniformData
     vec4 Position;
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
-    vec4 AmbientColor;
+    vec4 ClearColor;
     vec4 LightCounts;
     PointLight PointLights[MAX_LIGHTS];
     DirectionalLight DirectionalLights[MAX_LIGHTS];
@@ -63,6 +68,6 @@ void main() {
     HasTexture = MeshUniform.HasTexture ? 1 : 0;
     gl_Position = GlobalUniform.ProjectionMatrix * GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0);
     ComputePhongProperties();
-    fragColor = MeshUniform.Color;
+    fragColor = vec4(MeshUniform.Ambient);
     UV = texCoord;
 }

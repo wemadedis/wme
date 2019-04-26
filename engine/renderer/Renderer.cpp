@@ -130,7 +130,7 @@ void Renderer::RecordRenderPass()
     for (uint32_t bufferIndex = 0; bufferIndex < _commandBufferManager->GetCommandBufferCount(); bufferIndex++)
     {
         VkCommandBuffer cmdBuffer = _commandBufferManager->GetCommandBuffer(bufferIndex);
-        _renderPass->BeginRenderPass(_pipeline, cmdBuffer, _swapChain->GetFramebuffers()[bufferIndex]);
+        _renderPass->BeginRenderPass(_pipeline, cmdBuffer, _swapChain->GetFramebuffers()[bufferIndex], _globalUniform.ClearColor);
 
         for (unsigned int meshIndex = 0; meshIndex < _meshInstances.size(); meshIndex++)
         {
@@ -575,9 +575,9 @@ void Renderer::SetPointLightProperties(PointLightHandle light, std::function<voi
     });
 }
 
-void Renderer::SetAmbientLight(glm::vec4 color)
+void Renderer::SetClearColor(glm::vec4 color)
 {
-    _globalUniform.AmbientColor = color;
+    _globalUniform.ClearColor = color;
 }
 
 void Renderer::SetCamera(Camera camera)

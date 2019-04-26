@@ -108,6 +108,7 @@ struct Shader
 
 struct Material
 {
+    float Ambient;
     float Diffuse;
     float Specular;
     float Shininess;

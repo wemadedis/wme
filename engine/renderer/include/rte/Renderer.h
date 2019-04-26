@@ -180,7 +180,7 @@ The renderer will the internally handle everything related to this.
 
     void SetPointLightProperties(PointLightHandle light, std::function<void(PointLight &)> mutator);
 
-    void SetAmbientLight(glm::vec4 color);
+    void SetClearColor(glm::vec4 color);
 
     void SetCamera(Camera camera);
 

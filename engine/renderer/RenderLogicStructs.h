@@ -36,7 +36,12 @@ struct TextureInfo
 struct MeshUniformData
 {
 	glm::mat4 ModelMatrix;
-	glm::vec4 Color = glm::vec4(1.0f);
+	float Ambient = 0.2f;
+    float Diffuse = 0.3f;
+    float Specular = 1.0f;
+    float Shininess = 10.0f;
+    float Reflectivity = 0.0f;
+    float Transparency = 0.0f;
 	bool HasTexture;
 };
 
@@ -59,7 +64,7 @@ struct GlobalUniformData
 	glm::vec4 Position;
 	glm::mat4 ViewMatrix;
 	glm::mat4 ProjectionMatrix;
-    glm::vec4 AmbientColor;
+    glm::vec4 ClearColor;
 	glm::vec4 LightCounts;
 	PointLight PointLights[MAX_LIGHTS] = {};
     DirectionalLight DirectionalLights[MAX_LIGHTS] = {};

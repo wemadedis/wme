@@ -52,7 +52,12 @@ layout(set = 1, binding = 4) uniform samplerBuffer VertexBuffers[];
 layout(set = 2, binding = 4) uniform InstanceUniformData
 {
     mat4 ModelMatrix;
-    vec4 Color;
+    float Ambient;
+    float Diffuse;
+    float Specular;
+    float Shininess;
+    float Reflectivity;
+    float Transparency;
     bool HasTexture;
 } InstanceData[];
 
@@ -104,9 +109,12 @@ HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
 
 vec4 Phong(vec3 L, vec3 R, vec3 N)
 {
-    float diff = max(0.0f, dot(L,N));
-    float spec = max(0.0f, dot(-gl_WorldRayDirectionNV,R));
-    return vec4(1.0f) * diff * spec;
+    float udiff = InstanceData[gl_InstanceCustomIndexNV].Diffuse;
+    float uspec = InstanceData[gl_InstanceCustomIndexNV].Specular;
+    float shininess = InstanceData[gl_InstanceCustomIndexNV].Shininess;
+    float diff = max(0.0f, dot(L,N)) * udiff;
+    float spec = pow(max(0.0f, dot(-gl_WorldRayDirectionNV,R)) * uspec, shininess);
+    return vec4(1.0f) * diff + vec4(1.0f) * spec;
 }
 
 vec4 CalculatePointLightShading(PointLight light, HitInfo hitinfo)
@@ -149,8 +157,8 @@ void main()
 
     uint meshIndex = texelFetch(InstanceMapping, gl_InstanceCustomIndexNV).r;
     int index1 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3).r);
-    int index2 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3+2).r);
-    int index3 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3+3).r);
+    int index2 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3+1).r);
+    int index3 = int(texelFetch(IndexBuffers[nonuniformEXT(meshIndex)], gl_PrimitiveID*3+2).r);
     Vertex v1 = GetVertex(meshIndex, index1);
     Vertex v2 = GetVertex(meshIndex, index2);
     Vertex v3 = GetVertex(meshIndex, index3);

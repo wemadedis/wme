@@ -81,7 +81,7 @@ int main()
     //auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
     auto quadhandle = renderer.UploadMesh(*quad);
     auto quadInstance = renderer.CreateMeshInstance(quadhandle);
-    auto quadInstance2 = renderer.CreateMeshInstance(quadhandle);
+    //auto quadInstance2 = renderer.CreateMeshInstance(quadhandle);
 
     MeshHandle cylinderMeshHandle = renderer.UploadMesh(*cylinder);
     MeshInstanceHandle inst = renderer.CreateMeshInstance(cylinderMeshHandle);
@@ -120,9 +120,10 @@ int main()
     auto monkeyHandle = renderer.UploadMesh(monkey);
     auto monkeyInstance = renderer.CreateMeshInstance(monkeyHandle);
     renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
-
+    auto texHandle = renderer.UploadTexture(tex);
+    renderer.BindTextureToMeshInstance(texHandle, quadInstance);
     renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(0.0f), 0.0f, 0.0f), glm::vec3(10.0f));
-    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(180.0f), 0.0f, 0.0f), glm::vec3(10.0f));
+    //renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(180.0f), 0.0f, 0.0f), glm::vec3(10.0f));
     renderer.SetCamera(cam);
 
     PointLight p;
@@ -145,7 +146,7 @@ int main()
     p.PositionRadius = glm::vec4(0.0f, 5.5f, 0.0f, 10.25f);
     PointLightHandle pl5 = renderer.AddPointLight(p);
 
-    renderer.SetAmbientLight(glm::vec4(0.1f));
+    renderer.SetClearColor(glm::vec4(0.0f));
     renderer.Finalize();
     TimePoint now = Clock::now();
     float deltaTime = 0.0f;

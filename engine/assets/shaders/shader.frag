@@ -15,12 +15,23 @@ struct PointLight
     vec4 PositionRadius;
 };
 
+layout(binding = 0) uniform MeshUniformData {
+    mat4 ModelMatrix;
+    float Ambient;
+    float Diffuse;
+    float Specular;
+    float Shininess;
+    float Reflectivity;
+    float Transparency;
+    bool HasTexture;
+} MeshUniform;
+
 layout(binding = 1) uniform GlobalUniformData
 {
     vec4 Position;
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
-    vec4 AmbientColor;
+    vec4 ClearColor;
     vec4 LightCounts;
     PointLight PointLights[MAX_LIGHTS];
     DirectionalLight DirectionalLights[MAX_LIGHTS];
@@ -41,10 +52,11 @@ layout(location = 0) out vec4 outColor;
 
 vec4 Phong(vec3 L, vec3 R)
 {
-    float diff = max(0.0f, dot(L,N));
-    float spec = max(0.0f, dot(V,R));
+    float diff = max(0.0f, dot(L,N)) * MeshUniform.Diffuse;
+    float spec = pow(max(0.0f, dot(V,R)) * MeshUniform.Specular, MeshUniform.Shininess);
     bool hasTex = HasTexture != 0;
-    return hasTex ? texture(texSampler, UV) * diff *spec : fragColor * diff * spec;
+
+    return hasTex ? texture(texSampler, UV) * diff + texture(texSampler, UV) * spec : vec4(1.0f) * diff + vec4(1.0f) * spec;
 }
 
 vec4 CalculatePointLightShading(PointLight light)
@@ -69,7 +81,7 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light)
 vec4 CalculatePerLightShading()
 {
     bool hasTex = HasTexture != 0;
-    vec4 color = hasTex ? texture(texSampler, UV) * GlobalUniform.AmbientColor : fragColor * GlobalUniform.AmbientColor;
+    vec4 color = hasTex ? texture(texSampler, UV) * MeshUniform.Ambient : fragColor * MeshUniform.Ambient;
     for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
     {
         color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex]);

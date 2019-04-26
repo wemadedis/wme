@@ -1,6 +1,7 @@
 #pragma once
 #include "rte/Component.h"
 #include "rte/TransformComponent.hpp"
+#include "rte/Colors.hpp"
 
 namespace RTE::Rendering
 {
@@ -24,6 +25,8 @@ public:
     ProjectionMode Projection = ProjectionMode::PERSPECTIVE;
     float FieldOfView = 45.0f;
     float NearPlane = 0.5f, FarPlane = 1000.0f;
+    Colors::Color BackgroundColor = Colors::Yellow;
+
     CameraComponent() = default;
     ~CameraComponent();
     void Initialize(TransformComponent *transformComponent);
@@ -31,6 +34,7 @@ public:
 
     glm::mat4 ViewMatrix();
     glm::mat4 ProjectionMatrix();
+    void SetAsMain();
     
     virtual void Update(float deltaTime) override;
 };
