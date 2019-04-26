@@ -43,11 +43,11 @@ public:
         }
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_Q) == GLFW_PRESS)
         {
-            _camera->FieldOfView -= 1.0f*deltaTime;
+            _camera->GetTransformComponent()->Transform.Rot.y += 50.0f*deltaTime;
         }
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_E) == GLFW_PRESS)
         {
-            _camera->FieldOfView += 1.0f*deltaTime;
+            _camera->GetTransformComponent()->Transform.Rot.y -= 50.0f*deltaTime;
         }
         std::cout << _camera->FieldOfView << std::endl;
     }

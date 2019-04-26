@@ -108,16 +108,17 @@ struct Shader
 
 struct Material
 {
-    float Ambient;
-    float Diffuse;
-    float Specular;
-    float Shininess;
-    float Reflectivity;
-    float Transparency;
+	float Ambient = 0.2f;
+    float Diffuse = 0.3f;
+    float Specular = 1.0f;
+    float Shininess = 10.0f;
+    float Reflectivity = 0.0f;
+    float Transparency = 0.0f;
 
-    glm::vec4 Color;
+    //TODO: We currently do not use color, and texture should be defined by path (for the rendering manager). Remove these?
+    //glm::vec4 Color;
 
-    Texture *Texture;
+    //Texture *Texture;
 };
 
 struct Mesh

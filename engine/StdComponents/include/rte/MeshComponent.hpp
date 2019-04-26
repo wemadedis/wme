@@ -22,6 +22,8 @@ private:
     std::string _texturePath;
     TransformComponent *_transform;
 public:
+    Material Material = {};
+    
     MeshComponent();
 
     void Initialize(TransformComponent *transform, std::string meshFilePath, std::string textureFilePath = std::string(""));

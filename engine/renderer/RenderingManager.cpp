@@ -70,6 +70,7 @@ void RenderingManager::Update(float deltaTime)
         MeshInstanceHandle instance = iter->second;
         Transform *t = &comp->GetTransformComponent()->Transform;
         _renderer->SetMeshTransform(instance, t->Pos, t->Rot, t->Scale);
+        _renderer->SetInstanceMaterial(instance, comp->Material);
     }
 
     if(_mainCamera != nullptr)

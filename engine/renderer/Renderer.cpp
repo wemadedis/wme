@@ -531,13 +531,26 @@ void Renderer::MarkDirty(MeshHandle mesh)
 {
 }
 
+void Renderer::SetInstanceMaterial(MeshInstanceHandle instance, Material &mat)
+{
+     _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshUniformData *data) {
+        data->Ambient = mat.Ambient;
+        data->Diffuse = mat.Diffuse;
+        data->Specular = mat.Specular;
+        data->Shininess = mat.Shininess;
+        data->Reflectivity = mat.Reflectivity;
+        data->Transparency = mat.Transparency;
+        //data->HasTexture = mat.Texture != null;
+    });
+}
+
 void Renderer::SetMeshTransform(MeshInstanceHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl)
 {
     glm::mat4 rotation = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
     glm::mat4 translation = glm::translate(pos);
     glm::mat4 scale = glm::scale(scl);
     auto modelMatrix = translation * rotation * scale;
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [modelMatrix](MeshUniformData *data) {
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [&](MeshUniformData *data) {
         data->ModelMatrix = modelMatrix;
     });
 
