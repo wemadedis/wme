@@ -3,6 +3,8 @@
 #include "rte/MeshComponent.hpp"
 #include "rte/PhysicsComponent.hpp"
 #include "rte/TransformComponent.hpp"
+#include "rte/MeshComponent.hpp"
+#include "rte/CameraComponent.hpp"
 
 namespace RTE
 {

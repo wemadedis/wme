@@ -29,6 +29,7 @@ public:
     void Initialize(TransformComponent *transformComponent);
     TransformComponent* GetTransformComponent();
     
+    virtual void Update(float deltaTime) override;
 };
 
 }

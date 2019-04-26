@@ -356,6 +356,8 @@ void Renderer::CreateShaderBindingTable()
 Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f / info.MaxFPS)
 {
     _initInfo = info;
+    _frameWidth = info.Width;
+    _frameHeight = info.Height;
     _lastFrameEnd = Clock::now();
     Initialize();
     if (RTXon)
