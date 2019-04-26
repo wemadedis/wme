@@ -18,12 +18,12 @@ private:
     /// @brief The ID of this GameObject
     uint64_t _id = 0;
 
-    /// @brief std::vector of #RTE::Runtime::Component's attached to this GameObject
-
-    std::vector<Component *> *_components = nullptr;
-
     /// @brief The enabled state of this GameObject
     bool _enabled = true;
+
+    /// @brief std::vector of #RTE::Runtime::Component's attached to this GameObject
+    std::vector<Component *> *_components = nullptr;
+
 
 public:
     /**
@@ -40,8 +40,6 @@ public:
      */
     std::vector<Component *> *GetComponents();
 
-    /// @brief Destroys this GameObject and associated #RTE::Runtime::Component's
-    void Destroy();
 
     /**
      * @brief Get the ID of this GameObject

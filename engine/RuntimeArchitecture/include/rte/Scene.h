@@ -35,9 +35,7 @@ public:
     TComp *AddComponent(uint64_t compId, GameObject *go)
     {
         Component *comp = _componentPools[compId]->AddComponent(go->GetId());
-        comp->SetEnabled(true);
-        comp->GameObjectID = go->GetId();
-        TComp *tp = static_cast<TComp *>(comp);
+        TComp *tp = dynamic_cast<TComp *>(comp);
         go->GetComponents()->push_back(tp);
         return tp;
     }

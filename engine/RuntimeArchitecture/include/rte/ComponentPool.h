@@ -20,16 +20,16 @@ class ComponentPoolInstance : public ComponentPool
 {
 public:
     static_assert(std::is_base_of<Component, TComp>::value, "TComp must inherit from Component");
-    std::vector<TComp> Components = std::vector<TComp>();
+    std::vector<TComp*> Components = std::vector<TComp*>();
     std::map<uint64_t, uint64_t> _goIdToComponentIndex;
 
     void UpdateAll(float deltaTime) override
     {
         for (int32_t componentIndex = 0; componentIndex < Components.size(); componentIndex++)
         {
-            if (Components[componentIndex].GetEnabled())
+            if (Components[componentIndex]->GetEnabled())
             {
-                Components[componentIndex].Update(deltaTime);
+                Components[componentIndex]->Update(deltaTime);
             }
         }
     }
@@ -45,9 +45,10 @@ public:
         // Add gameobject index to map index
         uint64_t componentIndex = GetFreeComponentIndex();
         _goIdToComponentIndex[goId] = componentIndex;
-        Components.push_back(TComp());
-        Components[componentIndex].SetEnabled(true);
-        return &Components[componentIndex];
+		TComp *c = new TComp();
+		c->GameObjectID = goId;
+        Components.push_back(c);
+        return Components[componentIndex];
     }
 };
 } // namespace RTE::Runtime

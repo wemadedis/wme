@@ -22,6 +22,17 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     Scene *scene = sceneManager.MakeScene();
     sceneManager.SetActiveScene(scene);
 
+	// Testing
+    uint64_t transIndex = scene->DefineComponent<TransformComponent>();
+    GameObject *go = scene->CreateGameObject();
+    TransformComponent *transComp0 = scene->AddComponent<TransformComponent>(transIndex, go);
+	transComp0->Initialize(glm::vec3(10,10,10), glm::vec3(0), glm::vec3(1));
+	TransformComponent *transComp1 = scene->AddComponent<TransformComponent>(transIndex, go);
+	transComp1->Initialize(glm::vec3(5,5,5), glm::vec3(0), glm::vec3(2));
+	int32_t memes = 5;
+	
+	/*
+
     // Init components pools
     uint64_t pcIndex = scene->DefineComponent<PlayerController>();
     uint64_t transIndex = scene->DefineComponent<TransformComponent>();
@@ -40,4 +51,5 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     physComp->Initialize(transComp, 100, {boxCollider});
 
     pcComp->Initialize(transComp, physComp);
+	*/
 }
