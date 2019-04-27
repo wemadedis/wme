@@ -3,10 +3,10 @@
 #include "rte/MeshComponent.hpp"
 #include "rte/PhysicsComponent.hpp"
 #include "rte/TransformComponent.hpp"
-#include "rte/MeshComponent.hpp"
 #include "rte/CameraComponent.hpp"
 #include "rte/PointLightComponent.hpp"
 #include "rte/DirectionalLightComponent.hpp"
+
 namespace RTE
 {
 /**
