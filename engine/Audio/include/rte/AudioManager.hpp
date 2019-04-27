@@ -10,7 +10,6 @@ class AudioManager
 private:
     static AudioManager *_instance;
 
-
 public:    
     AudioManager();
     ~AudioManager();

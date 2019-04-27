@@ -7,7 +7,7 @@ Emitter::Emitter()
     
 }
 
-void Emitter::setState(Audio::State state)
+void Emitter::SetState(Audio::State state)
 {
     _state = state;
 }
@@ -56,19 +56,19 @@ void Emitter::SetPlayingOffset(float offset)
 void Emitter::Play()
 {
     _sound.play();
-    setState(Playing);
+    SetState(Playing);
 }
 
 void Emitter::Pause()
 {
     _sound.pause();
-    setState(Paused);
+    SetState(Paused);
 }
 
 void Emitter::Stop()
 {
     _sound.stop();
-    setState(Stopped);
+    SetState(Stopped);
 }
 
 }

@@ -8,7 +8,7 @@
 
 int main()
 {
-    const std::string& path = "E:\\projects\\rte\\engine\\assets\\audio\\stereo.wav";
+    const std::string& path = std::string(ENGINE_ASSET_DIR) + std::string("audio\\mono.wav");
     
     // Emitter TEST
 

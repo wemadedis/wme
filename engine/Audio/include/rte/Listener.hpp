@@ -7,8 +7,6 @@
 namespace RTE::Audio
 {
 class Listener {
-    // static glm::vec3 _position;
-    // static glm::vec3 _direction;
 public:
     static void SetPosition(glm::vec3);
     static glm::vec3 GetPosition();
