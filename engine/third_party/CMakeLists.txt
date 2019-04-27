@@ -51,8 +51,10 @@ target_link_libraries(bullet INTERFACE
 
 
 ###<DEAR IMGUI>
-add_library(imgui imgui/imgui/imgui.cpp imgui/imgui/imgui_draw.cpp imgui/imgui/imgui_widgets.cpp imgui/imgui/imgui_demo.cpp)
+file(GLOB  imgui_source "imgui/imgui/*.cpp")
+add_library(imgui ${imgui_source})
 target_include_directories(imgui PUBLIC imgui)
+target_link_libraries(imgui PUBLIC vulkan glfw)
 ###</DEAR IMGUI>
 
 ### <SFML>

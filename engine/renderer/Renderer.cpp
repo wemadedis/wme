@@ -21,6 +21,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
+#include "imgui/imgui_impl_glfw_vulkan.h"
+
 namespace RTE::Rendering
 {
 TextureHandle Renderer::EMPTY_TEXTURE;
@@ -146,7 +148,7 @@ void Renderer::RecordRenderPass()
 
             vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(mesh->IndexCount), 1, 0, 0, 0);
         }
-
+        //ImGui_ImplGlfwVulkan_Render(cmdBuffer);
         _renderPass->EndRenderPass(cmdBuffer);
     }
 }
