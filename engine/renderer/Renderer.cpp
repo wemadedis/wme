@@ -21,8 +21,6 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-#include "imgui/imgui_impl_glfw_vulkan.h"
-
 namespace RTE::Rendering
 {
 TextureHandle Renderer::EMPTY_TEXTURE;

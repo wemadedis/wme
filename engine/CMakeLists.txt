@@ -1,4 +1,5 @@
 add_subdirectory(core)
+add_subdirectory(gui)
 add_subdirectory(renderer)
 add_subdirectory(Physics)
 add_subdirectory(platform)
@@ -8,3 +9,4 @@ add_subdirectory(RuntimeArchitecture)
 add_subdirectory(Importer)
 add_subdirectory(StdComponents)
 add_subdirectory(Audio)
+

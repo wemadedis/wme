@@ -21,6 +21,7 @@ add_subdirectory(apps)
 target_link_libraries(rte INTERFACE
     core
     physics
+    gui
     renderer
     runtime_architecture 
     importer 

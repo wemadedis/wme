@@ -180,9 +180,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
         { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1 },
         { VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV, 1 },
         { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 },
-        { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1 },
-        { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, (uint32_t)meshes.size() },
-        { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, (uint32_t)meshes.size() },
+        { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, (uint32_t)meshes.size() * 3 + 1},
         { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, (uint32_t)instances.size() },
     });
 

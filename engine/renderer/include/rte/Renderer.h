@@ -21,6 +21,8 @@
 //RT
 #include "AccelerationStructureRT.h"
 
+#include "rte/GUIModule.h"
+
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
 #else
