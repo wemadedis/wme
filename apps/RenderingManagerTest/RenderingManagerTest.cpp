@@ -10,7 +10,8 @@ using namespace RTE;
 
 void ConfigureGame(RTEConfig &config)
 {
-    config.WindowConfig.WindowHeight = 1000;
+    config.WindowConfig.WindowHeight = 500;
+    config.WindowConfig.WindowWidth = 500;
     config.WindowConfig.ApplicationName = "Banana";
     config.WindowConfig.WindowName = "Eggplant";
     config.GraphicsConfig.UseRaytracing = false;
@@ -51,9 +52,9 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
 
     GameObject *go3 = scene->CreateGameObject();
     auto trans3 = scene->AddComponent<TransformComponent>(transIndex, go3);
-    //auto pointLight = scene->AddComponent<PointLightComponent>(plIndex, go3);
+    auto pointLight = scene->AddComponent<PointLightComponent>(plIndex, go3);
     trans3->Transform.Pos = glm::vec3(0.0f, 2.0f, 0.0f);
-    //pointLight->Initialize(trans3, 5.0f);
+    pointLight->Initialize(trans3, Colors::Yellow, 5.0f);
 
     GameObject *go4 = scene->CreateGameObject();
     auto trans4 = scene->AddComponent<TransformComponent>(transIndex, go4);

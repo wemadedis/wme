@@ -22,7 +22,7 @@ public:
     PointLightComponent() = default;
     ~PointLightComponent();
     TransformComponent* GetTransformComponent();
-    void Initialize(TransformComponent *transform, float radius);
+    void Initialize(TransformComponent *transform, Colors::Color color, float radius);
     virtual void Update(float deltaTime) override;
 };
 
