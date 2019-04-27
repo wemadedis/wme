@@ -17,9 +17,12 @@ void ListenerComponent::Initialize(TransformComponent* transformComponent, bool 
 
 void ListenerComponent::Update(float deltaTime)
 {
-    using namespace RTE::Audio;
-    Listener::SetPosition(_transformComponent->Transform.Pos);
-    Listener::SetDirection(_transformComponent->Transform.Rot);
+    if (_enabled)
+    {
+        using namespace RTE::Audio;
+        Listener::SetPosition(_transformComponent->Transform.Pos);
+        Listener::SetDirection(_transformComponent->Transform.Rot);
+    }
 }
 
 void ListenerComponent::Enable()
