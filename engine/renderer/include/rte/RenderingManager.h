@@ -16,7 +16,6 @@
 #include <vector>
 #include <string>
 
-
 namespace RTE::Platform
 {
 class WindowManager;
@@ -30,7 +29,8 @@ private:
     static RenderingManager *_instance;
     Renderer *_renderer;
     GUI::GUIModule *_guiModule;
-    
+    bool _rtEnabled = false;
+
     // RESOURCE DATA: filepath -> resource handle
     std::unordered_map<std::string, MeshHandle> _meshes;
     std::unordered_map<std::string, TextureHandle> _textures;
@@ -53,6 +53,7 @@ public:
     void FinalizeRenderer();
     static RenderingManager* GetInstance();
     void Update(float deltaTime) override;
+    void SetRTEnabled(bool rtEnabled);
     void FrameResized(int32_t width, int32_t height);
     void ImportRenderingResources(std::vector<std::string> &meshes, std::vector<std::string> &textures);
     void RegisterMeshComponent(MeshComponent *meshComponent);
@@ -60,6 +61,7 @@ public:
     void SetMainCamera(CameraComponent *cameraComponent);
     void RegisterPointLight(PointLightComponent *pointLight);
     void RegisterDirectionalLight(DirectionalLightComponent *dirLight);
+    void SetGUIDrawFunction(void (*function)());
     glm::ivec2 GetRendererFrameSize();
 };
 

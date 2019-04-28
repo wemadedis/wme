@@ -23,7 +23,7 @@ RenderingManager::RenderingManager(
     };
     _guiModule = new GUI::GUIModule();
 
-    _guiModule->ImGUIDrawCommands = [](){
+    _guiModule->DrawFunction = [&](){
         ImGui::Begin("Wazzup");
         ImGui::Text("Hello, world %d", 123);
         if (ImGui::Button("Save"))
@@ -32,10 +32,11 @@ RenderingManager::RenderingManager(
         }
         float f;
         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+        ImGui::Checkbox("RTX ON", &_rtEnabled);
         ImGui::End();
     };
-
     _renderer = new Renderer(info, _guiModule);
+    //TODO: Handle cases where RT is requested but not available
 
     _textures.insert({std::string(""), Renderer::EMPTY_TEXTURE});
 
@@ -95,11 +96,19 @@ void RenderingManager::Update(float deltaTime)
     {
         UpdateMainCamera();
     }
+
+    if(_rtEnabled) _renderer->SetRenderMode(RenderMode::RAYTRACE);
+    else _renderer->SetRenderMode(RenderMode::RASTERIZE);
     
     auto size = _renderer->GetFrameSize();
     auto& io = ImGui::GetIO();
     io.DisplaySize = ImVec2((float)size.x, (float)size.y);
     _renderer->Draw();
+}
+
+void RenderingManager::SetRTEnabled(bool rtEnabled)
+{
+    _rtEnabled = rtEnabled;
 }
 
 void RenderingManager::ImportRenderingResources(std::vector<std::string> &meshes, std::vector<std::string> &textures)
@@ -161,7 +170,7 @@ void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshCom
     Transform &trans = meshComponent->GetTransformComponent()->Transform;
     _renderer->BindMeshToInstance(mesh, instance);
     _renderer->BindTextureToMeshInstance(texture, instance);
-    _renderer->SetMeshTransform(instance, trans.Pos, trans.Rot, trans.Scale);
+    _renderer->SetInstanceTransform(instance, trans.Pos, trans.Rot, trans.Scale);
     _renderer->SetInstanceMaterial(instance, meshComponent->Material);
 }
 
@@ -211,6 +220,11 @@ void RenderingManager::RegisterDirectionalLight(DirectionalLightComponent *dirLi
     dl.Direction = glm::vec4(dirLight->Direction(), 0.0f);
     DirectionalLightHandle light = _renderer->AddDirectionalLight(dl);
     _directionalLights.insert({dirLight, light});
+}
+
+void RenderingManager::SetGUIDrawFunction(void (*function)())
+{
+    _guiModule->DrawFunction = function;
 }
 
 glm::ivec2 RenderingManager::GetRendererFrameSize()

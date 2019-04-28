@@ -73,8 +73,8 @@ Vertex GetVertex(uint meshIndex, int vertexIndex)
 {
     Vertex vert;
     vert.pos.x =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS    );
-    vert.pos.x =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 1);
-    vert.pos.x =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 2);
+    vert.pos.y =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 1);
+    vert.pos.z =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 2);
     vert.color.r =  FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 3);
     vert.color.g =  FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 4);
     vert.color.b =  FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 5);
@@ -126,16 +126,14 @@ vec4 CalculatePointLightShading(PointLight light, HitInfo hitinfo)
     float distance = length(direction);
     return Phong(L,R, hitinfo.Normal) * light.Color * light.PositionRadius.w / (distance*distance);
 }
-/*
-vec4 CalculateDirectionalLightShading(DirectionalLight light, vec3 N)
+
+
+vec4 CalculateDirectionalLightShading(DirectionalLight light, HitInfo hitInfo)
 {
-    vec3 L = light.Direction.xyz;
-    vec3 R = reflect(L, N);
-    return Phong(L,R) * light.Color;
+    vec3 L = -light.Direction.xyz;
+    vec3 R = reflect(L, hitInfo.Normal);
+    return Phong(L,R, hitInfo.Normal) * light.Color;
 }
-*/
-
-
 
 vec4 CalculatePerLightShading(HitInfo hitinfo)
 {
@@ -144,10 +142,10 @@ vec4 CalculatePerLightShading(HitInfo hitinfo)
     {
         color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex], hitinfo);
     }
-    /*for(uint directionalLightIndex = 0; directionalLightIndex < GlobalUniform.LightCounts.x; directionalLightIndex++)
+    for(uint directionalLightIndex = 0; directionalLightIndex < GlobalUniform.LightCounts.x; directionalLightIndex++)
     {
-        color += CalculateDirectionalLightShading(GlobalUniform.DirectionalLights[directionalLightIndex]);
-    }*/
+        color += CalculateDirectionalLightShading(GlobalUniform.DirectionalLights[directionalLightIndex], hitinfo);
+    }
     return color;
 }
 

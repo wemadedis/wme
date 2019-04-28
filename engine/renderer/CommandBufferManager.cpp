@@ -13,7 +13,7 @@ void CommandBufferManager::CreateCommandPool()
     VkCommandPoolCreateInfo poolInfo = {};
     poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
     poolInfo.queueFamilyIndex = queueFamilyIndices.GraphicsFamily.value();
-    poolInfo.flags = 0;
+    poolInfo.flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT ;
 
     VkResult code = vkCreateCommandPool(_instance->GetDevice(), &poolInfo, nullptr, &_commandPool);
     Utilities::CheckVkResult(code, "Failed to create a command pool!");

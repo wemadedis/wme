@@ -70,22 +70,7 @@ void AccelerationStructure::FillOutStructure(std::vector<VkGeometryNV> geometrie
         _rtUtil->vkCmdBuildAccelerationStructureNV(commandBuffer, &asInfo, _instanceBuffer.buffer, 0, VK_FALSE, _top, VK_NULL_HANDLE, _scratchBuffer.buffer, 0);
     }
     vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV, VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_NV, 0, 1, &memoryBarrier, 0, 0, 0, 0);
-
-    vkEndCommandBuffer(commandBuffer);
-
-    VkSubmitInfo submitInfo;
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-    submitInfo.pNext = nullptr;
-    submitInfo.waitSemaphoreCount = 0;
-    submitInfo.pWaitSemaphores = nullptr;
-    submitInfo.pWaitDstStageMask = nullptr;
-    submitInfo.commandBufferCount = 1;
-    submitInfo.pCommandBuffers = &commandBuffer;
-    submitInfo.signalSemaphoreCount = 0;
-    submitInfo.pSignalSemaphores = nullptr;
-
-    vkQueueSubmit(_instance->GetGraphicsQueue(), 1, &submitInfo, VK_NULL_HANDLE);
-    vkQueueWaitIdle(_instance->GetGraphicsQueue());
+    _commandBufferManager->SubmitCommandBufferInstance(commandBuffer, _instance->GetGraphicsQueue());
 }
 
 AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryManager *deviceMemoryManager,
@@ -331,7 +316,7 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
     FillOutStructure(geometries, instances);
 }
 
-VkAccelerationStructureNV AccelerationStructure::GetTopStructure()
+VkAccelerationStructureNV& AccelerationStructure::GetTopStructure()
 {
     return _top;
 }
@@ -358,7 +343,7 @@ void AccelerationStructure::UpdateInstanceTransform(MeshInstanceHandle instanceH
 
 void AccelerationStructure::RebuildTopStructureCmd(VkCommandBuffer commandBuffer)
 {
-    VkMemoryBarrier memoryBarrier;
+    VkMemoryBarrier memoryBarrier = {};
     memoryBarrier.sType = VK_STRUCTURE_TYPE_MEMORY_BARRIER;
     memoryBarrier.pNext = nullptr;
     memoryBarrier.srcAccessMask = VK_ACCESS_ACCELERATION_STRUCTURE_WRITE_BIT_NV | VK_ACCESS_ACCELERATION_STRUCTURE_READ_BIT_NV;
@@ -374,8 +359,8 @@ void AccelerationStructure::RebuildTopStructureCmd(VkCommandBuffer commandBuffer
     asInfo.pGeometries = nullptr;
     //_rtUtil->vkCmdBuildAccelerationStructureNV(commandBuffer, &asInfo, _instanceBuffer.buffer, 0, VK_FALSE, _top, VK_NULL_HANDLE, _scratchBuffer.buffer, 0);
     _rtUtil->vkCmdBuildAccelerationStructureNV(commandBuffer, &asInfo, _instanceBuffer.buffer, 0, VK_TRUE, _top, _top, _scratchBuffer.buffer, 0);
-    //TODO: Find out why we do memory barriers here
-    vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV, VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_NV, 0, 1, &memoryBarrier, 0, 0, 0, 0);
+    //TODO: Find out why we do memory barriers here (COMMENTED OUT, NOTHING CHANGED)
+    //vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_ACCELERATION_STRUCTURE_BUILD_BIT_NV, VK_PIPELINE_STAGE_RAY_TRACING_SHADER_BIT_NV, 0, 1, &memoryBarrier, 0, 0, 0, 0);
 }
 
 } // namespace RTE::Rendering

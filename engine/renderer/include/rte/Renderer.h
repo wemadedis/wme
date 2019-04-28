@@ -100,8 +100,6 @@ private:
     AccelerationStructure *_accelerationStructure = nullptr;
     GraphicsPipeline *_pipelineRT = nullptr;
     BufferInformation _shaderBindingTable;
-    ImageInformation _offScreenImageRT;
-    VkImageView _offScreenImageView;
     BufferInformation _instanceBuffer;
 
     const float _minFrameTime;
@@ -125,6 +123,7 @@ private:
 
 public:
     static TextureHandle EMPTY_TEXTURE;
+    static bool IsRaytracingCapable();
     /*
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.
 */
@@ -178,7 +177,7 @@ The renderer will the internally handle everything related to this.
 
     void SetInstanceMaterial(MeshInstanceHandle instance, Material &mat);
 
-    void SetMeshTransform(MeshInstanceHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl);
+    void SetInstanceTransform(MeshInstanceHandle instance, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl);
 
     //LLLLLLLLLIIIIIIIIIIIIIIGGGGGGGGGGGHHHHHHHHHHHHTTTTTTTTTTSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!
     DirectionalLightHandle AddDirectionalLight(DirectionalLight light);
@@ -195,9 +194,5 @@ The renderer will the internally handle everything related to this.
 
     ShaderHandle UploadShader(Shader shader);
 };
-
-void CreateInstance(std::string appName, VkInstance *instance, std::vector<const char *> extensions, bool enableValidationLayers);
-void SetupDebugCallback(VkInstance instance);
-void CreateSurface(VkInstance instance);
 
 }; // namespace RTE::Rendering

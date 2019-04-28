@@ -17,6 +17,13 @@ void Terminate();
 void WaitEvents();
 void PollEvents();
 
+typedef std::function<void(int button, int action)> MouseButtonCallback;
+typedef std::function<void(double xoffset, double yoffset)> MouseWheelCallback;
+typedef std::function<void(double x, double y)> MousePositionCallback;
+typedef std::function<void(int key, int action)> KeyCallback;
+typedef std::function<void(unsigned int character)> CharCallback;
+
+
 class WindowManager : public RTEModule
 {
 public:
@@ -36,11 +43,24 @@ public:
     GLFWwindow *Window;
     void SetRenderingManager(Rendering::RenderingManager *rm);
 
+    void RegisterMouseButtonCallback(MouseButtonCallback cb);
+    void RegisterMouseWheelCallback(MouseWheelCallback cb);
+    void RegisterMousePositionCallback(MousePositionCallback cb);
+    void RegisterKeyCallback(KeyCallback cb);
+    void RegisterCharCallback(CharCallback cb);
+    
 private:
     // Instance for singleton pattern
     static WindowManager *_instance;
     // Creates a Vulkan surface a given GLFW window
     Rendering::RenderingManager *_renderingManager;
+
+    std::vector<MouseButtonCallback> _mbCallbacks;
+    std::vector<MouseWheelCallback> _mwCallbacks;
+    std::vector<MousePositionCallback> _mpCallbacks;
+    std::vector<KeyCallback> _keyCallbacks;
+    std::vector<CharCallback> _charCallbacks;
+    void SetupGLFWCallbacks();
 
     // Callback function called when the size of the window is changed
     static void FramebufferResizeCallback(GLFWwindow *window, int width, int height);

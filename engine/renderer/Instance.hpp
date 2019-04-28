@@ -29,7 +29,7 @@ private:
 
     void CreateInstance(std::vector<const char*> &extensions);
     bool DeviceMeetsRequirements(VkPhysicalDevice device);
-    void ChoosePhysicalDevice();
+    void ChoosePhysicalDevice(bool rtRequested);
     void CreateLogicalDevice();
     void SetupDebugCallBack();
     
@@ -47,7 +47,7 @@ public:
     
     VkFormat GetOptimalFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features);
 	VkFormat GetOptimalDepthFormat();
-    bool IsRayTracingCapable();
+    static bool IsRayTracingCapable();
 };
 
 };
