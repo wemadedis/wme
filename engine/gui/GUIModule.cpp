@@ -1,10 +1,11 @@
 #include "rte/GUIModule.h"
 #include "imgui/imgui.h"
 #include "imgui/examples/imgui_impl_vulkan.h"
-
+#include "rte/WindowManager.h"
 
 namespace RTE::GUI
 {
+
 
 void GUIModule::Initialize(GUIInitInfo info, VkRenderPass rp, VkCommandBuffer cmdBuffer)
 {
