@@ -36,14 +36,14 @@ void GUIModule::SetupInputCallbacks()
     auto wm = Platform::WindowManager::GetInstance();
     
     wm->RegisterMouseButtonCallback([&](int button, int action){
-        if(button >= 0 && button < 3)
+        if(button >= 0 && button < 3) //TODO: Revisit. Dunno what other buttons are, followed the NV tutorial here
         {
             io.MouseDown[button] = action == GLFW_PRESS;
         }
     });
 
     wm->RegisterMousePositionCallback([&](double x, double y){
-        io.MousePos = ImVec2(x,y);
+        io.MousePos = ImVec2((float)x,(float)y);
     });
 
     wm->RegisterMouseWheelCallback([&](double xoffset, double yoffset){

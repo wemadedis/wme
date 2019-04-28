@@ -170,13 +170,13 @@ void Renderer::RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32
     _descriptorManager->UpdateRTTargetImage(_swapChain->GetSwapChainImages()[frameIndex].imageView);
     auto dset = _descriptorManager->GetDescriptorSetRT();
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, (uint32_t)dset.size(), dset.data(), 0, 0);
-
+    auto extent = _swapChain->GetSwapChainExtent();
     RTUtilities::GetInstance()->vkCmdTraceRaysNV(commandBuffer,
                                                  _shaderBindingTable.buffer, 0,
                                                  _shaderBindingTable.buffer, 2 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
                                                  _shaderBindingTable.buffer, 1 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
                                                  VK_NULL_HANDLE, 0, 0,
-                                                 _initInfo.Width, _initInfo.Height, 1);
+                                                 extent.width, extent.height, 1);
 }
 
 void Renderer::RecordCommandBuffersRT()

@@ -23,7 +23,7 @@ RenderingManager::RenderingManager(
     };
     _guiModule = new GUI::GUIModule();
 
-    _guiModule->DrawFunction = [](){
+    _guiModule->DrawFunction = [&](){
         ImGui::Begin("Wazzup");
         ImGui::Text("Hello, world %d", 123);
         if (ImGui::Button("Save"))
@@ -32,9 +32,11 @@ RenderingManager::RenderingManager(
         }
         float f;
         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+        ImGui::Checkbox("RTX ON", &_rtEnabled);
         ImGui::End();
     };
     _renderer = new Renderer(info, _guiModule);
+    //TODO: Handle cases where RT is requested but not available
 
     _textures.insert({std::string(""), Renderer::EMPTY_TEXTURE});
 
@@ -94,6 +96,9 @@ void RenderingManager::Update(float deltaTime)
     {
         UpdateMainCamera();
     }
+
+    if(_rtEnabled) _renderer->SetRenderMode(RenderMode::RAYTRACE);
+    else _renderer->SetRenderMode(RenderMode::RASTERIZE);
     
     auto size = _renderer->GetFrameSize();
     auto& io = ImGui::GetIO();
