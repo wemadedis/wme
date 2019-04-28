@@ -34,7 +34,6 @@ RenderingManager::RenderingManager(
         ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
         ImGui::End();
     };
-
     _renderer = new Renderer(info, _guiModule);
 
     _textures.insert({std::string(""), Renderer::EMPTY_TEXTURE});
@@ -100,6 +99,11 @@ void RenderingManager::Update(float deltaTime)
     auto& io = ImGui::GetIO();
     io.DisplaySize = ImVec2((float)size.x, (float)size.y);
     _renderer->Draw();
+}
+
+void RenderingManager::SetRTEnabled(bool rtEnabled)
+{
+    _rtEnabled = rtEnabled;
 }
 
 void RenderingManager::ImportRenderingResources(std::vector<std::string> &meshes, std::vector<std::string> &textures)
@@ -211,6 +215,11 @@ void RenderingManager::RegisterDirectionalLight(DirectionalLightComponent *dirLi
     dl.Direction = glm::vec4(dirLight->Direction(), 0.0f);
     DirectionalLightHandle light = _renderer->AddDirectionalLight(dl);
     _directionalLights.insert({dirLight, light});
+}
+
+void RenderingManager::SetGUIDrawFunction(void (*function)())
+{
+    _guiModule->ImGUIDrawCommands = function;
 }
 
 glm::ivec2 RenderingManager::GetRendererFrameSize()

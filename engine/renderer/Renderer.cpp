@@ -26,6 +26,12 @@ namespace RTE::Rendering
 TextureHandle Renderer::EMPTY_TEXTURE;
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
+
+bool Renderer::IsRaytracingCapable()
+{
+    return Instance::IsRayTracingCapable();
+}
+
 void Renderer::FrameResized(int32_t width, int32_t height)
 {
     _frameWidth = width;

@@ -34,6 +34,7 @@ void GUIModule::SetupInputCallbacks()
 {
     auto& io = ImGui::GetIO();
     auto wm = Platform::WindowManager::GetInstance();
+    
     wm->RegisterMouseButtonCallback([&](int button, int action){
         if(button >= 0 && button < 3)
         {

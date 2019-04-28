@@ -1,6 +1,10 @@
+#include "rte/RTEException.h"
+
 #include "Instance.hpp"
 #include "SwapChain.hpp"
 #include "Utilities.h"
+
+
 #include <set>
 #include <iostream>
 
@@ -61,25 +65,26 @@ bool Instance::DeviceMeetsRequirements(VkPhysicalDevice device)
     return indices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
 }
 
-void Instance::ChoosePhysicalDevice()
+void Instance::ChoosePhysicalDevice(bool rtRequested)
 {
+    if(rtRequested)
+    {
+        _neededDeviceExtensions.push_back(VK_NV_RAY_TRACING_EXTENSION_NAME);
+    }
+
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(_instance, &deviceCount, nullptr);
-    if (deviceCount == 0)
-    {
-        throw std::runtime_error("failed to find GPUs with Vulkan support!");
-    }
+    if (deviceCount == 0) throw RTEException("Failed to find GPUs with Vulkan support!");
+
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(_instance, &deviceCount, devices.data());
     bool supportsRT = false;
     for (const auto &device : devices)
     {
-        //VkPhysicalDeviceProperties props;
-        //vkGetPhysicalDeviceProperties(device, &props);
         if (DeviceMeetsRequirements(device))
         {
             _physicalDevice = device;
-            if(_rayTracingCapable)
+            if(rtRequested)
             {
                 supportsRT = Utilities::DeviceSupportsExtensions(device, {VK_NV_RAY_TRACING_EXTENSION_NAME});
                 if(supportsRT) 
@@ -94,10 +99,13 @@ void Instance::ChoosePhysicalDevice()
         }
     }
     
-    _rayTracingCapable = supportsRT;
+    if(!supportsRT && rtRequested)
+    {
+        throw RTEException("Ray tracing requested, but no device supports it!");
+    }
     if (_physicalDevice == VK_NULL_HANDLE)
     {
-        throw std::runtime_error("failed to find a suitable GPU!");
+        throw RTEException("Failed to find a suitable GPU!");
     }
 }
 
@@ -181,14 +189,9 @@ void Instance::SetupDebugCallBack()
 
 Instance::Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction, bool isRayTracing)
 {
-    if(isRayTracing)
-    {
-        _rayTracingCapable = isRayTracing;
-        _neededDeviceExtensions.push_back(VK_NV_RAY_TRACING_EXTENSION_NAME);
-    }
     CreateInstance(extensions);
     surfaceBindingFunction(_surface, _instance);
-    ChoosePhysicalDevice();
+    ChoosePhysicalDevice(isRayTracing);
     CreateLogicalDevice();
     
     #ifndef NDEBUG
@@ -266,7 +269,41 @@ return GetOptimalFormat(
 
 bool Instance::IsRayTracingCapable()
 {
-    return _rayTracingCapable;
+    VkApplicationInfo appInfo = {};
+    appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+    appInfo.pApplicationName = "IS RT ON";
+    appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+    appInfo.pEngineName = "RTE";
+    appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
+    appInfo.apiVersion = VK_API_VERSION_1_1;
+    
+    VkInstanceCreateInfo createInfo = {};
+    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+    createInfo.pApplicationInfo = &appInfo;
+    createInfo.enabledExtensionCount = 0;
+    createInfo.ppEnabledExtensionNames = nullptr;
+
+    VkInstance instance;
+    VkResult code = vkCreateInstance(&createInfo, nullptr, &instance);
+    Utilities::CheckVkResult(code, "Could not create a vulkan instance to query RT capabilities!");
+
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(instance, &deviceCount, nullptr);
+    if (deviceCount == 0) throw RTEException("Failed to find any GPU with Vulkan support!");
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(instance, &deviceCount, devices.data());
+    bool supportsRT = false;
+
+    for (const auto &device : devices)
+    {
+        supportsRT = Utilities::DeviceSupportsExtensions(device, {VK_NV_RAY_TRACING_EXTENSION_NAME});
+        if(supportsRT) 
+        {
+            break;
+        }
+    }
+    vkDestroyInstance(instance, nullptr);
+    return supportsRT;
 }
 
 

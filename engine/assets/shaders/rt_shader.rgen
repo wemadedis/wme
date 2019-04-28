@@ -44,7 +44,7 @@ void main()
 
     float fov = tan(radians(45.0f/2.0f));
 
-    vec3 direction = normalize(vec3(d.x * aspectRatio*fov, -d.y*fov, -1));
+    vec3 direction = normalize(vec3(d.x * aspectRatio*fov, d.y*fov, -1));
     direction = vec3(vec4(direction,0.0f) * (GlobalUniform.ViewMatrix));
     uint rayFlags = gl_RayFlagsOpaqueNV;
     uint cullMask = 0xff;
