@@ -7,7 +7,7 @@
 #include "rte/PhysicsMain.hpp"
 #include "rte/RTEConfig.hpp"
 #include "rte/RTEModule.hpp"
-#include "rte/RuntimeAchitectureMain.hpp"
+#include "rte/RuntimeMain.hpp"
 #include "rte/WindowManager.h"
 
 extern void(ConfigureGame)(RTE::RTEConfig &config);
