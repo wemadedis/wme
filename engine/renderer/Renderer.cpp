@@ -130,7 +130,9 @@ void Renderer::RecordRenderPass()
     for (uint32_t bufferIndex = 0; bufferIndex < _commandBufferManager->GetCommandBufferCount(); bufferIndex++)
     {
         VkCommandBuffer cmdBuffer = _commandBufferManager->GetCommandBuffer(bufferIndex);
-        _renderPass->BeginRenderPass(_pipeline, cmdBuffer, _swapChain->GetFramebuffers()[bufferIndex], _globalUniform.ClearColor);
+        _renderPass->BeginRenderPass(cmdBuffer, _swapChain->GetFramebuffers()[bufferIndex], _globalUniform.ClearColor);
+
+        vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline->GetHandle());
 
         for (unsigned int meshIndex = 0; meshIndex < _meshInstances.size(); meshIndex++)
         {
@@ -146,6 +148,7 @@ void Renderer::RecordRenderPass()
 
             vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(mesh->IndexCount), 1, 0, 0, 0);
         }
+        _renderPass->NextSubpass(cmdBuffer, VK_SUBPASS_CONTENTS_INLINE);
         if(_guiModule != nullptr)
         {
             _guiModule->Draw(cmdBuffer, _frameWidth, _frameHeight);
@@ -157,15 +160,10 @@ void Renderer::RecordRenderPass()
 
 void Renderer::RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32_t frameIndex)
 {
-    _accelerationStructure->RebuildTopStructureCmd(commandBuffer);
     vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetHandle());
+    _descriptorManager->UpdateRTTargetImage(_swapChain->GetSwapChainImages()[frameIndex].imageView);
     auto dset = _descriptorManager->GetDescriptorSetRT();
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, (uint32_t)dset.size(), dset.data(), 0, 0);
-
-    // Here's how the shader binding table looks like in this tutorial:
-    // |[ raygen shader ]|
-    // |                 |
-    // | 0               | 1
 
     RTUtilities::GetInstance()->vkCmdTraceRaysNV(commandBuffer,
                                                  _shaderBindingTable.buffer, 0,
@@ -177,56 +175,22 @@ void Renderer::RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32
 
 void Renderer::RecordCommandBuffersRT()
 {
-    VkCommandBufferBeginInfo commandBufferBeginInfo;
-    commandBufferBeginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
-    commandBufferBeginInfo.pNext = nullptr;
-    commandBufferBeginInfo.flags = 0;
-    commandBufferBeginInfo.pInheritanceInfo = nullptr;
-
-    VkImageSubresourceRange subresourceRange;
-    subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
-    subresourceRange.baseMipLevel = 0;
-    subresourceRange.levelCount = 1;
-    subresourceRange.baseArrayLayer = 0;
-    subresourceRange.layerCount = 1;
-
+    auto commandBuffer = _commandBufferManager->BeginCommandBufferInstance();
+    _accelerationStructure->RebuildTopStructureCmd(commandBuffer);
+    _commandBufferManager->SubmitCommandBufferInstance(commandBuffer, _instance->GetGraphicsQueue());
     for (uint32_t bufferIndex = 0; bufferIndex < _commandBufferManager->GetCommandBufferCount(); bufferIndex++)
     {
         const VkCommandBuffer commandBuffer = _commandBufferManager->GetCommandBufferRT(bufferIndex);
-
-        VkResult code = vkBeginCommandBuffer(commandBuffer, &commandBufferBeginInfo);
-        Utilities::CheckVkResult(code, "Could not begin RT command buffer!");
-
-        _imageManager->ImageBarrier(commandBuffer, _offScreenImageRT.image, subresourceRange,
-                                    0, VK_ACCESS_SHADER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_GENERAL);
+        _renderPass->BeginRenderPass(commandBuffer, _swapChain->GetFramebuffers()[bufferIndex], _globalUniform.ClearColor);
 
         RecordCommandBufferForFrame(commandBuffer, bufferIndex); // user draw code
 
-        auto swapChainImage = _swapChain->GetSwapChainImages()[bufferIndex].imageInfo.image;
-
-        _imageManager->ImageBarrier(commandBuffer, swapChainImage, subresourceRange,
-                                    0, VK_ACCESS_TRANSFER_WRITE_BIT, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-
-        _imageManager->ImageBarrier(commandBuffer, _offScreenImageRT.image, subresourceRange,
-                                    VK_ACCESS_SHADER_WRITE_BIT, VK_ACCESS_TRANSFER_READ_BIT, VK_IMAGE_LAYOUT_GENERAL, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL);
-
-        VkImageCopy copyRegion;
-        copyRegion.srcSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
-        copyRegion.srcOffset = {0, 0, 0};
-        copyRegion.dstSubresource = {VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1};
-        copyRegion.dstOffset = {0, 0, 0};
-        copyRegion.extent = {_initInfo.Width, _initInfo.Height, 1};
-        vkCmdCopyImage(commandBuffer, _offScreenImageRT.image, VK_IMAGE_LAYOUT_TRANSFER_SRC_OPTIMAL,
-                       swapChainImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
-
-        _imageManager->ImageBarrier(commandBuffer, swapChainImage, subresourceRange,
-                                    VK_ACCESS_TRANSFER_WRITE_BIT, 0, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
+        _renderPass->NextSubpass(commandBuffer, VK_SUBPASS_CONTENTS_INLINE);
         if(_guiModule != nullptr)
         {
             _guiModule->Draw(commandBuffer, _frameWidth, _frameHeight);
         }
-        code = vkEndCommandBuffer(commandBuffer);
-        Utilities::CheckVkResult(code, "Could not end RT command buffer!");
+        _renderPass->EndRenderPass(commandBuffer);  
     }
 }
 
@@ -285,6 +249,7 @@ void Renderer::RecreateSwapChain()
 
     _swapChain = new SwapChain(_instance, width, height);
     _renderPass = new RenderPass(_instance, _swapChain);
+    
     auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
     auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
 
@@ -425,7 +390,7 @@ void Renderer::Finalize()
             }
         });
 
-        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _offScreenImageView, _globalUniformBuffer, _meshes, _meshInstances, _instanceBuffer);
+        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _swapChain->GetSwapChainImages()[_currentFrame].imageView, _globalUniformBuffer, _meshes, _meshInstances, _instanceBuffer);
         //RecordCommandBuffersRT();
     }
 
@@ -458,12 +423,9 @@ void Renderer::Finalize()
     if (RTXon)
     {
         RecordCommandBuffersRT();
-        RecordRenderPass();
+
     }
-    else
-    {
-        RecordRenderPass();
-    }
+    RecordRenderPass();
 
     CreateSyncObjects();
 
@@ -488,6 +450,16 @@ void Renderer::Draw()
     vkWaitForFences(_instance->GetDevice(), 1, &_inFlightFences[_currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
     vkResetFences(_instance->GetDevice(), 1, &_inFlightFences[_currentFrame]);
 
+    if (_renderMode == RenderMode::RASTERIZE)
+    {
+        RecordRenderPass();
+    }
+    else
+    {
+        RecordCommandBuffersRT();
+    }
+
+
     float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
     while (time < _minFrameTime)
     {
@@ -507,34 +479,39 @@ void Renderer::Draw()
         throw std::runtime_error("failed to acquire swap chain image!");
     }
 
-    VkSubmitInfo submitInfo = {};
-    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
-
-    VkSemaphore waitSemaphores[] = {_imageAvailableSemaphores[_currentFrame]};
-    VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-    submitInfo.waitSemaphoreCount = 1;
-    submitInfo.pWaitSemaphores = waitSemaphores;
-    submitInfo.pWaitDstStageMask = waitStages;
-
     VkCommandBuffer cmdBuffer;
     if (_renderMode == RenderMode::RASTERIZE)
     {
-        RecordRenderPass();
+        //RecordRenderPass();
         cmdBuffer = _commandBufferManager->GetCommandBuffer(imageIndex);
     }
     else
     {
-        RecordCommandBuffersRT();
+        //RecordCommandBuffersRT();
         cmdBuffer = _commandBufferManager->GetCommandBufferRT(imageIndex);
     }
+
+
+
+    VkSemaphore waitSemaphores[] = {_imageAvailableSemaphores[_currentFrame]};
+
+    _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT; //TODO: ANALYZE THIS: WAS AT THE END OF THIS FUNC BEFORE AND INTRODUCED INCONSISTENCY IN SUBMITTING & RECORDING COMMAND BUFFERS
+
+    VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+    
+    VkSubmitInfo submitInfo = {};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = waitSemaphores;
+    submitInfo.pWaitDstStageMask = waitStages;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &cmdBuffer;
-
     VkSemaphore signalSemaphores[] = {_renderFinishedSemaphores[_currentFrame]};
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
-    vkResetFences(_instance->GetDevice(), 1, &_inFlightFences[_currentFrame]);
+    
+
 
     VkResult code = vkQueueSubmit(_instance->GetGraphicsQueue(), 1, &submitInfo, _inFlightFences[_currentFrame]);
     Utilities::CheckVkResult(code, "Failed to submit draw command buffer!");
@@ -563,7 +540,6 @@ void Renderer::Draw()
         throw std::runtime_error("failed to present swap chain image!");
     }
     _lastFrameEnd = Clock::now();
-    _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
 void Renderer::MarkDirty(MeshHandle mesh)

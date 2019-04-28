@@ -163,7 +163,7 @@ void SwapChain::CreateSwapChain()
     createInfo.imageColorSpace = optFormat.colorSpace;
     createInfo.imageExtent = optExtent;
     createInfo.imageArrayLayers = 1;
-    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
+    createInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT | VK_IMAGE_USAGE_STORAGE_BIT;
 
     auto [graphicsFamily, presentFamily] = Utilities::FindQueueFamilies(_instance->GetPhysicalDevice(), _instance->GetSurface());
     uint32_t queueFamilyIndices[] = {graphicsFamily.value(), presentFamily.value()};

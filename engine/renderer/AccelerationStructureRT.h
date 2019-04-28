@@ -36,7 +36,7 @@ public:
     AccelerationStructure(  Instance *instance, DeviceMemoryManager *deviceMemoryManager, 
                             CommandBufferManager *commandBufferManager, std::vector<MeshInfo*> &meshes,
                             std::vector<MeshInstance> &instances);
-    VkAccelerationStructureNV GetTopStructure();
+    VkAccelerationStructureNV& GetTopStructure();
     std::vector<VkAccelerationStructureNV> GetBotStructures();
     void UpdateInstanceTransform(MeshInstanceHandle instanceHandle, glm::mat4 modelMatrix);
     void RebuildTopStructureCmd(VkCommandBuffer commandBuffer);

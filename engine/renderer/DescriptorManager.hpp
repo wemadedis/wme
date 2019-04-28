@@ -23,6 +23,17 @@ class DescriptorManager
     VkDescriptorPool _poolRT;
     std::vector<VkDescriptorSet> _descriptorsetsRT;
 
+
+    VkWriteDescriptorSetAccelerationStructureNV _descriptorAccelerationStructureInfo = {};
+    VkDescriptorImageInfo _descriptorOutputImageInfo = {};
+    VkDescriptorBufferInfo _globalBuffer = {};
+    VkBufferView _mappingView;
+    std::vector<VkBufferView> _indexViews;
+    std::vector<VkBufferView> _vertexViews;
+    std::vector<VkDescriptorBufferInfo> _meshBufferInfos;
+
+
+    std::vector<VkWriteDescriptorSet> _descriptorWritesRT;
 public:
     DescriptorManager(Instance *instance);
     void CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInstance> &meshes);
@@ -30,6 +41,9 @@ public:
     void CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount);
     void CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo*> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer);
     void CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData);
+
+    void UpdateRTTargetImage(VkImageView imageViewRT);
+    
     VkDescriptorSetLayout* GetDescriptorLayout();
     std::vector<VkDescriptorSetLayout> GetDescriptorLayoutRT();
     VkDescriptorPool GetDescriptorPool();

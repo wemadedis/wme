@@ -82,19 +82,39 @@ void RenderPass::CreateRenderPass()
     VkAttachmentReference colorAttachmentReference = GetColorAttachmentReference();
     VkAttachmentReference depthAttachmentReference = GetDepthAttachmentReference();
     VkSubpassDescription subpassDescription = GetSubpassDescription(colorAttachmentReference, depthAttachmentReference);
+    VkSubpassDescription subpassDescription2 = GetSubpassDescription(colorAttachmentReference, depthAttachmentReference);
+    VkSubpassDescription descriptions[2] = { subpassDescription, subpassDescription2};
     
-    VkSubpassDependency subpassDependency = GetSubpassDependency();
+    std::vector<VkSubpassDependency> dependencies(2);
+
+    dependencies[0].srcSubpass    = VK_SUBPASS_EXTERNAL;
+    dependencies[0].dstSubpass    = 0;
+    dependencies[0].srcStageMask  = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    dependencies[0].dstStageMask  = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependencies[0].srcAccessMask = VK_ACCESS_MEMORY_READ_BIT;
+    dependencies[0].dstAccessMask =
+        VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    dependencies[0].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
+
+    //In case of GUI
+    dependencies[1].srcSubpass   = 0;
+    dependencies[1].dstSubpass   = 1; 
+    dependencies[1].srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependencies[1].dstStageMask = VK_PIPELINE_STAGE_BOTTOM_OF_PIPE_BIT;
+    dependencies[1].srcAccessMask =
+        VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    dependencies[1].dstAccessMask   = VK_ACCESS_MEMORY_READ_BIT;
+    dependencies[1].dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
     
     std::array<VkAttachmentDescription, 2> attachments = {colorAttachment, depthAttachment};
     VkRenderPassCreateInfo renderPassInfo = {};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
     renderPassInfo.pAttachments = attachments.data();
-    renderPassInfo.subpassCount = 1;
-    renderPassInfo.pSubpasses = &subpassDescription;
-
-    renderPassInfo.dependencyCount = 1;
-    renderPassInfo.pDependencies = &subpassDependency;
+    renderPassInfo.subpassCount = 2;
+    renderPassInfo.pSubpasses = descriptions;
+    renderPassInfo.dependencyCount = 2;
+    renderPassInfo.pDependencies = dependencies.data();
 
     if (vkCreateRenderPass(_instance->GetDevice(), &renderPassInfo, nullptr, &_vkrpHandle) != VK_SUCCESS)
     {
@@ -119,15 +139,13 @@ VkRenderPass RenderPass::GetHandle()
     return _vkrpHandle;
 }
 
-void RenderPass::BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer cmdBuffer, VkFramebuffer frameBuffer, glm::vec4 clearColor)
+void RenderPass::BeginRenderPass(VkCommandBuffer cmdBuffer, VkFramebuffer frameBuffer, glm::vec4 clearColor)
 {
     VkCommandBufferBeginInfo beginInfo = {};
     beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
     beginInfo.flags = VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT;
-    if (vkBeginCommandBuffer(cmdBuffer, &beginInfo) != VK_SUCCESS)
-    {
-        throw std::runtime_error("RenderPass: Failed to begin recording command buffer!");
-    }
+    VkResult code = vkBeginCommandBuffer(cmdBuffer, &beginInfo);
+    Utilities::CheckVkResult(code, "Could not begin RT command buffer!");
 
     VkRenderPassBeginInfo renderPassInfo = {};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
@@ -144,17 +162,18 @@ void RenderPass::BeginRenderPass(GraphicsPipeline *pipeline, VkCommandBuffer cmd
     renderPassInfo.pClearValues = clearValues.data();
     
     vkCmdBeginRenderPass(cmdBuffer, &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+}
 
-    vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline->GetHandle());
+void RenderPass::NextSubpass(VkCommandBuffer cmdBuffer, VkSubpassContents contents)
+{
+    vkCmdNextSubpass(cmdBuffer, contents);
 }
 
 void RenderPass::EndRenderPass(VkCommandBuffer cmdBuffer)
 {
     vkCmdEndRenderPass(cmdBuffer);
-    if (vkEndCommandBuffer(cmdBuffer) != VK_SUCCESS)
-    {
-        throw std::runtime_error("RenderPass: Failed to record command buffer!");
-    }
+    VkResult code = vkEndCommandBuffer(cmdBuffer);
+    Utilities::CheckVkResult(code, "RenderPass: Failed to record command buffer!");
 }
 
 };

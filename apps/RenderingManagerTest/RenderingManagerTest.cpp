@@ -14,7 +14,7 @@ void ConfigureGame(RTEConfig &config)
     config.WindowConfig.WindowWidth = 500;
     config.WindowConfig.ApplicationName = "Banana";
     config.WindowConfig.WindowName = "Eggplant";
-    config.GraphicsConfig.UseRaytracing = false;
+    config.GraphicsConfig.UseRaytracing = true;
     config.AssetConfig.Meshes = { Utilities::GetFileFromAssets("models/monkey.ply") };
 }
 
