@@ -37,7 +37,7 @@ struct OnCollisionData
 
 struct EndCollisionData
 {
-    int32_t CollisionId;
+    uint64_t CollisionId;
 };
 
 } // namespace RTE::Physics

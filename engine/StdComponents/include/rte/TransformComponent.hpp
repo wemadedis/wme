@@ -20,6 +20,8 @@ public:
      */
     Rendering::Transform Transform;
 
+    void Initialize();
+
     /**
      * @brief Initialize this TransformComponent using an existing Transform
      * 

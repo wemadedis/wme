@@ -1,8 +1,5 @@
 #pragma once
 
-#include "rte/RTEConfig.hpp"
-#include "rte/RTECore.hpp"
-
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -27,7 +24,6 @@
  * 
  */
 #define Error(toPrint) RTE::Utilities::PrintError(toPrint, __FILE__, __LINE__)
-
 
 namespace RTE::Utilities
 {

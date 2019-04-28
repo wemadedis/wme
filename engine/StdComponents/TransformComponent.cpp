@@ -4,6 +4,11 @@
 namespace RTE::StdComponents
 {
 
+void TransformComponent::Initialize()
+{
+    Initialize(glm::vec3(0), glm::vec3(0), glm::vec3(1));
+}
+
 void TransformComponent::Initialize(Rendering::Transform transform)
 {
     Transform = transform;

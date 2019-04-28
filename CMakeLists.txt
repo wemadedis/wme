@@ -23,7 +23,7 @@ target_link_libraries(rte INTERFACE
     physics
     gui
     renderer
-    runtime_architecture 
+    runtime
     importer 
     platform 
     Audio

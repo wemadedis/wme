@@ -67,7 +67,7 @@ static inline btQuaternion Convert(glm::quat quat)
  */
 static inline glm::quat Convert(btQuaternion quat)
 {
-    return glm::quat(quat.getX(), quat.getY(), quat.getZ(), quat.getW());
+    return glm::highp_quat(quat.getX(), quat.getY(), quat.getZ(), quat.getW());
 }
 
 /**
@@ -164,13 +164,13 @@ private:
      *  Changed by the default constructor, or via setter 
      * method RTE::Physics::PhysicsManager(RTEConfig &config)
      */
-    uint32_t _framesPerSecond = -1;
+    uint32_t _framesPerSecond = 0;
 
     /**
      * @brief The fixed time step used for physics simulation
      * 
      */
-    float _fixedTimeStep = -1;
+    float _fixedTimeStep = 0;
 
     //! Control this value
     /**

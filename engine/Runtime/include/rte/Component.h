@@ -2,6 +2,8 @@
 
 #include <cstdint>
 
+#include "rte/Definitions.hpp"
+
 namespace RTE::Runtime
 {
 
@@ -13,6 +15,8 @@ private:
      *      Whether or not this component is enabled. Disabled components will not have #Update() called on it.
      */
     bool _enabled = false;
+
+    GameObjectId _gameObjectId = 0;
 
 public:
     /**
@@ -26,11 +30,8 @@ public:
      */
     Component() = default;
 
-    /**
-     * @brief The Id of the gameobject that holds this component.
-     * 
-     */
-    uint64_t GameObjectID;
+    GameObjectId GetGameObjectId();
+    void SetGameObjectId(GameObjectId goId);
 
     /**
      * @brief 

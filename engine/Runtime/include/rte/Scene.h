@@ -5,28 +5,25 @@
 #include <vector>
 
 #include "rte/ComponentPool.h"
+#include "rte/Definitions.hpp"
 #include "rte/GameObject.h"
-#include "rte/GameObjectPool.h"
 
-namespace RTE
-{
-namespace Runtime
+namespace RTE::Runtime
 {
 
 class Scene
 {
 private:
     std::vector<ComponentPool *> _componentPools;
-    GameObjectPool _gameObjectPool;
 
 public:
     void UpdateComponents(float deltaTime);
     GameObject *CreateGameObject();
 
-    template <typename TComp>
+    template <typename TComp, int MaxComponents>
     uint64_t DefineComponent()
     {
-        ComponentPool *compPool = new ComponentPoolInstance<TComp>();
+        ComponentPool *compPool = new ComponentPoolInstance<TComp, MaxComponents>();
         _componentPools.push_back(compPool);
         return _componentPools.size() - 1;
     }
@@ -40,5 +37,4 @@ public:
         return tp;
     }
 };
-} // namespace Runtime
-} // namespace RTE
+} // namespace RTE::Runtime

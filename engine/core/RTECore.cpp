@@ -44,9 +44,22 @@ void RTECore::RunUpdateLoop()
         now = Clock::now();
     }
 }
+
+void RTECore::ValidateConfiguration()
+{
+    // todo: (danh) Sun 21/04 - 11:46: Add raytrace check
+    bool raytracingAvailable = true;
+    Config.GraphicsConfig.UseRaytracing = raytracingAvailable;
+    // If the user requests raytracing while it is not available, crash
+    if (
+        Config.GraphicsConfig.UseRaytracing && raytracingAvailable == false)
+    {
+        throw RTEException("Tried to use Raytracing when not available");
+    }
+}
+
 //! Init static field
 RTEConfig RTECore::Config;
-
 RTECore::RTECore()
 {
     // todo: (danh) Sun 21/04 - 11:46: Add raytrace check
@@ -58,18 +71,7 @@ RTECore::RTECore()
         ConfigureGame(Config);
     }
 
-    // If the user requests raytracing while it is not available, crash
-    if (
-        Config.GraphicsConfig.UseRaytracing && raytracingAvailable == false)
-    {
-        throw RTEException("Tried to use Raytracing when not available");
-    }
-
-    if (Config.WindowConfig.WindowName == nullptr)
-    {
-        Config.WindowConfig.WindowName = Config.WindowConfig.ApplicationName;
-    }
-
+    ValidateConfiguration();
     InitEngine();
 
     _windowManager = new Platform::WindowManager(Config);

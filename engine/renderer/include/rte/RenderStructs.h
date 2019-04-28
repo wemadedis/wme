@@ -108,7 +108,7 @@ struct Shader
 
 struct Material
 {
-	float Ambient = 0.2f;
+    float Ambient = 0.2f;
     float Diffuse = 0.3f;
     float Specular = 1.0f;
     float Shininess = 10.0f;
