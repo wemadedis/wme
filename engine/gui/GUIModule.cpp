@@ -21,9 +21,9 @@ void GUIModule::Draw(VkCommandBuffer cmdBuffer, uint32_t frameWidth, uint32_t fr
     auto& io = ImGui::GetIO();
     io.DisplaySize = ImVec2((float)frameWidth, (float)frameHeight);
     ImGui::NewFrame();
-    if(ImGUIDrawCommands != nullptr)
+    if(DrawFunction != nullptr)
     {
-        ImGUIDrawCommands();
+        DrawFunction();
     }
     ImGui::Render();
     ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), cmdBuffer);

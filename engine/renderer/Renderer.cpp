@@ -565,20 +565,20 @@ void Renderer::SetInstanceMaterial(MeshInstanceHandle instance, Material &mat)
     });
 }
 
-void Renderer::SetMeshTransform(MeshInstanceHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl)
+void Renderer::SetInstanceTransform(MeshInstanceHandle instance, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl)
 {
     glm::mat4 rotation = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
     glm::mat4 translation = glm::translate(pos);
     glm::mat4 scale = glm::scale(scl);
     auto modelMatrix = translation * rotation * scale;
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[mesh].uniformBuffer, [&](MeshUniformData *data) {
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshUniformData *data) {
         data->ModelMatrix = modelMatrix;
     });
 
     //Don't update the structure if it does not exist (2 cases: no ray tracing, or renderer not finalized)
     if (_accelerationStructure != nullptr)
     {
-        _accelerationStructure->UpdateInstanceTransform(mesh, modelMatrix);
+        _accelerationStructure->UpdateInstanceTransform(instance, modelMatrix);
     }
 }
 

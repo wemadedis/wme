@@ -23,7 +23,7 @@ RenderingManager::RenderingManager(
     };
     _guiModule = new GUI::GUIModule();
 
-    _guiModule->ImGUIDrawCommands = [](){
+    _guiModule->DrawFunction = [](){
         ImGui::Begin("Wazzup");
         ImGui::Text("Hello, world %d", 123);
         if (ImGui::Button("Save"))
@@ -165,7 +165,7 @@ void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshCom
     Transform &trans = meshComponent->GetTransformComponent()->Transform;
     _renderer->BindMeshToInstance(mesh, instance);
     _renderer->BindTextureToMeshInstance(texture, instance);
-    _renderer->SetMeshTransform(instance, trans.Pos, trans.Rot, trans.Scale);
+    _renderer->SetInstanceTransform(instance, trans.Pos, trans.Rot, trans.Scale);
     _renderer->SetInstanceMaterial(instance, meshComponent->Material);
 }
 
@@ -219,7 +219,7 @@ void RenderingManager::RegisterDirectionalLight(DirectionalLightComponent *dirLi
 
 void RenderingManager::SetGUIDrawFunction(void (*function)())
 {
-    _guiModule->ImGUIDrawCommands = function;
+    _guiModule->DrawFunction = function;
 }
 
 glm::ivec2 RenderingManager::GetRendererFrameSize()

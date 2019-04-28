@@ -1,10 +1,11 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <functional>
 
 namespace RTE::GUI
 {
-
+typedef std::function <void()> DrawFunc;
 struct GUIInitInfo
 {
     VkInstance          Instance;
@@ -29,7 +30,7 @@ public:
     void Initialize(GUIInitInfo info, VkRenderPass rp, VkCommandBuffer cmdBuffer);
     void Draw(VkCommandBuffer cmdBuffer, uint32_t frameWidth, uint32_t frameHeight);
     void SetupInputCallbacks();
-    void (*ImGUIDrawCommands)() = nullptr;
+    DrawFunc DrawFunction = nullptr;
 };
 
 }

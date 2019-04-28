@@ -179,7 +179,7 @@ The renderer will the internally handle everything related to this.
 
     void SetInstanceMaterial(MeshInstanceHandle instance, Material &mat);
 
-    void SetMeshTransform(MeshInstanceHandle mesh, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl);
+    void SetInstanceTransform(MeshInstanceHandle instance, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl);
 
     //LLLLLLLLLIIIIIIIIIIIIIIGGGGGGGGGGGHHHHHHHHHHHHTTTTTTTTTTSSSSSSSSSSSSSSSSS!!!!!!!!!!!!!!!!!!!!!!!!!
     DirectionalLightHandle AddDirectionalLight(DirectionalLight light);
@@ -196,9 +196,5 @@ The renderer will the internally handle everything related to this.
 
     ShaderHandle UploadShader(Shader shader);
 };
-
-void CreateInstance(std::string appName, VkInstance *instance, std::vector<const char *> extensions, bool enableValidationLayers);
-void SetupDebugCallback(VkInstance instance);
-void CreateSurface(VkInstance instance);
 
 }; // namespace RTE::Rendering

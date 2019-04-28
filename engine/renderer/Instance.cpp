@@ -107,6 +107,7 @@ void Instance::ChoosePhysicalDevice(bool rtRequested)
     {
         throw RTEException("Failed to find a suitable GPU!");
     }
+    _rayTracingCapable = supportsRT;
 }
 
 void Instance::CreateLogicalDevice()

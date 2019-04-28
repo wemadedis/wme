@@ -29,7 +29,7 @@ private:
     static RenderingManager *_instance;
     Renderer *_renderer;
     GUI::GUIModule *_guiModule;
-    bool _rtEnabled;
+    bool _rtEnabled = false;
 
     // RESOURCE DATA: filepath -> resource handle
     std::unordered_map<std::string, MeshHandle> _meshes;
