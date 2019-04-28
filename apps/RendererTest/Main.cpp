@@ -81,7 +81,7 @@ int main()
     cam.ProjectionMatrix[1][1] *= -1;
 
     auto gm = new RTE::GUI::GUIModule();
-    gm->ImGUIDrawCommands = [](){
+    gm->DrawFunction = [](){
         ImGui::Begin("Wazzup");
         ImGui::Text("Hello, world %d", 123);
         if (ImGui::Button("Save"))
@@ -102,7 +102,7 @@ int main()
 
     MeshHandle cylinderMeshHandle = renderer.UploadMesh(*cylinder);
     MeshInstanceHandle inst = renderer.CreateMeshInstance(cylinderMeshHandle);
-    renderer.SetMeshTransform(
+    renderer.SetInstanceTransform(
         inst,
         glm::vec3(5.f, 0.f, 0.f),
         glm::vec3(0.0f),
@@ -122,7 +122,7 @@ int main()
             for (int z = 0; z < depth; z++)
             {
                 MeshInstanceHandle mesh = renderer.CreateMeshInstance(cylinderMeshHandle);
-                renderer.SetMeshTransform(mesh, glm::vec3(x, y, z), glm::vec3(0.0f), glm::vec3(1.0f));
+                renderer.SetInstanceTransform(mesh, glm::vec3(x, y, z), glm::vec3(0.0f), glm::vec3(1.0f));
                 meshes.push_back(mesh);
             }
         }
@@ -136,10 +136,10 @@ int main()
 
     auto monkeyHandle = renderer.UploadMesh(monkey);
     auto monkeyInstance = renderer.CreateMeshInstance(monkeyHandle);
-    renderer.SetMeshTransform(monkeyInstance, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
+    renderer.SetInstanceTransform(monkeyInstance, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
     auto texHandle = renderer.UploadTexture(tex);
     renderer.BindTextureToMeshInstance(texHandle, quadInstance);
-    renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(0.0f), 0.0f, 0.0f), glm::vec3(10.0f));
+    renderer.SetInstanceTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(0.0f), 0.0f, 0.0f), glm::vec3(10.0f));
     //renderer.SetMeshTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(180.0f), 0.0f, 0.0f), glm::vec3(10.0f));
     renderer.SetCamera(cam);
 

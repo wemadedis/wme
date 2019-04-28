@@ -384,8 +384,6 @@ void Renderer::Finalize()
                                                            _commandBufferManager, _meshes, _meshInstances);
 
         CreateShaderBindingTable();
-        _offScreenImageRT = _deviceMemoryManager->CreateImage(_initInfo.Width, _initInfo.Height, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_STORAGE_BIT | VK_IMAGE_USAGE_TRANSFER_SRC_BIT);
-        _offScreenImageView = _imageManager->CreateImageView(_offScreenImageRT, _swapChain->GetSwapChainImageFormat(), VK_IMAGE_ASPECT_COLOR_BIT);
 
         //instance buffer maps an instance to the mesh
         _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::HOST, sizeof(uint32_t) * _meshInstances.size(), _instanceBuffer);

@@ -100,8 +100,6 @@ private:
     AccelerationStructure *_accelerationStructure = nullptr;
     GraphicsPipeline *_pipelineRT = nullptr;
     BufferInformation _shaderBindingTable;
-    ImageInformation _offScreenImageRT;
-    VkImageView _offScreenImageView;
     BufferInformation _instanceBuffer;
 
     const float _minFrameTime;

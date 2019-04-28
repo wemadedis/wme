@@ -73,8 +73,8 @@ Vertex GetVertex(uint meshIndex, int vertexIndex)
 {
     Vertex vert;
     vert.pos.x =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS    );
-    vert.pos.x =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 1);
-    vert.pos.x =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 2);
+    vert.pos.y =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 1);
+    vert.pos.z =    FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 2);
     vert.color.r =  FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 3);
     vert.color.g =  FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 4);
     vert.color.b =  FetchFloat(meshIndex, vertexIndex * VERTEX_SIZE_FLOATS + 5);
