@@ -57,10 +57,7 @@ WindowManager::WindowManager(RTEConfig &config)
         config.WindowConfig.WindowHeight,
         config.WindowConfig.WindowName);
     SetConsoleTitleA("Egg asdalsjdkasld");
-
-    RegisterMouseButtonCallback([](int b, int a){
-        std::cout << "Werkz" << std::endl;
-    });
+    SetupGLFWCallbacks();
 }
 
 void WindowManager::Update(float deltaTime)
@@ -108,6 +105,30 @@ int WindowManager::GetKey(int key)
 void WindowManager::RegisterMouseButtonCallback(MouseButtonCallback cb)
 {
     _mbCallbacks.push_back(cb);
+}
+
+void WindowManager::RegisterMouseWheelCallback(MouseWheelCallback cb)
+{
+    _mwCallbacks.push_back(cb);
+}
+
+void WindowManager::RegisterMousePositionCallback(MousePositionCallback cb)
+{
+    _mpCallbacks.push_back(cb);
+}
+
+void WindowManager::RegisterKeyCallback(KeyCallback cb)
+{
+    _keyCallbacks.push_back(cb);
+}
+
+void WindowManager::RegisterCharCallback(CharCallback cb)
+{
+    _charCallbacks.push_back(cb);
+}
+
+void WindowManager::SetupGLFWCallbacks()
+{
     glfwSetMouseButtonCallback(Window, [](GLFWwindow*, int b, int a, int){
         auto wm = WindowManager::GetInstance();
         for(uint32_t cbIndex = 0; cbIndex < wm->_mbCallbacks.size(); cbIndex++)
@@ -115,11 +136,7 @@ void WindowManager::RegisterMouseButtonCallback(MouseButtonCallback cb)
             wm->_mbCallbacks[cbIndex](b,a);
         }
     });
-}
 
-void WindowManager::RegisterMouseWheelCallback(MouseWheelCallback cb)
-{
-    _mwCallbacks.push_back(cb);
     glfwSetScrollCallback(Window, [](GLFWwindow*, double x, double y){
         auto wm = WindowManager::GetInstance();
         for(uint32_t cbIndex = 0; cbIndex < wm->_mwCallbacks.size(); cbIndex++)
@@ -127,10 +144,15 @@ void WindowManager::RegisterMouseWheelCallback(MouseWheelCallback cb)
             wm->_mwCallbacks[cbIndex](x,y);
         }
     });
-}
-void WindowManager::RegisterKeyCallback(KeyCallback cb)
-{
-    _keyCallbacks.push_back(cb);
+
+    glfwSetCursorPosCallback(Window, [](GLFWwindow*, double x, double y){
+        auto wm = WindowManager::GetInstance();
+        for(uint32_t cbIndex = 0; cbIndex < wm->_mpCallbacks.size(); cbIndex++)
+        {
+            wm->_mpCallbacks[cbIndex](x,y);
+        }
+    });
+
     glfwSetKeyCallback(Window, [](GLFWwindow*, int key, int, int action, int){
         auto wm = WindowManager::GetInstance();
         for(uint32_t cbIndex = 0; cbIndex < wm->_keyCallbacks.size(); cbIndex++)
@@ -138,11 +160,7 @@ void WindowManager::RegisterKeyCallback(KeyCallback cb)
             wm->_keyCallbacks[cbIndex](key,action);
         }
     });
-}
 
-void WindowManager::RegisterCharCallback(CharCallback cb)
-{
-    _charCallbacks.push_back(cb);
     glfwSetCharCallback(Window, [](GLFWwindow*, unsigned int c){
         auto wm = WindowManager::GetInstance();
         for(uint32_t cbIndex = 0; cbIndex < wm->_charCallbacks.size(); cbIndex++)
