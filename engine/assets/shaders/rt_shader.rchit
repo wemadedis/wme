@@ -157,7 +157,7 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light, HitInfo hitInfo)
 
 vec4 CalculatePerLightShading(HitInfo hitinfo)
 {
-    vec4 color = GlobalUniform.AmbientColor;
+    vec4 color = vec4(InstanceData[gl_InstanceCustomIndexNV].Ambient)*InstanceData[gl_InstanceCustomIndexNV].Ambient; //TODO: THIS IS WRONG (AMBIENT*AMBIENT)
     for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
     {
         color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex], hitinfo);
