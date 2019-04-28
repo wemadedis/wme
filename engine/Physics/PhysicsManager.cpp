@@ -11,7 +11,8 @@ namespace RTE::Physics
 
 static bool ContactProcessedCallback(
     btManifoldPoint &cp,
-    void *bodyA, void *bodyB)
+    void *bodyA,
+    void *bodyB)
 {
     auto GetPhysicsComponent = [=](void *src) {
         auto rb = static_cast<btRigidBody *>(src);
@@ -21,31 +22,28 @@ static bool ContactProcessedCallback(
     auto compA = GetPhysicsComponent(bodyA);
     auto compB = GetPhysicsComponent(bodyB);
 
-    CollisionId *id = (CollisionId *)cp.m_userPersistentData;
-    bool collisionBegin = id == nullptr;
+    Collision *col = (Collision *)cp.m_userPersistentData;
+    bool collisionBegin = (col == nullptr);
 
     // New collision
     if (collisionBegin)
     {
-        id = new CollisionId;
-        static uint64_t collisionId = 0;
-        collisionId++;
-        id->CollisionId = collisionId;
-        id->BodyA = compA;
-        id->BodyB = compB;
-        cp.m_userPersistentData = id;
+        static CollisionId id = 0;
+        id++;
+        col = new Collision(id, compA, compB);
+        cp.m_userPersistentData = col;
     }
 
     OnCollisionData colDataA;
-    colDataA.CollisionId = id->CollisionId;
-    colDataA.OtherId = compB->GetGameObjectId();
+    colDataA.Id = col->Id;
+    colDataA.GoId = compB->GetGameObjectId();
     colDataA.Point = Convert(cp.getPositionWorldOnA());
     colDataA.NewCollision = collisionBegin;
     compA->Collisions->push(colDataA);
 
     OnCollisionData colDataB;
-    colDataB.CollisionId = id->CollisionId;
-    colDataB.OtherId = compA->GetGameObjectId();
+    colDataB.Id = col->Id;
+    colDataB.GoId = compA->GetGameObjectId();
     colDataB.Point = Convert(cp.getPositionWorldOnB());
     colDataB.NewCollision = collisionBegin;
     compB->Collisions->push(colDataB);
@@ -55,14 +53,15 @@ static bool ContactProcessedCallback(
 
 static bool ContactDestroyedCallback(void *data)
 {
-    CollisionId *id = (CollisionId *)data;
+    Collision *col = (Collision *)data;
 
-    EndCollisionData colDataA{id->CollisionId};
-    EndCollisionData colDataB{id->CollisionId};
+    EndCollisionData colDataA{col->Id};
+    EndCollisionData colDataB{col->Id};
 
-    id->BodyA->EndCollisions->push(colDataA);
-    id->BodyB->EndCollisions->push(colDataB);
-    delete id;
+    col->BodyA->EndCollisions->push(colDataA);
+    col->BodyB->EndCollisions->push(colDataB);
+
+    delete col;
     return true;
 }
 

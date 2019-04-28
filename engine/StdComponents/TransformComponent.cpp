@@ -15,6 +15,7 @@ void TransformComponent::Initialize(Rendering::Transform transform)
 }
 
 void TransformComponent::Initialize(glm::vec3 pos,
+
                                     glm::vec3 rot,
                                     glm::vec3 scale)
 {

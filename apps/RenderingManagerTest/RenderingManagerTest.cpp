@@ -2,6 +2,7 @@
 
 #include "PlayerController.hpp"
 #include "rte/CameraComponent.hpp"
+#include "rte/Definitions.hpp"
 #include "rte/StdComponentsMain.hpp"
 
 #include <iostream>
@@ -26,12 +27,13 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     sceneManager.SetActiveScene(scene);
 
     // Init components pools
-    uint64_t transIndex = scene->DefineComponent<TransformComponent, 4>();
-    uint64_t meshIndex = scene->DefineComponent<MeshComponent, 1>();
-    uint64_t pcIndex = scene->DefineComponent<PlayerController, 1>();
-    uint64_t camIndex = scene->DefineComponent<CameraComponent, 1>();
-    uint64_t plIndex = scene->DefineComponent<PointLightComponent, 1>();
-    uint64_t dlIndex = scene->DefineComponent<DirectionalLightComponent, 1>();
+    ComponentPoolId transIndex = scene->DefineComponent<TransformComponent, 4>();
+    ComponentPoolId meshIndex = scene->DefineComponent<MeshComponent, 1>();
+    ComponentPoolId pcIndex = scene->DefineComponent<PlayerController, 1>();
+    ComponentPoolId camIndex = scene->DefineComponent<CameraComponent, 1>();
+    ComponentPoolId plIndex = scene->DefineComponent<PointLightComponent, 1>();
+    ComponentPoolId dlIndex = scene->DefineComponent<DirectionalLightComponent, 1>();
+
     // Setup our game object
     GameObject *go = scene->CreateGameObject();
     TransformComponent *transComp = scene->AddComponent<TransformComponent>(transIndex, go);

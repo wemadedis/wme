@@ -21,7 +21,7 @@ public:
     GameObject *CreateGameObject();
 
     template <typename TComp, int MaxComponents>
-    uint64_t DefineComponent()
+    ComponentPoolId DefineComponent()
     {
         ComponentPool *compPool = new ComponentPoolInstance<TComp, MaxComponents>();
         _componentPools.push_back(compPool);
@@ -29,7 +29,7 @@ public:
     }
 
     template <typename TComp>
-    TComp *AddComponent(uint64_t compId, GameObject *go)
+    TComp *AddComponent(ComponentPoolId compId, GameObject *go)
     {
         Component *comp = _componentPools[compId]->AddComponent(go->GetId());
         TComp *tp = dynamic_cast<TComp *>(comp);

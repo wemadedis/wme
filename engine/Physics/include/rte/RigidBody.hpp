@@ -5,8 +5,6 @@
 #include <Bullet/btBulletDynamicsCommon.h>
 #include <glm/glm.hpp>
 
-// Forward declaration
-class PhysicsManager;
 namespace RTE::Physics
 {
 class RigidBody

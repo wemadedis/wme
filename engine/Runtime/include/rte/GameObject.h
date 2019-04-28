@@ -45,14 +45,14 @@ public:
      * 
      * @return uint64_t The ID of this GameObject
      */
-    uint64_t GetId();
+    GameObjectId GetId();
 
     /**
      * @brief Set the ID of this GameObject
      * 
      * @param id The new ID of this GameObject
      */
-    void SetId(uint64_t id);
+    void SetId(GameObjectId id);
 
     /**
      * @brief Get the enabled state of this GameObject

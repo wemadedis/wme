@@ -3,41 +3,45 @@
 #include <Bullet/btBulletDynamicsCommon.h>
 #include <cstdint>
 
+#include "rte/Definitions.hpp"
 #include "rte/GlmWrapper.hpp"
 
 namespace RTE::StdComponents
 {
 class PhysicsComponent;
-}
+} // namespace RTE::StdComponents
+
 namespace RTE::Physics
 {
 
-struct CollisionId
+struct Collision
 {
-    uint64_t CollisionId;
+    CollisionId Id;
     StdComponents::PhysicsComponent *BodyA;
     StdComponents::PhysicsComponent *BodyB;
-};
 
-enum class CollisionType
-{
-    None,
-    Started,
-    During,
-    Ended
+    Collision(
+        CollisionId id,
+        StdComponents::PhysicsComponent *bodyA,
+        StdComponents::PhysicsComponent *bodyB)
+    {
+        Id = id;
+        BodyA = BodyA;
+        BodyB = BodyB;
+    }
 };
 
 struct OnCollisionData
 {
-    uint64_t CollisionId;
-    uint64_t OtherId;
+    CollisionId Id;
+    GameObjectId GoId;
     glm::vec3 Point;
     bool NewCollision;
 };
 
 struct EndCollisionData
 {
-    uint64_t CollisionId;
+    CollisionId Id;
 };
 
 } // namespace RTE::Physics

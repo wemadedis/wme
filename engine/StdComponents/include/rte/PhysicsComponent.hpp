@@ -3,6 +3,7 @@
 #include <queue>
 #include <vector>
 
+#include "rte/Collision.hpp"
 #include "rte/Component.h"
 #include "rte/PhysicsManager.hpp"
 #include "rte/RigidBody.hpp"

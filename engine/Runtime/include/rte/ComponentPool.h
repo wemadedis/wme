@@ -12,8 +12,6 @@
 namespace RTE::Runtime
 {
 
-typedef uint64_t ComponentPoolID;
-
 class ComponentPool
 {
 private:

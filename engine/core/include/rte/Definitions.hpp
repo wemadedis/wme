@@ -2,5 +2,8 @@
 
 #include <cstdint>
 
-typedef uint64_t ComponentId;
-typedef uint64_t GameObjectId;
+typedef uint32_t DefaultIdType;
+typedef DefaultIdType ComponentId;
+typedef DefaultIdType ComponentPoolId;
+typedef DefaultIdType GameObjectId;
+typedef DefaultIdType CollisionId;
