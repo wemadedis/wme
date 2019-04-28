@@ -27,7 +27,8 @@ public:
     GUIModule() = default;
 
     void Initialize(GUIInitInfo info, VkRenderPass rp, VkCommandBuffer cmdBuffer);
-    void Draw(VkCommandBuffer cmdBuffer);
+    void Draw(VkCommandBuffer cmdBuffer, uint32_t frameWidth, uint32_t frameHeight);
+    void (*ImGUIDrawCommands)() = nullptr;
 };
 
 }

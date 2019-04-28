@@ -146,7 +146,11 @@ void Renderer::RecordRenderPass()
 
             vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(mesh->IndexCount), 1, 0, 0, 0);
         }
-        //ImGui_ImplGlfwVulkan_Render(cmdBuffer);
+        if(_guiModule != nullptr)
+        {
+            _guiModule->Draw(cmdBuffer, _frameWidth, _frameHeight);
+        }
+        
         _renderPass->EndRenderPass(cmdBuffer);
     }
 }
@@ -217,7 +221,10 @@ void Renderer::RecordCommandBuffersRT()
 
         _imageManager->ImageBarrier(commandBuffer, swapChainImage, subresourceRange,
                                     VK_ACCESS_TRANSFER_WRITE_BIT, 0, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_PRESENT_SRC_KHR);
-
+        if(_guiModule != nullptr)
+        {
+            _guiModule->Draw(commandBuffer, _frameWidth, _frameHeight);
+        }
         code = vkEndCommandBuffer(commandBuffer);
         Utilities::CheckVkResult(code, "Could not end RT command buffer!");
     }
@@ -365,6 +372,11 @@ Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f / info.MaxFPS)
     }
 }
 
+Renderer::Renderer(RendererInitInfo info, GUI::GUIModule *guiModule) : Renderer(info)
+{
+    _guiModule = guiModule;
+}
+
 void Renderer::Finalize()
 {
 
@@ -420,6 +432,29 @@ void Renderer::Finalize()
     _descriptorManager->CreateDescriptorPool(_swapChain, _meshInstances);
     _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
     UploadGlobalUniform();
+
+    
+    GUI::GUIInitInfo guiInfo;
+    guiInfo.Instance = _instance->GetInstance();
+    guiInfo.PhysicalDevice = _instance->GetPhysicalDevice();
+    guiInfo.Device = _instance->GetDevice();
+    guiInfo.QueueFamily = VK_QUEUE_FAMILY_IGNORED;
+    guiInfo.Queue = _instance->GetGraphicsQueue();
+    guiInfo.PipelineCache = VK_NULL_HANDLE;
+    guiInfo.DescriptorPool = _descriptorManager->GetDescriptorPool();
+    guiInfo.MinImageCount = _swapChain->GetSwapChainImageCount();
+    guiInfo.ImageCount = guiInfo.MinImageCount;
+    guiInfo.Allocator = nullptr;
+    guiInfo.CheckVkResultFn = [](VkResult code) { Utilities::CheckVkResult(code, "ImGUI Error"); };
+
+    VkCommandBuffer cmdBuffer = _commandBufferManager->BeginCommandBufferInstance();
+
+    if(_guiModule != nullptr)
+    {
+        _guiModule->Initialize(guiInfo, _renderPass->GetHandle(), cmdBuffer);
+    }
+    _commandBufferManager->SubmitCommandBufferInstance(cmdBuffer, _instance->GetGraphicsQueue());
+
     if (RTXon)
     {
         RecordCommandBuffersRT();
@@ -431,6 +466,8 @@ void Renderer::Finalize()
     }
 
     CreateSyncObjects();
+
+    
 }
 
 void Renderer::SetRenderMode(RenderMode mode)
@@ -482,10 +519,12 @@ void Renderer::Draw()
     VkCommandBuffer cmdBuffer;
     if (_renderMode == RenderMode::RASTERIZE)
     {
+        RecordRenderPass();
         cmdBuffer = _commandBufferManager->GetCommandBuffer(imageIndex);
     }
     else
     {
+        RecordCommandBuffersRT();
         cmdBuffer = _commandBufferManager->GetCommandBufferRT(imageIndex);
     }
     submitInfo.commandBufferCount = 1;

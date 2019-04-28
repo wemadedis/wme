@@ -107,6 +107,9 @@ private:
     const float _minFrameTime;
     TimePoint _lastFrameEnd;
 
+
+    GUI::GUIModule *_guiModule = nullptr;
+
     void Initialize();
     void RecordRenderPass();
     void RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32_t frameIndex);
@@ -126,6 +129,8 @@ public:
 Used to bind the window surface to the vulkan instance. Remake into a contructor since it will be a class.
 */
     Renderer(RendererInitInfo info);
+
+    Renderer(RendererInitInfo info, GUI::GUIModule *guiModule);
 
     void FrameResized(int32_t width, int32_t height);
 

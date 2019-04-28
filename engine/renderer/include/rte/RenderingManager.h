@@ -8,6 +8,7 @@
 #include "rte/RenderStructs.h"
 #include "rte/RendererHandles.h"
 
+#include "rte/GUIModule.h"
 
 #include "rte/StdComponentsMain.hpp"
 
@@ -28,7 +29,8 @@ class RenderingManager : public RTEModule
 private:
     static RenderingManager *_instance;
     Renderer *_renderer;
-
+    GUI::GUIModule *_guiModule;
+    
     // RESOURCE DATA: filepath -> resource handle
     std::unordered_map<std::string, MeshHandle> _meshes;
     std::unordered_map<std::string, TextureHandle> _textures;

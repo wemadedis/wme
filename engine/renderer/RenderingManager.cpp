@@ -4,6 +4,8 @@
 #include "rte/ImportFunctions.h"
 #include "rte/TransformComponent.hpp"
 
+#include "imgui/imgui.h"
+
 namespace RTE::Rendering
 {
 RenderingManager* RenderingManager::_instance = nullptr;
@@ -19,8 +21,21 @@ RenderingManager::RenderingManager(
     info.BindingFunc = [&](VkSurfaceKHR &surface, VkInstance instance) {
         windowManager.CreateSurface(instance, surface);
     };
+    _guiModule = new GUI::GUIModule();
 
-    _renderer = new Renderer(info);
+    _guiModule->ImGUIDrawCommands = [](){
+        ImGui::Begin("Wazzup");
+        ImGui::Text("Hello, world %d", 123);
+        if (ImGui::Button("Save"))
+        {
+            std::cout << "Saved" << std::endl;
+        }
+        float f;
+        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+        ImGui::End();
+    };
+
+    _renderer = new Renderer(info, _guiModule);
 
     _textures.insert({std::string(""), Renderer::EMPTY_TEXTURE});
 
@@ -80,7 +95,10 @@ void RenderingManager::Update(float deltaTime)
     {
         UpdateMainCamera();
     }
-
+    
+    auto size = _renderer->GetFrameSize();
+    auto& io = ImGui::GetIO();
+    io.DisplaySize = ImVec2((float)size.x, (float)size.y);
     _renderer->Draw();
 }
 

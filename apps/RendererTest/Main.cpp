@@ -27,6 +27,10 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtx/transform.hpp>
 
+
+#include "rte/GUIModule.h"
+#include "imgui/imgui.h"
+
 using namespace RTE::Rendering;
 
 typedef std::chrono::high_resolution_clock Clock;
@@ -76,7 +80,20 @@ int main()
     cam.ProjectionMatrix = glm::perspective(glm::radians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
     cam.ProjectionMatrix[1][1] *= -1;
 
-    auto renderer = Renderer(info);
+    auto gm = new RTE::GUI::GUIModule();
+    gm->ImGUIDrawCommands = [](){
+        ImGui::Begin("Wazzup");
+        ImGui::Text("Hello, world %d", 123);
+        if (ImGui::Button("Save"))
+        {
+            std::cout << "Saved" << std::endl;
+        }
+        float f;
+        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+        ImGui::End();
+    };
+
+    auto renderer = Renderer(info, gm);
     
     //auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
     auto quadhandle = renderer.UploadMesh(*quad);
