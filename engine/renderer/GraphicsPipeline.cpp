@@ -210,13 +210,15 @@ void GraphicsPipeline::CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragme
 }
 
 
-void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, ShaderInfo rmiss)
+void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, ShaderInfo rmiss, ShaderInfo srchit, ShaderInfo srmiss)
 {
     std::vector<VkPipelineShaderStageCreateInfo> shaderStages(
     {
         GetPipelineStageInfo(VK_SHADER_STAGE_RAYGEN_BIT_NV, rayGen),
         GetPipelineStageInfo(VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV, rchit),
-        GetPipelineStageInfo(VK_SHADER_STAGE_MISS_BIT_NV, rmiss)
+        GetPipelineStageInfo(VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV, srchit),
+        GetPipelineStageInfo(VK_SHADER_STAGE_MISS_BIT_NV, rmiss),
+        GetPipelineStageInfo(VK_SHADER_STAGE_MISS_BIT_NV, srmiss)
     });
 
     auto descriptorLayout = _descriptorManager->GetDescriptorLayoutRT();
@@ -225,7 +227,7 @@ void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, Sha
     pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutCreateInfo.pNext = nullptr;
     pipelineLayoutCreateInfo.flags = 0;
-    pipelineLayoutCreateInfo.setLayoutCount = descriptorLayout.size();
+    pipelineLayoutCreateInfo.setLayoutCount = (uint32_t)descriptorLayout.size();
     pipelineLayoutCreateInfo.pSetLayouts = descriptorLayout.data();
     pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
     pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
@@ -238,8 +240,12 @@ void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, Sha
         { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV, 0, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV },
         // group1 = [ chit ]
         { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_NV, VK_SHADER_UNUSED_NV, 1, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV },
-        // group2 = [ miss ]
-        { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV, 2, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV },
+        // group2 = [ srchit ]
+        { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_NV, VK_SHADER_UNUSED_NV, 2, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV },
+        // group3 = [ miss ]
+        { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV, 3, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV },
+        // group4 = [ srmiss ]
+        { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV, 4, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV },
     });
 
     VkRayTracingPipelineCreateInfoNV rayPipelineInfo;
@@ -250,7 +256,7 @@ void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, Sha
     rayPipelineInfo.pStages = shaderStages.data();
     rayPipelineInfo.groupCount = (uint32_t)shaderGroups.size();
     rayPipelineInfo.pGroups = shaderGroups.data();
-    rayPipelineInfo.maxRecursionDepth = 1;
+    rayPipelineInfo.maxRecursionDepth = 3;
     rayPipelineInfo.layout = _pipelineLayout;
     rayPipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
     rayPipelineInfo.basePipelineIndex = 0;
@@ -278,6 +284,8 @@ GraphicsPipeline::GraphicsPipeline( ShaderInfo vertexShader,
 GraphicsPipeline::GraphicsPipeline( ShaderInfo rayGen, 
                                     ShaderInfo rchit, 
                                     ShaderInfo rmiss,
+                                    ShaderInfo srchit, 
+                                    ShaderInfo srmiss,
                                     VkExtent2D swapChainExtent, 
                                     DescriptorManager *descriptorManager, 
                                     Instance *instance, 
@@ -288,7 +296,7 @@ GraphicsPipeline::GraphicsPipeline( ShaderInfo rayGen,
     _instance = instance;
     _renderPass = renderPass;
     //TODO: Check shader type!
-    CreatePipelineRT(rayGen, rchit, rmiss);
+    CreatePipelineRT(rayGen, rchit, rmiss, srchit, srmiss);
 }
 
 GraphicsPipeline::~GraphicsPipeline()

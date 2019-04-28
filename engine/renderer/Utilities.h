@@ -47,6 +47,8 @@ ShaderInfo GetStandardFragmentShader(VkDevice device);
 ShaderInfo GetStandardRayGenShader(VkDevice device);
 ShaderInfo GetStandardRayHitShader(VkDevice device);
 ShaderInfo GetStandardRayMissShader(VkDevice device);
+ShaderInfo GetShadowRayHitShader(VkDevice device);
+ShaderInfo GetShadowdRayMissShader(VkDevice device);
 
 
 bool HasStencilComponent(VkFormat format);

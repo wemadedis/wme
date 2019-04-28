@@ -34,6 +34,10 @@ struct HitInfo
 
 layout(location = 0) rayPayloadInNV vec3 hitValue;
 layout(location = 1) hitAttributeNV vec3 attribs;
+layout(location = 2) rayPayloadInNV float secondaryRayHitValue;
+
+
+layout(binding = 0) uniform accelerationStructureNV topLevelAS;
 
 layout(binding = 2) uniform GlobalUniformData
 {
@@ -107,8 +111,24 @@ HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
     return info;
 }
 
-vec4 Phong(vec3 L, vec3 R, vec3 N)
+float FireShadowRay(vec3 origin, vec3 direction)
 {
+    //vec3 origin = gl_WorldRayOriginNV + gl_WorldRayDirectionNV * gl_HitTNV; //THIS MOTHER@!#$€?
+    //vec3 direction = dir;
+    uint rayFlags = gl_RayFlagsOpaqueNV | gl_RayFlagsTerminateOnFirstHitNV;
+    uint cullMask = 0xff;
+    float tmin = 0.001;
+    float tmax = 100.0;
+
+    traceNV(topLevelAS, rayFlags, cullMask, 1 /* sbtRecordOffset */, 0 /* sbtRecordStride */, 1 /* missIndex */, origin, tmin, -direction, tmax, 2 /*payload location*/);
+    return secondaryRayHitValue;
+}
+
+
+
+vec4 Phong(vec3 L, vec3 R, vec3 N, vec3 O)
+{
+    if(FireShadowRay(O, L) < 100.0f) return vec4(0.0f);
     float udiff = InstanceData[gl_InstanceCustomIndexNV].Diffuse;
     float uspec = InstanceData[gl_InstanceCustomIndexNV].Specular;
     float shininess = InstanceData[gl_InstanceCustomIndexNV].Shininess;
@@ -117,14 +137,14 @@ vec4 Phong(vec3 L, vec3 R, vec3 N)
     return vec4(1.0f) * diff + vec4(1.0f) * spec;
 }
 
-vec4 CalculatePointLightShading(PointLight light, HitInfo hitinfo)
+vec4 CalculatePointLightShading(PointLight light, HitInfo hitInfo)
 {
     vec3 lightPosition = light.PositionRadius.xyz;
-    vec3 direction =  lightPosition - hitinfo.Point;
+    vec3 direction =  lightPosition - hitInfo.Point;
     vec3 L = -normalize(direction);
-    vec3 R = reflect(L,hitinfo.Normal);
+    vec3 R = reflect(L,hitInfo.Normal);
     float distance = length(direction);
-    return Phong(L,R, hitinfo.Normal) * light.Color * light.PositionRadius.w / (distance*distance);
+    return Phong(L,R, hitInfo.Normal, hitInfo.Point) * light.Color * light.PositionRadius.w / (distance*distance);
 }
 
 
@@ -132,7 +152,7 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light, HitInfo hitInfo)
 {
     vec3 L = -light.Direction.xyz;
     vec3 R = reflect(L, hitInfo.Normal);
-    return Phong(L,R, hitInfo.Normal) * light.Color;
+    return Phong(L,R, hitInfo.Normal, hitInfo.Point) * light.Color;
 }
 
 vec4 CalculatePerLightShading(HitInfo hitinfo)
@@ -161,5 +181,6 @@ void main()
     Vertex v2 = GetVertex(meshIndex, index2);
     Vertex v3 = GetVertex(meshIndex, index3);
     HitInfo hitinfo = GetHitInfo(v1, v2, v3, barycentrics);
+
     hitValue = CalculatePerLightShading(hitinfo).rgb;
 }

@@ -173,7 +173,7 @@ void Renderer::RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32
     auto extent = _swapChain->GetSwapChainExtent();
     RTUtilities::GetInstance()->vkCmdTraceRaysNV(commandBuffer,
                                                  _shaderBindingTable.buffer, 0,
-                                                 _shaderBindingTable.buffer, 2 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
+                                                 _shaderBindingTable.buffer, 3 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
                                                  _shaderBindingTable.buffer, 1 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
                                                  VK_NULL_HANDLE, 0, 0,
                                                  extent.width, extent.height, 1);
@@ -315,7 +315,7 @@ void Renderer::InitRT()
 
 void Renderer::CreateShaderBindingTable()
 {
-    const uint32_t groupNum = 3; // 1 group is listed in pGroupNumbers in VkRayTracingPipelineCreateInfoNV
+    const uint32_t groupNum = 5;
     const uint32_t shaderBindingTableSize = _rtProperties.shaderGroupHandleSize * groupNum;
 
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, shaderBindingTableSize, _shaderBindingTable);
@@ -356,10 +356,6 @@ void Renderer::Finalize()
 
     auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
     auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
-    auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
-    //TODO: Change name to GetStandardRayClosestHitShader
-    auto rchit = Utilities::GetStandardRayHitShader(_instance->GetDevice());
-    auto rmiss = Utilities::GetStandardRayMissShader(_instance->GetDevice());
 
     _pipeline = new GraphicsPipeline(vertexShader,
                                      fragmentShader,
@@ -370,11 +366,20 @@ void Renderer::Finalize()
 
     if (RTXon)
     {
+        auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
+        //TODO: Change name to GetStandardRayClosestHitShader
+        auto rchit = Utilities::GetStandardRayHitShader(_instance->GetDevice());
+        auto rmiss = Utilities::GetStandardRayMissShader(_instance->GetDevice());
+        auto srchit = Utilities::GetShadowRayHitShader(_instance->GetDevice());
+        auto srmiss = Utilities::GetShadowdRayMissShader(_instance->GetDevice());
+
         InitRT();
         _descriptorManager->CreateDescriptorSetLayoutRT((uint32_t)_meshes.size(), (uint32_t)_meshInstances.size());
         _pipelineRT = new GraphicsPipeline(rayGen,
                                            rchit,
                                            rmiss,
+                                           srchit,
+                                           srmiss,
                                            _swapChain->GetSwapChainExtent(),
                                            _descriptorManager,
                                            _instance,

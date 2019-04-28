@@ -81,6 +81,16 @@ ShaderInfo GetStandardRayMissShader(VkDevice device)
     return {ShaderType::RMISS, CreateShaderModule(ReadEngineAsset("shaders/rmiss.spv"), device)};
 }
 
+ShaderInfo GetShadowRayHitShader(VkDevice device)
+{
+    return {ShaderType::RCHIT, CreateShaderModule(ReadEngineAsset("shaders/srchit.spv"), device)};
+}
+
+ShaderInfo GetShadowdRayMissShader(VkDevice device)
+{
+    return {ShaderType::RMISS, CreateShaderModule(ReadEngineAsset("shaders/srmiss.spv"), device)};
+}
+
 bool HasStencilComponent(VkFormat format)
 {
     return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
