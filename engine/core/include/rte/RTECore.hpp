@@ -26,6 +26,7 @@ private:
     Platform::WindowManager *_windowManager = nullptr;
     void InitEngine();
     void RunUpdateLoop();
+    void ValidateConfiguration();
 
 public:
     static RTEConfig Config;

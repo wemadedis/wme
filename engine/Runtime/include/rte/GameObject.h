@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "rte/Component.h"
+#include "rte/Definitions.hpp"
 
 namespace RTE::Runtime
 {
@@ -16,7 +17,7 @@ class GameObject
 {
 private:
     /// @brief The ID of this GameObject
-    uint64_t _id = 0;
+    GameObjectId _id = 0;
 
     /// @brief The enabled state of this GameObject
     bool _enabled = true;
@@ -24,14 +25,13 @@ private:
     /// @brief std::vector of #RTE::Runtime::Component's attached to this GameObject
     std::vector<Component *> *_components = nullptr;
 
-
 public:
     /**
      * @brief Construct a new GameObject with the given ID 
      * 
      * @param id The ID of this GameObject
      */
-    GameObject(uint64_t id);
+    GameObject(GameObjectId id);
 
     /**
      * @brief Get the #RTE::Runtime::Component's attachted to this GameObject
@@ -39,7 +39,6 @@ public:
      * @return std::vector<#RTE::Runtime::Component*>* A pointer to the std::vector containing the attached #RTE::Runtime::Component's.
      */
     std::vector<Component *> *GetComponents();
-
 
     /**
      * @brief Get the ID of this GameObject

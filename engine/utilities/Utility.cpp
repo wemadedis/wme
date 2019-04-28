@@ -1,5 +1,8 @@
 #include "rte/Utility.hpp"
 
+#include "rte/RTEConfig.hpp"
+#include "rte/RTECore.hpp"
+
 #include <chrono>
 #include <cstdarg>
 #include <ctime>

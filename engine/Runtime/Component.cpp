@@ -2,7 +2,6 @@
 
 namespace RTE::Runtime
 {
-
 bool Component::GetEnabled()
 {
     return _enabled;
@@ -11,6 +10,16 @@ bool Component::GetEnabled()
 void Component::SetEnabled(bool enabled)
 {
     _enabled = enabled;
+}
+
+GameObjectId Component::GetGameObjectId()
+{
+    return _gameObjectId;
+}
+
+void Component::SetGameObjectId(GameObjectId goId)
+{
+    _gameObjectId = goId;
 }
 
 } // namespace RTE::Runtime

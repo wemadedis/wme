@@ -38,18 +38,18 @@ static bool ContactProcessedCallback(
 
     OnCollisionData colDataA;
     colDataA.CollisionId = id->CollisionId;
-    colDataA.OtherId = compB->GameObjectID;
+    colDataA.OtherId = compB->GetGameObjectId();
     colDataA.Point = Convert(cp.getPositionWorldOnA());
     colDataA.NewCollision = collisionBegin;
     compA->Collisions->push(colDataA);
 
     OnCollisionData colDataB;
     colDataB.CollisionId = id->CollisionId;
-    colDataB.OtherId = compA->GameObjectID;
+    colDataB.OtherId = compA->GetGameObjectId();
     colDataB.Point = Convert(cp.getPositionWorldOnB());
     colDataB.NewCollision = collisionBegin;
     compB->Collisions->push(colDataB);
-    
+
     return true;
 }
 

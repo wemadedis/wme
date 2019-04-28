@@ -12,10 +12,9 @@ void ConfigureGame(RTEConfig &config)
 {
     config.WindowConfig.WindowHeight = 500;
     config.WindowConfig.WindowWidth = 500;
-    config.WindowConfig.ApplicationName = "Banana";
     config.WindowConfig.WindowName = "Eggplant";
     config.GraphicsConfig.UseRaytracing = false;
-    config.AssetConfig.Meshes = { Utilities::GetFileFromAssets("models/monkey.ply") };
+    config.AssetConfig.Meshes = {Utilities::GetFileFromAssets("models/monkey.ply")};
 }
 
 void OnGameStart(Runtime::SceneManager &sceneManager)
@@ -43,7 +42,6 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     pc->SetEnabled(true);
     GameObject *go2 = scene->CreateGameObject();
 
-
     CameraComponent *camera = scene->AddComponent<CameraComponent>(camIndex, go2);
     camera->SetEnabled(true);
     TransformComponent *trans2 = scene->AddComponent<TransformComponent>(transIndex, go2);
@@ -62,9 +60,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     trans4->Transform.Pos = glm::vec3(0.0f, 0.0f, 0.0f);
     dirLight->Initialize(trans4, Colors::White);
 
-
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
     meshComp->Initialize(transComp, monkey);
     pc->Initialize(transComp, nullptr, camera);
-
 }

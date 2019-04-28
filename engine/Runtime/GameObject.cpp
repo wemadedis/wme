@@ -8,7 +8,7 @@ namespace RTE::Runtime
 GameObject::GameObject(uint64_t id)
 {
     SetId(id);
-	_components = new std::vector<Component*>();
+    _components = new std::vector<Component *>();
 }
 
 std::vector<Component *> *GameObject::GetComponents()
@@ -16,7 +16,7 @@ std::vector<Component *> *GameObject::GetComponents()
     return _components;
 }
 
-uint64_t GameObject::GetId()
+GameObjectId GameObject::GetId()
 {
     return _id;
 }

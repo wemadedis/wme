@@ -17,7 +17,7 @@ struct GraphicsConfig
 
     /**
      * @brief Color of a ray miss OR rasterized clear color
-     * Alpha value is ignored
+     * Alpha channel is ignored
      */
     Colors::Color BackgroundColor = Colors::Cyan;
 
@@ -39,13 +39,11 @@ struct WindowConfig
     /// @brief Window height in pixels
     uint32_t WindowHeight = 1000;
 
+    /// @brief Set the window to be fullscreen
     bool Fullscreen = false;
 
-    /// @brief The title of the app
-    char *ApplicationName = "RTEGame";
-
-    /// @brief The Title of the main window, if null, #ApplicationName is used.
-    char *WindowName = nullptr;
+    /// @brief The Title of the window
+    std::string WindowName = "RTEGame";
 };
 
 struct AssetConfig
