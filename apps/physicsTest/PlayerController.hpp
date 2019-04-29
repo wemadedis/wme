@@ -23,7 +23,6 @@ public:
         while (_physics->Collisions->empty() == false)
         {
             RTE::Physics::OnCollisionData colData = _physics->Collisions->front();
-            Debug(std::to_string(colData.OtherId));
             _physics->Collisions->pop();
         }
         while (_physics->EndCollisions->empty() == false)
@@ -34,7 +33,7 @@ public:
 
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_A) == GLFW_PRESS)
         {
-            
+
             Debug("Called");
         }
     }
