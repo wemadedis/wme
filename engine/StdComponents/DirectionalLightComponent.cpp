@@ -28,7 +28,7 @@ glm::vec3 DirectionalLightComponent::Direction()
 
 void DirectionalLightComponent::Update(float deltaTime) 
 {
-
+    _transform->Transform.Rot.x += 25.0f*deltaTime;
 }
 
 }

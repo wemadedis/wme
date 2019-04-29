@@ -99,9 +99,9 @@ void DescriptorManager::CreateDescriptorSetLayout()
     }
 }
 
-void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount)
+void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount, uint32_t textureCount)
 {
-    _layoutsRT.resize(3);
+    _layoutsRT.resize(4);
     VkDescriptorSetLayoutBinding accelerationStructureLayoutBinding = {};
     accelerationStructureLayoutBinding.binding = 0;
     accelerationStructureLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV;
@@ -190,12 +190,22 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
     layoutInfo.pBindings = &instanceUniformLayout;
 
     code = vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layoutsRT[2]);
-    Utilities::CheckVkResult(code, "Failed to create vertex descriptor set layout (RT)!");
+    Utilities::CheckVkResult(code, "Failed to create instance descriptor set layout (RT)!");
+
+    VkDescriptorSetLayoutBinding textureUniformLayout = {};
+    textureUniformLayout.binding = 4;
+    textureUniformLayout.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    textureUniformLayout.descriptorCount = textureCount;
+    textureUniformLayout.stageFlags = VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV;
+    layoutInfo.pBindings = &textureUniformLayout;
+    int i = 5;
+    code = vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layoutsRT[3]);
+    Utilities::CheckVkResult(code, "Failed to create texture descriptor set layout (RT)!");
 }
 
-void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo*> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer)
+void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo*> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures)
 {
-    _descriptorsetsRT.resize(3);
+    _descriptorsetsRT.resize(4);
 
 
     std::vector<VkDescriptorPoolSize> poolSizes
@@ -205,6 +215,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
         { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1 },
         { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, (uint32_t)meshes.size() * 3 + 1},
         { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, (uint32_t)instances.size() },
+        { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, (uint32_t)textures.size() },
     });
 
     VkDescriptorPoolCreateInfo descriptorPoolCreateInfo;
@@ -218,11 +229,12 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     VkResult code = vkCreateDescriptorPool(_instance->GetDevice(), &descriptorPoolCreateInfo, nullptr, &_poolRT);
     Utilities::CheckVkResult(code, "Failed to create RT descriptor pool!");
 
-    uint32_t variableDescriptorCounts[3] = 
+    uint32_t variableDescriptorCounts[4] = 
     {
         (uint32_t)meshes.size(),
         (uint32_t)meshes.size(),
         (uint32_t)instances.size(),
+        (uint32_t)textures.size(),
     };
 
     VkDescriptorSetVariableDescriptorCountAllocateInfoEXT variableDescriptorCountInfo;
@@ -363,6 +375,25 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     instanceBuffers.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
     instanceBuffers.pBufferInfo = _meshBufferInfos.data();
 
+
+    _imageInfos.resize(textures.size(), {});
+    for(uint32_t textureIndex = 0; textureIndex < textures.size(); textureIndex++)
+    {
+        _imageInfos[textureIndex].imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        _imageInfos[textureIndex].imageView = textures[textureIndex].image.imageView;
+        _imageInfos[textureIndex].sampler = textures[textureIndex].sampler;
+    }
+    
+
+    VkWriteDescriptorSet textureSamplers = {};
+    textureSamplers.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    textureSamplers.dstSet = _descriptorsetsRT[3];
+    textureSamplers.dstBinding = 4;
+    textureSamplers.dstArrayElement = 0;
+    textureSamplers.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    textureSamplers.descriptorCount = (uint32_t)textures.size();
+    textureSamplers.pImageInfo = _imageInfos.data();
+
     
     //std::vector<VkWriteDescriptorSet> descriptorWrites({ accelerationStructureWrite, outputImageWrite, cameraUniform, instanceMappingBuffer, indexBuffers, vertexBuffers, instanceBuffers });
     _descriptorWritesRT.push_back(accelerationStructureWrite);
@@ -372,6 +403,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     _descriptorWritesRT.push_back(indexBuffers);
     _descriptorWritesRT.push_back(vertexBuffers);
     _descriptorWritesRT.push_back(instanceBuffers);
+    _descriptorWritesRT.push_back(textureSamplers);
     
     vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)_descriptorWritesRT.size(), _descriptorWritesRT.data(), 0, nullptr);
 }

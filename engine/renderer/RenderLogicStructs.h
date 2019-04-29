@@ -42,6 +42,7 @@ struct MeshUniformData
     float Shininess = 10.0f;
     float Reflectivity = 0.0f;
     float Transparency = 0.0f;
+	TextureHandle Texture;
 	bool HasTexture;
 };
 

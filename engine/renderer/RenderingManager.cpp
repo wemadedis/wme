@@ -3,11 +3,14 @@
 #include "rte/ModelImporter.h"
 #include "rte/ImportFunctions.h"
 #include "rte/TransformComponent.hpp"
-
+#include "rte/Primitives.h"
 #include "imgui/imgui.h"
 
 namespace RTE::Rendering
 {
+const std::string RenderingManager::QUAD = "quad";
+const std::string RenderingManager::CYLINDER = "cylinder";
+
 RenderingManager* RenderingManager::_instance = nullptr;
 RenderingManager::RenderingManager(
     RTEConfig &config,
@@ -32,7 +35,7 @@ RenderingManager::RenderingManager(
     //TODO: Handle cases where RT is requested but not available
 
     _textures.insert({std::string(""), Renderer::EMPTY_TEXTURE});
-
+    UploadPrimitives();
     ImportRenderingResources(config.AssetConfig.Meshes, config.AssetConfig.Textures);
 
     _instance = this;
@@ -213,6 +216,16 @@ void RenderingManager::RegisterDirectionalLight(DirectionalLightComponent *dirLi
     dl.Direction = glm::vec4(dirLight->Direction(), 0.0f);
     DirectionalLightHandle light = _renderer->AddDirectionalLight(dl);
     _directionalLights.insert({dirLight, light});
+}
+
+void RenderingManager::UploadPrimitives()
+{
+    auto cylinder = Primitives::MakeCylinder(1, 2, 64);
+    auto quad = Primitives::MakeQuad();
+    MeshHandle cylinderHandle = _renderer->UploadMesh(cylinder);
+    MeshHandle quadHandle = _renderer->UploadMesh(quad);
+    _meshes.insert({CYLINDER, cylinderHandle});
+    _meshes.insert({QUAD, quadHandle});
 }
 
 void RenderingManager::SetGUIDrawFunction(void (*function)())

@@ -12,7 +12,7 @@ using namespace glm;
 namespace RTE::Rendering::Primitives
 {
 
-Mesh* MakeCylinder(float radius, float height, int faces){
+Mesh MakeCylinder(float radius, float height, int faces){
     vec3 pos = vec3(0.0f,0.0f,radius);
     vector<vec3> vertices;
     vector<vec3> normals;
@@ -69,29 +69,29 @@ Mesh* MakeCylinder(float radius, float height, int faces){
         indices.push_back(i+2);
 
     }
-    Mesh* cylinder = new Mesh();
+    Mesh cylinder;
     for(uint32_t i = 0; i < vertices.size(); i++){
         Vertex v = {vertices[i], vec4(0.5f), normals[i]};
-        cylinder->Vertices.push_back(v);
+        cylinder.Vertices.push_back(v);
     }
-    cylinder->Indices = indices;
+    cylinder.Indices = indices;
     return cylinder;
 }
 
-Mesh* MakeQuad()
+Mesh MakeQuad()
 {
     const std::vector<Vertex> vertices = {
-        {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
-        {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
-        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
-        {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f, 1.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}}
+        {{-0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 1.0f}},
+        {{0.5f, -0.5f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+        {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 0.0f}},
+        {{-0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 0.0f, 0.0f}, {0.0f, 0.0f, 1.0f}, {0.0f, 0.0f}}
     };
     const std::vector<uint16_t> indices = {
         0, 1, 2, 2, 3, 0
     };
-    Mesh* quad = new Mesh();
-    quad->Vertices = vertices;
-    quad->Indices = indices;
+    Mesh quad;
+    quad.Vertices = vertices;
+    quad.Indices = indices;
     return quad;
 }
 

@@ -31,15 +31,15 @@ class DescriptorManager
     std::vector<VkBufferView> _indexViews;
     std::vector<VkBufferView> _vertexViews;
     std::vector<VkDescriptorBufferInfo> _meshBufferInfos;
-
+    std::vector<VkDescriptorImageInfo> _imageInfos;
 
     std::vector<VkWriteDescriptorSet> _descriptorWritesRT;
 public:
     DescriptorManager(Instance *instance);
     void CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInstance> &meshes);
     void CreateDescriptorSetLayout();
-    void CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount);
-    void CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo*> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer);
+    void CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount, uint32_t textureCount);
+    void CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo*> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures);
     void CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData);
 
     void UpdateRTTargetImage(VkImageView imageViewRT);

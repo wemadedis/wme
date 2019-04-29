@@ -110,8 +110,8 @@ struct Material
 {
     float Ambient = 0.2f;
     float Diffuse = 0.3f;
-    float Specular = 1.0f;
-    float Shininess = 10.0f;
+    float Specular = 0.3f;
+    float Shininess = 1.0f;
     float Reflectivity = 0.0f;
     float Transparency = 0.0f;
 

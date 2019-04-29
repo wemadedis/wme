@@ -44,8 +44,10 @@ private:
     CameraComponent* _mainCamera = nullptr;
     void UpdateMainCamera();
     void UpdateMeshComponent(MeshComponent *meshComponent);
-
+    void UploadPrimitives();
 public:
+    static const std::string QUAD;
+    static const std::string CYLINDER;
     RenderingManager(
         RTEConfig &config,
         Platform::WindowManager &windowManager);

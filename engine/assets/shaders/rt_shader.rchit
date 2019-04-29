@@ -65,8 +65,11 @@ layout(set = 2, binding = 4) uniform InstanceUniformData
     float Shininess;
     float Reflectivity;
     float Transparency;
+    uint Texture;
     bool HasTexture;
 } InstanceData[];
+
+layout(set = 3, binding = 4) uniform sampler2D TextureSamplers[];
 
 float FetchFloat(uint meshIndex, int offset)
 {
@@ -102,7 +105,7 @@ HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
     vec2 UV = v1.texCoord * barycentrics.x + v2.texCoord * barycentrics.y + v3.texCoord * barycentrics.z;
     
     
-    normal =vec3(modelMatrix * vec4(normal,0.0f));
+    normal = normalize(vec3(modelMatrix * vec4(normal,0.0f)));
     if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
     
     position = vec3(modelMatrix * vec4(position,1.0f));
@@ -133,13 +136,19 @@ float FireShadowRay(vec3 origin, vec3 direction)
 
 vec4 Phong(vec3 L, vec3 R, vec3 N, vec3 O)
 {
-    if(FireShadowRay(O+N*0.0001f, L) < 100.0f) return vec4(0.0f);
+    //if(FireShadowRay(O+N*0.0001f, L) < 100.0f) return vec4(0.0f);
     float udiff = InstanceData[gl_InstanceCustomIndexNV].Diffuse;
     float uspec = InstanceData[gl_InstanceCustomIndexNV].Specular;
     float shininess = InstanceData[gl_InstanceCustomIndexNV].Shininess;
-    float diff = max(0.0f, dot(L,N)) * udiff;
-    float spec = pow(max(0.0f, dot(-gl_WorldRayDirectionNV,R)) * uspec, shininess);
-    return vec4(1.0f) * diff + vec4(1.0f) * spec;
+    float diff = max(0.0f, dot(L,N))*udiff;
+    float spec = max(0.0f, dot(-gl_WorldRayDirectionNV,R))*uspec;
+    if(InstanceData[gl_InstanceCustomIndexNV].HasTexture)
+    {
+        uint texIndex = InstanceData[gl_InstanceCustomIndexNV].Texture;
+        vec4 texColor = texture(TextureSamplers[texIndex], hitValue.UV);    
+        return texColor * diff + texColor * spec;
+    }
+    return vec4(diff) + vec4(spec);
 }
 
 vec4 CalculatePointLightShading(PointLight light, HitInfo hitInfo)
@@ -155,14 +164,19 @@ vec4 CalculatePointLightShading(PointLight light, HitInfo hitInfo)
 
 vec4 CalculateDirectionalLightShading(DirectionalLight light, HitInfo hitInfo)
 {
-    vec3 L = -light.Direction.xyz;
+    vec3 L = light.Direction.xyz;
     vec3 R = reflect(L, hitInfo.Normal);
     return Phong(L,R, hitInfo.Normal, hitInfo.Point) * light.Color;
 }
 
 vec4 CalculatePerLightShading(HitInfo hitinfo)
 {
-    vec4 color = vec4(InstanceData[gl_InstanceCustomIndexNV].Ambient)*InstanceData[gl_InstanceCustomIndexNV].Ambient; //TODO: THIS IS WRONG (AMBIENT*AMBIENT)
+    vec4 color = vec4(InstanceData[gl_InstanceCustomIndexNV].Ambient);
+    if(InstanceData[gl_InstanceCustomIndexNV].HasTexture)
+    {
+        uint texIndex = InstanceData[gl_InstanceCustomIndexNV].Texture;
+        color *= texture(TextureSamplers[texIndex], hitValue.UV);    
+    }
     for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
     {
         color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex], hitinfo);

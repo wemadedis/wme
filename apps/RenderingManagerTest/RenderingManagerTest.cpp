@@ -16,6 +16,7 @@ void ConfigureGame(RTEConfig &config)
     config.WindowConfig.WindowName = "Eggplant";
     config.GraphicsConfig.UseRaytracing = true;
     config.AssetConfig.Meshes = {Utilities::GetFileFromAssets("models/monkey.ply")};
+    config.AssetConfig.Textures = {Utilities::GetFileFromAssets("textures/rte.png")};
 }
 
 void OnGameStart(Runtime::SceneManager &sceneManager)
@@ -27,12 +28,12 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     sceneManager.SetActiveScene(scene);
 
     // Init components pools
-    ComponentPoolId transIndex = scene->DefineComponent<TransformComponent, 4>();
-    ComponentPoolId meshIndex = scene->DefineComponent<MeshComponent, 1>();
-    ComponentPoolId pcIndex = scene->DefineComponent<PlayerController, 1>();
-    ComponentPoolId camIndex = scene->DefineComponent<CameraComponent, 1>();
-    ComponentPoolId plIndex = scene->DefineComponent<PointLightComponent, 1>();
-    ComponentPoolId dlIndex = scene->DefineComponent<DirectionalLightComponent, 1>();
+    ComponentPoolId transIndex = scene->DefineComponent<TransformComponent, 50>();
+    ComponentPoolId meshIndex = scene->DefineComponent<MeshComponent, 50>();
+    ComponentPoolId pcIndex = scene->DefineComponent<PlayerController, 50>();
+    ComponentPoolId camIndex = scene->DefineComponent<CameraComponent, 50>();
+    ComponentPoolId plIndex = scene->DefineComponent<PointLightComponent, 50>();
+    ComponentPoolId dlIndex = scene->DefineComponent<DirectionalLightComponent, 50>();
 
     // Setup our game object
     GameObject *go = scene->CreateGameObject();
@@ -61,6 +62,18 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     auto dirLight = scene->AddComponent<DirectionalLightComponent>(dlIndex, go4);
     trans4->Transform.Pos = glm::vec3(0.0f, 0.0f, 0.0f);
     dirLight->Initialize(trans4, Colors::White);
+
+    GameObject *go5 = scene->CreateGameObject();
+    auto trans5 = scene->AddComponent<TransformComponent>(transIndex, go5);
+    trans5->Transform.Scale = glm::vec3(20.0f);
+    trans5->Transform.Pos.z = -10.0f;
+    auto quadMesh = scene->AddComponent<MeshComponent>(meshIndex, go5);
+
+
+
+    quadMesh->Initialize(trans5, RenderingManager::QUAD, RTE::Utilities::GetFileFromAssets("textures/rte.png"));
+    quadMesh->Material.Reflectivity = 0.5f;
+
 
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
     meshComp->Initialize(transComp, monkey);

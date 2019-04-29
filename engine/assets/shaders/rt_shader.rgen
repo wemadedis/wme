@@ -51,7 +51,7 @@ void main()
     float aspectRatio = float(gl_LaunchSizeNV.x) / float(gl_LaunchSizeNV.y);
 
 
-    vec3 origin = vec3(GlobalUniform.Position);//vec3(vec4(vec3(0.0f),1.0f) *  (GlobalUniform.ViewMatrix));
+    vec3 origin = vec3(GlobalUniform.Position);
 
     float fov = tan(radians(45.0f/2.0f));
 
@@ -66,8 +66,8 @@ void main()
     vec4 color = hitValue.Color;
     if(!hitValue.Missed && hitValue.Reflectivity > 0.0f)
     {
-        origin = hitValue.Point + hitValue.Normal*0.0001f;
-        direction = normalize(reflect(-direction, hitValue.Normal));
+        origin = hitValue.Point - hitValue.Normal*0.0001f;
+        direction = normalize(reflect(direction, hitValue.Normal));
         float oldRefl = hitValue.Reflectivity;
         for(int i = 0; i < 1; i++)
         {

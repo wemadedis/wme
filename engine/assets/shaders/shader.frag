@@ -23,6 +23,7 @@ layout(binding = 0) uniform MeshUniformData {
     float Shininess;
     float Reflectivity;
     float Transparency;
+    uint Texture;
     bool HasTexture;
 } MeshUniform;
 
@@ -73,7 +74,7 @@ vec4 CalculatePointLightShading(PointLight light)
 
 vec4 CalculateDirectionalLightShading(DirectionalLight light)
 {
-    vec3 L = vec3(GlobalUniform.ViewMatrix * vec4(light.Direction.xyz,0.0f));
+    vec3 L = -vec3(GlobalUniform.ViewMatrix * vec4(light.Direction.xyz,0.0f));
     vec3 R = reflect(L, N);
     return Phong(L,R) * light.Color;
 }

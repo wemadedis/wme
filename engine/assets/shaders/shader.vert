@@ -23,6 +23,7 @@ layout(binding = 0) uniform MeshUniformData {
     float Shininess;
     float Reflectivity;
     float Transparency;
+    uint Texture;
     bool HasTexture;
 } MeshUniform;
 

@@ -126,7 +126,8 @@ TextureHandle Renderer::UploadTexture(Texture &texture)
 void Renderer::BindTextureToMeshInstance(TextureHandle texture, MeshInstanceHandle instance)
 {
     _meshInstances[instance].texture = texture;
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [](MeshUniformData *data) {
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshUniformData *data) {
+        data->Texture = texture;
         data->HasTexture = true;
     });
 }
@@ -374,7 +375,7 @@ void Renderer::Finalize()
         auto srmiss = Utilities::GetShadowdRayMissShader(_instance->GetDevice());
 
         InitRT();
-        _descriptorManager->CreateDescriptorSetLayoutRT((uint32_t)_meshes.size(), (uint32_t)_meshInstances.size());
+        _descriptorManager->CreateDescriptorSetLayoutRT((uint32_t)_meshes.size(), (uint32_t)_meshInstances.size(), (uint32_t)_textures.size());
         _pipelineRT = new GraphicsPipeline(rayGen,
                                            rchit,
                                            rmiss,
@@ -399,7 +400,7 @@ void Renderer::Finalize()
             }
         });
 
-        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _swapChain->GetSwapChainImages()[_currentFrame].imageView, _globalUniformBuffer, _meshes, _meshInstances, _instanceBuffer);
+        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _swapChain->GetSwapChainImages()[_currentFrame].imageView, _globalUniformBuffer, _meshes, _meshInstances, _instanceBuffer, _textures);
         //RecordCommandBuffersRT();
     }
 

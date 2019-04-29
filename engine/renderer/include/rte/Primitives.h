@@ -4,6 +4,6 @@
 namespace RTE::Rendering::Primitives
 {
 
-Mesh* MakeCylinder(float radius, float height, int faces);
-Mesh* MakeQuad();
+Mesh MakeCylinder(float radius, float height, int faces);
+Mesh MakeQuad();
 };
