@@ -149,7 +149,7 @@ vec4 CalculatePointLightShading(PointLight light, HitInfo hitInfo)
     vec3 L = -normalize(direction);
     vec3 R = reflect(L,hitInfo.Normal);
     float distance = length(direction);
-    return Phong(L,R, hitInfo.Normal, hitInfo.Point) * light.Color * light.PositionRadius.w / (distance*distance);
+    return Phong(L,R, hitInfo.Normal, hitInfo.Point+hitInfo.Normal*+0.0001f) * light.Color * light.PositionRadius.w / (distance*distance);
 }
 
 
@@ -157,7 +157,7 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light, HitInfo hitInfo)
 {
     vec3 L = -light.Direction.xyz;
     vec3 R = reflect(L, hitInfo.Normal);
-    return Phong(L,R, hitInfo.Normal, hitInfo.Point) * light.Color;
+    return Phong(L,R, hitInfo.Normal, hitInfo.Point+hitInfo.Normal*+0.0001f) * light.Color;
 }
 
 vec4 CalculatePerLightShading(HitInfo hitinfo)

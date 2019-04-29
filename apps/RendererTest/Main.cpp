@@ -147,7 +147,7 @@ int main()
     p.Color = glm::vec4(0.5f);
     p.PositionRadius = glm::vec4(2.5f, 1.5f, 2.5f, 4.25f);
     PointLightHandle pl = renderer.AddPointLight(p);
-    /*p.Color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
+    p.Color = glm::vec4(1.0f, 0.0f, 0.0f, 0.0f);
     p.PositionRadius = glm::vec4(-2.5f, 1.5f, -2.5f, 4.25f);
     PointLightHandle pl2 = renderer.AddPointLight(p);
 
@@ -161,7 +161,7 @@ int main()
 
     p.Color = glm::vec4(1.0f, 1.0f, 1.0f, 0.0f);
     p.PositionRadius = glm::vec4(0.0f, 5.5f, 0.0f, 10.25f);
-    PointLightHandle pl5 = renderer.AddPointLight(p);*/
+    PointLightHandle pl5 = renderer.AddPointLight(p);
 
     renderer.SetClearColor(glm::vec4(0.0f));
     renderer.Finalize();
@@ -219,7 +219,7 @@ int main()
             // ae.SetPosition(pos);
             // if (ae.GetState() != RTE::Audio::Playing) ae.Play();
         });
-        /*renderer.SetPointLightProperties(pl2, [deltaTime](PointLight &light) {
+        renderer.SetPointLightProperties(pl2, [deltaTime](PointLight &light) {
             glm::vec3 pos = glm::vec3(light.PositionRadius.x, light.PositionRadius.y, light.PositionRadius.z);
             pos = glm::rotateY(pos, glm::radians(10.0f) * deltaTime);
             light.PositionRadius.x = pos.x;
@@ -239,7 +239,7 @@ int main()
             light.PositionRadius.x = pos.x;
             light.PositionRadius.y = pos.y;
             light.PositionRadius.z = pos.z;
-        });*/
+        });
         renderer.SetCamera(cam);
         renderer.Draw();
         deltaTime = std::chrono::duration_cast<FpSeconds>(Clock::now() - now).count();

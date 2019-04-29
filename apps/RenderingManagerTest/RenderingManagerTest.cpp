@@ -11,8 +11,8 @@ using namespace RTE;
 
 void ConfigureGame(RTEConfig &config)
 {
-    config.WindowConfig.WindowHeight = 500;
-    config.WindowConfig.WindowWidth = 500;
+    config.WindowConfig.WindowHeight = 800;
+    config.WindowConfig.WindowWidth = 800;
     config.WindowConfig.WindowName = "Eggplant";
     config.GraphicsConfig.UseRaytracing = true;
     config.AssetConfig.Meshes = {Utilities::GetFileFromAssets("models/monkey.ply")};

@@ -25,13 +25,6 @@ RenderingManager::RenderingManager(
 
     _guiModule->DrawFunction = [&](){
         ImGui::Begin("Wazzup");
-        ImGui::Text("Hello, world %d", 123);
-        if (ImGui::Button("Save"))
-        {
-            std::cout << "Saved" << std::endl;
-        }
-        float f;
-        ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
         ImGui::Checkbox("RTX ON", &_rtEnabled);
         ImGui::End();
     };

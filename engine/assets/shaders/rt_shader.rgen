@@ -68,7 +68,7 @@ void main()
     {
         origin = hitValue.Point + hitValue.Normal*0.0001f;
         direction = normalize(reflect(-direction, hitValue.Normal));
-        float oldRefl = 0.5f;// hitValue.Reflectivity;
+        float oldRefl = hitValue.Reflectivity;
         for(int i = 0; i < 1; i++)
         {
             traceNV(topLevelAS, rayFlags, cullMask, 0 /*sbtRecordOffset*/, 0 /*sbtRecordStride*/, 0 /*missIndex*/, origin, tmin, direction, tmax, 0 /*payload*/);
