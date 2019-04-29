@@ -256,7 +256,7 @@ void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, Sha
     rayPipelineInfo.pStages = shaderStages.data();
     rayPipelineInfo.groupCount = (uint32_t)shaderGroups.size();
     rayPipelineInfo.pGroups = shaderGroups.data();
-    rayPipelineInfo.maxRecursionDepth = 3;
+    rayPipelineInfo.maxRecursionDepth = 1;
     rayPipelineInfo.layout = _pipelineLayout;
     rayPipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
     rayPipelineInfo.basePipelineIndex = 0;
