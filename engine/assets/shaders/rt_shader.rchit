@@ -27,12 +27,15 @@ struct Vertex
 
 struct HitInfo
 {
+    bool Missed;
     vec3 Point;
     vec3 Normal;
     vec2 UV;
+    vec4 Color;
+    float Reflectivity;
 };
 
-layout(location = 0) rayPayloadInNV vec3 hitValue;
+layout(location = 0) rayPayloadInNV HitInfo hitValue;
 layout(location = 1) hitAttributeNV vec3 attribs;
 layout(location = 2) rayPayloadInNV float secondaryRayHitValue;
 
@@ -104,16 +107,18 @@ HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
     
     position = vec3(modelMatrix * vec4(position,1.0f));
 
-    HitInfo info;
-    info.Point = position;
-    info.Normal = normal;
-    info.UV = UV;
-    return info;
+    hitValue.Missed = false;
+    hitValue.Point = position;
+    hitValue.Normal = normal;
+    hitValue.UV = UV;
+    hitValue.Color = vec4(0.0f);
+    hitValue.Reflectivity = InstanceData[nonuniformEXT(gl_InstanceCustomIndexNV)].Reflectivity;
+    return hitValue;
 }
 
 float FireShadowRay(vec3 origin, vec3 direction)
 {
-    //vec3 origin = gl_WorldRayOriginNV + gl_WorldRayDirectionNV * gl_HitTNV; //THIS MOTHER@!#$€?
+    //vec3 origin = gl_WorldRayOriginNV + gl_WorldRayDirectionNV * gl_HitTNV; //TODO: THIS MOTHER@!#$€?
     //vec3 direction = dir;
     uint rayFlags = gl_RayFlagsOpaqueNV | gl_RayFlagsTerminateOnFirstHitNV;
     uint cullMask = 0xff;
@@ -181,6 +186,6 @@ void main()
     Vertex v2 = GetVertex(meshIndex, index2);
     Vertex v3 = GetVertex(meshIndex, index3);
     HitInfo hitinfo = GetHitInfo(v1, v2, v3, barycentrics);
-
-    hitValue = CalculatePerLightShading(hitinfo).rgb;
+    
+    hitValue.Color = CalculatePerLightShading(hitinfo);
 }
