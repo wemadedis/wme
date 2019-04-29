@@ -108,7 +108,7 @@ HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
     position = vec3(modelMatrix * vec4(position,1.0f));
 
     hitValue.Missed = false;
-    hitValue.Point = position;
+    hitValue.Point = gl_WorldRayOriginNV + gl_WorldRayDirectionNV * gl_HitTNV;//position;
     hitValue.Normal = normal;
     hitValue.UV = UV;
     hitValue.Color = vec4(0.0f);
@@ -133,7 +133,7 @@ float FireShadowRay(vec3 origin, vec3 direction)
 
 vec4 Phong(vec3 L, vec3 R, vec3 N, vec3 O)
 {
-    if(FireShadowRay(O, L) < 100.0f) return vec4(0.0f);
+    if(FireShadowRay(O+N*0.0001f, L) < 100.0f) return vec4(0.0f);
     float udiff = InstanceData[gl_InstanceCustomIndexNV].Diffuse;
     float uspec = InstanceData[gl_InstanceCustomIndexNV].Specular;
     float shininess = InstanceData[gl_InstanceCustomIndexNV].Shininess;
@@ -149,7 +149,7 @@ vec4 CalculatePointLightShading(PointLight light, HitInfo hitInfo)
     vec3 L = -normalize(direction);
     vec3 R = reflect(L,hitInfo.Normal);
     float distance = length(direction);
-    return Phong(L,R, hitInfo.Normal, hitInfo.Point+hitInfo.Normal*+0.0001f) * light.Color * light.PositionRadius.w / (distance*distance);
+    return Phong(L,R, hitInfo.Normal, hitInfo.Point) * light.Color * light.PositionRadius.w / (distance*distance);
 }
 
 
@@ -157,7 +157,7 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light, HitInfo hitInfo)
 {
     vec3 L = -light.Direction.xyz;
     vec3 R = reflect(L, hitInfo.Normal);
-    return Phong(L,R, hitInfo.Normal, hitInfo.Point+hitInfo.Normal*+0.0001f) * light.Color;
+    return Phong(L,R, hitInfo.Normal, hitInfo.Point) * light.Color;
 }
 
 vec4 CalculatePerLightShading(HitInfo hitinfo)
