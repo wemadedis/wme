@@ -49,7 +49,7 @@ struct WindowConfig
 
 struct PhysicsConfig
 {
-    uint32_t MaxCollisionCount;
+    uint32_t MaxCollisionCount = 1000;
 };
 
 struct AssetConfig

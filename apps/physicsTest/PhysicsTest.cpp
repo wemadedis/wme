@@ -1,6 +1,7 @@
 #include <rte/RTE.hpp>
 
 #include "PlayerController.hpp"
+#include "rte/TestGenericPool.hpp"
 
 #include <iostream>
 
@@ -8,7 +9,7 @@ using namespace RTE;
 
 void ConfigureGame(RTEConfig &config)
 {
-    config.WindowConfig.WindowHeight = 100;
+    config.WindowConfig.WindowHeight = 400;
     config.WindowConfig.WindowName = "Eggplant";
     config.GraphicsConfig.UseRaytracing = false;
 }

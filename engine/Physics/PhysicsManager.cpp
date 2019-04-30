@@ -30,7 +30,7 @@ static bool ContactProcessedCallback(
     {
         static CollisionId id = 0;
         id++;
-        col = new Collision();
+        col = PhysicsManager::GetCollisionSlot();
         col->Id = id;
         col->BodyA = compA;
         col->BodyB = compB;
@@ -64,7 +64,7 @@ static bool ContactDestroyedCallback(void *data)
     col->BodyA->EndCollisions->push(colDataA);
     col->BodyB->EndCollisions->push(colDataB);
 
-    delete col;
+    PhysicsManager::FreeCollisionSlot(col);
     return true;
 }
 
@@ -185,6 +185,16 @@ void PhysicsManager::SetGravity(glm::vec3 gravity)
 uint32_t PhysicsManager::GetFramesPerSecond()
 {
     return _framesPerSecond;
+}
+
+Collision *PhysicsManager::GetCollisionSlot()
+{
+    return _instance->_collisionPool->CreateObject();
+}
+
+void PhysicsManager::FreeCollisionSlot(Collision *col)
+{
+    _instance->_collisionPool->FreeObject(col);
 }
 
 void PhysicsManager::SetFramesPerSecond(uint32_t framesPerSecond)

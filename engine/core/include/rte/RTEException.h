@@ -1,18 +1,22 @@
 #pragma once
 
+#include "rte/Utility.hpp"
 #include <exception>
 
-class RTEException: public std::exception
+class RTEException : public std::exception
 {
 public:
-    explicit RTEException(const char* message)
-     :_message(message) { }
+    explicit RTEException(const char *message)
+        : std::exception(message), _message(message)
+    {
+        Exception(message);
+    }
 
-    virtual ~RTEException() throw (){}
+    virtual ~RTEException() throw() {}
 
-
-    virtual const char* What() const throw (){
-       return _message;
+    virtual const char *what() const throw()
+    {
+        return _message;
     }
 
 protected:

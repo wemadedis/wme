@@ -10,6 +10,7 @@
  * 
  */
 #define Debug(toPrint) RTE::Utilities::PrintDebug(toPrint, __FILE__, __LINE__)
+#define Exception(toPrint) RTE::Utilities::PrintException(toPrint)
 
 /**
  * @brief Prints a debug message in the format: Warning:([HH:MM:SS])[FILE]: [LINE]: [toPrint]
@@ -58,5 +59,6 @@ void PrintWarning(std::string toPrint, const char *file, uint32_t line);
  * @param line Line to print
  */
 void PrintError(std::string toPrint, const char *file, uint32_t line);
+void PrintException(std::string toPrint);
 
 } // namespace RTE::Utilities

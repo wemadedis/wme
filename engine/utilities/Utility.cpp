@@ -20,6 +20,7 @@ AbsoluteFilePath GetFileFromAssets(RelativeFilePath path)
 static const std::string DEBUG_STRING = "Debug";
 static const std::string WARNING_STRING = "Warning";
 static const std::string ERROR_STRING = "Error";
+static const std::string EXCEPTION_STRING = "Exception";
 
 std::string MinTwoWide(uint32_t n)
 {
@@ -48,11 +49,20 @@ std::string GetTimestamp()
     return ss.str();
 }
 
+void PrintWithTimestamp(std::string warningType,
+                        std::string toPrint)
+{
+    std::string timestamp = GetTimestamp();
+    std::cout << warningType
+              << "(" << timestamp << ") "
+              << toPrint << std::endl;
+}
+
 // PrintDebug("This is good!");
 // Debug(14:10:20): RTEThis is good!
-void PrintWithTimestamp(std::string warningType,
-                        std::string toPrint,
-                        const char *file, uint32_t line)
+void PrintWithTimestampAndFile(std::string warningType,
+                               std::string toPrint,
+                               const char *file, uint32_t line)
 {
     std::string timestamp = GetTimestamp();
     std::cout << warningType
@@ -63,16 +73,21 @@ void PrintWithTimestamp(std::string warningType,
 
 void PrintDebug(std::string toPrint, const char *file, uint32_t line)
 {
-    PrintWithTimestamp(DEBUG_STRING, toPrint, file, line);
+    PrintWithTimestampAndFile(DEBUG_STRING, toPrint, file, line);
 }
 
 void PrintWarning(std::string toPrint, const char *file, uint32_t line)
 {
-    PrintWithTimestamp(WARNING_STRING, toPrint, file, line);
+    PrintWithTimestampAndFile(WARNING_STRING, toPrint, file, line);
 }
 
 void PrintError(std::string toPrint, const char *file, uint32_t line)
 {
-    PrintWithTimestamp(ERROR_STRING, toPrint, file, line);
+    PrintWithTimestampAndFile(ERROR_STRING, toPrint, file, line);
+}
+
+void PrintException(std::string toPrint)
+{
+    PrintWithTimestamp(EXCEPTION_STRING, toPrint);
 }
 } // namespace RTE::Utilities
