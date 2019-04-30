@@ -260,6 +260,8 @@ public:
      */
     static PhysicsManager *GetInstance();
 
+    static Collision *PhysicsManager::GetCollisionSlot();
+    static void PhysicsManager::FreeCollisionSlot(Collision *col);
     /**
      * @brief Get the Frames Per Second
      * @return uint32_t Frames per second
