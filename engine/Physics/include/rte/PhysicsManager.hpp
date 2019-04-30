@@ -236,7 +236,6 @@ public:
      * @return glm::vec3 Gravity
      */
     glm::vec3 GetGravity();
-
     /**
      * @brief Set the world gravity using individual x, y, z components.
      * 
@@ -250,6 +249,7 @@ public:
      * @brief Set the world gravity using a glm vector 
      * 
      * @param gravity The new gravity 
+
      */
     void SetGravity(glm::vec3 gravity);
 

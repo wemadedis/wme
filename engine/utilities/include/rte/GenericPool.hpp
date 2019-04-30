@@ -24,13 +24,15 @@ private:
     uint32_t _maxObjects = 0;
     TWrapper *_objects;
 
-    TWrapper *_firstAvailable = nullptr;
+    TWrapper *_first = nullptr;
+    TWrapper *_last = nullptr;
 
 public:
     GenericPool(uint32_t count)
     {
         _objects = new TWrapper[count];
-        _firstAvailable = _objects;
+        _first = _objects;
+        _last = &_objects[count - 1];
         _maxObjects = count;
 
         // Each particle points to the next.
@@ -38,11 +40,11 @@ public:
              i < count - 1;
              i++)
         {
-            _objects[i].Next = &_objects[i + 1];
+            //_objects[i].Next = &_objects[i + 1];
         }
 
         // The last one terminates the list.
-        _objects[count - 1].Next = nullptr;
+        //_objects[count - 1].Next = nullptr;
     }
 
     ~GenericPool()
@@ -56,14 +58,14 @@ public:
         assert(_firstAvailable != nullptr);
 
         // Remove it from the available list.
-        TWrapper *wrapper = _firstAvailable;
-        firstAvailable_ = wrapper->Next;
-        return _firstAvailable;
+        TWrapper *wrapper = _first;
+        first_ = wrapper->Next;
+        return wrapper->Object;
     }
 
     void FreeObject(T *obj)
     {
-        TWrapper *objWrapper = (TWrapper *)obj;
+        TWrapper *objWrapper = {obj};
         objWrapper->Next = _firstAvailable;
     }
 };
