@@ -105,7 +105,7 @@ HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
     
     
     normal = normalize(vec3(modelMatrix * vec4(normal,0.0f)));
-    if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
+    if(dot(normal, gl_WorldRayDirectionNV) > 0.0f) normal = -normal;
 
     hitValue.Missed = false;
     hitValue.Point = gl_WorldRayOriginNV + gl_WorldRayDirectionNV * gl_HitTNV;//position;
@@ -125,7 +125,7 @@ float FireShadowRay(vec3 origin, vec3 direction)
     float tmin = 0.001;
     float tmax = 100.0;
 
-    traceNV(topLevelAS, rayFlags, cullMask, 1 /* sbtRecordOffset */, 0 /* sbtRecordStride */, 1 /* missIndex */, origin, tmin, -direction, tmax, 2 /*payload location*/);
+    traceNV(topLevelAS, rayFlags, cullMask, 1 /* sbtRecordOffset */, 0 /* sbtRecordStride */, 1 /* missIndex */, origin, tmin, direction, tmax, 2 /*payload location*/);
     return shadowRayHitValue;
 }
 
@@ -133,7 +133,12 @@ float FireShadowRay(vec3 origin, vec3 direction)
 
 vec4 Phong(vec3 L, vec3 R, vec3 N, vec3 O)
 {
-    if(FireShadowRay(O-N*0.01f, L) < 100.0f) return vec4(0.0f);
+    //If the light lits the surface from behind, the front is shadowed
+    //Warning: not does an instance "shadow flip" on flat shaded surfaces.
+    //if(dot(N, L) > 0.0f) return vec4(0.0f);
+    //If something occludes the surface from the light, the surface is in shadow
+    float intensity = 1.0f;
+    if(FireShadowRay((O+(N*0.01f)), -L) < 100.0f) intensity = 0.2f;
     float udiff = InstanceData[gl_InstanceCustomIndexNV].Diffuse;
     float uspec = InstanceData[gl_InstanceCustomIndexNV].Specular;
     float shininess = InstanceData[gl_InstanceCustomIndexNV].Shininess;
@@ -145,7 +150,7 @@ vec4 Phong(vec3 L, vec3 R, vec3 N, vec3 O)
         vec4 texColor = texture(TextureSamplers[texIndex], hitValue.UV);    
         return texColor * diff + texColor * spec;
     }*/
-    return vec4(diff) + vec4(spec);
+    return vec4(diff*intensity) + vec4(spec*intensity);
 }
 
 vec4 CalculatePointLightShading(PointLight light, HitInfo hitInfo)
@@ -169,6 +174,7 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light, HitInfo hitInfo)
 vec4 CalculatePerLightShading(HitInfo hitinfo)
 {
     vec4 color = vec4(InstanceData[gl_InstanceCustomIndexNV].Ambient);
+    
     if(InstanceData[gl_InstanceCustomIndexNV].HasTexture)
     {
         uint texIndex = InstanceData[gl_InstanceCustomIndexNV].Texture;

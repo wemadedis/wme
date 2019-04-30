@@ -62,20 +62,21 @@ void main()
     float tmin = 0.001;
     float tmax = 100.0;
     
-    traceNV(topLevelAS, rayFlags, cullMask, 0 /*sbtRecordOffset*/, 0 /*sbtRecordStride*/, 0 /*missIndex*/, origin, tmin, direction, tmax, 0 /*payload*/);
+    traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
     vec4 color = hitValue.Color;
+    
     if(!hitValue.Missed && hitValue.Reflectivity > 0.0f)
     {
-        origin = hitValue.Point - hitValue.Normal*0.01f;
+        origin = hitValue.Point + hitValue.Normal*0.01f;
         direction = normalize(reflect(direction, hitValue.Normal));
         float oldRefl = hitValue.Reflectivity;
         for(int i = 0; i < 1; i++)
         {
-            traceNV(topLevelAS, rayFlags, cullMask, 0 /*sbtRecordOffset*/, 0 /*sbtRecordStride*/, 0 /*missIndex*/, origin, tmin, direction, tmax, 0 /*payload*/);
-            color = color*(1.0f-oldRefl) + hitValue.Color * oldRefl;
+            traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
+            color = color*(1.0f-oldRefl) + hitValue.Color*oldRefl;
         }
     }
-    
-
     imageStore(image, ivec2(gl_LaunchIDNV.xy), color);
+
+    
 }

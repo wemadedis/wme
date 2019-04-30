@@ -77,7 +77,9 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     quadMesh->SetGUIDraw([=](){
         ImGui::Begin("Wazzup");
         ImGui::DragFloat("Reflectivity", &quadMesh->Material.Reflectivity, 0.002f, 0.0f, 1.0f);
-        ImGui::DragFloat("Light X Rot:", &trans4->Transform.Rot.x, 0.1f, 0.0f, 360.0f);
+        ImGui::DragFloat("Light X Rot:", &trans4->Transform.Rot.x, 0.1f, -0.1f, 360.1f);
+        if(trans4->Transform.Rot.x > 360.0f) trans4->Transform.Rot.x = 0.0f;
+        if(trans4->Transform.Rot.x < 0.0f) trans4->Transform.Rot.x = 360.0f;
         ImGui::End();
 
     });
