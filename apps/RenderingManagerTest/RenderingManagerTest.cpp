@@ -53,9 +53,9 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
 
     GameObject *go3 = scene->CreateGameObject();
     auto trans3 = scene->AddComponent<TransformComponent>(transIndex, go3);
-    auto pointLight = scene->AddComponent<PointLightComponent>(plIndex, go3);
+    //auto pointLight = scene->AddComponent<PointLightComponent>(plIndex, go3);
     trans3->Transform.Pos = glm::vec3(0.0f, 2.0f, 0.0f);
-    pointLight->Initialize(trans3, Colors::Yellow, 5.0f);
+    //pointLight->Initialize(trans3, Colors::Yellow, 5.0f);
 
     GameObject *go4 = scene->CreateGameObject();
     auto trans4 = scene->AddComponent<TransformComponent>(transIndex, go4);
@@ -74,9 +74,10 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     quadMesh->Initialize(trans5, RenderingManager::QUAD, RTE::Utilities::GetFileFromAssets("textures/rte.png"));
     quadMesh->Material.Reflectivity = 0.5f;
 
-    quadMesh->SetGUIDraw([quadMesh](){
+    quadMesh->SetGUIDraw([=](){
         ImGui::Begin("Wazzup");
         ImGui::DragFloat("Reflectivity", &quadMesh->Material.Reflectivity, 0.002f, 0.0f, 1.0f);
+        ImGui::DragFloat("Light X Rot:", &trans4->Transform.Rot.x, 0.1f, 0.0f, 360.0f);
         ImGui::End();
 
     });

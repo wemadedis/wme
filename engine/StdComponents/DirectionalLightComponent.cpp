@@ -17,6 +17,11 @@ void DirectionalLightComponent::Initialize(TransformComponent *transform, Colors
     SetEnabled(true);
 }
 
+TransformComponent* DirectionalLightComponent::GetTransformComponent()
+{
+    return _transform;
+}
+
 glm::vec3 DirectionalLightComponent::Direction()
 {
     using namespace glm;
@@ -28,7 +33,7 @@ glm::vec3 DirectionalLightComponent::Direction()
 
 void DirectionalLightComponent::Update(float deltaTime) 
 {
-    _transform->Transform.Rot.x += 25.0f*deltaTime;
+
 }
 
 }

@@ -22,6 +22,7 @@ public:
     DirectionalLightComponent() = default;
     ~DirectionalLightComponent();
     void Initialize(TransformComponent *transform, Colors::Color color);
+    TransformComponent* GetTransformComponent();
     glm::vec3 Direction();
     virtual void Update(float deltaTime) override;
 };

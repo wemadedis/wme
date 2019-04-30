@@ -37,7 +37,7 @@ struct HitInfo
 
 layout(location = 0) rayPayloadInNV HitInfo hitValue;
 layout(location = 1) hitAttributeNV vec3 attribs;
-layout(location = 2) rayPayloadInNV float secondaryRayHitValue;
+layout(location = 2) rayPayloadInNV float shadowRayHitValue;
 
 
 layout(binding = 0) uniform accelerationStructureNV topLevelAS;
@@ -100,15 +100,12 @@ Vertex GetVertex(uint meshIndex, int vertexIndex)
 HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
 {
     mat4 modelMatrix = InstanceData[nonuniformEXT(gl_InstanceCustomIndexNV)].ModelMatrix;
-    vec3 position = v1.pos * barycentrics.x + v2.pos * barycentrics.y + v3.pos * barycentrics.z;
     vec3 normal = normalize(v1.normal * barycentrics.x + v2.normal * barycentrics.y + v3.normal * barycentrics.z);
     vec2 UV = v1.texCoord * barycentrics.x + v2.texCoord * barycentrics.y + v3.texCoord * barycentrics.z;
     
     
     normal = normalize(vec3(modelMatrix * vec4(normal,0.0f)));
     if(dot(normal, gl_WorldRayDirectionNV) < 0.0f) normal = -normal;
-    
-    position = vec3(modelMatrix * vec4(position,1.0f));
 
     hitValue.Missed = false;
     hitValue.Point = gl_WorldRayOriginNV + gl_WorldRayDirectionNV * gl_HitTNV;//position;
@@ -121,7 +118,7 @@ HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
 
 float FireShadowRay(vec3 origin, vec3 direction)
 {
-    //vec3 origin = gl_WorldRayOriginNV + gl_WorldRayDirectionNV * gl_HitTNV; //TODO: THIS MOTHER@!#$€?
+    //origin = gl_WorldRayOriginNV + gl_WorldRayDirectionNV * gl_HitTNV; //TODO: THIS MOTHER@!#$€?
     //vec3 direction = dir;
     uint rayFlags = gl_RayFlagsOpaqueNV | gl_RayFlagsTerminateOnFirstHitNV;
     uint cullMask = 0xff;
@@ -129,25 +126,25 @@ float FireShadowRay(vec3 origin, vec3 direction)
     float tmax = 100.0;
 
     traceNV(topLevelAS, rayFlags, cullMask, 1 /* sbtRecordOffset */, 0 /* sbtRecordStride */, 1 /* missIndex */, origin, tmin, -direction, tmax, 2 /*payload location*/);
-    return secondaryRayHitValue;
+    return shadowRayHitValue;
 }
 
 
 
 vec4 Phong(vec3 L, vec3 R, vec3 N, vec3 O)
 {
-    if(FireShadowRay(O+N*0.0001f, L) < 100.0f) return vec4(0.0f);
+    if(FireShadowRay(O-N*0.01f, L) < 100.0f) return vec4(0.0f);
     float udiff = InstanceData[gl_InstanceCustomIndexNV].Diffuse;
     float uspec = InstanceData[gl_InstanceCustomIndexNV].Specular;
     float shininess = InstanceData[gl_InstanceCustomIndexNV].Shininess;
     float diff = max(0.0f, dot(L,N))*udiff;
     float spec = max(0.0f, dot(-gl_WorldRayDirectionNV,R))*uspec;
-    if(InstanceData[gl_InstanceCustomIndexNV].HasTexture)
+    /*if(InstanceData[gl_InstanceCustomIndexNV].HasTexture)
     {
         uint texIndex = InstanceData[gl_InstanceCustomIndexNV].Texture;
         vec4 texColor = texture(TextureSamplers[texIndex], hitValue.UV);    
         return texColor * diff + texColor * spec;
-    }
+    }*/
     return vec4(diff) + vec4(spec);
 }
 
@@ -164,8 +161,8 @@ vec4 CalculatePointLightShading(PointLight light, HitInfo hitInfo)
 
 vec4 CalculateDirectionalLightShading(DirectionalLight light, HitInfo hitInfo)
 {
-    vec3 L = light.Direction.xyz;
-    vec3 R = reflect(L, hitInfo.Normal);
+    vec3 L = normalize(light.Direction.xyz);
+    vec3 R = normalize(reflect(L, hitInfo.Normal));
     return Phong(L,R, hitInfo.Normal, hitInfo.Point) * light.Color;
 }
 
