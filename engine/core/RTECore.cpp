@@ -63,7 +63,7 @@ RTEConfig RTECore::Config;
 RTECore::RTECore()
 {
     // todo: (danh) Sun 21/04 - 11:46: Add raytrace check
-    bool raytracingAvailable = true;
+    bool raytracingAvailable = Rendering::RenderingManager::RayTracingAvailable();
     Config.GraphicsConfig.UseRaytracing = raytracingAvailable;
 
     if (ConfigureGame != nullptr)
@@ -82,6 +82,7 @@ RTECore::RTECore()
 
     Modules->push_back(sceneManager);
     Modules->push_back(rm);
+    
     // Call the client initialize function
     if (OnGameStart != nullptr)
     {

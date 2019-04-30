@@ -6,7 +6,6 @@
 
 namespace RTE::Runtime
 {
-
 class Component
 {
 private:
@@ -17,7 +16,7 @@ private:
     bool _enabled = true;
 
     GameObjectId _gameObjectId = 0;
-
+    GUIDrawFunction  GUIDraw;
 public:
     /**
      * @brief 
@@ -52,6 +51,15 @@ public:
      *      The new enabled state of the #Component
      */
     void SetEnabled(bool enabled);
+
+    /**
+     * @brief
+     *      Set the GUI draw function for this Component
+     * 
+     * @param
+     *      The GUI draw function 
+     */
+    void SetGUIDraw(GUIDrawFunction func);
 
     /**
      * @brief 

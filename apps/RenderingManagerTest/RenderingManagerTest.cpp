@@ -4,7 +4,7 @@
 #include "rte/CameraComponent.hpp"
 #include "rte/Definitions.hpp"
 #include "rte/StdComponentsMain.hpp"
-
+#include "imgui/imgui.h"
 #include <iostream>
 
 using namespace RTE;
@@ -74,6 +74,12 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     quadMesh->Initialize(trans5, RenderingManager::QUAD, RTE::Utilities::GetFileFromAssets("textures/rte.png"));
     quadMesh->Material.Reflectivity = 0.5f;
 
+    quadMesh->SetGUIDraw([quadMesh](){
+        ImGui::Begin("Wazzup");
+        ImGui::DragFloat("Reflectivity", &quadMesh->Material.Reflectivity, 0.002f, 0.0f, 1.0f);
+        ImGui::End();
+
+    });
 
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
     meshComp->Initialize(transComp, monkey);

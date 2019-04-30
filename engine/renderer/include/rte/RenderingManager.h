@@ -11,6 +11,7 @@
 #include "rte/GUIModule.h"
 
 #include "rte/StdComponentsMain.hpp"
+#include "rte/Definitions.hpp"
 
 #include <unordered_map>
 #include <vector>
@@ -38,8 +39,9 @@ private:
     std::unordered_map<MeshComponent*, MeshInstanceHandle> _instances;
     std::unordered_map<PointLightComponent*, PointLightHandle> _pointLights;
     std::unordered_map<DirectionalLightComponent*, DirectionalLightHandle> _directionalLights;
+    std::unordered_map<Runtime::Component*, GUIDrawFunction> _guiDraws;
     std::vector<CameraComponent*> _cameras;
-    
+
 
     CameraComponent* _mainCamera = nullptr;
     void UpdateMainCamera();
@@ -52,6 +54,7 @@ public:
         RTEConfig &config,
         Platform::WindowManager &windowManager);
     ~RenderingManager();
+    static bool RayTracingAvailable();
     void FinalizeRenderer();
     static RenderingManager* GetInstance();
     void Update(float deltaTime) override;
@@ -63,7 +66,7 @@ public:
     void SetMainCamera(CameraComponent *cameraComponent);
     void RegisterPointLight(PointLightComponent *pointLight);
     void RegisterDirectionalLight(DirectionalLightComponent *dirLight);
-    void SetGUIDrawFunction(void (*function)());
+    void RegisterGUIDrawFunction(Runtime::Component* comp, GUIDrawFunction func);
     glm::ivec2 GetRendererFrameSize();
 };
 
