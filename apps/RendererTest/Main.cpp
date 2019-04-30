@@ -96,11 +96,11 @@ int main()
     auto renderer = Renderer(info, gm);
     
     //auto cylinderMeshHandle = renderer.UploadMesh(cylinder);
-    auto quadhandle = renderer.UploadMesh(*quad);
+    auto quadhandle = renderer.UploadMesh(quad);
     //auto quadInstance = renderer.CreateMeshInstance(quadhandle);
     //auto quadInstance2 = renderer.CreateMeshInstance(quadhandle);
 
-    MeshHandle cylinderMeshHandle = renderer.UploadMesh(*cylinder);
+    MeshHandle cylinderMeshHandle = renderer.UploadMesh(cylinder);
     MeshInstanceHandle inst = renderer.CreateMeshInstance(cylinderMeshHandle);
     renderer.SetInstanceTransform(
         inst,
