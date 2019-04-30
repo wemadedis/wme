@@ -4,6 +4,7 @@
 #include "rte/ImportFunctions.h"
 #include "rte/TransformComponent.hpp"
 #include "rte/Primitives.h"
+
 #include "imgui/imgui.h"
 
 namespace RTE::Rendering
@@ -26,14 +27,21 @@ RenderingManager::RenderingManager(
     };
     _guiModule = new GUI::GUIModule();
 
-    _guiModule->DrawFunction = [&](){
-        ImGui::Begin("Wazzup");
-        ImGui::Checkbox("RTX ON", &_rtEnabled);
-        ImGui::End();
+    _guiModule->DrawFunction = [&]()
+    {
+        for(auto iter = _guiDraws.begin(); iter != _guiDraws.end(); iter++)
+        {   
+            auto comp = iter->first;
+            if(comp->GetEnabled())
+            {
+                iter->second();
+            }
+        }
     };
+
     _renderer = new Renderer(info, _guiModule);
     //TODO: Handle cases where RT is requested but not available
-
+    _rtEnabled = config.GraphicsConfig.UseRaytracing;
     _textures.insert({std::string(""), Renderer::EMPTY_TEXTURE});
     UploadPrimitives();
     ImportRenderingResources(config.AssetConfig.Meshes, config.AssetConfig.Textures);
@@ -43,6 +51,11 @@ RenderingManager::RenderingManager(
 
 RenderingManager::~RenderingManager()
 {
+}
+
+bool RenderingManager::RayTracingAvailable()
+{
+    return Renderer::IsRaytracingCapable();
 }
 
 void RenderingManager::FinalizeRenderer()
@@ -228,9 +241,9 @@ void RenderingManager::UploadPrimitives()
     _meshes.insert({QUAD, quadHandle});
 }
 
-void RenderingManager::SetGUIDrawFunction(void (*function)())
+void RenderingManager::RegisterGUIDrawFunction(Runtime::Component* comp, GUIDrawFunction func)
 {
-    _guiModule->DrawFunction = function;
+    _guiDraws.insert({comp, func});
 }
 
 glm::ivec2 RenderingManager::GetRendererFrameSize()
