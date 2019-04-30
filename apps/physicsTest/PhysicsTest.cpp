@@ -22,9 +22,9 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     sceneManager.SetActiveScene(scene);
 
     // Init components pools
-    uint64_t pcIndex = scene->DefineComponent<PlayerController, 1>();
-    uint64_t transIndex = scene->DefineComponent<TransformComponent, 2>();
-    uint64_t physIndex = scene->DefineComponent<PhysicsComponent, 2>();
+    ComponentId pcIndex = scene->DefineComponent<PlayerController, 1>();
+    ComponentId transIndex = scene->DefineComponent<TransformComponent, 2>();
+    ComponentId physIndex = scene->DefineComponent<PhysicsComponent, 2>();
 
     GameObject *go = scene->CreateGameObject();
 

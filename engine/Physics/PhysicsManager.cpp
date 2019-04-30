@@ -30,7 +30,10 @@ static bool ContactProcessedCallback(
     {
         static CollisionId id = 0;
         id++;
-        col = new Collision(id, compA, compB);
+        col = new Collision();
+        col->Id = id;
+        col->BodyA = compA;
+        col->BodyB = compB;
         cp.m_userPersistentData = col;
     }
 
@@ -70,19 +73,12 @@ void PhysicsManager::Update(float deltaTime)
     Step(deltaTime);
 }
 
-PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
-{
-    _instance = this;
-    SetFramesPerSecond(config.GraphicsConfig.FramesPerSecond);
-    _physicsWorld = CreateDefaultDynamicsWorld();
-    SetGravity(_defaultGravity);
-}
-
 btDiscreteDynamicsWorld *PhysicsManager::CreateDefaultDynamicsWorld()
 {
     SetupBulletCallbacks();
 
     //* Extend: Make this extendable
+    // todo: (danh) Mon 29/04 - 22:26: Allocator? Struct?
     auto Broadphase = new btDbvtBroadphase();
     auto CollisionConfiguration = new btDefaultCollisionConfiguration();
     auto CollisionDispatcher = new btCollisionDispatcher(CollisionConfiguration);
@@ -100,6 +96,15 @@ void PhysicsManager::SetupBulletCallbacks()
 {
     gContactProcessedCallback = ContactProcessedCallback;
     gContactDestroyedCallback = ContactDestroyedCallback;
+}
+
+PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
+{
+    _instance = this;
+    SetFramesPerSecond(config.GraphicsConfig.FramesPerSecond);
+    _physicsWorld = CreateDefaultDynamicsWorld();
+    _collisionPool = new GenericPool<Collision>(config.PhysicsConfig.MaxCollisionCount);
+    SetGravity(_defaultGravity);
 }
 
 PhysicsManager::~PhysicsManager()

@@ -1,6 +1,8 @@
 #pragma once
 
-namespace RTE::Utilities
+#include <cstdint>
+
+namespace RTE
 {
 /**
  * @brief 
@@ -21,7 +23,6 @@ private:
 
     uint32_t _maxObjects = 0;
     TWrapper *_objects;
-    bool *_inUse;
 
     TWrapper *_firstAvailable = nullptr;
 
@@ -55,8 +56,8 @@ public:
         assert(_firstAvailable != nullptr);
 
         // Remove it from the available list.
-        Particle *newParticle = _firstAvailable;
-        firstAvailable_ = newParticle->getNext();
+        TWrapper *wrapper = _firstAvailable;
+        firstAvailable_ = wrapper->Next;
         return _firstAvailable;
     }
 
@@ -66,4 +67,4 @@ public:
         objWrapper->Next = _firstAvailable;
     }
 };
-} // namespace RTE::Utilities
+} // namespace RTE

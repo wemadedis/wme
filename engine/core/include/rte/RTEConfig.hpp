@@ -1,6 +1,7 @@
 #pragma once
 
 #include "rte/Colors.hpp"
+#include "rte/Definitions.hpp"
 #include "rte/GlmWrapper.hpp"
 #include "rte/RTEProjectProperties.hpp"
 
@@ -46,17 +47,22 @@ struct WindowConfig
     std::string WindowName = "RTEGame";
 };
 
+struct PhysicsConfig
+{
+    uint32_t MaxCollisionCount;
+};
+
 struct AssetConfig
 {
     /**
      * @brief Path to the root of the asset directory
      * 
      */
-    char *AssetRootDir = ENGINE_ASSET_DIR;
+    AbsoluteFilePath AssetRootDir = ENGINE_ASSET_DIR;
     /// @brief File paths to the textures
-    std::vector<std::string> Textures;
+    std::vector<AbsoluteFilePath> Textures;
     /// @brief File paths to the mesh geometry data
-    std::vector<std::string> Meshes;
+    std::vector<AbsoluteFilePath> Meshes;
 };
 
 /**
@@ -67,5 +73,6 @@ struct RTEConfig
     GraphicsConfig GraphicsConfig;
     WindowConfig WindowConfig;
     AssetConfig AssetConfig;
+    PhysicsConfig PhysicsConfig;
 };
 } // namespace RTE

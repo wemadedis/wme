@@ -7,6 +7,7 @@
 #include <glm/glm.hpp>
 
 #include "rte/Collision.hpp"
+#include "rte/GenericPool.hpp"
 #include "rte/RTEConfig.hpp"
 #include "rte/RTEModule.hpp"
 #include "rte/RigidBody.hpp"
@@ -145,6 +146,8 @@ private:
      * @return btDiscreteDynamicsWorld* 
      */
     btDiscreteDynamicsWorld *CreateDefaultDynamicsWorld();
+
+    GenericPool<Collision> *_collisionPool;
 
     /**
      * @brief Initializes Bullet global collision callbacks with

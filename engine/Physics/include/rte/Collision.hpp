@@ -19,16 +19,6 @@ struct Collision
     CollisionId Id;
     StdComponents::PhysicsComponent *BodyA;
     StdComponents::PhysicsComponent *BodyB;
-
-    Collision(
-        CollisionId id,
-        StdComponents::PhysicsComponent *bodyA,
-        StdComponents::PhysicsComponent *bodyB)
-    {
-        Id = id;
-        BodyA = BodyA;
-        BodyB = BodyB;
-    }
 };
 
 struct OnCollisionData

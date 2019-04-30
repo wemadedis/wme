@@ -14,7 +14,7 @@ private:
      * @brief 
      *      Whether or not this component is enabled. Disabled components will not have #Update() called on it.
      */
-    bool _enabled = false;
+    bool _enabled = true;
 
     GameObjectId _gameObjectId = 0;
 

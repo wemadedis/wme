@@ -9,10 +9,10 @@
 
 namespace RTE::Utilities
 {
-std::string GetFileFromAssets(std::string path)
+AbsoluteFilePath GetFileFromAssets(RelativeFilePath path)
 {
     std::ostringstream ss;
-    const char *folder = RTECore::Config.AssetConfig.AssetRootDir;
+    AbsoluteFilePath folder = RTECore::Config.AssetConfig.AssetRootDir;
     ss << folder << path;
     return ss.str();
 }
