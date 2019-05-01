@@ -37,7 +37,7 @@ struct HitInfo
 
 layout(location = 0) rayPayloadInNV HitInfo hitValue;
 layout(location = 1) hitAttributeNV vec3 attribs;
-layout(location = 2) rayPayloadInNV float shadowRayHitValue;
+layout(location = 2) rayPayloadNV float shadowRayHitValue;
 
 
 layout(binding = 0) uniform accelerationStructureNV topLevelAS;
@@ -112,7 +112,7 @@ HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
     hitValue.Normal = normal;
     hitValue.UV = UV;
     hitValue.Color = vec4(0.0f);
-    hitValue.Reflectivity = InstanceData[nonuniformEXT(gl_InstanceCustomIndexNV)].Reflectivity;
+    hitValue.Reflectivity = InstanceData[gl_InstanceCustomIndexNV].Reflectivity;
     return hitValue;
 }
 
@@ -203,6 +203,6 @@ void main()
     Vertex v2 = GetVertex(meshIndex, index2);
     Vertex v3 = GetVertex(meshIndex, index3);
     HitInfo hitinfo = GetHitInfo(v1, v2, v3, barycentrics);
-    
+    hitValue.Missed = false;
     hitValue.Color = CalculatePerLightShading(hitinfo);
 }
