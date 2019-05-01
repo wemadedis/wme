@@ -1,9 +1,9 @@
 #include "rte/RenderingManager.h"
-#include "rte/WindowManager.h"
-#include "rte/ModelImporter.h"
 #include "rte/ImportFunctions.h"
-#include "rte/TransformComponent.hpp"
+#include "rte/ModelImporter.h"
 #include "rte/Primitives.h"
+#include "rte/TransformComponent.hpp"
+#include "rte/WindowManager.h"
 
 #include "imgui/imgui.h"
 
@@ -12,7 +12,7 @@ namespace RTE::Rendering
 const std::string RenderingManager::QUAD = "quad";
 const std::string RenderingManager::CYLINDER = "cylinder";
 
-RenderingManager* RenderingManager::_instance = nullptr;
+RenderingManager *RenderingManager::_instance = nullptr;
 RenderingManager::RenderingManager(
     RTEConfig &config,
     Platform::WindowManager &windowManager)
@@ -27,12 +27,11 @@ RenderingManager::RenderingManager(
     };
     _guiModule = new GUI::GUIModule();
 
-    _guiModule->DrawFunction = [&]()
-    {
-        for(auto iter = _guiDraws.begin(); iter != _guiDraws.end(); iter++)
-        {   
+    _guiModule->DrawFunction = [&]() {
+        for (auto iter = _guiDraws.begin(); iter != _guiDraws.end(); iter++)
+        {
             auto comp = iter->first;
-            if(comp->GetEnabled())
+            if (comp->GetEnabled())
             {
                 iter->second();
             }
@@ -63,7 +62,7 @@ void RenderingManager::FinalizeRenderer()
     _renderer->Finalize();
 }
 
-RenderingManager* RenderingManager::GetInstance()
+RenderingManager *RenderingManager::GetInstance()
 {
     return _instance;
 }
@@ -75,42 +74,44 @@ void RenderingManager::FrameResized(int32_t width, int32_t height)
 
 void RenderingManager::Update(float deltaTime)
 {
-    
-    for(auto iter = _instances.begin(); iter != _instances.end(); iter++)
+
+    for (auto iter = _instances.begin(); iter != _instances.end(); iter++)
     {
         StdComponents::MeshComponent *comp = iter->first;
         UpdateMeshComponent(comp);
     }
 
-    for(auto iter = _pointLights.begin(); iter != _pointLights.end(); iter++)
+    for (auto iter = _pointLights.begin(); iter != _pointLights.end(); iter++)
     {
         auto pl = iter->first;
         auto &trans = pl->GetTransformComponent()->Transform;
-        _renderer->SetPointLightProperties(iter->second, [&](PointLight &light){
+        _renderer->SetPointLightProperties(iter->second, [&](PointLight &light) {
             light.Color = pl->Color;
             light.PositionRadius = glm::vec4(trans.Pos, pl->Radius);
         });
     }
 
-    for(auto iter = _directionalLights.begin(); iter != _directionalLights.end(); iter++)
+    for (auto iter = _directionalLights.begin(); iter != _directionalLights.end(); iter++)
     {
         auto *comp = iter->first;
-        _renderer->SetDirectionalLightProperties(iter->second, [&](DirectionalLight &light){
+        _renderer->SetDirectionalLightProperties(iter->second, [&](DirectionalLight &light) {
             light.Color = comp->Color;
-            light.Direction = glm::vec4(comp->Direction(),0.0f);
+            light.Direction = glm::vec4(comp->Direction(), 0.0f);
         });
     }
 
-    if(_mainCamera != nullptr)
+    if (_mainCamera != nullptr)
     {
         UpdateMainCamera();
     }
 
-    if(_rtEnabled) _renderer->SetRenderMode(RenderMode::RAYTRACE);
-    else _renderer->SetRenderMode(RenderMode::RASTERIZE);
-    
+    if (_rtEnabled)
+        _renderer->SetRenderMode(RenderMode::RAYTRACE);
+    else
+        _renderer->SetRenderMode(RenderMode::RASTERIZE);
+
     auto size = _renderer->GetFrameSize();
-    auto& io = ImGui::GetIO();
+    auto &io = ImGui::GetIO();
     io.DisplaySize = ImVec2((float)size.x, (float)size.y);
     _renderer->Draw();
 }
@@ -122,10 +123,10 @@ void RenderingManager::SetRTEnabled(bool rtEnabled)
 
 void RenderingManager::ImportRenderingResources(std::vector<std::string> &meshes, std::vector<std::string> &textures)
 {
-    for(uint32_t meshIndex = 0; meshIndex < meshes.size(); meshIndex++)
+    for (uint32_t meshIndex = 0; meshIndex < meshes.size(); meshIndex++)
     {
         std::string &meshPath = meshes[meshIndex];
-        if(_meshes.find(meshPath) == _meshes.end())
+        if (_meshes.find(meshPath) == _meshes.end())
         {
             Mesh meshData = Importing::ModelImporter::ImportMesh(meshPath.c_str());
             MeshHandle mesh = _renderer->UploadMesh(meshData);
@@ -133,10 +134,10 @@ void RenderingManager::ImportRenderingResources(std::vector<std::string> &meshes
         }
     }
 
-    for(uint32_t textureIndex = 0; textureIndex < textures.size(); textureIndex++)
+    for (uint32_t textureIndex = 0; textureIndex < textures.size(); textureIndex++)
     {
-        std::string& texturePath = textures[textureIndex];
-        if(_textures.find(texturePath) == _textures.end())
+        std::string &texturePath = textures[textureIndex];
+        if (_textures.find(texturePath) == _textures.end())
         {
             Texture texData = Importing::ImportTexture(texturePath.c_str());
             TextureHandle texture = _renderer->UploadTexture(texData);
@@ -153,7 +154,7 @@ void RenderingManager::RegisterMeshComponent(StdComponents::MeshComponent *meshC
     {
         mesh = _meshes.at(meshComponent->GetMesh());
     }
-    catch(const std::out_of_range)
+    catch (const std::out_of_range)
     {
         throw RTEException("Mesh resource not found!");
     }
@@ -161,14 +162,14 @@ void RenderingManager::RegisterMeshComponent(StdComponents::MeshComponent *meshC
     {
         texture = _textures.at(meshComponent->GetTexture());
     }
-    catch(const std::out_of_range)
+    catch (const std::out_of_range)
     {
         throw RTEException("Texture resource not found!");
     }
 
     MeshInstanceHandle instance = _renderer->CreateMeshInstance(mesh);
     _instances.insert({meshComponent, instance});
-    UpdateMeshComponent(meshComponent);   
+    UpdateMeshComponent(meshComponent);
 }
 
 void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshComponent)
@@ -185,7 +186,7 @@ void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshCom
 
 void RenderingManager::RegisterCameraComponent(StdComponents::CameraComponent *cc)
 {
-    if(_mainCamera == nullptr)
+    if (_mainCamera == nullptr)
     {
         SetMainCamera(cc);
         UpdateMainCamera();
@@ -195,7 +196,7 @@ void RenderingManager::RegisterCameraComponent(StdComponents::CameraComponent *c
 
 void RenderingManager::SetMainCamera(StdComponents::CameraComponent *cc)
 {
-    if(cc == nullptr)
+    if (cc == nullptr)
     {
         throw new RTEException("Main camera cannot be null!");
     }
@@ -241,7 +242,7 @@ void RenderingManager::UploadPrimitives()
     _meshes.insert({QUAD, quadHandle});
 }
 
-void RenderingManager::RegisterGUIDrawFunction(Runtime::Component* comp, GUIDrawFunction func)
+void RenderingManager::RegisterGUIDrawFunction(Runtime::Component *comp, GUIDrawFunction func)
 {
     _guiDraws.insert({comp, func});
 }

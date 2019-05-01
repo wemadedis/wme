@@ -1,10 +1,10 @@
 #include <rte/RTE.hpp>
 
 #include "PlayerController.hpp"
+#include "imgui/imgui.h"
 #include "rte/CameraComponent.hpp"
 #include "rte/Definitions.hpp"
 #include "rte/StdComponentsMain.hpp"
-#include "imgui/imgui.h"
 #include <iostream>
 
 using namespace RTE;
@@ -69,19 +69,18 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     trans5->Transform.Pos.z = -10.0f;
     auto quadMesh = scene->AddComponent<MeshComponent>(meshIndex, go5);
 
-
-
     quadMesh->Initialize(trans5, RenderingManager::QUAD, RTE::Utilities::GetFileFromAssets("textures/rte.png"));
     quadMesh->Material.Reflectivity = 0.5f;
 
-    quadMesh->SetGUIDraw([=](){
+    quadMesh->SetGUIDraw([=]() {
         ImGui::Begin("Wazzup");
         ImGui::DragFloat("Reflectivity", &quadMesh->Material.Reflectivity, 0.002f, 0.0f, 1.0f);
         ImGui::DragFloat("Light X Rot:", &trans4->Transform.Rot.x, 0.1f, -0.1f, 360.1f);
-        if(trans4->Transform.Rot.x > 360.0f) trans4->Transform.Rot.x = 0.0f;
-        if(trans4->Transform.Rot.x < 0.0f) trans4->Transform.Rot.x = 360.0f;
+        if (trans4->Transform.Rot.x > 360.0f)
+            trans4->Transform.Rot.x = 0.0f;
+        if (trans4->Transform.Rot.x < 0.0f)
+            trans4->Transform.Rot.x = 360.0f;
         ImGui::End();
-
     });
 
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");

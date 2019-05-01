@@ -33,7 +33,6 @@ public:
 
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_A) == GLFW_PRESS)
         {
-
             Debug("Called");
         }
     }

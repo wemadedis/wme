@@ -26,7 +26,6 @@ namespace RTE::Rendering
 TextureHandle Renderer::EMPTY_TEXTURE;
 const int MAX_FRAMES_IN_FLIGHT = 2;
 
-
 bool Renderer::IsRaytracingCapable()
 {
     return Instance::IsRayTracingCapable();
@@ -41,7 +40,7 @@ void Renderer::FrameResized(int32_t width, int32_t height)
 
 glm::ivec2 Renderer::GetFrameSize()
 {
-    return { _frameWidth, _frameHeight };
+    return {_frameWidth, _frameHeight};
 }
 
 void Renderer::Initialize()
@@ -156,11 +155,11 @@ void Renderer::RecordRenderPass()
             vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(mesh->IndexCount), 1, 0, 0, 0);
         }
         _renderPass->NextSubpass(cmdBuffer, VK_SUBPASS_CONTENTS_INLINE);
-        if(_guiModule != nullptr)
+        if (_guiModule != nullptr)
         {
             _guiModule->Draw(cmdBuffer, _frameWidth, _frameHeight);
         }
-        
+
         _renderPass->EndRenderPass(cmdBuffer);
     }
 }
@@ -193,11 +192,11 @@ void Renderer::RecordCommandBuffersRT()
         RecordCommandBufferForFrame(commandBuffer, bufferIndex); // user draw code
 
         _renderPass->NextSubpass(commandBuffer, VK_SUBPASS_CONTENTS_INLINE);
-        if(_guiModule != nullptr)
+        if (_guiModule != nullptr)
         {
             _guiModule->Draw(commandBuffer, _frameWidth, _frameHeight);
         }
-        _renderPass->EndRenderPass(commandBuffer);  
+        _renderPass->EndRenderPass(commandBuffer);
     }
 }
 
@@ -256,7 +255,7 @@ void Renderer::RecreateSwapChain()
 
     _swapChain = new SwapChain(_instance, width, height);
     _renderPass = new RenderPass(_instance, _swapChain);
-    
+
     auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
     auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
 
@@ -408,7 +407,6 @@ void Renderer::Finalize()
     _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
     UploadGlobalUniform();
 
-    
     GUI::GUIInitInfo guiInfo;
     guiInfo.Instance = _instance->GetInstance();
     guiInfo.PhysicalDevice = _instance->GetPhysicalDevice();
@@ -424,7 +422,7 @@ void Renderer::Finalize()
 
     VkCommandBuffer cmdBuffer = _commandBufferManager->BeginCommandBufferInstance();
 
-    if(_guiModule != nullptr)
+    if (_guiModule != nullptr)
     {
         _guiModule->Initialize(guiInfo, _renderPass->GetHandle(), cmdBuffer);
     }
@@ -433,13 +431,10 @@ void Renderer::Finalize()
     if (RTXon)
     {
         RecordCommandBuffersRT();
-
     }
     RecordRenderPass();
 
     CreateSyncObjects();
-
-    
 }
 
 void Renderer::SetRenderMode(RenderMode mode)
@@ -469,13 +464,12 @@ void Renderer::Draw()
         RecordCommandBuffersRT();
     }
 
-
+    // Delay until framerate hit
     float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
     while (time < _minFrameTime)
     {
         time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
     }
-
     uint32_t imageIndex;
     VkResult result = vkAcquireNextImageKHR(_instance->GetDevice(), _swapChain->GetSwapChain(), std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphores[_currentFrame], VK_NULL_HANDLE, &imageIndex);
 
@@ -501,14 +495,12 @@ void Renderer::Draw()
         cmdBuffer = _commandBufferManager->GetCommandBufferRT(imageIndex);
     }
 
-
-
     VkSemaphore waitSemaphores[] = {_imageAvailableSemaphores[_currentFrame]};
 
     _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT; //TODO: ANALYZE THIS: WAS AT THE END OF THIS FUNC BEFORE AND INTRODUCED INCONSISTENCY IN SUBMITTING & RECORDING COMMAND BUFFERS
 
     VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
-    
+
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.waitSemaphoreCount = 1;
@@ -519,9 +511,6 @@ void Renderer::Draw()
     VkSemaphore signalSemaphores[] = {_renderFinishedSemaphores[_currentFrame]};
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
-
-    
-
 
     VkResult code = vkQueueSubmit(_instance->GetGraphicsQueue(), 1, &submitInfo, _inFlightFences[_currentFrame]);
     Utilities::CheckVkResult(code, "Failed to submit draw command buffer!");
@@ -558,7 +547,7 @@ void Renderer::MarkDirty(MeshHandle mesh)
 
 void Renderer::SetInstanceMaterial(MeshInstanceHandle instance, Material &mat)
 {
-     _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshUniformData *data) {
+    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshUniformData *data) {
         data->Ambient = mat.Ambient;
         data->Diffuse = mat.Diffuse;
         data->Specular = mat.Specular;

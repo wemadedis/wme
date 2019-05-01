@@ -31,6 +31,7 @@ void RTECore::RunUpdateLoop()
     using namespace Platform;
     TimePoint now = Clock::now();
     float deltaTime = 0.0f;
+
     while (_windowManager->ShouldClose() == false)
     {
         Platform::PollEvents();
@@ -40,6 +41,11 @@ void RTECore::RunUpdateLoop()
         {
             Modules->at(moduleIndex)->Update(deltaTime);
         }
+        // float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
+        // while (time < _minFrameTime)
+        // {
+        //     time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
+        // }
         deltaTime = duration_cast<FpSeconds>(Clock::now() - now).count();
         now = Clock::now();
     }
@@ -82,10 +88,13 @@ RTECore::RTECore()
 
     Modules->push_back(sceneManager);
     Modules->push_back(rm);
-    
+
     // Call the client initialize function
     if (OnGameStart != nullptr)
     {
+        Runtime::Scene *scene = sceneManager->MakeScene();
+        sceneManager->SetActiveScene(scene);
+
         OnGameStart(*sceneManager);
     }
     rm->FinalizeRenderer();
