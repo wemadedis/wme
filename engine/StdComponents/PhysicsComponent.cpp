@@ -24,6 +24,7 @@ void PhysicsComponent::Initialize(
                                               mass,
                                               colliders,
                                               this);
+    _rigidBody->UpdateToPhysicsWorld(_transformComponent->Transform.Pos, _transformComponent->Transform.Rot);
 }
 
 void PhysicsComponent::Update(float deltaTime)

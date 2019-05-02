@@ -33,7 +33,7 @@ RTE::Rendering::Texture ImportTexture(const char * filePath)
     int texWidth, texHeight, texChannels;
     stbi_uc *pixels = stbi_load(filePath, &texWidth, &texHeight, &texChannels, STBI_rgb_alpha);
 
-    if (!pixels)
+    if (pixels == nullptr)
     {
         throw ImportException("Failed to import the texture image!");
     }

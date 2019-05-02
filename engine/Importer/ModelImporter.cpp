@@ -190,12 +190,20 @@ RTE::Rendering::Mesh ModelImporter::ImportMesh(const char *filename)
     Assimp::Importer importer;
     const aiScene *scene = importer.ReadFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
 
+    if(scene == nullptr)
+    {
+        throw RTEException("ModelImporter: File not found!");
+    }
+
     //! EXTEND: (danh 22/03 13:30): Implement better support for nested meshes
 
     RTE::Rendering::Mesh mesh;
     RTE::Rendering::Transform t;
 
-    mesh.Material = ConvertMaterial(scene->mMaterials[0]);
+    if(scene->mNumMaterials != 0)
+    {
+        mesh.Material = ConvertMaterial(scene->mMaterials[0]);
+    }
 
     MissingImportData missingInfo = MissingImportData::NONE;
 
