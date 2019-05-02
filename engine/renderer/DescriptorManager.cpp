@@ -344,7 +344,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     {
         _meshBufferInfos[instanceIndex].buffer = instances[instanceIndex].uniformBuffer.buffer;
         _meshBufferInfos[instanceIndex].offset = 0;
-        _meshBufferInfos[instanceIndex].range = sizeof(MeshUniformData);
+        _meshBufferInfos[instanceIndex].range = sizeof(MeshInstanceUniformData);
     }
 
 
@@ -430,7 +430,7 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instance
         VkDescriptorBufferInfo meshBuffer = {};
         meshBuffer.buffer = instances[i].uniformBuffer.buffer;
         meshBuffer.offset = 0;
-        meshBuffer.range = sizeof(MeshUniformData);
+        meshBuffer.range = sizeof(MeshInstanceUniformData);
 
         VkDescriptorBufferInfo globalBuffer = {};
         globalBuffer.buffer = globalUniformData.buffer;

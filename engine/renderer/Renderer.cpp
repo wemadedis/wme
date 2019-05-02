@@ -95,9 +95,9 @@ MeshHandle Renderer::UploadMesh(Mesh &mesh)
 MeshInstanceHandle Renderer::CreateMeshInstance(MeshHandle mesh)
 {
     MeshInstance instance = {};
-    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(MeshUniformData), instance.uniformBuffer);
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(MeshInstanceUniformData), instance.uniformBuffer);
 
-    MeshUniformData meshUniform = {};
+    MeshInstanceUniformData meshUniform = {};
     glm::mat4 rot = glm::eulerAngleXYZ(0.0f, 0.0f, 0.0f);
     glm::mat4 trn = glm::translate(glm::vec3(0.0f, 0.0f, 0.0f));
     glm::mat4 scl = glm::scale(glm::vec3(1.0f));
@@ -125,7 +125,7 @@ TextureHandle Renderer::UploadTexture(Texture &texture)
 void Renderer::BindTextureToMeshInstance(TextureHandle texture, MeshInstanceHandle instance)
 {
     _meshInstances[instance].texture = texture;
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshUniformData *data) {
+    _deviceMemoryManager->ModifyBufferData<MeshInstanceUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshInstanceUniformData *data) {
         data->Texture = texture;
         data->HasTexture = true;
     });
@@ -532,7 +532,7 @@ void Renderer::Draw()
 
 void Renderer::SetInstanceMaterial(MeshInstanceHandle instance, Material &mat)
 {
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshUniformData *data) {
+    _deviceMemoryManager->ModifyBufferData<MeshInstanceUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshInstanceUniformData *data) {
         data->Ambient = mat.Ambient;
         data->Diffuse = mat.Diffuse;
         data->Specular = mat.Specular;
@@ -549,7 +549,7 @@ void Renderer::SetInstanceTransform(MeshInstanceHandle instance, glm::mat4 &mode
     glm::mat4 translation = glm::translate(pos);
     glm::mat4 scale = glm::scale(scl);
     auto modelMatrix = translation * rotation * scale;*/
-    _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshUniformData *data) {
+    _deviceMemoryManager->ModifyBufferData<MeshInstanceUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshInstanceUniformData *data) {
         data->ModelMatrix = modelMatrix;
     });
 

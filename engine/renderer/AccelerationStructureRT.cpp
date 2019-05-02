@@ -265,7 +265,7 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
         {
             MeshInstance &meshInstance = meshInstances[instanceIndex];
             glm::mat4 model;
-            _memoryManager->ModifyBufferData<MeshUniformData>(meshInstance.uniformBuffer, [&](MeshUniformData *data) {
+            _memoryManager->ModifyBufferData<MeshInstanceUniformData>(meshInstance.uniformBuffer, [&](MeshInstanceUniformData *data) {
                 model = data->ModelMatrix;
             });
             for (uint32_t colIndex = 0; colIndex < 4; colIndex++)
