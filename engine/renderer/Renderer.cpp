@@ -46,7 +46,7 @@ glm::ivec2 Renderer::GetFrameSize()
 void Renderer::Initialize()
 {
     _instance = new Instance(_initInfo.extensions, _initInfo.BindingFunc, _initInfo.RayTracingOn);
-    RTXon = _instance->IsRayTracingCapable();
+    _rtxOn = _instance->IsRayTracingCapable();
 
     _swapChain = new SwapChain(_instance, _initInfo.Width, _initInfo.Height);
     _renderPass = new RenderPass(_instance, _swapChain);
@@ -164,32 +164,29 @@ void Renderer::RecordRenderPass()
     }
 }
 
-void Renderer::RecordCommandBufferForFrame(VkCommandBuffer commandBuffer, uint32_t frameIndex)
-{
-    vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetHandle());
-    _descriptorManager->UpdateRTTargetImage(_swapChain->GetSwapChainImages()[frameIndex].imageView);
-    auto dset = _descriptorManager->GetDescriptorSetRT();
-    vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, (uint32_t)dset.size(), dset.data(), 0, 0);
-    auto extent = _swapChain->GetSwapChainExtent();
-    RTUtilities::GetInstance()->vkCmdTraceRaysNV(commandBuffer,
-                                                 _shaderBindingTable.buffer, 0,
-                                                 _shaderBindingTable.buffer, 3 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
-                                                 _shaderBindingTable.buffer, 1 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
-                                                 VK_NULL_HANDLE, 0, 0,
-                                                 extent.width, extent.height, 1);
-}
-
-void Renderer::RecordCommandBuffersRT()
+void Renderer::RecordRenderPassRT()
 {
     auto commandBuffer = _commandBufferManager->BeginCommandBufferInstance();
     _accelerationStructure->RebuildTopStructureCmd(commandBuffer);
     _commandBufferManager->SubmitCommandBufferInstance(commandBuffer, _instance->GetGraphicsQueue());
+    
     for (uint32_t bufferIndex = 0; bufferIndex < _commandBufferManager->GetCommandBufferCount(); bufferIndex++)
     {
         const VkCommandBuffer commandBuffer = _commandBufferManager->GetCommandBufferRT(bufferIndex);
         _renderPass->BeginRenderPass(commandBuffer, _swapChain->GetFramebuffers()[bufferIndex], _globalUniform.ClearColor);
 
-        RecordCommandBufferForFrame(commandBuffer, bufferIndex); // user draw code
+        vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetHandle());
+        //Buffer index = frame index
+        _descriptorManager->UpdateRTTargetImage(_swapChain->GetSwapChainImages()[bufferIndex].imageView);
+        auto dset = _descriptorManager->GetDescriptorSetRT();
+        vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, (uint32_t)dset.size(), dset.data(), 0, 0);
+        auto extent = _swapChain->GetSwapChainExtent();
+        RTUtilities::GetInstance()->vkCmdTraceRaysNV(commandBuffer,
+                                                    _shaderBindingTable.buffer, 0,
+                                                    _shaderBindingTable.buffer, 3 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
+                                                    _shaderBindingTable.buffer, 1 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
+                                                    VK_NULL_HANDLE, 0, 0,
+                                                    extent.width, extent.height, 1);
 
         _renderPass->NextSubpass(commandBuffer, VK_SUBPASS_CONTENTS_INLINE);
         if (_guiModule != nullptr)
@@ -227,7 +224,7 @@ void Renderer::CreateSyncObjects()
 void Renderer::CleanupSwapChain()
 {
     _commandBufferManager->DeallocateCommandBuffers();
-    if (RTXon)
+    if (_rtxOn)
     {
         _commandBufferManager->DeallocateCommandBuffersRT();
     }
@@ -248,7 +245,7 @@ void Renderer::RecreateSwapChain()
 
     CleanupSwapChain();
     _commandBufferManager->AllocateCommandBuffers();
-    if (RTXon)
+    if (_rtxOn)
     {
         _commandBufferManager->AllocateCommandBuffersRT();
     }
@@ -295,7 +292,7 @@ void Renderer::CreateEmptyTexture()
     Renderer::EMPTY_TEXTURE = UploadTexture(tex);
 }
 
-void Renderer::InitRT()
+void Renderer::GetRTProperties()
 {
     VkDevice device = _instance->GetDevice();
     RTUtilities::GetInstance(&device);
@@ -333,7 +330,7 @@ Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f / info.MaxFPS)
     _frameHeight = info.Height;
     _lastFrameEnd = Clock::now();
     Initialize();
-    if (RTXon)
+    if (_rtxOn)
     {
         _renderMode = RenderMode::RAYTRACE;
     }
@@ -364,7 +361,7 @@ void Renderer::Finalize()
                                      _instance,
                                      _renderPass);
 
-    if (RTXon)
+    if (_rtxOn)
     {
         auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
         //TODO: Change name to GetStandardRayClosestHitShader
@@ -373,7 +370,7 @@ void Renderer::Finalize()
         auto srchit = Utilities::GetShadowRayHitShader(_instance->GetDevice());
         auto srmiss = Utilities::GetShadowdRayMissShader(_instance->GetDevice());
 
-        InitRT();
+        GetRTProperties();
         _descriptorManager->CreateDescriptorSetLayoutRT((uint32_t)_meshes.size(), (uint32_t)_meshInstances.size(), (uint32_t)_textures.size());
         _pipelineRT = new GraphicsPipeline(rayGen,
                                            rchit,
@@ -400,7 +397,7 @@ void Renderer::Finalize()
         });
 
         _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _swapChain->GetSwapChainImages()[_currentFrame].imageView, _globalUniformBuffer, _meshes, _meshInstances, _instanceBuffer, _textures);
-        //RecordCommandBuffersRT();
+        //RecordRenderPassRT();
     }
 
     _descriptorManager->CreateDescriptorPool(_swapChain, _meshInstances);
@@ -428,9 +425,9 @@ void Renderer::Finalize()
     }
     _commandBufferManager->SubmitCommandBufferInstance(cmdBuffer, _instance->GetGraphicsQueue());
 
-    if (RTXon)
+    if (_rtxOn)
     {
-        RecordCommandBuffersRT();
+        RecordRenderPassRT();
     }
     RecordRenderPass();
 
@@ -440,14 +437,6 @@ void Renderer::Finalize()
 void Renderer::SetRenderMode(RenderMode mode)
 {
     _renderMode = mode;
-}
-
-void Renderer::ClearAllMeshData()
-{
-}
-
-void Renderer::Draw(RenderPassInfo rpInfo)
-{
 }
 
 void Renderer::Draw()
@@ -461,7 +450,7 @@ void Renderer::Draw()
     }
     else
     {
-        RecordCommandBuffersRT();
+        RecordRenderPassRT();
     }
 
     // Delay until framerate hit
@@ -491,7 +480,7 @@ void Renderer::Draw()
     }
     else
     {
-        //RecordCommandBuffersRT();
+        //RecordRenderPassRT();
         cmdBuffer = _commandBufferManager->GetCommandBufferRT(imageIndex);
     }
 
@@ -541,10 +530,6 @@ void Renderer::Draw()
     _lastFrameEnd = Clock::now();
 }
 
-void Renderer::MarkDirty(MeshHandle mesh)
-{
-}
-
 void Renderer::SetInstanceMaterial(MeshInstanceHandle instance, Material &mat)
 {
     _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshUniformData *data) {
@@ -558,12 +543,12 @@ void Renderer::SetInstanceMaterial(MeshInstanceHandle instance, Material &mat)
     });
 }
 
-void Renderer::SetInstanceTransform(MeshInstanceHandle instance, glm::vec3 pos, glm::vec3 rot, glm::vec3 scl)
+void Renderer::SetInstanceTransform(MeshInstanceHandle instance, glm::mat4 &modelMatrix)
 {
-    glm::mat4 rotation = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
+    /*glm::mat4 rotation = glm::eulerAngleXYZ(rot.x, rot.y, rot.z);
     glm::mat4 translation = glm::translate(pos);
     glm::mat4 scale = glm::scale(scl);
-    auto modelMatrix = translation * rotation * scale;
+    auto modelMatrix = translation * rotation * scale;*/
     _deviceMemoryManager->ModifyBufferData<MeshUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshUniformData *data) {
         data->ModelMatrix = modelMatrix;
     });
@@ -614,15 +599,6 @@ void Renderer::SetCamera(Camera camera)
     _globalUniform.ViewMatrix = camera.ViewMatrix;
     _globalUniform.ProjectionMatrix = camera.ProjectionMatrix;
     UploadGlobalUniform();
-}
-
-ShaderHandle Renderer::UploadShader(Shader shader)
-{
-    ShaderInfo info = {};
-    info.Type = shader.Type;
-    info.Module = Utilities::CreateShaderModule(Utilities::ReadEngineAsset(shader.FilePath), _instance->GetDevice());
-    _shaders.push_back(info);
-    return (ShaderHandle)_shaders.size() - 1;
 }
 
 const std::vector<const char *> validationLayers =

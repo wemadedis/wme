@@ -39,17 +39,26 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     GameObject *go = scene->CreateGameObject();
     TransformComponent *transComp = scene->AddComponent<TransformComponent>(transIndex, go);
     MeshComponent *meshComp = scene->AddComponent<MeshComponent>(meshIndex, go);
-    PlayerController *pc = scene->AddComponent<PlayerController>(pcIndex, go);
+    
     transComp->SetEnabled(true);
     meshComp->SetEnabled(true);
-    pc->SetEnabled(true);
+
     GameObject *go2 = scene->CreateGameObject();
+
+
 
     CameraComponent *camera = scene->AddComponent<CameraComponent>(camIndex, go2);
     camera->SetEnabled(true);
     TransformComponent *trans2 = scene->AddComponent<TransformComponent>(transIndex, go2);
     trans2->Transform.Pos = glm::vec3(0.0f, 0.0f, 10.0f);
     camera->Initialize(trans2);
+    camera->BackgroundColor = glm::vec4(0.0f,0.0f,0.0f,0.0f);
+    PlayerController *pc = scene->AddComponent<PlayerController>(pcIndex, go);
+    pc->SetEnabled(true);
+    pc->Initialize(trans2, nullptr, camera);
+
+
+
 
     GameObject *go3 = scene->CreateGameObject();
     auto trans3 = scene->AddComponent<TransformComponent>(transIndex, go3);
@@ -85,5 +94,4 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
 
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
     meshComp->Initialize(transComp, monkey);
-    pc->Initialize(transComp, nullptr, camera);
 }

@@ -152,6 +152,16 @@ struct Transform
         return glm::translate(Pos);
     }
 
+    glm::mat4 Transform::ScalingMatrix()
+    {
+        return glm::scale(Scale);
+    }
+
+    glm::mat4 Transform::ModelMatrix()
+    {
+        return TranslationMatrix() * RotationMatrix() * ScalingMatrix();
+    }
+
     Transform(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot)
     {
         Pos = pos;

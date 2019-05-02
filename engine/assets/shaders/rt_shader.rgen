@@ -37,7 +37,7 @@ layout(binding = 2) uniform GlobalUniformData
     vec4 Position;
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
-    vec4 AmbientColor;
+    vec4 ClearColor;
     vec4 LightCounts;
     PointLight PointLights[MAX_LIGHTS];
     DirectionalLight DirectionalLights[MAX_LIGHTS];
