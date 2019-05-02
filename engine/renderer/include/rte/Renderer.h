@@ -48,18 +48,6 @@ enum class RenderMode
 struct MeshInfo;
 struct TextureInfo;
 
-
-
-/**
- * @brief Bullet Physics callback for contact destroyed
- * 
- * @param data Whatever data passed to it
- * @return true Bullet documentation doesn't specify
- * @return false Bullet documentation doesn't specify
- */
-
-
-
 /**
  * @brief Struct encapsulating the necessary data needed by the renderer to initialize.
  */

@@ -9,6 +9,38 @@
 namespace RTE::Rendering
 {
 
+
+/**
+ * @brief An enum containing the varioues shader types used by the renderer.
+ */
+enum class ShaderType
+{
+    /**
+     * @brief Vertex shader type.
+     */
+    VERTEX,
+
+    /**
+     * @brief Fragment shader type.
+     */
+    FRAGMENT,
+
+    /**
+     * @brief Ray generation shader type.
+     */
+    RAYGEN,
+
+    /**
+     * @brief Ray closest hit shader type.
+     */
+    RCHIT,
+
+    /**
+     * @brief Ray miss shader type.
+     */
+    RMISS
+};
+
 struct ShaderInfo
 {
 	ShaderType Type;
