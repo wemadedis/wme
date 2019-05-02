@@ -5,10 +5,6 @@
 namespace RTE::StdComponents
 {
 
-MeshComponent::MeshComponent()
-{
-}
-
 void MeshComponent::Initialize(TransformComponent *transform, std::string meshFilePath, std::string textureFilePath)
 {
     _renderingManager = RenderingManager::GetInstance();
