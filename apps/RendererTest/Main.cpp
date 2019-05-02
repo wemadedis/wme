@@ -122,7 +122,7 @@ int main()
             for (int z = 0; z < depth; z++)
             {
                 MeshInstanceHandle mesh = renderer.CreateMeshInstance(cylinderMeshHandle);
-                renderer.SetInstanceTransform(mesh, glm::vec3(x, y, z), glm::vec3(0.0f), glm::vec3(1.0f));
+                //renderer.SetInstanceTransform(mesh, glm::vec3(x, y, z), glm::vec3(0.0f), glm::vec3(1.0f));
                 meshes.push_back(mesh);
             }
         }
@@ -136,7 +136,7 @@ int main()
 
     auto monkeyHandle = renderer.UploadMesh(monkey);
     auto monkeyInstance = renderer.CreateMeshInstance(monkeyHandle);
-    renderer.SetInstanceTransform(monkeyInstance, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
+    //renderer.SetInstanceTransform(monkeyInstance, glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(glm::radians(-90.0f), 0.0f, 0.0f), glm::vec3(1.0f));
     auto texHandle = renderer.UploadTexture(tex);
     //renderer.BindTextureToMeshInstance(texHandle, quadInstance);
     //renderer.SetInstanceTransform(quadInstance, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(glm::radians(0.0f), 0.0f, 0.0f), glm::vec3(10.0f));

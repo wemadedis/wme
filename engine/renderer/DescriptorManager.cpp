@@ -116,12 +116,12 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
     outputImageLayoutBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV;
     outputImageLayoutBinding.pImmutableSamplers = nullptr;
 
-    VkDescriptorSetLayoutBinding cameraDataBinding = {};
-    cameraDataBinding.binding = 2;
-    cameraDataBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    cameraDataBinding.descriptorCount = 1;
-    cameraDataBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV | VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV;
-    cameraDataBinding.pImmutableSamplers = nullptr;
+    VkDescriptorSetLayoutBinding globalDataBinding = {};
+    globalDataBinding.binding = 2;
+    globalDataBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    globalDataBinding.descriptorCount = 1;
+    globalDataBinding.stageFlags = VK_SHADER_STAGE_RAYGEN_BIT_NV | VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV | VK_SHADER_STAGE_MISS_BIT_NV;
+    globalDataBinding.pImmutableSamplers = nullptr;
 
     VkDescriptorSetLayoutBinding instanceMappingBinding = {};
     instanceMappingBinding.binding = 3;
@@ -136,7 +136,7 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
     indexBuffersBinding.stageFlags = VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV;
 
     {
-        std::vector<VkDescriptorSetLayoutBinding> bindings({ accelerationStructureLayoutBinding, outputImageLayoutBinding, cameraDataBinding, instanceMappingBinding, indexBuffersBinding });
+        std::vector<VkDescriptorSetLayoutBinding> bindings({ accelerationStructureLayoutBinding, outputImageLayoutBinding, globalDataBinding, instanceMappingBinding, indexBuffersBinding });
         std::array<VkDescriptorBindingFlagsEXT, 5> flags = { 0, 0, 0, 0, VK_DESCRIPTOR_BINDING_VARIABLE_DESCRIPTOR_COUNT_BIT_EXT };
 
         VkDescriptorSetLayoutBindingFlagsCreateInfoEXT bindingFlags;

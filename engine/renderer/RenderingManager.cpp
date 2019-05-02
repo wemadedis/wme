@@ -180,7 +180,7 @@ void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshCom
     Transform &trans = meshComponent->GetTransformComponent()->Transform;
     _renderer->BindMeshToInstance(mesh, instance);
     _renderer->BindTextureToMeshInstance(texture, instance);
-    _renderer->SetInstanceTransform(instance, trans.Pos, trans.Rot, trans.Scale);
+    _renderer->SetInstanceTransform(instance, trans.ModelMatrix());
     _renderer->SetInstanceMaterial(instance, meshComponent->Material);
 }
 
