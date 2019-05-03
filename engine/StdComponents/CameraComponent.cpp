@@ -53,7 +53,16 @@ glm::mat4 CameraComponent::ProjectionMatrix()
     glm::vec2 frameSize = glm::vec2(_renderingManager->GetRendererFrameSize());
     if(Projection == ProjectionMode::PERSPECTIVE)
     {
-        return glm::perspective(glm::radians(FieldOfView), frameSize.x/frameSize.y, NearPlane, FarPlane);
+        float aspect = 0.0f;
+        if(frameSize.y <= 0.0f ||frameSize.x <= 0.0f)
+        {
+            aspect = 1.0f;
+        } 
+        else 
+        {
+            aspect = frameSize.x/frameSize.y;    
+        }
+        return glm::perspective(glm::radians(FieldOfView), aspect, NearPlane, FarPlane);
     }
     return glm::ortho(-frameSize.x*0.5f, frameSize.x*0.5f, -frameSize.y*0.5f, frameSize.y*0.5f, NearPlane, FarPlane);
 }
