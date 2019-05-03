@@ -214,14 +214,22 @@ SwapChain::~SwapChain()
         vkDestroyFramebuffer(_instance->GetDevice(), _swapChainFramebuffers[imageIndex], nullptr);
         vkDestroyImageView(_instance->GetDevice(), _swapChainImages[imageIndex].imageView, nullptr);
     }
-
-
     vkDestroySwapchainKHR(_instance->GetDevice(), _swapChain, nullptr);
 }
 
 void SwapChain::CreateFramebuffers(RenderPass *renderPass, ImageManager *imageManager)
 {
+    /*
+     * If the window has been minimized or some exceptional situation arises where both
+     * the width or heigh of the frame buffer are 0, set them to 1 to avoid a crash.
+     */
+    if(_framebufferWidth <= 0 || _framebufferHeight <= 0)
+    {
+        _framebufferWidth = 1;
+        _framebufferHeight = 1;
+    }
     _depthImage = imageManager->CreateDepthImage(_framebufferWidth, _framebufferHeight);
+    
     _swapChainFramebuffers.resize(_swapChainImageCount);
     for (size_t i = 0; i < _swapChainImageCount; i++)
     {
