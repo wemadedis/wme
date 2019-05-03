@@ -33,6 +33,10 @@ public:
     {
         Component *comp = _componentPools[compId]->AddComponent(go->GetId());
         TComp *tp = dynamic_cast<TComp *>(comp);
+        if (tp == nullptr)
+        {
+            throw RTEException("Scene: Wrong comp id for object type");
+        }
         go->GetComponents()->push_back(tp);
         return tp;
     }

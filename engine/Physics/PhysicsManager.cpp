@@ -101,13 +101,14 @@ void PhysicsManager::SetupBulletCallbacks()
 PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
 {
     _instance = this;
-    SetFramesPerSecond(config.GraphicsConfig.FramesPerSecond);
+    SetFramesPerSecond(60);
     _physicsWorld = CreateDefaultDynamicsWorld();
     _collisionPool = new GenericPool<Collision>(config.PhysicsConfig.MaxCollisionCount);
     SetGravity(_defaultGravity);
 }
 
-PhysicsManager::~PhysicsManager()
+PhysicsManager::
+    ~PhysicsManager()
 {
     delete _physicsWorld;
 }

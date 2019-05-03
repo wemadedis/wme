@@ -11,28 +11,31 @@ using namespace RTE::StdComponents;
 using namespace RTE::Utilities;
 
 const RelativeFilePath BoxPath = "models/box.ply";
-const RelativeFilePath BoxTexturePath = "textures/rte.png";
-const RelativeFilePath PlanePath = "models/plane.ply";
-const RelativeFilePath PlaneTexturePath = "textures/rte.png";
+const RelativeFilePath RedPath = "textures/red.png";
+const RelativeFilePath GreenPath = "textures/green.png";
+const RelativeFilePath BluePath = "textures/blue.png";
+const RelativeFilePath CyanPath = "textures/cyan.png";
 
 AbsoluteFilePath AbsBoxPath;
-AbsoluteFilePath AbsBoxTexturePath;
-AbsoluteFilePath AbsPlanePath;
-AbsoluteFilePath AbsPlaneTexturePath;
+AbsoluteFilePath AbsRedPath;
+AbsoluteFilePath AbsGreenPath;
+AbsoluteFilePath AbsBluePath;
+AbsoluteFilePath AbsCyanPath;
 
 void ConfigureGame(RTEConfig &config)
 {
     AbsBoxPath = GetFileFromAssets(BoxPath);
-    AbsBoxTexturePath = GetFileFromAssets(BoxTexturePath);
-    AbsPlanePath = GetFileFromAssets(PlanePath);
-    AbsPlaneTexturePath = GetFileFromAssets(PlaneTexturePath);
+    AbsRedPath = GetFileFromAssets(RedPath);
+    AbsGreenPath = GetFileFromAssets(GreenPath);
+    AbsBluePath = GetFileFromAssets(BluePath);
+    AbsCyanPath = GetFileFromAssets(CyanPath);
+
     config.WindowConfig.WindowName = "Physics Test";
     config.GraphicsConfig.UseRaytracing = true;
     config.WindowConfig.WindowWidth = 600;
     config.WindowConfig.WindowHeight = 700;
-    config.AssetConfig.Meshes = {AbsBoxPath,
-                                 AbsPlanePath};
-    config.AssetConfig.Textures = {AbsBoxTexturePath, AbsPlaneTexturePath};
+    config.AssetConfig.Meshes = {AbsBoxPath};
+    config.AssetConfig.Textures = {AbsRedPath, AbsGreenPath, AbsBluePath, AbsCyanPath};
 }
 
 struct ComponentIds
@@ -83,12 +86,12 @@ StaticBox MakeStaticBox(Scene *scene, ComponentIds &comps)
     StaticBox box;
     box.Go = scene->CreateGameObject();
     box.Trans = scene->AddComponent<TransformComponent>(comps.TransformPoolId, box.Go);
-    box.Phys = scene->AddComponent<PhysicsComponent>(comps.PhysicsPoolId, box.Go);
+    //box.Phys = scene->AddComponent<PhysicsComponent>(comps.PhysicsPoolId, box.Go);
     box.Mesh = scene->AddComponent<MeshComponent>(comps.MeshPoolId, box.Go);
 
-    box.Trans->Initialize({0, 1, 0}, {0, 0, 0}, {1, 1, 1});
-    box.Phys->Initialize(box.Trans, 1, {MakeBoxCollider(glm::vec3(1))});
-    box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsBoxTexturePath);
+    box.Trans->Initialize({5, 7, 0}, {0, 0, 0}, {1, 1, 1});
+    //box.Phys->Initialize(box.Trans, 1, {MakeBoxCollider(glm::vec3(1))});
+    box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsBluePath);
     return box;
 }
 
@@ -101,9 +104,9 @@ ControlledBox MakeControlledBox(Scene *scene, ComponentIds &comps)
     box.Mesh = scene->AddComponent<MeshComponent>(comps.MeshPoolId, box.Go);
     box.Controller = scene->AddComponent<PlayerController>(comps.PCPoolId, box.Go);
 
-    box.Trans->Initialize({0, 5, 0}, {0, 0, 0}, {1, 1, 1});
+    box.Trans->Initialize({-5, 1, 0}, {0, 0, 0}, {1, 1, 1});
     box.Phys->Initialize(box.Trans, 1, {MakeBoxCollider(glm::vec3(1))});
-    box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsBoxTexturePath);
+    box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsRedPath);
     box.Controller->Initialize(box.Trans, box.Phys);
     return box;
 }
@@ -125,7 +128,7 @@ Plane MakeGround(Scene *scene, ComponentIds &comps)
     glm::vec3 scale(glm::vec3(10, 1, 10));
     plane.Trans->Initialize({0, -10, 0}, {0, 0, 0}, scale);
     plane.Phys->Initialize(plane.Trans, 1, {MakeBoxCollider(scale)});
-    plane.Mesh->Initialize(plane.Trans, AbsBoxPath, AbsBoxTexturePath);
+    plane.Mesh->Initialize(plane.Trans, AbsBoxPath, AbsCyanPath);
     plane.Phys->GetRigidBody()->SetKinematic(true);
     return plane;
 }
@@ -134,11 +137,12 @@ Plane MakeBackground(Scene *scene, ComponentIds &comps)
 {
     Plane plane = MakePlane(scene, comps);
 
-    glm::vec3 scale(glm::vec3(10, 1, 10));
-    plane.Trans->Initialize({0, 0, 0}, {0, 0, glm::radians(-90.0f)}, scale);
+    glm::vec3 scale(glm::vec3(10, 10, 1));
+    plane.Trans->Initialize({0, 1, -6}, {0, 0, 0}, scale);
     plane.Phys->Initialize(plane.Trans, 1, {MakeBoxCollider(scale)});
-    plane.Mesh->Initialize(plane.Trans, AbsBoxPath, AbsBoxTexturePath);
+    plane.Mesh->Initialize(plane.Trans, AbsBoxPath, AbsGreenPath);
     plane.Phys->GetRigidBody()->SetKinematic(true);
+    plane.Mesh->Material.Reflectivity = 0.5;
     return plane;
 }
 
@@ -163,23 +167,24 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
 
     // Sunlight
     GameObject *sun = scene->CreateGameObject();
-    TransformComponent *sunLocation = scene->AddComponent<TransformComponent>(componentIds.TransformPoolId, sun);
+    TransformComponent *sunTransform = scene->AddComponent<TransformComponent>(componentIds.TransformPoolId, sun);
     DirectionalLightComponent *sunLight = scene->AddComponent<DirectionalLightComponent>(componentIds.DirLightPoolId, sun);
-    sunLocation->Initialize({0, 0, 0}, {50, 50, 0}, {0, 0, 0});
-    sunLight->Initialize(sunLocation, Colors::Cyan);
+    sunTransform->Initialize({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
+    sunLight->Initialize(sunTransform, Colors::White);
 
     // Camera
     GameObject *camera = scene->CreateGameObject();
     TransformComponent *cameraTransform = scene->AddComponent<TransformComponent>(componentIds.TransformPoolId, camera);
     CameraComponent *cameraComp = scene->AddComponent<CameraComponent>(componentIds.CameraPoolId, camera);
-    cameraTransform->Initialize(glm::vec3(0, 0, 50), glm::vec3(0, 0, 0), {1, 1, 1});
+    cameraComp->BackgroundColor = Colors::Black;
+    cameraTransform->Initialize(glm::vec3(20, 10, 40), glm::vec3(-20, 25, 0), {1, 1, 1});
     cameraComp->Initialize(cameraTransform);
 
     // Static box
     StaticBox staticBox = MakeStaticBox(scene, componentIds);
 
     // Controlled box
-    ControlledBox controlledBox = MakeControlledBox(scene, componentIds);
+    //ControlledBox controlledBox = MakeControlledBox(scene, componentIds);
 
     // Background
     Plane bgPlane = MakeBackground(scene, componentIds);
