@@ -74,7 +74,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
 
     GameObject *go5 = scene->CreateGameObject();
     auto trans5 = scene->AddComponent<TransformComponent>(transIndex, go5);
-    trans5->Transform.Scale = glm::vec3(20.0f);
+    trans5->Transform.Scale = glm::vec3(5.0f);
     trans5->Transform.Pos.z = -10.0f;
     auto quadMesh = scene->AddComponent<MeshComponent>(meshIndex, go5);
 
@@ -89,6 +89,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
             trans4->Transform.Rot.x = 0.0f;
         if (trans4->Transform.Rot.x < 0.0f)
             trans4->Transform.Rot.x = 360.0f;
+        ImGui::DragFloat("Quad X Rot:", &trans5->Transform.Rot.x, 0.1f, -0.1f, 360.1f);
         ImGui::End();
     });
 

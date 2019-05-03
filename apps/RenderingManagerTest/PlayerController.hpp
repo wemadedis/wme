@@ -39,7 +39,7 @@ public:
             ImGui::Text(std::to_string(dy).c_str());
             ImGui::End();
         });
-        RTE::Platform::WindowManager::GetInstance()->RegisterMousePositionCallback([&](double x, double y){
+        /*RTE::Platform::WindowManager::GetInstance()->RegisterMousePositionCallback([&](double x, double y){
             if(oldX != x)
             {
                 dx = oldX - x;
@@ -56,7 +56,7 @@ public:
                 if(_transform->Transform.Rot.x > 35) _transform->Transform.Rot.x = 35;
                 if(_transform->Transform.Rot.x < -35) _transform->Transform.Rot.x = -35;
             }
-        });
+        });*/
     }
 
     void Update(float deltaTime)
