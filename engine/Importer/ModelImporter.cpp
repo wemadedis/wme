@@ -200,10 +200,10 @@ RTE::Rendering::Mesh ModelImporter::ImportMesh(const char *filename)
     RTE::Rendering::Mesh mesh;
     RTE::Rendering::Transform t;
 
-    if(scene->mNumMaterials != 0)
-    {
-        mesh.Material = ConvertMaterial(scene->mMaterials[0]);
-    }
+    // if(scene->mNumMaterials != 0)
+    // {
+    //     mesh.Material = ConvertMaterial(scene->mMaterials[0]);
+    // }
 
     MissingImportData missingInfo = MissingImportData::NONE;
 
