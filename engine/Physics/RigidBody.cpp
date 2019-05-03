@@ -7,9 +7,11 @@
 
 namespace RTE::Physics
 {
-RigidBody::RigidBody(btRigidBody *body)
+RigidBody::RigidBody(btRigidBody *body, Rendering::Transform trans)
 {
     _rigidBody = body;
+
+    _oldTransform = btTransform(Convert(trans.RotationMatrix()), Convert(trans.Pos));
 }
 
 void RigidBody::SetLinearVelocity(glm::vec3 vel)
@@ -100,20 +102,27 @@ void RigidBody::SetMass(float mass, glm::vec3 inertia)
     _rigidBody->setMassProps(mass, Convert(inertia));
 }
 
-void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform, bool transformChanged)
+void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform)
 {
-    if (transformChanged)
-    {
-        UpdateToPhysicsWorld(transform.Pos, transform.Rot);
-    }
-
+    // get phys transform
     btTransform physTransform;
     _rigidBody->getMotionState()->getWorldTransform(physTransform);
-    glm::vec3 pos = Convert(physTransform.getOrigin());
-    transform.Pos = pos;
-    btQuaternion rot = physTransform.getRotation();
-    glm::quat inputQuat = Convert(rot);
-    transform.Rot = glm::degrees(glm::eulerAngles(inputQuat));
+
+    // btVector3 dPos = physTransform.getOrigin() - _oldTransform.getOrigin();
+    // btQuaternion dRot = physTransform.getRotation() - _oldTransform.getRotation();
+
+    transform.Pos = Convert(physTransform.getOrigin());
+    transform.Rot = glm::radians(glm::eulerAngles(Convert(physTransform.getRotation())));
+
+    // Apply physics change to real transform
+    //transform.Pos += Convert(dPos);
+    //transform.Rot += glm::eulerAngles(Convert(dRot));
+
+    // Override physics change with real world change
+    //UpdateToPhysicsWorld(transform.Pos, transform.Rot);
+
+    _rigidBody->getMotionState()->getWorldTransform(physTransform);
+    _oldTransform = physTransform;
 }
 
 void RigidBody::UpdateToPhysicsWorld(glm::vec3 position, glm::vec3 orientation)

@@ -1,3 +1,4 @@
+#include <imgui/imgui.h>
 #include <rte/RTE.hpp>
 
 #include "PlayerController.hpp"
@@ -11,12 +12,14 @@ using namespace RTE::StdComponents;
 using namespace RTE::Utilities;
 
 const RelativeFilePath BoxPath = "models/box.ply";
+const RelativeFilePath PlanePath = "models/plane.ply";
 const RelativeFilePath RedPath = "textures/red.png";
 const RelativeFilePath GreenPath = "textures/green.png";
 const RelativeFilePath BluePath = "textures/blue.png";
 const RelativeFilePath CyanPath = "textures/cyan.png";
 
 AbsoluteFilePath AbsBoxPath;
+AbsoluteFilePath AbsPlanePath;
 AbsoluteFilePath AbsRedPath;
 AbsoluteFilePath AbsGreenPath;
 AbsoluteFilePath AbsBluePath;
@@ -25,6 +28,7 @@ AbsoluteFilePath AbsCyanPath;
 void ConfigureGame(RTEConfig &config)
 {
     AbsBoxPath = GetFileFromAssets(BoxPath);
+    AbsPlanePath = GetFileFromAssets(PlanePath);
     AbsRedPath = GetFileFromAssets(RedPath);
     AbsGreenPath = GetFileFromAssets(GreenPath);
     AbsBluePath = GetFileFromAssets(BluePath);
@@ -32,9 +36,9 @@ void ConfigureGame(RTEConfig &config)
 
     config.WindowConfig.WindowName = "Physics Test";
     config.GraphicsConfig.UseRaytracing = true;
-    config.WindowConfig.WindowWidth = 600;
-    config.WindowConfig.WindowHeight = 700;
-    config.AssetConfig.Meshes = {AbsBoxPath};
+    config.WindowConfig.WindowWidth = 1200;
+    config.WindowConfig.WindowHeight = 800;
+    config.AssetConfig.Meshes = {AbsBoxPath, AbsPlanePath};
     config.AssetConfig.Textures = {AbsRedPath, AbsGreenPath, AbsBluePath, AbsCyanPath};
 }
 
@@ -86,30 +90,40 @@ StaticBox MakeStaticBox(Scene *scene, ComponentIds &comps)
     StaticBox box;
     box.Go = scene->CreateGameObject();
     box.Trans = scene->AddComponent<TransformComponent>(comps.TransformPoolId, box.Go);
-    //box.Phys = scene->AddComponent<PhysicsComponent>(comps.PhysicsPoolId, box.Go);
+    box.Phys = scene->AddComponent<PhysicsComponent>(comps.PhysicsPoolId, box.Go);
     box.Mesh = scene->AddComponent<MeshComponent>(comps.MeshPoolId, box.Go);
 
-    box.Trans->Initialize({5, 7, 0}, {0, 0, 0}, {1, 1, 1});
-    //box.Phys->Initialize(box.Trans, 1, {MakeBoxCollider(glm::vec3(1))});
+    box.Trans->SetGUIDraw([=]() {
+        ImGui::Begin("THINGS");
+        ImGui::DragFloat("pos x", &box.Trans->Transform.Pos.x);
+        ImGui::DragFloat("pos y", &box.Trans->Transform.Pos.y);
+        ImGui::DragFloat("pos z", &box.Trans->Transform.Pos.z);
+        ImGui::DragFloat("rot x", &box.Trans->Transform.Rot.x);
+        ImGui::DragFloat("rot y", &box.Trans->Transform.Rot.y);
+        ImGui::DragFloat("rot z", &box.Trans->Transform.Rot.z);
+        ImGui::End();
+    });
+    box.Trans->Initialize({0, 50, 0}, {0, 0, 0}, {1, 1, 1});
+    box.Phys->Initialize(box.Trans, 0, {MakeBoxCollider({0.5, 0.5, 0.5})});
     box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsBluePath);
     return box;
 }
 
-ControlledBox MakeControlledBox(Scene *scene, ComponentIds &comps)
-{
-    ControlledBox box;
-    box.Go = scene->CreateGameObject();
-    box.Trans = scene->AddComponent<TransformComponent>(comps.TransformPoolId, box.Go);
-    box.Phys = scene->AddComponent<PhysicsComponent>(comps.PhysicsPoolId, box.Go);
-    box.Mesh = scene->AddComponent<MeshComponent>(comps.MeshPoolId, box.Go);
-    box.Controller = scene->AddComponent<PlayerController>(comps.PCPoolId, box.Go);
+// ControlledBox MakeControlledBox(Scene *scene, ComponentIds &comps)
+// {
+//     ControlledBox box;
+//     box.Go = scene->CreateGameObject();
+//     box.Trans = scene->AddComponent<TransformComponent>(comps.TransformPoolId, box.Go);
+//     box.Phys = scene->AddComponent<PhysicsComponent>(comps.PhysicsPoolId, box.Go);
+//     box.Mesh = scene->AddComponent<MeshComponent>(comps.MeshPoolId, box.Go);
+//     box.Controller = scene->AddComponent<PlayerController>(comps.PCPoolId, box.Go);
 
-    box.Trans->Initialize({-5, 1, 0}, {0, 0, 0}, {1, 1, 1});
-    box.Phys->Initialize(box.Trans, 1, {MakeBoxCollider(glm::vec3(1))});
-    box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsRedPath);
-    box.Controller->Initialize(box.Trans, box.Phys);
-    return box;
-}
+//     box.Trans->Initialize({-5, 1, 0}, {0, 0, 0}, {1, 1, 1});
+//     box.Phys->Initialize(box.Trans, 1, {MakeBoxCollider(glm::vec3(1))});
+//     box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsRedPath);
+//     box.Controller->Initialize(box.Trans, box.Phys);
+//     return box;
+// }
 
 Plane MakePlane(Scene *scene, ComponentIds &comps)
 {
@@ -125,10 +139,9 @@ Plane MakeGround(Scene *scene, ComponentIds &comps)
 {
     Plane plane = MakePlane(scene, comps);
 
-    glm::vec3 scale(glm::vec3(10, 1, 10));
-    plane.Trans->Initialize({0, -10, 0}, {0, 0, 0}, scale);
-    plane.Phys->Initialize(plane.Trans, 1, {MakeBoxCollider(scale)});
-    plane.Mesh->Initialize(plane.Trans, AbsBoxPath, AbsCyanPath);
+    plane.Trans->Initialize({0, -20, 0}, {90, 0, 0}, {1, 1, 1});
+    plane.Phys->Initialize(plane.Trans, 1, {MakeBoxCollider({0.5, 0.5, 0.5})});
+    plane.Mesh->Initialize(plane.Trans, AbsPlanePath, AbsCyanPath);
     plane.Phys->GetRigidBody()->SetKinematic(true);
     return plane;
 }
@@ -137,10 +150,9 @@ Plane MakeBackground(Scene *scene, ComponentIds &comps)
 {
     Plane plane = MakePlane(scene, comps);
 
-    glm::vec3 scale(glm::vec3(10, 10, 1));
-    plane.Trans->Initialize({0, 1, -6}, {0, 0, 0}, scale);
-    plane.Phys->Initialize(plane.Trans, 1, {MakeBoxCollider(scale)});
-    plane.Mesh->Initialize(plane.Trans, AbsBoxPath, AbsGreenPath);
+    plane.Trans->FromPos({0, 1, -6});
+    plane.Phys->Initialize(plane.Trans, 1, {MakeBoxCollider({10, 1, 10})});
+    plane.Mesh->Initialize(plane.Trans, AbsPlanePath, AbsGreenPath);
     plane.Phys->GetRigidBody()->SetKinematic(true);
     plane.Mesh->Material.Reflectivity = 0.5;
     return plane;
@@ -151,7 +163,7 @@ ComponentIds DefineComponents(Scene *scene)
     ComponentIds componentIds;
     componentIds.PCPoolId = scene->DefineComponent<PlayerController, 1>();
     componentIds.TransformPoolId = scene->DefineComponent<TransformComponent, 6>();
-    componentIds.PhysicsPoolId = scene->DefineComponent<PhysicsComponent, 4>();
+    componentIds.PhysicsPoolId = scene->DefineComponent<PhysicsComponent, 2>();
     componentIds.MeshPoolId = scene->DefineComponent<MeshComponent, 4>();
     componentIds.DirLightPoolId = scene->DefineComponent<DirectionalLightComponent, 1>();
     componentIds.CameraPoolId = scene->DefineComponent<CameraComponent, 1>();
@@ -169,7 +181,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     GameObject *sun = scene->CreateGameObject();
     TransformComponent *sunTransform = scene->AddComponent<TransformComponent>(componentIds.TransformPoolId, sun);
     DirectionalLightComponent *sunLight = scene->AddComponent<DirectionalLightComponent>(componentIds.DirLightPoolId, sun);
-    sunTransform->Initialize({0, 0, 0}, {0, 0, 0}, {0, 0, 0});
+    sunTransform->Initialize({0, 0, 0}, {90, 45, 0}, {0, 0, 0});
     sunLight->Initialize(sunTransform, Colors::White);
 
     // Camera
@@ -187,7 +199,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     //ControlledBox controlledBox = MakeControlledBox(scene, componentIds);
 
     // Background
-    Plane bgPlane = MakeBackground(scene, componentIds);
+    //Plane bgPlane = MakeBackground(scene, componentIds);
 
     // Ground
     Plane groundPlane = MakeGround(scene, componentIds);

@@ -14,6 +14,11 @@ void TransformComponent::Initialize(Rendering::Transform transform)
     Transform = transform;
 }
 
+void TransformComponent::FromPos(glm::vec3 pos)
+{
+    Transform.Pos = pos;
+}
+
 void TransformComponent::Initialize(glm::vec3 pos,
                                     glm::vec3 rot,
                                     glm::vec3 scale)

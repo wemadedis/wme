@@ -29,7 +29,8 @@ void RTECore::InitEngine()
 void RTECore::RunUpdateLoop()
 {
     using namespace Platform;
-    TimePoint now = Clock::now();
+    TimePoint lastFrameEnd = Clock::now();
+    float minFrameTime = 1.0f / Config.GraphicsConfig.FramesPerSecond;
     float deltaTime = 0.0f;
 
     while (_windowManager->ShouldClose() == false)
@@ -41,13 +42,14 @@ void RTECore::RunUpdateLoop()
         {
             Modules->at(moduleIndex)->Update(deltaTime);
         }
-        // float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
-        // while (time < _minFrameTime)
-        // {
-        //     time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
-        // }
-        deltaTime = duration_cast<FpSeconds>(Clock::now() - now).count();
-        now = Clock::now();
+
+        float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
+        while (time < minFrameTime)
+        {
+            time = std::chrono::duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
+        }
+        deltaTime = duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
+        lastFrameEnd = Clock::now();
     }
 }
 

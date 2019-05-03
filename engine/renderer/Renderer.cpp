@@ -169,7 +169,7 @@ void Renderer::RecordRenderPassRT()
     auto commandBuffer = _commandBufferManager->BeginCommandBufferInstance();
     _accelerationStructure->RebuildTopStructureCmd(commandBuffer);
     _commandBufferManager->SubmitCommandBufferInstance(commandBuffer, _instance->GetGraphicsQueue());
-    
+
     for (uint32_t bufferIndex = 0; bufferIndex < _commandBufferManager->GetCommandBufferCount(); bufferIndex++)
     {
         const VkCommandBuffer commandBuffer = _commandBufferManager->GetCommandBufferRT(bufferIndex);
@@ -182,11 +182,11 @@ void Renderer::RecordRenderPassRT()
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, (uint32_t)dset.size(), dset.data(), 0, 0);
         auto extent = _swapChain->GetSwapChainExtent();
         RTUtilities::GetInstance()->vkCmdTraceRaysNV(commandBuffer,
-                                                    _shaderBindingTable.buffer, 0,
-                                                    _shaderBindingTable.buffer, 3 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
-                                                    _shaderBindingTable.buffer, 1 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
-                                                    VK_NULL_HANDLE, 0, 0,
-                                                    extent.width, extent.height, 1);
+                                                     _shaderBindingTable.buffer, 0,
+                                                     _shaderBindingTable.buffer, 3 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
+                                                     _shaderBindingTable.buffer, 1 * _rtProperties.shaderGroupHandleSize, _rtProperties.shaderGroupHandleSize,
+                                                     VK_NULL_HANDLE, 0, 0,
+                                                     extent.width, extent.height, 1);
 
         _renderPass->NextSubpass(commandBuffer, VK_SUBPASS_CONTENTS_INLINE);
         if (_guiModule != nullptr)
@@ -453,12 +453,12 @@ void Renderer::Draw()
         RecordRenderPassRT();
     }
 
-    // Delay until framerate hit
-    float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
-    while (time < _minFrameTime)
-    {
-        time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
-    }
+    // // Delay until framerate hit
+    // float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
+    // while (time < _minFrameTime)
+    // {
+    //     time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
+    // }
     uint32_t imageIndex;
     VkResult result = vkAcquireNextImageKHR(_instance->GetDevice(), _swapChain->GetSwapChain(), std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphores[_currentFrame], VK_NULL_HANDLE, &imageIndex);
 

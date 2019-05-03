@@ -115,7 +115,8 @@ PhysicsManager::
 
 void PhysicsManager::Step(float deltaTime)
 {
-    _physicsWorld->stepSimulation(deltaTime, _maxSubSteps, _fixedTimeStep);
+    Debug(std::to_string(1.0f / deltaTime));
+    _physicsWorld->stepSimulation(deltaTime);
 }
 
 PhysicsManager *PhysicsManager::_instance = nullptr;
@@ -165,7 +166,7 @@ RigidBody *PhysicsManager::CreateRigidBody(
     bulletRigidBody->setUserPointer(rigidBodyOwner);
     _physicsWorld->addRigidBody(bulletRigidBody);
 
-    return new RigidBody(bulletRigidBody);
+    return new RigidBody(bulletRigidBody, trans);
 }
 
 glm::vec3 PhysicsManager::GetGravity()

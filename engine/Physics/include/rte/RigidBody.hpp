@@ -15,6 +15,7 @@ private:
      * 
      */
     btRigidBody *_rigidBody;
+    btTransform _oldTransform;
 
 public:
     /**
@@ -23,7 +24,7 @@ public:
      * @param rigidBody The BulletPhysics rigidbody this RigidBody correlates to 
      *      in the physics world. 
      */
-    RigidBody(btRigidBody *rigidBody);
+    RigidBody(btRigidBody *rigidBody, Rendering::Transform trans);
 
     glm::vec3 GetLinearVelocity();
     void SetLinearVelocity(glm::vec3 vel);
@@ -47,7 +48,7 @@ public:
     void SetMass(float mass, glm::vec3 inertia);
 
     // malloc(sizeof(TransformComponent*) * NumTransforms)
-    void UpdateFromPhysicsWorld(Rendering::Transform &trans, bool transformChanged);
+    void UpdateFromPhysicsWorld(Rendering::Transform &trans);
     void UpdateToPhysicsWorld(glm::vec3 position, glm::vec3 orientation);
 };
 } // namespace RTE::Physics

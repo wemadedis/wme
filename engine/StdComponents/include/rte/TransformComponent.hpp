@@ -20,6 +20,8 @@ public:
      */
     Rendering::Transform Transform;
 
+    void ApplyTransform();
+
     void Initialize();
 
     /**
@@ -38,6 +40,7 @@ public:
      */
     void Initialize(glm::vec3 pos, glm::vec3 rot, glm::vec3 scale);
 
+    void FromPos(glm::vec3 pos);
     /**
      * @brief Does nothing
      * 
