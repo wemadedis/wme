@@ -7,14 +7,36 @@
 
 namespace RTE::Rendering
 {
-/// <summary>Vertex struct for use in RTE rendering.</summary>
+/**
+ * @brief Struct encapsulating vertex data used by meshes.
+ */
 struct Vertex
 {
-    glm::vec3 pos;
-    glm::vec4 color;
-    glm::vec3 normal;
-    glm::vec2 texCoord;
+    /**
+     * @brief The XYZ position of the vertex.
+     */
+    glm::vec3 Position;
 
+    /**
+     * @brief The RGBA color of the vertex.
+     */
+    glm::vec4 Color;
+
+    /**
+     * @brief The XYZ normal of the vertex.
+     */
+    glm::vec3 Normal;
+
+    /**
+     * @brief The UV coordinates used for texture mapping.
+     */
+    glm::vec2 UV;
+
+
+    /**
+     * @brief Gets the Vulkan vertex input binding description, used by the renderer. 
+     * @return Returns the corresponing binding description Vulkan struct.
+     */
     static VkVertexInputBindingDescription getBindingDescription()
     {
         VkVertexInputBindingDescription bindingDescription = {};
@@ -25,94 +47,100 @@ struct Vertex
         return bindingDescription;
     }
 
+    /**
+     * @brief Gets the Vulkan vertex input attribute description, used by the renderer. 
+     * @return Returns the corresponing attribute description Vulkan struct.
+     */
     static std::array<VkVertexInputAttributeDescription, 4> getAttributeDescriptions()
     {
         std::array<VkVertexInputAttributeDescription, 4> attributeDescriptions = {};
         attributeDescriptions[0].binding = 0;
         attributeDescriptions[0].location = 0;
         attributeDescriptions[0].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[0].offset = offsetof(Vertex, pos);
+        attributeDescriptions[0].offset = offsetof(Vertex, Position);
 
         attributeDescriptions[1].binding = 0;
         attributeDescriptions[1].location = 1;
         attributeDescriptions[1].format = VK_FORMAT_R32G32B32A32_SFLOAT;
-        attributeDescriptions[1].offset = offsetof(Vertex, color);
+        attributeDescriptions[1].offset = offsetof(Vertex, Color);
 
         attributeDescriptions[2].binding = 0;
         attributeDescriptions[2].location = 2;
         attributeDescriptions[2].format = VK_FORMAT_R32G32B32_SFLOAT;
-        attributeDescriptions[2].offset = offsetof(Vertex, normal);
+        attributeDescriptions[2].offset = offsetof(Vertex, Normal);
 
         attributeDescriptions[3].binding = 0;
         attributeDescriptions[3].location = 3;
         attributeDescriptions[3].format = VK_FORMAT_R32G32_SFLOAT;
-        attributeDescriptions[3].offset = offsetof(Vertex, texCoord);
+        attributeDescriptions[3].offset = offsetof(Vertex, UV);
         return attributeDescriptions;
     }
 };
 
+/**
+ * @brief Struct encapsulating the camera data used for rendering.
+ */
 struct Camera
 {
+    /**
+     * @brief The XYZ position of the camera. Used by the renderer for ray tracing.
+     */
     glm::vec3 Position;
+
+    /**
+     * @brief A 4x4 matrix used to transform vertices from global to camera space.
+     */
     glm::mat4 ViewMatrix;
+    
+    /**
+     * @brief A 4x4 matrix used to  transform vertices from view to clip space.
+     */
     glm::mat4 ProjectionMatrix;
 };
 
-enum class LightType
-{
-    DIRECTIONAL,
-    POINT,
-    AMBIENT
-};
-
-struct Light
-{
-    LightType LightType;
-    glm::vec4 Color;
-    union {
-        struct
-        {
-            glm::vec3 Direction;
-        };
-        struct
-        {
-            glm::vec3 Position;
-            float Radius;
-            float Intensity;
-        };
-    };
-};
-
+/**
+ * @brief Struct containing image information for texture creation.
+ */
 struct Texture
 {
     unsigned char *Pixels;
     uint16_t Width, Height;
 };
 
-enum class ShaderType
-{
-    VERTEX,
-    FRAGMENT,
-    RAYGEN,
-    RCHIT,
-    RMISS
-};
-
-// Soon™¨
-
-struct Shader
-{
-    ShaderType Type;
-    const char *FilePath;
-};
-
+/**
+ * @brief Struct encapsulating the properties of a mesh surface. 
+ */
 struct Material
 {
+    /**
+     * @brief The ambient reflection intensity. 
+     */
     float Ambient = 0.2f;
+
+    /**
+     * @brief The diffuse reflection intensity. 
+     */
     float Diffuse = 0.3f;
+
+    /**
+     * @brief The specular reflection intensity. 
+     */
     float Specular = 0.3f;
+
+    /**
+     * @brief The shininess coefficient. 
+     */
     float Shininess = 1.0f;
+
+    /**
+     * @brief The reflectivity of the surface. Used for ray tracing. 
+     */
     float Reflectivity = 0.0f;
+
+    //TODO: need dis?
+    /**
+     * @brief The transparency of the surface. To be used for ray tracing. 
+     */
     float Transparency = 0.0f;
 
     //TODO: We currently do not use color, and texture should be defined by path (for the rendering manager). Remove these?
@@ -121,24 +149,58 @@ struct Material
     //Texture *Texture;
 };
 
+/**
+ * @brief Struct containing mesh information.
+ */
 struct Mesh
 {
+    /**
+     * @brief Vector of vertices of the mesh.
+     */ 
     std::vector<Vertex> Vertices = {};
+    
+    /**
+     * @brief Vector of indices of the mesh.
+     */ 
     std::vector<uint16_t> Indices = {};
-    // EXTEND: (danh 22/03 13:32): Improve support for nested meshes
+    //TODO: Remove dis as well?
+    /**
+     * @brief The material of the mesh.
+     */ 
     Material Material;
 };
 
+/**
+ * @brief Struct containing transformation information of objects in a scene.
+ */ 
 struct Transform
 {
+    /**
+     * @brief XYZ position.
+     */ 
     glm::vec3 Pos = glm::vec3(0);
+    
+    /**
+     * @brief XYZ rotation.
+     */ 
     glm::vec3 Rot = glm::vec3(0);
+
+    /**
+     * @brief XYZ scaling.
+     */ 
     glm::vec3 Scale = glm::vec3(1);
 
+    /**
+     * @brief Default constructor of the transform.
+     */ 
     Transform() : Transform(glm::vec3(0), glm::vec3(1), glm::vec3(0))
     {
     }
 
+    /**
+     * @brief Calculates the rotation matrix from the rotation of the transform.
+     * @return Returns a 4x4 rotation matrix.
+     */ 
     glm::mat4 Transform::RotationMatrix()
     {
         glm::mat4 rotZ = glm::eulerAngleZ(glm::radians(Rot.z));
@@ -147,21 +209,39 @@ struct Transform
         return rotZ * rotY * rotX;
     }
 
+    /**
+     * @brief Calculates the translation matrix from the position of the transform.
+     * @return Returns a 4x4 translation matrix.
+     */
     glm::mat4 Transform::TranslationMatrix()
     {
         return glm::translate(Pos);
     }
 
-    glm::mat4 Transform::ScalingMatrix()
+    /**
+     * @brief Calculates the scale matrix from the scale of the transform.
+     * @return Returns a 4x4 scale matrix.
+     */
+    glm::mat4 Transform::ScaleMatrix()
     {
         return glm::scale(Scale);
     }
 
+    /**
+     * @brief Calculates the model matrix of the transform.
+     * @return Returns a 4x4 model matrix.
+     */
     glm::mat4 Transform::ModelMatrix()
     {
-        return TranslationMatrix() * RotationMatrix() * ScalingMatrix();
+        return TranslationMatrix() * RotationMatrix() * ScaleMatrix();
     }
 
+    /**
+     * @brief Constructor for the transform, taking all transform information.
+     * @param pos The position of the transform
+     * @param scale The scale of the transform
+     * @param rot The rotation of the transform
+     */
     Transform(glm::vec3 pos, glm::vec3 scale, glm::vec3 rot)
     {
         Pos = pos;
@@ -169,6 +249,11 @@ struct Transform
         Rot = rot;
     }
 
+    /**
+     * @brief Creates a new transform by combining this and other transform.
+     * @param other The other transform to be combined with.
+     * @return Returns a new Transform.
+     */
     Transform operator+(const Transform &other)
     {
         Transform t;
@@ -179,11 +264,4 @@ struct Transform
     }
 };
 
-struct RenderPassInfo
-{
-};
-
-struct RendererSettings
-{
-};
 }; // namespace RTE::Rendering

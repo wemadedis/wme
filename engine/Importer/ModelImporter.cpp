@@ -118,7 +118,7 @@ RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, uint32_t vertexIndex, Missing
     if (mesh->HasPositions())
     {
         glm::vec3 p = ConvertVector3(mesh->mVertices[vertexIndex]);
-        v.pos = toGlobal * glm::vec4(p, 1);
+        v.Position = toGlobal * glm::vec4(p, 1);
     }
     else
     {
@@ -129,7 +129,7 @@ RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, uint32_t vertexIndex, Missing
     if (mesh->HasNormals())
     {
         glm::vec3 n = ConvertVector3(mesh->mNormals[vertexIndex]);
-        v.normal = glm::normalize(toGlobal * glm::vec4(n, 0));
+        v.Normal = glm::normalize(toGlobal * glm::vec4(n, 0));
     }
     else
     {
@@ -139,12 +139,12 @@ RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, uint32_t vertexIndex, Missing
     // ! (danh) Sun 24/03 - 18:31: Don't know if this is the right way of handling colors.
     if (mesh->HasVertexColors(0))
     {
-        v.color = ConvertColor(mesh->mColors[0]);
+        v.Color = ConvertColor(mesh->mColors[0]);
     }
 
     if (mesh->HasTextureCoords(0))
     {
-        v.texCoord = ConvertTexture(mesh->mTextureCoords[0]);
+        v.UV = ConvertTexture(mesh->mTextureCoords[0]);
     }
     return v;
 }
