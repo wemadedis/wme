@@ -38,6 +38,8 @@ public:
     // Returns the VulkanExtensions required for GLFW to operate
     std::vector<const char *> GetRequiredExtensions();
     static int GetKey(int key);
+    static void CursorHide();
+    static void CursorShow();
     void Update(float deltaTime) override;
 
     GLFWwindow *Window;

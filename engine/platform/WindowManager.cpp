@@ -170,6 +170,17 @@ void WindowManager::SetupGLFWCallbacks()
     });
 }
 
+void WindowManager::CursorHide()
+{   
+    glfwSetInputMode(GetInstance()->Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
+    glfwSetInputMode(GetInstance()->Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+}
+
+void WindowManager::CursorShow()
+{
+    glfwSetInputMode(GetInstance()->Window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+}
+
 WindowManager *WindowManager::GetInstance()
 {
     assert(WindowManager::_instance);
