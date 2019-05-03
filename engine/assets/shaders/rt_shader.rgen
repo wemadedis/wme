@@ -62,26 +62,30 @@ void main()
     uint cullMask = 0xff;
     float tmin = 0.001;
     float tmax = 100.0;
-    
-    // traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
+
+
     vec4 color = vec4(0.0f);
-    float prevRefl = 1.0f;
-    for(int i = 0; i < 2; i++)
+    
+    
+    traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
+    color = hitValue.Color;
+    float prevRefl = hitValue.Reflectivity;
+/*
+    if(hitValue.Missed)
     {
-        traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
-        if(hitValue.Missed)
-        {
-            color = hitValue.Color;
-            break;
-        }
-        color = color*(1.0f-prevRefl) + hitValue.Color*prevRefl;
-
-        if(hitValue.Reflectivity <= 0.0f) break;
-
+        color = vec4(1,0,0,0);
+        imageStore(image, ivec2(gl_LaunchIDNV.xy), color);
+        return;
+    }
+*/
+    if(!hitValue.Missed && hitValue.Reflectivity > 0.0f)
+    {
         origin = hitValue.Point + hitValue.Normal*0.01f;
         direction = normalize(reflect(direction, hitValue.Normal));
-        prevRefl = hitValue.Reflectivity;
+        traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
+        color = color*(1.0f-prevRefl) + hitValue.Color*prevRefl;
     }
+
     imageStore(image, ivec2(gl_LaunchIDNV.xy), color);
 
     

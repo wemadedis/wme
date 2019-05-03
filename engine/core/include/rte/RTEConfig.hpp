@@ -16,12 +16,6 @@ struct GraphicsConfig
     /// @brief The maximum framerate for the engine
     uint32_t FramesPerSecond = 240;
 
-    /**
-     * @brief Color of a ray miss OR rasterized clear color
-     * Alpha channel is ignored
-     */
-    Colors::Color BackgroundColor = Colors::Cyan;
-
     /** 
      * @brief Whether or not this application will try to use NVidia Raytracing.
      * @details
@@ -39,9 +33,6 @@ struct WindowConfig
 
     /// @brief Window height in pixels
     uint32_t WindowHeight = 1000;
-
-    /// @brief Set the window to be fullscreen
-    bool Fullscreen = false;
 
     /// @brief The Title of the window
     std::string WindowName = "RTEGame";
