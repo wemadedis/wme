@@ -39,15 +39,11 @@ layout(binding = 2) uniform GlobalUniformData
     DirectionalLight DirectionalLights[MAX_LIGHTS];
 } GlobalUniform;
 
-
-
-
-
-
 layout(location = 0) rayPayloadInNV HitInfo hitValue;
 
 void main()
 {
     hitValue.Missed = true;
     hitValue.Color = GlobalUniform.ClearColor;
+    hitValue.Reflectivity = 0.0f;
 }

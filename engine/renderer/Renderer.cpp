@@ -404,26 +404,30 @@ void Renderer::Finalize()
     _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
     UploadGlobalUniform();
 
-    GUI::GUIInitInfo guiInfo;
-    guiInfo.Instance = _instance->GetInstance();
-    guiInfo.PhysicalDevice = _instance->GetPhysicalDevice();
-    guiInfo.Device = _instance->GetDevice();
-    guiInfo.QueueFamily = VK_QUEUE_FAMILY_IGNORED;
-    guiInfo.Queue = _instance->GetGraphicsQueue();
-    guiInfo.PipelineCache = VK_NULL_HANDLE;
-    guiInfo.DescriptorPool = _descriptorManager->GetDescriptorPool();
-    guiInfo.MinImageCount = _swapChain->GetSwapChainImageCount();
-    guiInfo.ImageCount = guiInfo.MinImageCount;
-    guiInfo.Allocator = nullptr;
-    guiInfo.CheckVkResultFn = [](VkResult code) { Utilities::CheckVkResult(code, "ImGUI Error"); };
-
-    VkCommandBuffer cmdBuffer = _commandBufferManager->BeginCommandBufferInstance();
+    
 
     if (_guiModule != nullptr)
     {
+        GUI::GUIInitInfo guiInfo;
+        guiInfo.Instance = _instance->GetInstance();
+        guiInfo.PhysicalDevice = _instance->GetPhysicalDevice();
+        guiInfo.Device = _instance->GetDevice();
+        guiInfo.QueueFamily = VK_QUEUE_FAMILY_IGNORED;
+        guiInfo.Queue = _instance->GetGraphicsQueue();
+        guiInfo.PipelineCache = VK_NULL_HANDLE;
+        guiInfo.DescriptorPool = _descriptorManager->GetDescriptorPool();
+        guiInfo.MinImageCount = _swapChain->GetSwapChainImageCount();
+        guiInfo.ImageCount = guiInfo.MinImageCount;
+        guiInfo.Allocator = nullptr;
+        guiInfo.CheckVkResultFn = [](VkResult code) { Utilities::CheckVkResult(code, "ImGUI Error"); };
+
+        VkCommandBuffer cmdBuffer = _commandBufferManager->BeginCommandBufferInstance();
+
         _guiModule->Initialize(guiInfo, _renderPass->GetHandle(), cmdBuffer);
+        
+        _commandBufferManager->SubmitCommandBufferInstance(cmdBuffer, _instance->GetGraphicsQueue());
     }
-    _commandBufferManager->SubmitCommandBufferInstance(cmdBuffer, _instance->GetGraphicsQueue());
+
 
     if (_rtxOn)
     {

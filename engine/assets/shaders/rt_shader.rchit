@@ -166,7 +166,7 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light, HitInfo hitInfo)
 {
     vec3 L = normalize(light.Direction.xyz);
     vec3 R = normalize(reflect(L, hitInfo.Normal));
-    return Phong(L,R, hitInfo.Normal, hitInfo.Point, 1000.0f) * light.Color;
+    return Phong(L,R, hitInfo.Normal, hitInfo.Point, 500.0f) * light.Color;
 }
 
 vec4 CalculatePerLightShading(HitInfo hitinfo)

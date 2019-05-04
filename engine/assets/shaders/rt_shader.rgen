@@ -54,6 +54,8 @@ void FireRay(vec3 origin, vec3 direction, float tmin, float tmax)
     traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
 }
 
+#define MAX_RECURSION 5
+
 void main() 
 {
     const vec2 pixelCenter = vec2(gl_LaunchIDNV.xy) + vec2(0.5);
@@ -66,20 +68,29 @@ void main()
     direction = vec3(vec4(direction,0.0f) * (GlobalUniform.ViewMatrix));
 
     vec3 origin = vec3(GlobalUniform.Position);
-    
-    FireRay(origin, direction, GlobalUniform.NearPlane, GlobalUniform.FarPlane);
-    
-    vec4 color = hitValue.Color;
-    float prevRefl = hitValue.Reflectivity;
 
-    if(!hitValue.Missed && hitValue.Reflectivity > 0.0f)
+    HitInfo infos[MAX_RECURSION];
+    int reflectionCount = 0;
+    float tmin = GlobalUniform.NearPlane; //First ray fired by the camera has the near plane distance applied on it
+    for(uint rayIndex = 0; rayIndex < MAX_RECURSION; rayIndex++)
     {
+        FireRay(origin, direction, tmin, GlobalUniform.FarPlane);
+        infos[rayIndex] = hitValue;
+        reflectionCount++;
+        if(hitValue.Missed || hitValue.Reflectivity <= 0.0f) break;
         origin = hitValue.Point + hitValue.Normal*0.01f;
         direction = normalize(reflect(direction, hitValue.Normal));
-        FireRay(origin, direction, 0.0f, GlobalUniform.FarPlane);
-        color = color*(1.0f-prevRefl) + hitValue.Color*prevRefl;
+        tmin = 0.0f; //the reflections can have a minimum t = 0
     }
 
+    vec4 color = infos[reflectionCount].Color * infos[reflectionCount].Reflectivity;
+    for(int hitIndex = reflectionCount-1; hitIndex >= 0; hitIndex--)
+    {
+        vec4 hitColor = infos[hitIndex].Color;
+        float hitReflectivity = infos[hitIndex].Reflectivity;
+        color = hitColor*(1.0f-hitReflectivity) + color*hitReflectivity;
+    }
+    
     imageStore(image, ivec2(gl_LaunchIDNV.xy), color);
 
     

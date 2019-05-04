@@ -5,7 +5,7 @@
 #include "rte/WindowManager.h"
 #include "rte/Utility.hpp"
 #include "imgui/imgui.h"
-
+#include "rte/RenderingManager.h"
 
 class PlayerController : public RTE::Runtime::Component
 {
@@ -19,6 +19,7 @@ private:
     double dx;
     double dy;
     float dt = 0.0f;
+    bool rtx = true;
 public:
     void Initialize(
         RTE::StdComponents::TransformComponent *trans,
@@ -55,10 +56,17 @@ public:
                 }
             }
         });
+        
+        SetGUIDraw([=]() {
+            ImGui::Begin("Inspector");
+            ImGui::Checkbox("RTX ON:", &rtx);
+            ImGui::End();
+        });
     }
 
     void Update(float deltaTime)
     {
+        RTE::Rendering::RenderingManager::GetInstance()->SetRTEnabled(rtx);
         dt = deltaTime;
 
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_W) == GLFW_PRESS)
