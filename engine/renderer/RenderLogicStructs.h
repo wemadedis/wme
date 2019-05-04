@@ -179,6 +179,24 @@ struct PointLight
 struct GlobalUniformData
 {
 	/**
+	 * @brief Field of view given in degrees.
+	 */
+	float FieldOfView;
+
+	/**
+	 * @brief Distance to the near plane.
+	 */
+	float NearPlane;
+	
+	/**
+	 * @brief Distance to the far plane.
+	 */
+	float FarPlane;
+
+	//Padding to meet memory alignment requirement.
+	int padding;
+
+	/**
 	 * @brief The position of the camera.
 	 */
 	glm::vec4 Position;

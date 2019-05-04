@@ -81,20 +81,17 @@ struct {VkSurfaceFormatKHR _surfaceFormat;
 
     //Get optimal extent
     if (info._surfaceCapabilities.currentExtent.width != std::numeric_limits<uint32_t>::max())
-		{
-			optimalExtent = info._surfaceCapabilities.currentExtent;
-		}
-		else
-		{
-			int width, height;
-			//glfwGetFramebufferSize(window, &width, &height); <------------------------------------------------------------------------------------------------------------------------------
+    {
+        optimalExtent = info._surfaceCapabilities.currentExtent;
+    }
+    else
+    {
+        optimalExtent = {
+            static_cast<uint32_t>(framebufferWidth),
+            static_cast<uint32_t>(framebufferHeight)};
 
-			optimalExtent = {
-				static_cast<uint32_t>(framebufferWidth),
-				static_cast<uint32_t>(framebufferHeight)};
-
-			optimalExtent.width = std::max(info._surfaceCapabilities.minImageExtent.width, std::min(info._surfaceCapabilities.maxImageExtent.width, optimalExtent.width));
-			optimalExtent.height = std::max(info._surfaceCapabilities.minImageExtent.height, std::min(info._surfaceCapabilities.maxImageExtent.height, optimalExtent.height));
+        optimalExtent.width = std::max(info._surfaceCapabilities.minImageExtent.width, std::min(info._surfaceCapabilities.maxImageExtent.width, optimalExtent.width));
+        optimalExtent.height = std::max(info._surfaceCapabilities.minImageExtent.height, std::min(info._surfaceCapabilities.maxImageExtent.height, optimalExtent.height));
     }
 
     return {optimalFormat, optimalPresentMode, optimalExtent};

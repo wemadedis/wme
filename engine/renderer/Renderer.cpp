@@ -596,6 +596,9 @@ void Renderer::SetCamera(Camera camera)
     _globalUniform.Position = glm::vec4(camera.Position, 1.0f);
     _globalUniform.ViewMatrix = camera.ViewMatrix;
     _globalUniform.ProjectionMatrix = camera.ProjectionMatrix;
+    _globalUniform.FieldOfView = glm::tan(glm::radians(camera.FieldOfView/2.0f));
+    _globalUniform.NearPlane = camera.NearPlane;
+    _globalUniform.FarPlane = camera.FarPlane;
     UploadGlobalUniform();
 }
 

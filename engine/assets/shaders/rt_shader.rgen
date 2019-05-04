@@ -34,6 +34,9 @@ struct PointLight
 
 layout(binding = 2) uniform GlobalUniformData
 {
+    float FieldOfView;
+    float NearPlane;
+    float FarPlane;
     vec4 Position;
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
@@ -43,6 +46,14 @@ layout(binding = 2) uniform GlobalUniformData
     DirectionalLight DirectionalLights[MAX_LIGHTS];
 } GlobalUniform;
 
+
+void FireRay(vec3 origin, vec3 direction, float tmin, float tmax)
+{
+    uint rayFlags = gl_RayFlagsOpaqueNV;
+    uint cullMask = 0xff;
+    traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
+}
+
 void main() 
 {
     const vec2 pixelCenter = vec2(gl_LaunchIDNV.xy) + vec2(0.5);
@@ -50,39 +61,22 @@ void main()
 
     vec2 d = inUV * 2.0 - 1.0;
     float aspectRatio = float(gl_LaunchSizeNV.x) / float(gl_LaunchSizeNV.y);
-
-
-    vec3 origin = vec3(GlobalUniform.Position);
-
-    float fov = tan(radians(45.0f/2.0f));
-
+    float fov = GlobalUniform.FieldOfView;
     vec3 direction = normalize(vec3(d.x * aspectRatio*fov, d.y*fov, -1));
     direction = vec3(vec4(direction,0.0f) * (GlobalUniform.ViewMatrix));
-    uint rayFlags = gl_RayFlagsOpaqueNV;
-    uint cullMask = 0xff;
-    float tmin = 0.001;
-    float tmax = 100.0;
 
-
-    vec4 color = vec4(0.0f);
+    vec3 origin = vec3(GlobalUniform.Position);
     
+    FireRay(origin, direction, GlobalUniform.NearPlane, GlobalUniform.FarPlane);
     
-    traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
-    color = hitValue.Color;
+    vec4 color = hitValue.Color;
     float prevRefl = hitValue.Reflectivity;
-/*
-    if(hitValue.Missed)
-    {
-        color = vec4(1,0,0,0);
-        imageStore(image, ivec2(gl_LaunchIDNV.xy), color);
-        return;
-    }
-*/
+
     if(!hitValue.Missed && hitValue.Reflectivity > 0.0f)
     {
         origin = hitValue.Point + hitValue.Normal*0.01f;
         direction = normalize(reflect(direction, hitValue.Normal));
-        traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
+        FireRay(origin, direction, 0.0f, GlobalUniform.FarPlane);
         color = color*(1.0f-prevRefl) + hitValue.Color*prevRefl;
     }
 

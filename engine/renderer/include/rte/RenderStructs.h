@@ -83,6 +83,21 @@ struct Vertex
 struct Camera
 {
     /**
+     * @brief The field of view of the camera, given in degrees.
+     */
+    float FieldOfView;
+
+    /**
+     * @brief The distance to the near plane.
+     */
+    float NearPlane;
+
+    /**
+     * @brief The distance to the far plane.
+     */
+    float FarPlane;
+
+    /**
      * @brief The XYZ position of the camera. Used by the renderer for ray tracing.
      */
     glm::vec3 Position;

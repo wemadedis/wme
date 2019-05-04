@@ -29,34 +29,32 @@ public:
         _physics = phys;
         _camera = cam;
         _transform->Transform.Rot.x = glm::radians(-90.0f);
-        SetGUIDraw([&](){
-            ImGui::Begin("Wazzup");
-            ImGui::DragFloat("X", &_transform->Transform.Rot.x, 0.1f, -0.1f, 360.1f);
-            ImGui::DragFloat("Y", &_transform->Transform.Rot.y, 0.1f, -0.1f, 360.1f);
-            ImGui::Text(std::to_string(oldX).c_str());
-            ImGui::Text(std::to_string(oldY).c_str());
-            ImGui::Text(std::to_string(dx).c_str());
-            ImGui::Text(std::to_string(dy).c_str());
-            ImGui::End();
-        });
-        /*RTE::Platform::WindowManager::GetInstance()->RegisterMousePositionCallback([&](double x, double y){
+        auto wm = RTE::Platform::WindowManager::GetInstance();
+        wm->RegisterMousePositionCallback([&](double x, double y){
             if(oldX != x)
             {
                 dx = oldX - x;
                 oldX = x;
-                _transform->Transform.Rot.y += dx*dt*50.0f;
-                if(_transform->Transform.Rot.y > 360) _transform->Transform.Rot.y = _transform->Transform.Rot.y - 360;
-                if(_transform->Transform.Rot.y < 0) _transform->Transform.Rot.y = 360 - _transform->Transform.Rot.y;
+                if(!wm->GetKey(GLFW_KEY_LEFT_SHIFT))
+                {
+                    if(dx < 5.0f) _transform->Transform.Rot.y += dx*dt*150.0f;
+                    if(_transform->Transform.Rot.y > 360) _transform->Transform.Rot.y = _transform->Transform.Rot.y - 360;
+                    if(_transform->Transform.Rot.y < 0) _transform->Transform.Rot.y = 360 - _transform->Transform.Rot.y;
+                }
+                
             }
             if(oldY != y)
             {
                 dy = oldY - y;
                 oldY = y;
-                _transform->Transform.Rot.x += dy*dt*50.0f;
-                if(_transform->Transform.Rot.x > 35) _transform->Transform.Rot.x = 35;
-                if(_transform->Transform.Rot.x < -35) _transform->Transform.Rot.x = -35;
+                if(!wm->GetKey(GLFW_KEY_LEFT_SHIFT))
+                {
+                    if(dy < 5.0f) _transform->Transform.Rot.x += dy*dt*150.0f;
+                    if(_transform->Transform.Rot.x > 35) _transform->Transform.Rot.x = 35;
+                    if(_transform->Transform.Rot.x < -35) _transform->Transform.Rot.x = -35;
+                }
             }
-        });*/
+        });
     }
 
     void Update(float deltaTime)
@@ -65,19 +63,27 @@ public:
 
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_W) == GLFW_PRESS)
         {
-            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,0.0f,-1.0f,0.0f))*deltaTime;
+            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,0.0f,-5.0f,0.0f))*deltaTime;
         }
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_A) == GLFW_PRESS)
         {
-            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(-1.0f,0.0f,0.0f,0.0f))*deltaTime;
+            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(-5.0f,0.0f,0.0f,0.0f))*deltaTime;
         }
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_S) == GLFW_PRESS)
         {
-            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,0.0f,1.0f,0.0f))*deltaTime;
+            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,0.0f,5.0f,0.0f))*deltaTime;
         }
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
         {
-            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(1.0f,0.0f,0.0f,0.0f))*deltaTime;
+            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(5.0f,0.0f,0.0f,0.0f))*deltaTime;
+        }
+        if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_SPACE) == GLFW_PRESS)
+        {
+            _transform->Transform.Pos += glm::vec3(0,5,0)*deltaTime;
+        }
+        if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)
+        {
+            _transform->Transform.Pos += glm::vec3(0,-5,0)*deltaTime;
         }
     }
 };

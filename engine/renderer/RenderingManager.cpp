@@ -210,6 +210,9 @@ void RenderingManager::UpdateMainCamera()
     camera.Position = transform.Pos;
     camera.ViewMatrix = _mainCamera->ViewMatrix();
     camera.ProjectionMatrix = _mainCamera->ProjectionMatrix();
+    camera.FieldOfView = _mainCamera->FieldOfView;
+    camera.NearPlane = _mainCamera->NearPlane;
+    camera.FarPlane = _mainCamera->FarPlane;
     _renderer->SetCamera(camera);
     _renderer->SetClearColor(_mainCamera->BackgroundColor);
 }

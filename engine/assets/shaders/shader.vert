@@ -29,6 +29,9 @@ layout(binding = 0) uniform MeshUniformData {
 
 layout(binding = 1) uniform GlobalUniformData
 {
+    float FieldOfView;
+    float NearPlane;
+    float FarPlane;
     vec4 Position;
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
