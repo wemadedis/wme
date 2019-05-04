@@ -19,7 +19,7 @@ private:
     double dx;
     double dy;
     float dt = 0.0f;
-    bool rtx = true;
+    bool rtx = false;
 public:
     void Initialize(
         RTE::StdComponents::TransformComponent *trans,
