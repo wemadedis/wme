@@ -61,9 +61,8 @@ void ComputePhongProperties(){
     vec4 pos = GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0);
     PositionCameraSpace = pos.xyz/pos.w;
     N = normalize(GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix *  vec4(normal,0.0f)).xyz;
-    //N = normalize(vec4(normal,0.0f)).xyz;
     V = normalize(PositionCameraSpace);
-    //Flip the normal if it points away from the eye (REMOVE THIS LATER)
+    //Flip the normal if it points away from the eye
     if(dot(N,V) > 0) N = -N;
 }
 
