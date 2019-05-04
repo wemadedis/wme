@@ -64,7 +64,7 @@ void ComputePhongProperties(){
     //N = normalize(vec4(normal,0.0f)).xyz;
     V = normalize(PositionCameraSpace);
     //Flip the normal if it points away from the eye (REMOVE THIS LATER)
-    //if(dot(N,V) < 0) N = -N;
+    if(dot(N,V) > 0) N = -N;
 }
 
 

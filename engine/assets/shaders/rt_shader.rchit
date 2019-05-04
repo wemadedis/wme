@@ -136,17 +136,13 @@ float FireShadowRay(vec3 origin, vec3 direction)
 
 vec4 Phong(vec3 L, vec3 R, vec3 N, vec3 O, float distToLight)
 {
-    //If the light lits the surface from behind, the front is shadowed
-    //Warning: not does an instance "shadow flip" on flat shaded surfaces.
-    //if(dot(N, L) < 0.0f) return vec4(0.0f);
-    //If something occludes the surface from the light, the surface is in shadow
     float intensity = 1.0f;
-    if(FireShadowRay((O+(N*0.01f)), L) < distToLight) intensity = 0.0f;
+    //if(FireShadowRay((O+(N*0.01f)), L) < distToLight) intensity = 0.0f;
     float udiff = InstanceData[gl_InstanceCustomIndexNV].Diffuse;
     float uspec = InstanceData[gl_InstanceCustomIndexNV].Specular;
     float shininess = InstanceData[gl_InstanceCustomIndexNV].Shininess;
     float diff = max(0.0f, dot(N,L))*udiff;
-    float spec = max(0.0f, dot(-gl_WorldRayDirectionNV,R))*uspec;
+    float spec = pow(max(0.0f, dot(-gl_WorldRayDirectionNV,R))*uspec, shininess);
 
     return vec4(diff*intensity) + vec4(spec*intensity);
 }
