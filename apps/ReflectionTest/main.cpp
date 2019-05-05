@@ -102,7 +102,7 @@ Floor createFloor(Runtime::Scene *scene, ComponentIds compIds)
     std::string floorPath = "E:\\projects\\rte\\engine\\assets\\models\\floor.ply";
     floor.tc->Initialize(glm::vec3(0), glm::vec3(0,-0.1f, 0), glm::vec3(1));
     floor.mc->Initialize(floor.tc, floorPath, "");
-    // floor.mc->Material.Specular = 0;aww
+    // floor.mc->Material.Specular = 0;
 
     return floor;
 }
