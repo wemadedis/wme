@@ -62,6 +62,7 @@ layout(set = 1, binding = 4) uniform samplerBuffer VertexBuffers[];
 layout(set = 2, binding = 4) uniform InstanceUniformData
 {
     mat4 ModelMatrix;
+    mat4 NormalMatrix;
     float Ambient;
     float Diffuse;
     float Specular;
@@ -104,12 +105,12 @@ Vertex GetVertex(uint meshIndex, int vertexIndex)
 
 HitInfo GetHitInfo(Vertex v1, Vertex v2, Vertex v3, vec3 barycentrics)
 {
-    mat4 modelMatrix = InstanceData[nonuniformEXT(gl_InstanceCustomIndexNV)].ModelMatrix;
+    mat4 normalMatrix = InstanceData[nonuniformEXT(gl_InstanceCustomIndexNV)].NormalMatrix;
     vec3 normal = normalize(v1.normal * barycentrics.x + v2.normal * barycentrics.y + v3.normal * barycentrics.z);
     vec2 UV = v1.texCoord * barycentrics.x + v2.texCoord * barycentrics.y + v3.texCoord * barycentrics.z;
     
     
-    normal = normalize(vec3(modelMatrix * vec4(normal,0.0f)));
+    normal = normalize(vec3(normalMatrix * vec4(normal,0.0f)));
     if(dot(normal, gl_WorldRayDirectionNV) > 0.0f) normal = -normal;
 
     hitValue.Missed = false;
@@ -137,7 +138,7 @@ float FireShadowRay(vec3 origin, vec3 direction)
 vec4 Phong(vec3 L, vec3 R, vec3 N, vec3 O, float distToLight)
 {
     float intensity = 1.0f;
-    if(FireShadowRay((O+(N*0.01f)), L) < distToLight) intensity = 0.0f;
+    //if(FireShadowRay((O+(N*0.01f)), L) < distToLight) intensity = 0.0f;
     float udiff = InstanceData[gl_InstanceCustomIndexNV].Diffuse;
     float uspec = InstanceData[gl_InstanceCustomIndexNV].Specular;
     float shininess = InstanceData[gl_InstanceCustomIndexNV].Shininess;

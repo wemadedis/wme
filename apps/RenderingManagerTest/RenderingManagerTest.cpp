@@ -141,14 +141,14 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     pc->Initialize(trans2, nullptr, camera);
 
 
-
+/*
     auto pointLight = CreatePointLight();
     auto plComp = GetComponent<PointLightComponent>(pointLight);
     auto plTrans = plComp->GetTransformComponent();
     plTrans->Transform.Pos = glm::vec3(0.0f, 1.0f, 2.0f);
     SetPointLightGUI("Point Light - Properties", plComp);
     SetTransformGUI("Point Light - Transform", plTrans);
-
+*/
 
 
     GameObject *go4 = scene->CreateGameObject();
@@ -182,7 +182,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
         ImGui::DragFloat("Specular", &quadMeshComp2->Material.Specular, 0.002f, 0.0f, 1.0f);
         ImGui::DragFloat("Shininess", &quadMeshComp2->Material.Shininess, 0.1f, 0.0f, 1000.0f);
         //ImGui::DragFloat("DirLight X Rot:", &trans4->Transform.Rot.x, 0.1f, 0.0f, 360.1f);
-        ImGui::DragFloat("Monkey X Rot:", &transComp->Transform.Rot.x, 0.1f, 0.0f, 360.1f);
+        ImGui::DragFloat("Monkey X Rot:", &transComp->Transform.Scale.x, 0.1f, 0.0f, 360.1f);
         ImGui::DragFloat("Field of view:", &camera->FieldOfView, 0.1f, 0.0f, 180.0f);
         ImGui::DragFloat("Far plane:", &camera->FarPlane, 0.1f, 0.0f, 180.0f);
         ImGui::DragFloat("Near plane:", &camera->NearPlane, 0.1f, 0.0f, 180.0f);

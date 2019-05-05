@@ -15,8 +15,9 @@ struct PointLight
     vec4 PositionRadius;
 };
 
-layout(binding = 0) uniform MeshUniformData {
+layout(binding = 0) uniform InstanceUniformData {
     mat4 ModelMatrix;
+    mat4 NormalMatrix;
     float Ambient;
     float Diffuse;
     float Specular;
@@ -25,7 +26,7 @@ layout(binding = 0) uniform MeshUniformData {
     float Transparency;
     uint Texture;
     bool HasTexture;
-} MeshUniform;
+} InstanceUniform;
 
 layout(binding = 1) uniform GlobalUniformData
 {
@@ -56,8 +57,8 @@ layout(location = 0) out vec4 outColor;
 
 vec4 Phong(vec3 L, vec3 R)
 {
-    float diff = max(0.0f, dot(L,N)) * MeshUniform.Diffuse;
-    float spec = pow(max(0.0f, dot(-V,R)) * MeshUniform.Specular, MeshUniform.Shininess);
+    float diff = max(0.0f, dot(L,N)) * InstanceUniform.Diffuse;
+    float spec = pow(max(0.0f, dot(-V,R)) * InstanceUniform.Specular, InstanceUniform.Shininess);
     return vec4(diff) + vec4(spec);
 }
 
@@ -80,7 +81,7 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light)
 
 vec4 CalculatePerLightShading()
 {
-    vec4 color = vec4(MeshUniform.Ambient);
+    vec4 color = vec4(InstanceUniform.Ambient);
     if(HasTexture != 0)
     {
         color *= texture(texSampler, UV);

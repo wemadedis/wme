@@ -99,6 +99,11 @@ struct MeshInstanceUniformData
 	glm::mat4 ModelMatrix;
 
 	/**
+	 * @brief A 4x4 normal matrix used on normals to avoid issues with non-uniform scaling.
+	 */
+	glm::mat4 NormalMatrix;
+
+	/**
 	 * @brief The ambient reflection instensity.
 	 */
 	float Ambient = 0.2f;

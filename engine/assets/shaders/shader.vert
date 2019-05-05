@@ -15,8 +15,9 @@ struct PointLight
     vec4 PositionRadius;
 };
 
-layout(binding = 0) uniform MeshUniformData {
+layout(binding = 0) uniform InstanceUniformData {
     mat4 ModelMatrix;
+    mat4 NormalMatrix;
     float Ambient;
     float Diffuse;
     float Specular;
@@ -25,7 +26,7 @@ layout(binding = 0) uniform MeshUniformData {
     float Transparency;
     uint Texture;
     bool HasTexture;
-} MeshUniform;
+} InstanceUniform;
 
 layout(binding = 1) uniform GlobalUniformData
 {
@@ -58,9 +59,8 @@ layout(location = 6) out vec3 PositionCameraSpace;
 
 //https://learnopengl.com/Lighting/Multiple-lights
 void ComputePhongProperties(){
-    vec4 pos = GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0);
-    PositionCameraSpace = pos.xyz/pos.w;
-    N = normalize(GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix *  vec4(normal,0.0f)).xyz;
+    PositionCameraSpace = vec3(GlobalUniform.ViewMatrix * InstanceUniform.ModelMatrix * vec4(inPosition, 1.0));
+    N = normalize(vec3(InstanceUniform.NormalMatrix * vec4(normal,0.0f)));
     V = normalize(PositionCameraSpace);
     //Flip the normal if it points away from the eye
     if(dot(N,V) > 0) N = -N;
@@ -68,9 +68,9 @@ void ComputePhongProperties(){
 
 
 void main() {
-    HasTexture = MeshUniform.HasTexture ? 1 : 0;
-    gl_Position = GlobalUniform.ProjectionMatrix * GlobalUniform.ViewMatrix * MeshUniform.ModelMatrix * vec4(inPosition, 1.0);
+    HasTexture = InstanceUniform.HasTexture ? 1 : 0;
+    gl_Position = GlobalUniform.ProjectionMatrix * GlobalUniform.ViewMatrix * InstanceUniform.ModelMatrix * vec4(inPosition, 1.0);
     ComputePhongProperties();
-    fragColor = vec4(MeshUniform.Ambient);
+    fragColor = vec4(InstanceUniform.Ambient);
     UV = texCoord;
 }

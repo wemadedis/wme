@@ -558,8 +558,21 @@ void Renderer::SetInstanceMaterial(MeshInstanceHandle instance, Material &mat)
 
 void Renderer::SetInstanceTransform(MeshInstanceHandle instance, glm::mat4 &modelMatrix)
 {
+    glm::mat4 normalMatrix;
+    //Calculate the normal matrix
+    if(_renderMode == RenderMode::RAYTRACE)
+    {
+        normalMatrix = glm::transpose(glm::inverse(modelMatrix));
+    }
+    else 
+    {
+        //The normal is transformed to view space for further calculations in rasterization.
+        normalMatrix = glm::transpose(glm::inverse(_globalUniform.ViewMatrix*modelMatrix));
+    }
+    
     _deviceMemoryManager->ModifyBufferData<MeshInstanceUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshInstanceUniformData *data) {
         data->ModelMatrix = modelMatrix;
+        data->NormalMatrix = normalMatrix;
     });
 
     //Don't update the structure if it does not exist (2 cases: no ray tracing, or renderer not finalized)
