@@ -41,10 +41,8 @@ void Instance::CreateInstance(std::vector<const char*> &extensions)
     createInfo.ppenabledLayerNames = 0;
     #endif
 
-    if (vkCreateInstance(&createInfo, nullptr, &_instance) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create instance!");
-    }
+    VkResult code = vkCreateInstance(&createInfo, nullptr, &_instance);
+    Utilities::CheckVkResult(code, "Failed to create a Vulkan instance!");
 }
 
 bool Instance::DeviceMeetsRequirements(VkPhysicalDevice device)
@@ -62,7 +60,7 @@ bool Instance::DeviceMeetsRequirements(VkPhysicalDevice device)
         swapChainAdequate = !swapChainSupport._sufraceFormats.empty() && !swapChainSupport._presentModes.empty();
     }
 
-    return indices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
+    return indices.IsComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
 }
 
 void Instance::ChoosePhysicalDevice(bool rtRequested)
@@ -177,10 +175,8 @@ void Instance::SetupDebugCallBack()
     createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
     createInfo.pfnUserCallback = debugCallback;
 
-    if (Utilities::CreateDebugUtilsMessengerEXT(_instance, &createInfo, nullptr, &_callback) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to set up debug callback!");
-    }
+    VkResult code = Utilities::CreateDebugUtilsMessengerEXT(_instance, &createInfo, nullptr, &_callback);
+    Utilities::CheckVkResult(code, "Failed to set up debug callback!");
 }
 
 Instance::Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction, bool isRayTracing)

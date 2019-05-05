@@ -54,7 +54,7 @@ void FireRay(vec3 origin, vec3 direction, float tmin, float tmax)
     traceNV(topLevelAS, rayFlags, cullMask, 0, 0, 0, origin, tmin, direction, tmax, 0);
 }
 
-#define MAX_RECURSION 1
+#define MAX_RECURSION 2
 
 void main() 
 {
