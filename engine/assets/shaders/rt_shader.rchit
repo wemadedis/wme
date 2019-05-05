@@ -138,7 +138,7 @@ float FireShadowRay(vec3 origin, vec3 direction)
 vec4 Phong(vec3 L, vec3 R, vec3 N, vec3 O, float distToLight)
 {
     float intensity = 1.0f;
-    //if(FireShadowRay((O+(N*0.01f)), L) < distToLight) intensity = 0.0f;
+    if(FireShadowRay((O+(N*0.01f)), L) < distToLight) intensity = 0.0f;
     float udiff = InstanceData[gl_InstanceCustomIndexNV].Diffuse;
     float uspec = InstanceData[gl_InstanceCustomIndexNV].Specular;
     float shininess = InstanceData[gl_InstanceCustomIndexNV].Shininess;
