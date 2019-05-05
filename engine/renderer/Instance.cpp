@@ -162,17 +162,12 @@ void Instance::CreateLogicalDevice()
     vkGetDeviceQueue(_device, indices.PresentFamily.value(), 0, &_presentQueue);
 }
 
-
-
-
-
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData, void *pUserData)
 {
     std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
     return VK_FALSE;
 }
-
 
 void Instance::SetupDebugCallBack()
 {

@@ -95,7 +95,7 @@ GameObject* CreateQuadObject()
     GameObject *gameObject = GO();
     auto tc = TransComp(gameObject);
     auto mc = MeshComp(gameObject);
-    mc->Initialize(tc, RenderingManager::QUAD);
+    mc->Initialize(tc, RenderingManager::QUAD, RTE::Utilities::GetFileFromAssets("textures/rte.png"));
     return gameObject;
 }
 
