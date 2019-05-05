@@ -402,7 +402,8 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     _descriptorWritesRT.push_back(instanceMappingBuffer);
     _descriptorWritesRT.push_back(indexBuffers);
     _descriptorWritesRT.push_back(vertexBuffers);
-    _descriptorWritesRT.push_back(instanceBuffers);
+    //In if no instances exist, include the instance decriptor set.
+    if(_meshBufferInfos.size() > 0) _descriptorWritesRT.push_back(instanceBuffers);
     _descriptorWritesRT.push_back(textureSamplers);
     
     vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)_descriptorWritesRT.size(), _descriptorWritesRT.data(), 0, nullptr);

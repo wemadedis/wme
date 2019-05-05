@@ -110,6 +110,7 @@ GameObject* CreatePointLight()
 
 void OnGameStart(Runtime::SceneManager &sceneManager)
 {
+
     scene = sceneManager.MakeScene();
     sceneManager.SetActiveScene(scene);
 
@@ -149,13 +150,13 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     SetTransformGUI("Point Light - Transform", plTrans);
 
 
-/*
+
     GameObject *go4 = scene->CreateGameObject();
     auto trans4 = scene->AddComponent<TransformComponent>(transIndex, go4);
     auto dirLight = scene->AddComponent<DirectionalLightComponent>(dlIndex, go4);
     trans4->Transform.Rot = glm::vec3(0.0f, 0.0f, 0.0f);
     dirLight->Initialize(trans4, Colors::White);
-*/
+
 
     auto quad = CreateQuadObject();
     auto quadMeshComp = GetComponent<MeshComponent>(quad);
@@ -191,4 +192,5 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
 
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
     meshComp->Initialize(transComp, monkey);
+
 }

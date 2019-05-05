@@ -388,7 +388,16 @@ void Renderer::Finalize()
         CreateShaderBindingTable();
 
         //instance buffer maps an instance to the mesh
-        _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::HOST, sizeof(uint32_t) * _meshInstances.size(), _instanceBuffer);
+        if(_meshInstances.size() == 0)
+        {
+            //If no instances exist, create a buffer 
+            _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::HOST, sizeof(uint32_t), _instanceBuffer);
+        }
+        else
+        {
+            _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::HOST, sizeof(uint32_t) * _meshInstances.size(), _instanceBuffer);
+        }
+        
         _deviceMemoryManager->ModifyBufferData<uint32_t>(_instanceBuffer, [&](uint32_t *data) {
             for (uint32_t instanceIndex = 0; instanceIndex < _meshInstances.size(); instanceIndex++)
             {
