@@ -69,10 +69,8 @@ static inline btQuaternion Convert(glm::quat quat)
  */
 static inline glm::quat Convert(btQuaternion quat)
 {
-    return glm::highp_quat(quat.getX(), quat.getY(), quat.getZ(), quat.getW());
+    return glm::highp_quat(quat.getW(), quat.getX(), quat.getY(), quat.getZ());
 }
-
-
 
 /**
  * @brief Converts a glm vector to a bullet vector
@@ -100,7 +98,7 @@ static inline btTransform Convert(Rendering::Transform t)
     trans.setOrigin(Convert(t.Pos));
 
     trans.setRotation(Convert(t.RotationMatrix()));
-    return trans;    
+    return trans;
 }
 
 enum class ColliderType
@@ -196,7 +194,6 @@ private:
      */
     float _fixedTimeStep = 0;
 
-    //! Control this value
     /**
      * @brief Maximum number of substeps
      * @details 
@@ -254,6 +251,7 @@ public:
         std::vector<Collider> colliders,
         void *rigidBodyOwner);
 
+    void RemoveRigidBody(RigidBody *rb);
     /**
      * @brief Get the Gravity of the physics world
      * 

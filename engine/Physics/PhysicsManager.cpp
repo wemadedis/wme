@@ -152,7 +152,7 @@ RigidBody *PhysicsManager::CreateRigidBody(
 {
     btMotionState *motionState = new btDefaultMotionState(Convert(trans));
 
-    Collider col = colliders[0]; 
+    Collider col = colliders[0];
     btCollisionShape *colliderShape = GetCollisionShapeFromColliderType(col.Type, col.Data);
     /*
     btCompoundShape *colliderShape = new btCompoundShape();
@@ -166,14 +166,18 @@ RigidBody *PhysicsManager::CreateRigidBody(
             GetCollisionShapeFromColliderType(col.Type, col.Data));
     }*/
 
-    btRigidBody::btRigidBodyConstructionInfo info =
-        btRigidBody::btRigidBodyConstructionInfo(mass, motionState, colliderShape);
+    btRigidBody::btRigidBodyConstructionInfo info(mass, motionState, colliderShape);
     btRigidBody *bulletRigidBody = new btRigidBody(info);
-    bulletRigidBody->setActivationState(DISABLE_DEACTIVATION);
+
     bulletRigidBody->setUserPointer(rigidBodyOwner);
     _physicsWorld->addRigidBody(bulletRigidBody);
 
     return new RigidBody(bulletRigidBody, trans);
+}
+
+void PhysicsManager::RemoveRigidBody(RigidBody *rb)
+{
+    _physicsWorld->removeRigidBody(rb->GetRigidBody());
 }
 
 glm::vec3 PhysicsManager::GetGravity()

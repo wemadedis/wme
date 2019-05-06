@@ -14,6 +14,11 @@ RigidBody::RigidBody(btRigidBody *body, Rendering::Transform trans)
     _oldTransform = btTransform(Convert(trans.RotationMatrix()), Convert(trans.Pos));
 }
 
+btRigidBody *RigidBody::GetRigidBody()
+{
+    return _rigidBody;
+}
+
 void RigidBody::SetLinearVelocity(glm::vec3 vel)
 {
     _rigidBody->setLinearVelocity(Convert(vel));
@@ -108,15 +113,25 @@ void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform)
     btTransform physTransform;
     _rigidBody->getMotionState()->getWorldTransform(physTransform);
 
-    btVector3 dPos = physTransform.getOrigin() - _oldTransform.getOrigin();
+    auto pos = physTransform.getOrigin();
+    Debug("OLD POS:");
+    Debug(std::to_string(pos.getX()));
+    Debug(std::to_string(pos.getY()));
+    Debug(std::to_string(pos.getZ()));
+
+    btVector3 dPos = pos - _oldTransform.getOrigin();
     btQuaternion dRot = physTransform.getRotation() - _oldTransform.getRotation();
+
+    // transform.Pos = Convert(physTransform.getOrigin());
+    // transform.Rot = glm::degrees(glm::eulerAngles(Convert(physTransform.getRotation())));
 
     // Apply physics change to real transform
     transform.Pos += Convert(dPos);
-    transform.Rot += glm::eulerAngles(Convert(dRot));
+    transform.Rot += glm::degrees(glm::eulerAngles(Convert(dRot)));
 
     // Override physics change with real world change
     UpdateToPhysicsWorld(transform.Pos, transform.Rot);
+    _rigidBody->getMotionState()->getWorldTransform(physTransform);
     _oldTransform = physTransform;
 }
 
@@ -126,11 +141,11 @@ void RigidBody::UpdateToPhysicsWorld(glm::vec3 position, glm::vec3 orientation)
 
     trans.setOrigin(Convert(position));
 
+    orientation = glm::radians(orientation);
     glm::quat rotation(glm::eulerAngleXYZ(orientation.x,
                                           orientation.y,
                                           orientation.z));
     trans.setRotation(Convert(rotation));
-    Debug(std::to_string(trans.getOrigin().getY()));
     _rigidBody->getMotionState()->setWorldTransform(trans);
 }
 } // namespace RTE::Physics
