@@ -115,7 +115,7 @@ PhysicsManager::
 
 void PhysicsManager::Step(float deltaTime)
 {
-    Debug(std::to_string(1.0f / deltaTime));
+    // Debug(std::to_string(1.0f / deltaTime));
     _physicsWorld->stepSimulation(deltaTime);
 }
 
