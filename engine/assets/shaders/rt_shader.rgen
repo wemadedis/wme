@@ -69,6 +69,7 @@ void main()
 
     vec3 origin = vec3(GlobalUniform.Position);
 
+/*
     HitInfo infos[MAX_RECURSION];
     int reflectionCount = 0;
     float tmin = GlobalUniform.NearPlane; //First ray fired by the camera has the near plane distance applied on it
@@ -82,15 +83,32 @@ void main()
         direction = normalize(reflect(direction, hitValue.Normal));
         tmin = 0.0f; //the reflections can have a minimum t = 0
     }
+*/
 
+    float tmin = GlobalUniform.NearPlane;
+    vec4 color;
+    FireRay(origin, direction, tmin, GlobalUniform.FarPlane);
+    color = hitValue.Color;
+    float oldRefl = hitValue.Reflectivity;
+    if(!hitValue.Missed && hitValue.Reflectivity >= 0.0f)
+    {
+        origin = hitValue.Point + hitValue.Normal*0.01f;
+        direction = normalize(reflect(direction, hitValue.Normal));
+        tmin = 0.0f; //the reflections can have a minimum t = 0
+        FireRay(origin, direction, tmin, GlobalUniform.FarPlane);
+        color = color * (1.0f - oldRefl) + hitValue.Color * oldRefl;
+    }
+
+    /*
     vec4 color = infos[reflectionCount].Color * infos[reflectionCount].Reflectivity;
+
     for(int hitIndex = reflectionCount-1; hitIndex >= 0; hitIndex--)
     {
         vec4 hitColor = infos[hitIndex].Color;
         float hitReflectivity = infos[hitIndex].Reflectivity;
         color = hitColor*(1.0f-hitReflectivity) + color*hitReflectivity;
     }
-    
+*/
     imageStore(image, ivec2(gl_LaunchIDNV.xy), color);
 
     

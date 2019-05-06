@@ -1,4 +1,3 @@
-add_subdirectory(RendererTest)
 add_subdirectory(physicsTest)
 add_subdirectory(audioTest)
 add_subdirectory(RenderingManagerTest)
