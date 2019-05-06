@@ -1,6 +1,7 @@
 #include <rte/RTE.hpp>
 #include "PlayerController.hpp"
 #include "ObjectStructs.hpp"
+#include "rte/Utility.hpp"
 
 #include <iostream>
 
@@ -13,9 +14,10 @@ void ConfigureGame(RTEConfig &config)
     config.WindowConfig.WindowWidth = 1280;
     config.WindowConfig.WindowName = "rEfLeCtIoNs ArE tHinGs";
     config.GraphicsConfig.UseRaytracing = true;
+    config.GraphicsConfig.FramesPerSecond = 120;
     config.AssetConfig.Meshes = {
         "E:\\projects\\rte\\engine\\assets\\models\\monkey.ply",
-        "E:\\projects\\rte\\engine\\assets\\models\\box.ply",
+        "E:\\projects\\rte\\engine\\assets\\models\\box1x1x1.ply",
         "E:\\projects\\rte\\engine\\assets\\models\\floor.ply"
     };
 }
@@ -26,8 +28,8 @@ ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
     using namespace StdComponents;
     ComponentIds componentIds;
 
-    componentIds.transformIndex = scene->DefineComponent<TransformComponent, 4>();
-    componentIds.meshIndex = scene->DefineComponent<MeshComponent, 2>();
+    componentIds.transformIndex = scene->DefineComponent<TransformComponent, 10>();
+    componentIds.meshIndex = scene->DefineComponent<MeshComponent, 10>();
     componentIds.playerControllerIndex = scene->DefineComponent<PlayerController, 1>();
     componentIds.cameraIndex = scene->DefineComponent<CameraComponent, 1>();
     componentIds.pointLightIndex = scene->DefineComponent<PointLightComponent, 1>();
@@ -35,7 +37,7 @@ ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
     return componentIds;
 }
 
-Player createPlayer(Runtime::Scene *scene, ComponentIds compIds)
+Player createPlayer(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform st)
 {
     using namespace Runtime;
     using namespace StdComponents;
@@ -47,7 +49,7 @@ Player createPlayer(Runtime::Scene *scene, ComponentIds compIds)
     player.cc = scene->AddComponent<CameraComponent>(compIds.cameraIndex, player.go);
     player.pc = scene->AddComponent<PlayerController>(compIds.playerControllerIndex, player.go);
 
-    player.tc->Initialize(glm::vec3(0.f, 1.f, -5.f), glm::vec3(0.f, 180.f, 0.f), glm::vec3(1));
+    player.tc->Initialize(st.pos, st.rot, st.scale);
     player.cc->Initialize(player.tc);
     player.pc->Initialize(player.tc, player.cc);
 
@@ -89,39 +91,98 @@ PLight createPointLight(Runtime::Scene *scene, ComponentIds compIds, SimpleTrans
 }
 
 
-Floor createFloor(Runtime::Scene *scene, ComponentIds compIds)
+Box createBox(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform st)
 {
     using namespace Runtime;
     using namespace StdComponents;
 
-    Floor floor;
-    floor.go = scene->CreateGameObject();
-    floor.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, floor.go);
-    floor.mc = scene->AddComponent<MeshComponent>(compIds.meshIndex, floor.go);
+    Box box;
+    box.go = scene->CreateGameObject();
+    box.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, box.go);
+    box.mc = scene->AddComponent<MeshComponent>(compIds.meshIndex, box.go);
 
-    std::string floorPath = "E:\\projects\\rte\\engine\\assets\\models\\floor.ply";
-    floor.tc->Initialize(glm::vec3(0), glm::vec3(0,-0.1f, 0), glm::vec3(1));
-    floor.mc->Initialize(floor.tc, floorPath, "");
-    // floor.mc->Material.Specular = 0;
+    std::string boxPath = "E:\\projects\\rte\\engine\\assets\\models\\box1x1x1.ply";
+    box.tc->Initialize(st.pos, st.rot, st.scale);
+    box.mc->Initialize(box.tc, boxPath, "");
 
-    return floor;
+    return box;
 }
 
-void OnGameStart(Runtime::SceneManager &sceneManager)
+Wall createWall(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform ts)
 {
     using namespace Runtime;
     using namespace StdComponents;
 
-    Scene *scene = sceneManager.MakeScene();
-    sceneManager.SetActiveScene(scene);
-    ComponentIds componentIds = initComponentPools(scene);
+    Wall wall;
+    wall.go = scene->CreateGameObject();
+    wall.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, wall.go);
+    wall.mc = scene->AddComponent<MeshComponent>(compIds.meshIndex, wall.go);
 
+    std::string wallPath = "E:\\projects\\rte\\engine\\assets\\models\\floor.ply";
+    wall.tc->Initialize(ts.pos, ts.rot, ts.scale);
+    wall.mc->Initialize(wall.tc, wallPath, "");
+
+    return wall;
+}
+
+void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
+{
+    using namespace Runtime;
+    using namespace StdComponents;
+
+    SimpleTransform playerSt = {glm::vec3(0.f, 1.f, 6.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1)};
+    Player player = createPlayer(scene, componentIds, playerSt);
+    SimpleTransform st = {
+        glm::vec3(0.f, 4.3f, 0.f), //* Position
+        glm::vec3(0.f, 0.f, 0.f), //* Rotation
+        glm::vec3(1.f, 1.f, 1.f)  //* Scale
+    };
+    PLight pointLight = createPointLight(scene, componentIds, st, 15.f);
+
+    SimpleTransform wallSt = {
+        glm::vec3(0.f, 0.f, 0.f), //* Position
+        glm::vec3(0.f, 0.f, 0.f), //* Rotation
+        glm::vec3(6.f, 0.1f, 8.f)  //* Scale
+    };
+    Box floor = createBox(scene, componentIds, wallSt);
+
+    wallSt.pos = glm::vec3(0.f, 5.f, 0.f);
+    Box ceiling = createBox(scene, componentIds, wallSt);
+
+    wallSt.pos = glm::vec3(3.0f, 2.5f, 0.f);
+    wallSt.rot = glm::vec3(0.f, 0.f, 0.f);
+    wallSt.scale = glm::vec3(0.1f, 5.f, 8.0f);
+    Box wallLeft = createBox(scene, componentIds, wallSt);
+
+    wallSt.pos = glm::vec3(-3.0f, 2.5f, 0.f);
+    Box wallRight = createBox(scene, componentIds, wallSt);
+
+    wallSt.pos = glm::vec3(0.f, 2.5f, -4.f);
+    wallSt.scale = glm::vec3(6.f, 5.f, 0.1f);
+    Box wallFront = createBox(scene, componentIds, wallSt);
+
+    SimpleTransform boxSt;
+    boxSt.pos = glm::vec3(-0.75f, 1.5f, -1.5f);
+    boxSt.rot = glm::vec3(0.f, 115.f, 0.f);
+    boxSt.scale = glm::vec3(2.f, 3.f, 2.0f);
+    Box box1 = createBox(scene, componentIds, boxSt);
+
+    boxSt.pos = glm::vec3(1.1f, 0.65f, 1.5f);
+    boxSt.rot = glm::vec3(0.f, 75.f, 0.f);
+    boxSt.scale = glm::vec3(1.3f, 1.3f, 1.3f);
+    Box box2 = createBox(scene, componentIds, boxSt);
+
+}
+
+void MonkeyTest(Runtime::Scene *scene, ComponentIds componentIds)
+{
     // create player + camera
-    Player player = createPlayer(scene, componentIds);
+    SimpleTransform playerSt = {glm::vec3(0.f, 1.f, -4.f), glm::vec3(0.f, 180.f, 0.f), glm::vec3(1)};
+    Player player = createPlayer(scene, componentIds, playerSt);
 
     // create monkey
     SimpleTransform monkeyTransform;
-    monkeyTransform.pos = glm::vec3(0.f,1.2f,2.f);
+    monkeyTransform.pos = glm::vec3(0.f,1.3f,3.f);
     monkeyTransform.rot = glm::vec3(-90.f,180.f,0.f);
     monkeyTransform.scale = glm::vec3(1);
     Monkey monkey = createMonkey(scene, componentIds, monkeyTransform);
@@ -133,7 +194,28 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     lightTransform.scale = glm::vec3();
     PLight pLight = createPointLight(scene, componentIds, lightTransform, 35.f);
 
-    Floor floor = createFloor(scene, componentIds);
+    Wall wallTop = createWall(scene, componentIds,{glm::vec3(0), glm::vec3(0), glm::vec3(1)});
+    Wall wallBottom = createWall(scene, componentIds,{glm::vec3(0.f, 10.f, 0.f), glm::vec3(0), glm::vec3(1)});
+
+    Wall wallBack = createWall(scene, componentIds, {glm::vec3(0.f, 5.f, 5.f), glm::vec3(90, 0, 0), glm::vec3(1)});
+    Wall wallLeft = createWall(scene, componentIds, {glm::vec3(5.f, 5.f, 0.f), glm::vec3(90, 90, 0), glm::vec3(1)});
+    Wall wallRight = createWall(scene, componentIds, {glm::vec3(-5.f, 5.f, 0.f), glm::vec3(90, 90, 0), glm::vec3(1)});
+    Wall wallFront = createWall(scene, componentIds, {glm::vec3(0.f, 5.f, -5.f), glm::vec3(90, 0, 0), glm::vec3(1)});
+    
+    wallLeft.mc->Material.Reflectivity=1.f;
+    wallRight.mc->Material.Reflectivity=1.f;
+}
+
+void OnGameStart(Runtime::SceneManager &sceneManager)
+{
+    using namespace Runtime;
+    using namespace StdComponents;
+
+    Scene *scene = sceneManager.MakeScene();
+    sceneManager.SetActiveScene(scene);
+    ComponentIds componentIds = initComponentPools(scene);
+
+    CornellBox(scene, componentIds);
     
 
 }

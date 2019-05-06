@@ -19,6 +19,7 @@ private:
     double dy;
     float dt = 0.0f;
     bool cursor = true;
+    float speed = 3.0f;
 public:
     void Initialize(
         RTE::StdComponents::TransformComponent *trans,
@@ -38,21 +39,23 @@ public:
             ImGui::End();
         });
         RTE::Platform::WindowManager::GetInstance()->RegisterMousePositionCallback([&](double x, double y){
-            if(oldX != x)
-            {
-                dx = oldX - x;
-                oldX = x;
-                _transform->Transform.Rot.y += dx*dt*50.0f;
-                if(_transform->Transform.Rot.y > 360) _transform->Transform.Rot.y = _transform->Transform.Rot.y - 360;
-                if(_transform->Transform.Rot.y < 0) _transform->Transform.Rot.y = 360 - _transform->Transform.Rot.y;
-            }
-            if(oldY != y)
-            {
-                dy = oldY - y;
-                oldY = y;
-                _transform->Transform.Rot.x += dy*dt*50.0f;
-                if(_transform->Transform.Rot.x > 35) _transform->Transform.Rot.x = 35;
-                if(_transform->Transform.Rot.x < -35) _transform->Transform.Rot.x = -35;
+            if (cursor){
+                if(oldX != x)
+                {
+                    dx = oldX - x;
+                    oldX = x;
+                    _transform->Transform.Rot.y += dx*dt*50.0f;
+                    if(_transform->Transform.Rot.y > 360) _transform->Transform.Rot.y = _transform->Transform.Rot.y - 360;
+                    if(_transform->Transform.Rot.y < 0) _transform->Transform.Rot.y = 360 - _transform->Transform.Rot.y;
+                }
+                if(oldY != y)
+                {
+                    dy = oldY - y;
+                    oldY = y;
+                    _transform->Transform.Rot.x += dy*dt*50.0f;
+                    if(_transform->Transform.Rot.x > 35) _transform->Transform.Rot.x = 35;
+                    if(_transform->Transform.Rot.x < -35) _transform->Transform.Rot.x = -35;
+                }
             }
         });
     }
@@ -60,43 +63,52 @@ public:
     void Update(float deltaTime)
     {
         dt = deltaTime;
-
-        if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_W) == GLFW_PRESS)
-        {
-            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,0.0f,-1.0f,0.0f))*deltaTime;
-        }
-        if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_A) == GLFW_PRESS)
-        {
-            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(-1.0f,0.0f,0.0f,0.0f))*deltaTime;
-        }
-        if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_S) == GLFW_PRESS)
-        {
-            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,0.0f,1.0f,0.0f))*deltaTime;
-        }
-        if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
-        {
-            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(1.0f,0.0f,0.0f,0.0f))*deltaTime;
-        }
-        if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_Q) == GLFW_PRESS)
-        {
-            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,-1.0f,0.0f,0.0f))*deltaTime;
-        }
-        if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_E) == GLFW_PRESS)
-        {
-            _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,1.0f,0.0f,0.0f))*deltaTime;
-        }
-        if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_T))
-        {
-            if(cursor){
-                RTE::Platform::WindowManager::CursorHide();
-                cursor = false;
-            }
-            else
+        if (cursor){
+            if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_W) == GLFW_PRESS)
             {
-                RTE::Platform::WindowManager::CursorShow();
-                cursor = true;
+                _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,0.0f,-1.0f,0.0f))*deltaTime*speed;
+            }
+            if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_A) == GLFW_PRESS)
+            {
+                _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(-1.0f,0.0f,0.0f,0.0f))*deltaTime*speed;
+            }
+            if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_S) == GLFW_PRESS)
+            {
+                _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,0.0f,1.0f,0.0f))*deltaTime*speed;
+            }
+            if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_D) == GLFW_PRESS)
+            {
+                _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(1.0f,0.0f,0.0f,0.0f))*deltaTime*speed;
+            }
+            if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_Q) == GLFW_PRESS)
+            {
+                _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,-1.0f,0.0f,0.0f))*deltaTime*speed;
+            }
+            if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_E) == GLFW_PRESS)
+            {
+                _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,1.0f,0.0f,0.0f))*deltaTime*speed;
+            }
+            if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_KP_ADD) == GLFW_PRESS)
+            {
+                if (speed < 10.f) speed += 1.0f;
+            }
+            if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_KP_SUBTRACT) == GLFW_PRESS)
+            {
+                if (speed > 2.f) speed -= 1.0f;
             }
         }
+        // if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_T) == GLFW_PRESS)
+        // {
+        //     if(cursor){
+        //         RTE::Platform::WindowManager::CursorHide();
+        //         cursor = false;
+        //     }
+        //     else
+        //     {
+        //         RTE::Platform::WindowManager::CursorShow();
+        //         cursor = true;
+        //     }
+        // }
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
             std::exit(0);

@@ -40,7 +40,13 @@ struct PLight {
     PointLightComponent *plc;
 };
 
-struct Floor {
+struct Box {
+    GameObject *go;
+    TransformComponent *tc;
+    MeshComponent *mc;
+};
+
+struct Wall {
     GameObject *go;
     TransformComponent *tc;
     MeshComponent *mc;
