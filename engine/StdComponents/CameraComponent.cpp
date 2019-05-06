@@ -42,7 +42,7 @@ glm::mat4 CameraComponent::ViewMatrix()
         glm::vec4(       x.x,            -y.x,            z.x,      0 ),
         glm::vec4(       x.y,            -y.y,            z.y,      0 ),
         glm::vec4(       x.z,            -y.z,            z.z,      0 ),
-        glm::vec4( -glm::dot( x, pos ), -glm::dot( y, pos ), -glm::dot( z, pos ), 1 )
+        glm::vec4( -glm::dot( x, pos ), glm::dot( y, pos ), -glm::dot( z, pos ), 1 )
     };
      
     return viewMatrix;

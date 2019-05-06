@@ -41,10 +41,8 @@ void Instance::CreateInstance(std::vector<const char*> &extensions)
     createInfo.ppenabledLayerNames = 0;
     #endif
 
-    if (vkCreateInstance(&createInfo, nullptr, &_instance) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create instance!");
-    }
+    VkResult code = vkCreateInstance(&createInfo, nullptr, &_instance);
+    Utilities::CheckVkResult(code, "Failed to create a Vulkan instance!");
 }
 
 bool Instance::DeviceMeetsRequirements(VkPhysicalDevice device)
@@ -62,7 +60,7 @@ bool Instance::DeviceMeetsRequirements(VkPhysicalDevice device)
         swapChainAdequate = !swapChainSupport._sufraceFormats.empty() && !swapChainSupport._presentModes.empty();
     }
 
-    return indices.isComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
+    return indices.IsComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;
 }
 
 void Instance::ChoosePhysicalDevice(bool rtRequested)
@@ -162,17 +160,12 @@ void Instance::CreateLogicalDevice()
     vkGetDeviceQueue(_device, indices.PresentFamily.value(), 0, &_presentQueue);
 }
 
-
-
-
-
 static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData, void *pUserData)
 {
     std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
 
     return VK_FALSE;
 }
-
 
 void Instance::SetupDebugCallBack()
 {
@@ -182,10 +175,8 @@ void Instance::SetupDebugCallBack()
     createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT | VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
     createInfo.pfnUserCallback = debugCallback;
 
-    if (Utilities::CreateDebugUtilsMessengerEXT(_instance, &createInfo, nullptr, &_callback) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to set up debug callback!");
-    }
+    VkResult code = Utilities::CreateDebugUtilsMessengerEXT(_instance, &createInfo, nullptr, &_callback);
+    Utilities::CheckVkResult(code, "Failed to set up debug callback!");
 }
 
 Instance::Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction, bool isRayTracing)
@@ -243,29 +234,18 @@ VkSurfaceKHR Instance::GetSurface()
 }
 
 
-VkFormat Instance::GetOptimalFormat(const std::vector<VkFormat>& candidates, VkImageTiling tiling, VkFormatFeatureFlags features)
+VkFormat Instance::GetOptimalDepthFormat()
 {
+    std::vector<VkFormat> candidates = {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT};
     for (VkFormat format : candidates) {
 
         VkFormatProperties props;
         vkGetPhysicalDeviceFormatProperties(_physicalDevice, format, &props);
-
-        if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) {
-            return format;
-        } else if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) {
+        if ((props.optimalTilingFeatures & VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) == VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT) {
             return format;
         }
     }
-    throw std::runtime_error("failed to find supported format!");
-}
-
-
-VkFormat Instance::GetOptimalDepthFormat()
-{
-return GetOptimalFormat(
-    {VK_FORMAT_D32_SFLOAT, VK_FORMAT_D32_SFLOAT_S8_UINT, VK_FORMAT_D24_UNORM_S8_UINT},
-    VK_IMAGE_TILING_OPTIMAL,
-    VK_FORMAT_FEATURE_DEPTH_STENCIL_ATTACHMENT_BIT);
+    throw RTEException("failed to find supported format!");
 }
 
 bool Instance::IsRayTracingCapable()

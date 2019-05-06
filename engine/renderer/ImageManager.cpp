@@ -39,7 +39,8 @@ void ImageManager::TransitionImageLayout(ImageInformation &imageInfo, VkFormat f
 
     if (newLayout == VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL) {
         barrier.subresourceRange.aspectMask = VK_IMAGE_ASPECT_DEPTH_BIT;
-        if (Utilities::HasStencilComponent(format)) {
+        //Check if format has stencil component
+        if (format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT) {
             barrier.subresourceRange.aspectMask |= VK_IMAGE_ASPECT_STENCIL_BIT;
         }
     } else {
@@ -87,9 +88,9 @@ void ImageManager::TransitionImageLayout(ImageInformation &imageInfo, VkFormat f
     _cmdbManager->SubmitCommandBufferInstance(commandBuffer, _instance->GetGraphicsQueue());
 }
 
-TextureInfo ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t byteSize){
+TextureInfo ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t size){
     BufferInformation stagingBuffer;
-    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, byteSize, stagingBuffer);
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, size, stagingBuffer);
     _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, pixels);
     
     ImageInformation texture = _deviceMemoryManager->CreateImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT); 
@@ -105,9 +106,7 @@ TextureInfo ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigne
 
     _deviceMemoryManager->DestroyBuffer(stagingBuffer);
     VkImageView imageView = CreateImageView(texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
-    VkSampler sampler = CreateSampler(); //Unnecessary to make one per texture since it is independent and can be used for all
-
-    return {sampler, {texture, imageView}};
+    return {_stdSampler, {texture, imageView}};
 }
 
 VkSampler ImageManager::CreateSampler() 
@@ -145,32 +144,12 @@ ImageInfo ImageManager::CreateDepthImage(uint32_t width, uint32_t height) {
     return {imgInfo, imgview};
 }
 
-
-void ImageManager::ImageBarrier(VkCommandBuffer commandBuffer, VkImage image, VkImageSubresourceRange& subresourceRange,
-    VkAccessFlags srcAccessMask, VkAccessFlags dstAccessMask, VkImageLayout oldLayout, VkImageLayout newLayout)
-{
-    VkImageMemoryBarrier imageMemoryBarrier;
-    imageMemoryBarrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
-    imageMemoryBarrier.pNext = nullptr;
-    imageMemoryBarrier.srcAccessMask = srcAccessMask;
-    imageMemoryBarrier.dstAccessMask = dstAccessMask;
-    imageMemoryBarrier.oldLayout = oldLayout;
-    imageMemoryBarrier.newLayout = newLayout;
-    imageMemoryBarrier.srcQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    imageMemoryBarrier.dstQueueFamilyIndex = VK_QUEUE_FAMILY_IGNORED;
-    imageMemoryBarrier.image = image;
-    imageMemoryBarrier.subresourceRange = subresourceRange;
-
-    vkCmdPipelineBarrier(commandBuffer, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT, VK_PIPELINE_STAGE_ALL_COMMANDS_BIT,
-        0, 0, nullptr, 0, nullptr, 1, &imageMemoryBarrier);
-}
-
-
 ImageManager::ImageManager(Instance *instance, CommandBufferManager *cmdbManager, DeviceMemoryManager *memoryManager)
 {
     _instance = instance;
     _cmdbManager = cmdbManager;
     _deviceMemoryManager = memoryManager;
+    _stdSampler = CreateSampler();
 }
 
 

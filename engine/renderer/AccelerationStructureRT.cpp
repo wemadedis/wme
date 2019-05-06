@@ -107,113 +107,6 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
         geometry.flags = 0;
         geometries.emplace_back(geometry);
     }
-    /*{
-        const float scale = 0.25f;
-        const float d = (1.0f + sqrt(5.0f)) * 0.5f * scale;
-
-        struct Vertex
-        {
-            float X, Y, Z;
-        };
-        std::vector<Vertex> vertices
-        {
-            // Triangle vertices
-            { -0.5f, -0.5f, 0.0f },
-            { +0.0f, +0.5f, 0.0f },
-            { +0.5f, -0.5f, 0.0f },
-
-            // Tutorial 07 vertices
-            { -10.0f, .0f, +10.0f },
-            { +10.0f, .0f, +10.0f },
-            { +10.0f, .0f, -10.0f },
-            { -10.0f, .0f, -10.0f },
-
-            // Icosahedron vertices
-            { -scale, +d, 0 },
-            { +scale, +d, 0 },
-            { -scale, -d, 0 },
-            { +scale, -d, 0 },
-
-            { 0, -scale, +d },
-            { 0, +scale, +d },
-            { 0, -scale, -d },
-            { 0, +scale, -d },
-
-            { +d, 0, -scale },
-            { +d, 0, +scale },
-            { -d, 0, -scale },
-            { -d, 0, +scale },
-        };
-
-        const uint32_t vertexCount = (uint32_t)vertices.size();
-        const VkDeviceSize vertexSize = sizeof(Vertex);
-        const VkDeviceSize vertexBufferSize = vertexCount * vertexSize;
-
-        std::vector<uint16_t> indices
-        {
-            {
-                // Triangle indices
-                0, 1, 2,
-                // Tutorial 07 indices
-                // Quad indices
-                0, 1, 2, 2, 3, 0,
-                // Icosahedron indices
-                0, 11, 5, 0, 5, 1, 0, 1, 7, 0, 7, 10, 0, 10, 11,
-                1, 5, 9, 5, 11, 4, 11, 10, 2, 10, 7, 6, 7, 1, 8,
-                3, 9, 4, 3, 4, 2, 3, 2, 6, 3, 6, 8, 3, 8, 9,
-                4, 9, 5, 2, 4, 11, 6, 2, 10, 8, 6, 7, 9, 8, 1
-            }
-        };
-        const uint32_t indexCount = (uint32_t)indices.size();
-        const VkDeviceSize indexSize = sizeof(uint16_t);
-        const VkDeviceSize indexBufferSize = indexCount * indexSize;
-
-        _memoryManager->CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, MemProps::HOST, vertexBufferSize, _vertexBuffer);
-        _memoryManager->CopyDataToBuffer(_vertexBuffer, vertices.data());
-
-        _memoryManager->CreateBuffer(VK_BUFFER_USAGE_INDEX_BUFFER_BIT, MemProps::HOST, indexBufferSize, _indexBuffer);
-        _memoryManager->CopyDataToBuffer(_indexBuffer, indices.data());
-
-        VkGeometryNV geometry;
-        geometry.sType = VK_STRUCTURE_TYPE_GEOMETRY_NV;
-        geometry.pNext = nullptr;
-        geometry.geometryType = VK_GEOMETRY_TYPE_TRIANGLES_NV;
-        geometry.geometry.triangles.sType = VK_STRUCTURE_TYPE_GEOMETRY_TRIANGLES_NV;
-        geometry.geometry.triangles.pNext = nullptr;
-        geometry.geometry.triangles.vertexData = _vertexBuffer.buffer;
-        geometry.geometry.triangles.vertexOffset = 0;
-        geometry.geometry.triangles.vertexCount = vertexCount;
-        geometry.geometry.triangles.vertexStride = vertexSize;
-        geometry.geometry.triangles.vertexFormat = VK_FORMAT_R32G32B32_SFLOAT;
-        geometry.geometry.triangles.indexData = _indexBuffer.buffer;
-        geometry.geometry.triangles.indexOffset = 0;
-        geometry.geometry.triangles.indexCount = indexCount;
-        geometry.geometry.triangles.indexType = VK_INDEX_TYPE_UINT16;
-        geometry.geometry.triangles.transformData = VK_NULL_HANDLE;
-        geometry.geometry.triangles.transformOffset = 0;
-        geometry.geometry.aabbs = { };
-        geometry.geometry.aabbs.sType = VK_STRUCTURE_TYPE_GEOMETRY_AABB_NV;
-        geometry.flags = 0;
-
-        // Insert single triangle
-        geometry.geometry.triangles.vertexCount = 3;
-        geometry.geometry.triangles.indexCount = 3;
-        geometries.emplace_back(geometry);
-
-        // Insert bottom quad, use data from same vertex/index buffers, but with offset
-        geometry.geometry.triangles.vertexOffset = 3 * vertexSize; // offset in bytes
-        geometry.geometry.triangles.indexOffset = 3 * indexSize; // offset in bytes
-        geometry.geometry.triangles.vertexCount = 4;
-        geometry.geometry.triangles.indexCount = 6;
-        geometries.emplace_back(geometry);
-
-        // Insert icosahedron, use data from same vertex/index buffers, but with offset
-        geometry.geometry.triangles.vertexOffset = 7 * vertexSize; // offset in bytes
-        geometry.geometry.triangles.indexOffset = 9 * indexSize; // offset in bytes
-        geometry.geometry.triangles.vertexCount = 12;
-        geometry.geometry.triangles.indexCount = 60;
-        geometries.emplace_back(geometry);
-    }*/
 
     //TODO: NOTE DOWN IN REPORT HOW THE MAPPING WORKS
     for (uint32_t botIndex = 0; botIndex < _bot.size(); botIndex++)
@@ -246,20 +139,11 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
         }
 
         float transform[12] =
-            {
-                1.0f,
-                0.0f,
-                0.0f,
-                0.0f,
-                0.0f,
-                1.0f,
-                0.0f,
-                0.0f,
-                0.0f,
-                0.0f,
-                1.0f,
-                0.0f,
-            };
+        {
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+        };
 
         for (uint32_t instanceIndex = 0; instanceIndex < meshInstances.size(); instanceIndex++)
         {
@@ -279,30 +163,6 @@ AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryMan
             //TODO: Note down the structure here as well
             _instanceMeshMapping.push_back(meshInstance.mesh);
         }
-
-        /*// Insert 3 instances of the bottom level AS #1
-        instances.push_back(FillInstance(accelerationStructureHandles[0], 0, transform));
-        transform[3] = 1.5f; // move geometry along X axis
-        transform[11] = 0.5f; // move geometry along Z axis
-        instances.push_back(FillInstance(accelerationStructureHandles[0], 1, transform));
-        transform[3] = -1.5f;
-        transform[11] = -0.5f;
-        instances.push_back(FillInstance(accelerationStructureHandles[0], 2, transform));
-
-        // Insert 1 instance of the bottom level AS #2
-        float transform2[12] =
-        {
-            2.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 2.0f, 0.0f, -9.0f,
-            0.0f, 0.0f, 2.0f, 0.0f,
-        };
-        instances.push_back(FillInstance(accelerationStructureHandles[1], 3, transform2));
-
-        // Insert 1 instance of the bottom level AS #3
-        transform[3] = 3.0f;
-        transform[11] = 0.5f;
-        instances.push_back(FillInstance(accelerationStructureHandles[2], 4, transform));
-        */
         instanceNum = (uint32_t)instances.size();
 
         uint32_t instanceBufferSize = instanceNum * sizeof(VkGeometryInstance);

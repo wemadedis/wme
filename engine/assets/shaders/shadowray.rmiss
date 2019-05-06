@@ -5,5 +5,5 @@ layout(location = 2) rayPayloadInNV float secondaryRayHitValue;
 
 void main()
 {
-    secondaryRayHitValue = gl_RayTmaxNV;
+    secondaryRayHitValue = 2000.0f;
 }

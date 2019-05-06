@@ -388,7 +388,16 @@ void Renderer::Finalize()
         CreateShaderBindingTable();
 
         //instance buffer maps an instance to the mesh
-        _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::HOST, sizeof(uint32_t) * _meshInstances.size(), _instanceBuffer);
+        if(_meshInstances.size() == 0)
+        {
+            //If no instances exist, create a buffer 
+            _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::HOST, sizeof(uint32_t), _instanceBuffer);
+        }
+        else
+        {
+            _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::HOST, sizeof(uint32_t) * _meshInstances.size(), _instanceBuffer);
+        }
+        
         _deviceMemoryManager->ModifyBufferData<uint32_t>(_instanceBuffer, [&](uint32_t *data) {
             for (uint32_t instanceIndex = 0; instanceIndex < _meshInstances.size(); instanceIndex++)
             {
@@ -404,26 +413,30 @@ void Renderer::Finalize()
     _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
     UploadGlobalUniform();
 
-    GUI::GUIInitInfo guiInfo;
-    guiInfo.Instance = _instance->GetInstance();
-    guiInfo.PhysicalDevice = _instance->GetPhysicalDevice();
-    guiInfo.Device = _instance->GetDevice();
-    guiInfo.QueueFamily = VK_QUEUE_FAMILY_IGNORED;
-    guiInfo.Queue = _instance->GetGraphicsQueue();
-    guiInfo.PipelineCache = VK_NULL_HANDLE;
-    guiInfo.DescriptorPool = _descriptorManager->GetDescriptorPool();
-    guiInfo.MinImageCount = _swapChain->GetSwapChainImageCount();
-    guiInfo.ImageCount = guiInfo.MinImageCount;
-    guiInfo.Allocator = nullptr;
-    guiInfo.CheckVkResultFn = [](VkResult code) { Utilities::CheckVkResult(code, "ImGUI Error"); };
-
-    VkCommandBuffer cmdBuffer = _commandBufferManager->BeginCommandBufferInstance();
+    
 
     if (_guiModule != nullptr)
     {
+        GUI::GUIInitInfo guiInfo;
+        guiInfo.Instance = _instance->GetInstance();
+        guiInfo.PhysicalDevice = _instance->GetPhysicalDevice();
+        guiInfo.Device = _instance->GetDevice();
+        guiInfo.QueueFamily = VK_QUEUE_FAMILY_IGNORED;
+        guiInfo.Queue = _instance->GetGraphicsQueue();
+        guiInfo.PipelineCache = VK_NULL_HANDLE;
+        guiInfo.DescriptorPool = _descriptorManager->GetDescriptorPool();
+        guiInfo.MinImageCount = _swapChain->GetSwapChainImageCount();
+        guiInfo.ImageCount = guiInfo.MinImageCount;
+        guiInfo.Allocator = nullptr;
+        guiInfo.CheckVkResultFn = [](VkResult code) { Utilities::CheckVkResult(code, "ImGUI Error"); };
+
+        VkCommandBuffer cmdBuffer = _commandBufferManager->BeginCommandBufferInstance();
+
         _guiModule->Initialize(guiInfo, _renderPass->GetHandle(), cmdBuffer);
+        
+        _commandBufferManager->SubmitCommandBufferInstance(cmdBuffer, _instance->GetGraphicsQueue());
     }
-    _commandBufferManager->SubmitCommandBufferInstance(cmdBuffer, _instance->GetGraphicsQueue());
+
 
     if (_rtxOn)
     {
@@ -545,8 +558,21 @@ void Renderer::SetInstanceMaterial(MeshInstanceHandle instance, Material &mat)
 
 void Renderer::SetInstanceTransform(MeshInstanceHandle instance, glm::mat4 &modelMatrix)
 {
+    glm::mat4 normalMatrix;
+    //Calculate the normal matrix
+    if(_renderMode == RenderMode::RAYTRACE)
+    {
+        normalMatrix = glm::transpose(glm::inverse(modelMatrix));
+    }
+    else 
+    {
+        //The normal is transformed to view space for further calculations in rasterization.
+        normalMatrix = glm::transpose(glm::inverse(_globalUniform.ViewMatrix*modelMatrix));
+    }
+    
     _deviceMemoryManager->ModifyBufferData<MeshInstanceUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshInstanceUniformData *data) {
         data->ModelMatrix = modelMatrix;
+        data->NormalMatrix = normalMatrix;
     });
 
     //Don't update the structure if it does not exist (2 cases: no ray tracing, or renderer not finalized)
@@ -596,136 +622,10 @@ void Renderer::SetCamera(Camera camera)
     _globalUniform.Position = glm::vec4(camera.Position, 1.0f);
     _globalUniform.ViewMatrix = camera.ViewMatrix;
     _globalUniform.ProjectionMatrix = camera.ProjectionMatrix;
+    _globalUniform.FieldOfView = glm::tan(glm::radians(camera.FieldOfView/2.0f));
+    _globalUniform.NearPlane = camera.NearPlane;
+    _globalUniform.FarPlane = camera.FarPlane;
     UploadGlobalUniform();
-}
-
-const std::vector<const char *> validationLayers =
-    {
-        "VK_LAYER_LUNARG_standard_validation"};
-
-VkDebugUtilsMessengerEXT callback;
-
-bool CheckValidationLayerSupport()
-{
-    uint32_t layerCount;
-    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
-
-    std::vector<VkLayerProperties> availableLayers(layerCount);
-    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
-
-    for (const char *layerName : validationLayers)
-    {
-        bool layerFound = false;
-
-        for (const auto &layerProperties : availableLayers)
-        {
-            if (strcmp(layerName, layerProperties.layerName) == 0)
-            {
-                layerFound = true;
-                break;
-            }
-        }
-
-        if (!layerFound)
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-void CreateInstance(
-    std::string appName,
-    VkInstance *instance,
-    std::vector<const char *> extensions,
-    bool enableValidationLayers)
-{
-    if (enableValidationLayers && !CheckValidationLayerSupport())
-    {
-        throw std::runtime_error("validation layers requested, but not available!");
-    }
-
-    VkApplicationInfo appInfo = {};
-    appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    appInfo.pApplicationName = appName.c_str();
-    appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.pEngineName = "No Engine";
-    appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.apiVersion = VK_API_VERSION_1_0;
-
-    VkInstanceCreateInfo createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
-    createInfo.pApplicationInfo = &appInfo;
-
-    createInfo.enabledExtensionCount = static_cast<uint32_t>(extensions.size());
-    createInfo.ppEnabledExtensionNames = extensions.data();
-
-    if (enableValidationLayers)
-    {
-        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
-        createInfo.ppEnabledLayerNames = validationLayers.data();
-    }
-    else
-    {
-        createInfo.enabledLayerCount = 0;
-    }
-
-    if (vkCreateInstance(&createInfo, nullptr, instance) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create instance!");
-    }
-}
-
-static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
-    VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-    VkDebugUtilsMessageTypeFlagsEXT messageType,
-    const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-    void *pUserData)
-{
-    std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-
-    return VK_FALSE;
-}
-
-VkResult CreateDebugUtilsMessengerEXT(
-    VkInstance instance,
-    const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-    const VkAllocationCallbacks *pAllocator,
-    VkDebugUtilsMessengerEXT *pCallback)
-{
-    auto func = (PFN_vkCreateDebugUtilsMessengerEXT)vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT");
-    if (func != nullptr)
-    {
-        return func(instance, pCreateInfo, pAllocator, pCallback);
-    }
-    else
-    {
-        return VK_ERROR_EXTENSION_NOT_PRESENT;
-    }
-}
-
-void SetupDebugCallback(VkInstance instance)
-{
-    if (!enableValidationLayers)
-        return;
-
-    VkDebugUtilsMessengerCreateInfoEXT createInfo = {};
-    createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
-    createInfo.messageSeverity =
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
-    createInfo.messageType =
-        VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT |
-        VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
-    createInfo.pfnUserCallback = debugCallback;
-
-    if (CreateDebugUtilsMessengerEXT(instance, &createInfo, nullptr, &callback) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to set up debug callback!");
-    }
 }
 
 } // namespace RTE::Rendering

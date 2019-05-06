@@ -91,11 +91,6 @@ ShaderInfo GetShadowdRayMissShader(VkDevice device)
     return {ShaderType::RMISS, CreateShaderModule(ReadEngineAsset("shaders/srmiss.spv"), device)};
 }
 
-bool HasStencilComponent(VkFormat format)
-{
-    return format == VK_FORMAT_D32_SFLOAT_S8_UINT || format == VK_FORMAT_D24_UNORM_S8_UINT;
-}
-
 QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
     QueueFamilyIndices indices;
@@ -121,7 +116,7 @@ QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice device, VkSurfaceKHR surfa
             indices.PresentFamily = i;
         }
 
-        if (indices.isComplete())
+        if (indices.IsComplete())
         {
             break;
         }

@@ -99,6 +99,11 @@ struct MeshInstanceUniformData
 	glm::mat4 ModelMatrix;
 
 	/**
+	 * @brief A 4x4 normal matrix used on normals to avoid issues with non-uniform scaling.
+	 */
+	glm::mat4 NormalMatrix;
+
+	/**
 	 * @brief The ambient reflection instensity.
 	 */
 	float Ambient = 0.2f;
@@ -178,6 +183,24 @@ struct PointLight
  */
 struct GlobalUniformData
 {
+	/**
+	 * @brief Field of view given in degrees.
+	 */
+	float FieldOfView;
+
+	/**
+	 * @brief Distance to the near plane.
+	 */
+	float NearPlane;
+	
+	/**
+	 * @brief Distance to the far plane.
+	 */
+	float FarPlane;
+
+	//Padding to meet memory alignment requirement.
+	int padding;
+
 	/**
 	 * @brief The position of the camera.
 	 */

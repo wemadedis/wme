@@ -27,6 +27,9 @@ struct PointLight
 
 layout(binding = 2) uniform GlobalUniformData
 {
+    float FieldOfView;
+    float NearPlane;
+    float FarPlane;
     vec4 Position;
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
@@ -36,15 +39,11 @@ layout(binding = 2) uniform GlobalUniformData
     DirectionalLight DirectionalLights[MAX_LIGHTS];
 } GlobalUniform;
 
-
-
-
-
-
 layout(location = 0) rayPayloadInNV HitInfo hitValue;
 
 void main()
 {
     hitValue.Missed = true;
     hitValue.Color = GlobalUniform.ClearColor;
+    hitValue.Reflectivity = 0.0f;
 }
