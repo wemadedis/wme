@@ -168,10 +168,12 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
     wallSt.scale = glm::vec3(0.1f, 5.f, 8.0f);
     Box wallLeft = createBox(scene, componentIds, wallSt);
     wallLeft.mc->SetTexture(AbsRedPath);
+    wallLeft.mc->Material.Reflectivity = 0.2f;
 
     wallSt.pos = glm::vec3(-3.0f, 2.5f, 0.f);
     Box wallRight = createBox(scene, componentIds, wallSt);
     wallRight.mc->SetTexture(AbsGreenPath);
+    wallRight.mc->Material.Reflectivity = 0.2f;
 
     wallSt.pos = glm::vec3(0.f, 2.5f, -4.f);
     wallSt.scale = glm::vec3(6.f, 5.f, 0.1f);
