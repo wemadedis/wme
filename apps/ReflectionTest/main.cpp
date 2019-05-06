@@ -184,12 +184,13 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
     boxSt.rot = glm::vec3(0.f, 115.f, 0.f);
     boxSt.scale = glm::vec3(2.f, 3.f, 2.0f);
     Box box1 = createBox(scene, componentIds, boxSt);
+    box1.mc->Material.Reflectivity = 0.15f;
 
     boxSt.pos = glm::vec3(1.1f, 0.65f, 1.5f);
     boxSt.rot = glm::vec3(0.f, 75.f, 0.f);
     boxSt.scale = glm::vec3(1.3f, 1.3f, 1.3f);
     Box box2 = createBox(scene, componentIds, boxSt);
-
+    box2.mc->Material.Reflectivity = 0.15f;
 }
 
 void MonkeyTest(Runtime::Scene *scene, ComponentIds componentIds)
