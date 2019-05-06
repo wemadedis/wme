@@ -162,7 +162,10 @@ void Renderer::RecordRenderPass()
             {
                 _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, MemProps::HOST , sizeof(Line)*1000, _lineBuffer);
             }
-            _deviceMemoryManager->CopyDataToBuffer(_lineBuffer, lines.data(), sizeof(Line)*lines.size());
+            if(lines.size() != 0)
+            {
+                _deviceMemoryManager->CopyDataToBuffer(_lineBuffer, lines.data(), sizeof(Line)*lines.size());
+            }
             vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _linePipeline->GetHandle());
             vkCmdSetLineWidth(cmdBuffer, 2.0f);
             VkDeviceSize offsets[] = {0};
