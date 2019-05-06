@@ -4,22 +4,39 @@
 #include "rte/Utility.hpp"
 
 #include <iostream>
-
-
 using namespace RTE;
+using namespace RTE::Utilities;
+
+
+const RelativeFilePath RedPath = "textures/red.png";
+const RelativeFilePath GreenPath = "textures/green.png";
+
+const RelativeFilePath BoxPath = "models/box1x1x1.ply";
+const RelativeFilePath MonkeyPath = "models/monkey.ply";
+const RelativeFilePath FloorPath = "models/floor.ply";
+
+AbsoluteFilePath AbsRedPath;
+AbsoluteFilePath AbsGreenPath;
+
+AbsoluteFilePath AbsBoxPath;
+AbsoluteFilePath AbsMonkeyPath;
+AbsoluteFilePath AbsFloorPath;
 
 void ConfigureGame(RTEConfig &config)
 {
+    AbsRedPath = GetFileFromAssets(RedPath);
+    AbsGreenPath = GetFileFromAssets(GreenPath);
+    AbsBoxPath = GetFileFromAssets(BoxPath);
+    AbsMonkeyPath = GetFileFromAssets(MonkeyPath);
+    AbsFloorPath = GetFileFromAssets(FloorPath);
+
     config.WindowConfig.WindowHeight = 720;
     config.WindowConfig.WindowWidth = 1280;
     config.WindowConfig.WindowName = "rEfLeCtIoNs ArE tHinGs";
     config.GraphicsConfig.UseRaytracing = true;
     config.GraphicsConfig.FramesPerSecond = 120;
-    config.AssetConfig.Meshes = {
-        "E:\\projects\\rte\\engine\\assets\\models\\monkey.ply",
-        "E:\\projects\\rte\\engine\\assets\\models\\box1x1x1.ply",
-        "E:\\projects\\rte\\engine\\assets\\models\\floor.ply"
-    };
+    config.AssetConfig.Meshes = { AbsMonkeyPath, AbsBoxPath, AbsFloorPath };
+    config.AssetConfig.Textures = { AbsGreenPath, AbsRedPath };
 }
 
 ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
@@ -66,9 +83,8 @@ Monkey createMonkey(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform
     monkey.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, monkey.go);
     monkey.mc = scene->AddComponent<MeshComponent>(compIds.meshIndex, monkey.go);
 
-    std::string monkeyPath = "E:\\projects\\rte\\engine\\assets\\models\\monkey.ply";
     monkey.tc->Initialize(st.pos, st.rot, st.scale);
-    monkey.mc->Initialize(monkey.tc, monkeyPath, "");
+    monkey.mc->Initialize(monkey.tc, AbsMonkeyPath, "");
 
     return monkey;
 }
@@ -101,9 +117,8 @@ Box createBox(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform st)
     box.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, box.go);
     box.mc = scene->AddComponent<MeshComponent>(compIds.meshIndex, box.go);
 
-    std::string boxPath = "E:\\projects\\rte\\engine\\assets\\models\\box1x1x1.ply";
     box.tc->Initialize(st.pos, st.rot, st.scale);
-    box.mc->Initialize(box.tc, boxPath, "");
+    box.mc->Initialize(box.tc, AbsBoxPath, "");
 
     return box;
 }
@@ -118,9 +133,8 @@ Wall createWall(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform ts)
     wall.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, wall.go);
     wall.mc = scene->AddComponent<MeshComponent>(compIds.meshIndex, wall.go);
 
-    std::string wallPath = "E:\\projects\\rte\\engine\\assets\\models\\floor.ply";
     wall.tc->Initialize(ts.pos, ts.rot, ts.scale);
-    wall.mc->Initialize(wall.tc, wallPath, "");
+    wall.mc->Initialize(wall.tc, AbsFloorPath, "");
 
     return wall;
 }
@@ -153,9 +167,11 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
     wallSt.rot = glm::vec3(0.f, 0.f, 0.f);
     wallSt.scale = glm::vec3(0.1f, 5.f, 8.0f);
     Box wallLeft = createBox(scene, componentIds, wallSt);
+    wallLeft.mc->SetTexture(AbsRedPath);
 
     wallSt.pos = glm::vec3(-3.0f, 2.5f, 0.f);
     Box wallRight = createBox(scene, componentIds, wallSt);
+    wallRight.mc->SetTexture(AbsGreenPath);
 
     wallSt.pos = glm::vec3(0.f, 2.5f, -4.f);
     wallSt.scale = glm::vec3(6.f, 5.f, 0.1f);
