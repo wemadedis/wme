@@ -87,9 +87,9 @@ void RigidBody::SetAngularFactor(glm::vec3 fac)
     _rigidBody->setAngularFactor(Convert(fac));
 }
 
-void RigidBody::AddForce(glm::vec3 force)
+void RigidBody::AddForce(glm::vec3 force, glm::vec3 relPos = glm::vec3(0))
 {
-    _rigidBody->applyForce(Convert(force), Convert(glm::vec3(0)));
+    _rigidBody->applyForce(Convert(force), Convert(relPos));
 }
 
 void RigidBody::AddTorque(glm::vec3 torque)
@@ -108,35 +108,29 @@ void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform)
     btTransform physTransform;
     _rigidBody->getMotionState()->getWorldTransform(physTransform);
 
-    // btVector3 dPos = physTransform.getOrigin() - _oldTransform.getOrigin();
-    // btQuaternion dRot = physTransform.getRotation() - _oldTransform.getRotation();
-
-    transform.Pos = Convert(physTransform.getOrigin());
-    transform.Rot = glm::radians(glm::eulerAngles(Convert(physTransform.getRotation())));
+    btVector3 dPos = physTransform.getOrigin() - _oldTransform.getOrigin();
+    btQuaternion dRot = physTransform.getRotation() - _oldTransform.getRotation();
 
     // Apply physics change to real transform
-    //transform.Pos += Convert(dPos);
-    //transform.Rot += glm::eulerAngles(Convert(dRot));
+    transform.Pos += Convert(dPos);
+    transform.Rot += glm::eulerAngles(Convert(dRot));
 
     // Override physics change with real world change
-    //UpdateToPhysicsWorld(transform.Pos, transform.Rot);
-
-    _rigidBody->getMotionState()->getWorldTransform(physTransform);
+    UpdateToPhysicsWorld(transform.Pos, transform.Rot);
     _oldTransform = physTransform;
 }
 
 void RigidBody::UpdateToPhysicsWorld(glm::vec3 position, glm::vec3 orientation)
 {
-    btTransform initialTransform;
+    btTransform trans;
 
-    initialTransform.setOrigin(Convert(position));
+    trans.setOrigin(Convert(position));
 
     glm::quat rotation(glm::eulerAngleXYZ(orientation.x,
                                           orientation.y,
                                           orientation.z));
-    initialTransform.setRotation(Convert(rotation));
-
-    _rigidBody->setWorldTransform(initialTransform);
-    _rigidBody->getMotionState()->setWorldTransform(initialTransform);
+    trans.setRotation(Convert(rotation));
+    Debug(std::to_string(trans.getOrigin().getY()));
+    _rigidBody->getMotionState()->setWorldTransform(trans);
 }
 } // namespace RTE::Physics

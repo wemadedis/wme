@@ -103,8 +103,8 @@ StaticBox MakeStaticBox(Scene *scene, ComponentIds &comps)
         ImGui::DragFloat("rot z", &box.Trans->Transform.Rot.z);
         ImGui::End();
     });
-    box.Trans->Initialize({0, 50, 0}, {0, 0, 0}, {1, 1, 1});
-    box.Phys->Initialize(box.Trans, 0, {MakeBoxCollider({0.5, 0.5, 0.5})});
+    box.Trans->FromPos({0, 25, 0});
+    box.Phys->Initialize(box.Trans, 5, {MakeBoxCollider({0.5, 0.5, 0.5})});
     box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsBluePath);
     return box;
 }
@@ -139,22 +139,12 @@ Plane MakeGround(Scene *scene, ComponentIds &comps)
 {
     Plane plane = MakePlane(scene, comps);
 
-    plane.Trans->Initialize({0, -20, 0}, {90, 0, 0}, {1, 1, 1});
-    plane.Phys->Initialize(plane.Trans, 1, {MakeBoxCollider({0.5, 0.5, 0.5})});
+    plane.Trans->Initialize({0, -0.5, 0}, {glm::radians(90.0f), 0, 0}, {1, 1, 1});
+    plane.Phys->Initialize(plane.Trans, 0, {MakeBoxCollider({5, 1, 5})});
+    plane.Phys->GetRigidBody()->SetKinematic(true);
+    
     plane.Mesh->Initialize(plane.Trans, AbsPlanePath, AbsCyanPath);
-    plane.Phys->GetRigidBody()->SetKinematic(true);
-    return plane;
-}
 
-Plane MakeBackground(Scene *scene, ComponentIds &comps)
-{
-    Plane plane = MakePlane(scene, comps);
-
-    plane.Trans->FromPos({0, 1, -6});
-    plane.Phys->Initialize(plane.Trans, 1, {MakeBoxCollider({10, 1, 10})});
-    plane.Mesh->Initialize(plane.Trans, AbsPlanePath, AbsGreenPath);
-    plane.Phys->GetRigidBody()->SetKinematic(true);
-    plane.Mesh->Material.Reflectivity = 0.5;
     return plane;
 }
 
@@ -189,7 +179,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     TransformComponent *cameraTransform = scene->AddComponent<TransformComponent>(componentIds.TransformPoolId, camera);
     CameraComponent *cameraComp = scene->AddComponent<CameraComponent>(componentIds.CameraPoolId, camera);
     cameraComp->BackgroundColor = Colors::Black;
-    cameraTransform->Initialize(glm::vec3(20, 10, 40), glm::vec3(-20, 25, 0), {1, 1, 1});
+    cameraTransform->Initialize(glm::vec3(20, 20, 40), glm::vec3(-20, 25, 0), {1, 1, 1});
     cameraComp->Initialize(cameraTransform);
 
     // Static box

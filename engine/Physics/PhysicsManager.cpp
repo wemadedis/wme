@@ -148,21 +148,26 @@ RigidBody *PhysicsManager::CreateRigidBody(
     std::vector<Collider> colliders,
     void *rigidBodyOwner)
 {
-    glm::quat rotQ = glm::quat_cast(trans.RotationMatrix());
-    btMotionState *motionState =
-        new btDefaultMotionState(
-            btTransform(
-                btQuaternion(rotQ.x, rotQ.y, rotQ.z, rotQ.w),
-                btVector3(trans.Pos.x, trans.Pos.y, trans.Pos.z)));
-    btVector3 fallInertia(0, 0, 0);
+    btMotionState *motionState = new btDefaultMotionState(Convert(trans));
 
-    btBoxShape *boxShape = new btBoxShape({10, 10, 10});
+    Collider col = colliders[0]; 
+    btCollisionShape *colliderShape = GetCollisionShapeFromColliderType(col.Type, col.Data);
+    /*
+    btCompoundShape *colliderShape = new btCompoundShape();
+    for (int32_t colliderIndex = 0;
+         colliderIndex < colliders.size();
+         colliderIndex++)
+    {
+        Collider col = colliders[colliderIndex];
+        colliderShape->addChildShape(
+            Convert(col.ColliderTransform),
+            GetCollisionShapeFromColliderType(col.Type, col.Data));
+    }*/
 
     btRigidBody::btRigidBodyConstructionInfo info =
-        btRigidBody::btRigidBodyConstructionInfo(1000, motionState, boxShape);
+        btRigidBody::btRigidBodyConstructionInfo(mass, motionState, colliderShape);
     btRigidBody *bulletRigidBody = new btRigidBody(info);
-    boxShape->calculateLocalInertia(1000, fallInertia);
-
+    bulletRigidBody->setActivationState(DISABLE_DEACTIVATION);
     bulletRigidBody->setUserPointer(rigidBodyOwner);
     _physicsWorld->addRigidBody(bulletRigidBody);
 

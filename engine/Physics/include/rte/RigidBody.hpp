@@ -29,7 +29,7 @@ public:
     glm::vec3 GetLinearVelocity();
     void SetLinearVelocity(glm::vec3 vel);
 
-    void AddForce(glm::vec3 force);
+    void AddForce(glm::vec3 force, glm::vec3 relPos);
 
     void AddTorque(glm::vec3 torque);
 

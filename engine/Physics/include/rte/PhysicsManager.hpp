@@ -71,6 +71,8 @@ static inline glm::quat Convert(btQuaternion quat)
     return glm::highp_quat(quat.getX(), quat.getY(), quat.getZ(), quat.getW());
 }
 
+
+
 /**
  * @brief Converts a glm vector to a bullet vector
  * 
@@ -80,6 +82,24 @@ static inline glm::quat Convert(btQuaternion quat)
 static inline btVector3 Convert(glm::vec3 vec)
 {
     return btVector3(vec.x, vec.y, vec.z);
+}
+
+static inline Rendering::Transform Convert(btTransform t)
+{
+    Rendering::Transform trans;
+    trans.Pos = Convert(t.getOrigin());
+    trans.Rot = glm::eulerAngles(Convert(t.getRotation()));
+    trans.Scale = glm::vec3(1, 1, 1);
+    return trans;
+}
+
+static inline btTransform Convert(Rendering::Transform t)
+{
+    btTransform trans;
+    trans.setOrigin(Convert(t.Pos));
+
+    trans.setRotation(Convert(t.RotationMatrix()));
+    return trans;    
 }
 
 enum class ColliderType

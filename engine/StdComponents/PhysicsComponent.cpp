@@ -29,8 +29,6 @@ void PhysicsComponent::Initialize(
 
 void PhysicsComponent::Update(float deltaTime)
 {
-    auto pos = _transformComponent->Transform.Pos;
-    // TODO: (danh 25/04 14:30): Change this to use transform dirty flag!
     _rigidBody->UpdateFromPhysicsWorld(_transformComponent->Transform);
 }
 
