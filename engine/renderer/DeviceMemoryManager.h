@@ -66,7 +66,7 @@ public:
 	/*
 	Copies data from the host memory to a host visible buffer by mapping the buffer memory.
 	*/
-	void CopyDataToBuffer(BufferInformation& bufferInfo, void* data);
+	void CopyDataToBuffer(BufferInformation& bufferInfo, void* data, uint64_t size = 0);
 
 	template<typename T>
 	void ModifyBufferData(BufferInformation& bufferInfo, std::function<void(T*)> Mutator)

@@ -74,6 +74,20 @@ ShaderInfo GetStandardVertexShader(VkDevice device);
 ShaderInfo GetStandardFragmentShader(VkDevice device);
 
 /**
+ * @brief Creates a ShaderInfo struct from a standard line vertex shader file.
+ * @param device Vulkan handle to the logical device.
+ * @return ShaderInfo containing the shader module and the shader type.
+ */
+ShaderInfo GetStandardLineVertexShader(VkDevice device);
+
+/**
+ * @brief Creates a ShaderInfo struct from a standard line fragment shader file.
+ * @param device Vulkan handle to the logical device.
+ * @return ShaderInfo containing the shader module and the shader type.
+ */
+ShaderInfo GetStandardLineFragmentShader(VkDevice device);
+
+/**
  * @brief Creates a ShaderInfo struct from a standard ray generator shader file.
  * @param device Vulkan handle to the logical device.
  * @return ShaderInfo containing the shader module and the shader type.

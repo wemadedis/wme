@@ -11,6 +11,7 @@
 #include "rte/RTEConfig.hpp"
 #include "rte/RTEModule.hpp"
 #include "rte/RigidBody.hpp"
+#include "rte/PhysicsDebugDraw.h"
 
 // Forward declaration
 class RigidBody;
@@ -205,6 +206,9 @@ private:
      */
     uint32_t _maxSubSteps = 10;
 
+    //TODO: DOC THIS
+    PhysicsDebugDraw *_debugDraw = nullptr;
+
 public:
     /**
      * @brief Construct a new Physics Manager object
@@ -294,5 +298,7 @@ public:
      * @param framesPerSecond 
      */
     void SetFramesPerSecond(uint32_t framesPerSecond);
+
+    PhysicsDebugDraw *GetPhysicsDebugDraw();
 };
 } // namespace RTE::Physics

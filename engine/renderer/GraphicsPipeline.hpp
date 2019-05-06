@@ -21,6 +21,7 @@ private:
     VkPipelineShaderStageCreateInfo GetPipelineStageInfo(VkShaderStageFlagBits stage, ShaderInfo shader);
     VkPipelineVertexInputStateCreateInfo GetVertexInputInfo(VkVertexInputBindingDescription &binding, VkVertexInputAttributeDescription *attribute, uint32_t attributeDescriptionCount);
     VkPipelineInputAssemblyStateCreateInfo GetInputAssemblyCreateInfo();
+    VkPipelineInputAssemblyStateCreateInfo GetLineInputAssemblyCreateInfo();
     VkPipelineDepthStencilStateCreateInfo GetDepthStencilCreateInfo();
     VkViewport GetViewport();
     VkRect2D GetScissor();
@@ -31,6 +32,7 @@ private:
     VkPipelineColorBlendStateCreateInfo GetColorBlendCreateInfo(VkPipelineColorBlendAttachmentState &colorBlendAttachment);
     void CreatePipelineLayout();
     void CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader);
+    void CreateLinePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader);
 
     
     void CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, ShaderInfo rmiss, ShaderInfo srchit, ShaderInfo srmiss);
@@ -39,6 +41,9 @@ public:
                      VkExtent2D swapChainExtent, DescriptorManager *descriptorManager, 
                     Instance *instance, RenderPass* renderPass);
 
+    GraphicsPipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader, 
+                    VkExtent2D swapChainExtent, DescriptorManager *descriptorManager, 
+                    Instance *instance, RenderPass* renderPass, bool lines);
 
     GraphicsPipeline(ShaderInfo rayGen, 
                      ShaderInfo rchit, 

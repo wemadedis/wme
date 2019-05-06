@@ -103,6 +103,8 @@ PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
     _instance = this;
     SetFramesPerSecond(60);
     _physicsWorld = CreateDefaultDynamicsWorld();
+    _debugDraw = new PhysicsDebugDraw(_physicsWorld);
+    _physicsWorld->setDebugDrawer(dynamic_cast<btIDebugDraw*>(_debugDraw));
     _collisionPool = new GenericPool<Collision>(config.PhysicsConfig.MaxCollisionCount);
     SetGravity(_defaultGravity);
 }
@@ -213,6 +215,11 @@ void PhysicsManager::SetFramesPerSecond(uint32_t framesPerSecond)
 PhysicsManager *PhysicsManager::GetInstance()
 {
     return _instance;
+}
+
+PhysicsDebugDraw *PhysicsManager::GetPhysicsDebugDraw()
+{
+    return _debugDraw;
 }
 
 }; // namespace RTE::Physics

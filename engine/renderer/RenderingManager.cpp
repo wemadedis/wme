@@ -59,6 +59,7 @@ bool RenderingManager::RayTracingAvailable()
 
 void RenderingManager::FinalizeRenderer()
 {
+    _renderer->SetLineDebugDraw(Physics::PhysicsManager::GetInstance()->GetPhysicsDebugDraw());
     _renderer->Finalize();
 }
 

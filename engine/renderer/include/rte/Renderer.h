@@ -22,6 +22,7 @@
 #include "AccelerationStructureRT.h"
 
 #include "rte/GUIModule.h"
+#include "rte/LineDebugDrawModule.h"
 
 #ifdef NDEBUG
 const bool enableValidationLayers = false;
@@ -214,6 +215,14 @@ private:
     GUI::GUIModule *_guiModule = nullptr;
 
     /**
+     * @brief Line debug draw module used to draw lines.
+     */
+    LineDebugDrawModule *_lineModule = nullptr;
+
+    GraphicsPipeline *_linePipeline = nullptr;
+    BufferInformation _lineBuffer = {};
+
+    /**
      * @brief Called at renderer creation, instantiating the necessary structure before the user can upload rendering data.
      */
     void Initialize();
@@ -395,6 +404,8 @@ public:
      * @param camera The camera data.
      */
     void SetCamera(Camera camera);
+
+    void SetLineDebugDraw(LineDebugDrawModule *module);
 
 };
 

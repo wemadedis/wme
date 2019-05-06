@@ -166,7 +166,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     quadTrans.Pos.z = -5.0f;
     quadTrans.Scale = glm::vec3(10,10,10);
 
-
+/*
     auto quad2 = CreateQuadObject();
     auto quadMeshComp2 = GetComponent<MeshComponent>(quad2);
     auto quadTrans2 = quadMeshComp2->GetTransformComponent();
@@ -189,8 +189,8 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
         
         ImGui::End();
     });
-
+*/
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
-    meshComp->Initialize(transComp, monkey);
+    //meshComp->Initialize(transComp, monkey);
 
 }

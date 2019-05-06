@@ -5,3 +5,5 @@
 %~dp0glslangValidator -V %~dp0rt_shader.rmiss -o %~dp0rmiss.spv
 %~dp0glslangValidator -V %~dp0shadowray.rchit -o %~dp0srchit.spv
 %~dp0glslangValidator -V %~dp0shadowray.rmiss -o %~dp0srmiss.spv
+%~dp0glslangValidator -V %~dp0lineShader.vert -o %~dp0lineVert.spv
+%~dp0glslangValidator -V %~dp0lineShader.frag -o %~dp0lineFrag.spv

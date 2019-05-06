@@ -66,6 +66,17 @@ ShaderInfo GetStandardFragmentShader(VkDevice device)
     return {ShaderType::FRAGMENT, CreateShaderModule(ReadEngineAsset("shaders/frag.spv"), device)};
 }
 
+ShaderInfo GetStandardLineVertexShader(VkDevice device)
+{
+
+    return {ShaderType::VERTEX, CreateShaderModule(ReadEngineAsset("shaders/lineVert.spv"), device)};
+}
+
+ShaderInfo GetStandardLineFragmentShader(VkDevice device)
+{
+    return {ShaderType::FRAGMENT, CreateShaderModule(ReadEngineAsset("shaders/lineFrag.spv"), device)};
+}
+
 ShaderInfo GetStandardRayGenShader(VkDevice device)
 {
     return {ShaderType::RAYGEN, CreateShaderModule(ReadEngineAsset("shaders/rgen.spv"), device)};

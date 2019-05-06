@@ -46,7 +46,7 @@ glm::ivec2 Renderer::GetFrameSize()
 void Renderer::Initialize()
 {
     _instance = new Instance(_initInfo.extensions, _initInfo.BindingFunc, _initInfo.RayTracingOn);
-    _rtxOn = _instance->IsRayTracingCapable();
+    _rtxOn = _initInfo.RayTracingOn;
 
     _swapChain = new SwapChain(_instance, _initInfo.Width, _initInfo.Height);
     _renderPass = new RenderPass(_instance, _swapChain);
@@ -153,6 +153,23 @@ void Renderer::RecordRenderPass()
             vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline->GetLayout(), 0, 1, &_descriptorManager->GetDescriptorSets()[meshIndex], 0, nullptr);
 
             vkCmdDrawIndexed(cmdBuffer, static_cast<uint32_t>(mesh->IndexCount), 1, 0, 0, 0);
+        }
+        
+        if(_lineModule != nullptr)
+        {
+            auto lines = _lineModule->GetLineData();
+            if(_lineBuffer.buffer == VK_NULL_HANDLE)
+            {
+                _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, MemProps::HOST , sizeof(Line)*1000, _lineBuffer);
+            }
+            _deviceMemoryManager->CopyDataToBuffer(_lineBuffer, lines.data(), sizeof(Line)*lines.size());
+            vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _linePipeline->GetHandle());
+            vkCmdSetLineWidth(cmdBuffer, 2.0f);
+            VkDeviceSize offsets[] = {0};
+            vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline->GetLayout(), 0, 1, &_descriptorManager->GetDescriptorSets()[0], 0, nullptr);
+            vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &_lineBuffer.buffer, offsets);
+            vkCmdDraw(cmdBuffer, (uint32_t)lines.size()*2, 1, 0, 0);
+            _lineModule->ClearData();
         }
         _renderPass->NextSubpass(cmdBuffer, VK_SUBPASS_CONTENTS_INLINE);
         if (_guiModule != nullptr)
@@ -360,7 +377,18 @@ void Renderer::Finalize()
                                      _descriptorManager,
                                      _instance,
                                      _renderPass);
-
+    if(_lineModule != nullptr)
+    {
+        auto vertexShader = Utilities::GetStandardLineVertexShader(_instance->GetDevice());
+        auto fragmentShader = Utilities::GetStandardLineFragmentShader(_instance->GetDevice());
+        _linePipeline = new GraphicsPipeline(   vertexShader,
+                                                fragmentShader,
+                                                _swapChain->GetSwapChainExtent(),
+                                                _descriptorManager,
+                                                _instance,
+                                                _renderPass,
+                                                true); 
+    }
     if (_rtxOn)
     {
         auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
@@ -406,7 +434,6 @@ void Renderer::Finalize()
         });
 
         _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _swapChain->GetSwapChainImages()[_currentFrame].imageView, _globalUniformBuffer, _meshes, _meshInstances, _instanceBuffer, _textures);
-        //RecordRenderPassRT();
     }
 
     _descriptorManager->CreateDescriptorPool(_swapChain, _meshInstances);
@@ -488,12 +515,10 @@ void Renderer::Draw()
     VkCommandBuffer cmdBuffer;
     if (_renderMode == RenderMode::RASTERIZE)
     {
-        //RecordRenderPass();
         cmdBuffer = _commandBufferManager->GetCommandBuffer(imageIndex);
     }
     else
     {
-        //RecordRenderPassRT();
         cmdBuffer = _commandBufferManager->GetCommandBufferRT(imageIndex);
     }
 
@@ -626,6 +651,11 @@ void Renderer::SetCamera(Camera camera)
     _globalUniform.NearPlane = camera.NearPlane;
     _globalUniform.FarPlane = camera.FarPlane;
     UploadGlobalUniform();
+}
+
+void Renderer::SetLineDebugDraw(LineDebugDrawModule *module)
+{
+    _lineModule = module;
 }
 
 } // namespace RTE::Rendering

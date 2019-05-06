@@ -22,8 +22,7 @@ using FpSeconds = duration<float, seconds::period>;
 
 void RTECore::InitEngine()
 {
-    Modules = new std::vector<RTEModule *>();
-    Modules->push_back(new Physics::PhysicsManager(Config));
+
 }
 
 void RTECore::RunUpdateLoop()
@@ -72,16 +71,19 @@ RTECore::RTECore()
 {
     // todo: (danh) Sun 21/04 - 11:46: Add raytrace check
     bool raytracingAvailable = Rendering::RenderingManager::RayTracingAvailable();
-    Config.GraphicsConfig.UseRaytracing = raytracingAvailable;
+    Config.GraphicsConfig.UseRaytracing = Config.GraphicsConfig.UseRaytracing && raytracingAvailable;
 
     if (ConfigureGame != nullptr)
     {
         ConfigureGame(Config);
     }
 
-    ValidateConfiguration();
+    //ValidateConfiguration();
     InitEngine();
 
+    Modules = new std::vector<RTEModule *>();
+    
+    Modules->push_back(new Physics::PhysicsManager(Config));
     _windowManager = new Platform::WindowManager(Config);
     Rendering::RenderingManager *rm = new Rendering::RenderingManager(Config, *_windowManager);
     _windowManager->SetRenderingManager(rm);
