@@ -10,6 +10,7 @@ using namespace RTE;
 using namespace RTE::Runtime;
 using namespace RTE::StdComponents;
 using namespace RTE::Utilities;
+using namespace RTE::Physics;
 
 const RelativeFilePath BoxPath = "models/box.ply";
 const RelativeFilePath PlanePath = "models/plane.ply";
@@ -77,10 +78,10 @@ struct Plane
     MeshComponent *Mesh;
 };
 
-RTE::Physics::Collider MakeBoxCollider(glm::vec3 halfExtents)
+Collider MakeBoxCollider(glm::vec3 halfExtents)
 {
-    RTE::Physics::Collider boxCollider;
-    boxCollider.Type = RTE::Physics::ColliderType::BOX;
+    Collider boxCollider;
+    boxCollider.Type = ColliderType::BOX;
     boxCollider.Data.Box.HalfExtents = halfExtents;
     return boxCollider;
 }
@@ -94,36 +95,24 @@ StaticBox MakeStaticBox(Scene *scene, ComponentIds &comps)
     box.Mesh = scene->AddComponent<MeshComponent>(comps.MeshPoolId, box.Go);
 
     box.Trans->SetGUIDraw([=]() {
-        ImGui::Begin("THINGS");
+        ImGui::Begin("Box");
         ImGui::DragFloat("pos x", &box.Trans->Transform.Pos.x);
         ImGui::DragFloat("pos y", &box.Trans->Transform.Pos.y);
         ImGui::DragFloat("pos z", &box.Trans->Transform.Pos.z);
         ImGui::DragFloat("rot x", &box.Trans->Transform.Rot.x);
         ImGui::DragFloat("rot y", &box.Trans->Transform.Rot.y);
         ImGui::DragFloat("rot z", &box.Trans->Transform.Rot.z);
+        if (ImGui::Button("Set to 100"))
+        {
+            box.Trans->Transform.Pos.y = 100;
+        }
         ImGui::End();
     });
-    box.Trans->FromPos({0, 25, 0});
+    box.Trans->Initialize({0, 25, 6}, {0, 0, 0}, {1, 1, 1});
     box.Phys->Initialize(box.Trans, 5, {MakeBoxCollider({0.5, 0.5, 0.5})});
     box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsBluePath);
     return box;
 }
-
-// ControlledBox MakeControlledBox(Scene *scene, ComponentIds &comps)
-// {
-//     ControlledBox box;
-//     box.Go = scene->CreateGameObject();
-//     box.Trans = scene->AddComponent<TransformComponent>(comps.TransformPoolId, box.Go);
-//     box.Phys = scene->AddComponent<PhysicsComponent>(comps.PhysicsPoolId, box.Go);
-//     box.Mesh = scene->AddComponent<MeshComponent>(comps.MeshPoolId, box.Go);
-//     box.Controller = scene->AddComponent<PlayerController>(comps.PCPoolId, box.Go);
-
-//     box.Trans->Initialize({-5, 1, 0}, {0, 0, 0}, {1, 1, 1});
-//     box.Phys->Initialize(box.Trans, 1, {MakeBoxCollider(glm::vec3(1))});
-//     box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsRedPath);
-//     box.Controller->Initialize(box.Trans, box.Phys);
-//     return box;
-// }
 
 Plane MakePlane(Scene *scene, ComponentIds &comps)
 {
@@ -139,10 +128,20 @@ Plane MakeGround(Scene *scene, ComponentIds &comps)
 {
     Plane plane = MakePlane(scene, comps);
 
-    plane.Trans->Initialize({0, -0.5, 0}, {glm::radians(90.0f), 0, 0}, {1, 1, 1});
+    plane.Trans->SetGUIDraw([=]() {
+        ImGui::Begin("Ground");
+        ImGui::DragFloat("pos x", &plane.Trans->Transform.Pos.x);
+        ImGui::DragFloat("pos y", &plane.Trans->Transform.Pos.y);
+        ImGui::DragFloat("pos z", &plane.Trans->Transform.Pos.z);
+        ImGui::DragFloat("rot x", &plane.Trans->Transform.Rot.x);
+        ImGui::DragFloat("rot y", &plane.Trans->Transform.Rot.y);
+        ImGui::DragFloat("rot z", &plane.Trans->Transform.Rot.z);
+        ImGui::End();
+    });
+    plane.Trans->Initialize({0, -0.5, 6}, {30, 0, 0}, {1, 1, 1});
     plane.Phys->Initialize(plane.Trans, 0, {MakeBoxCollider({5, 1, 5})});
     plane.Phys->GetRigidBody()->SetKinematic(true);
-    
+
     plane.Mesh->Initialize(plane.Trans, AbsPlanePath, AbsCyanPath);
 
     return plane;
@@ -171,7 +170,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     GameObject *sun = scene->CreateGameObject();
     TransformComponent *sunTransform = scene->AddComponent<TransformComponent>(componentIds.TransformPoolId, sun);
     DirectionalLightComponent *sunLight = scene->AddComponent<DirectionalLightComponent>(componentIds.DirLightPoolId, sun);
-    sunTransform->Initialize({0, 0, 0}, {90, 45, 0}, {0, 0, 0});
+    sunTransform->Initialize({0, 0, 0}, {-45, -45, 0}, {0, 0, 0});
     sunLight->Initialize(sunTransform, Colors::White);
 
     // Camera
@@ -189,8 +188,8 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     //ControlledBox controlledBox = MakeControlledBox(scene, componentIds);
 
     // Background
-    //Plane bgPlane = MakeBackground(scene, componentIds);
 
     // Ground
     Plane groundPlane = MakeGround(scene, componentIds);
 }
+//Plane bgPlane = MakeBackground(scene, componentIds);

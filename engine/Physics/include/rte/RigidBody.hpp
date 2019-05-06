@@ -26,6 +26,8 @@ public:
      */
     RigidBody(btRigidBody *rigidBody, Rendering::Transform trans);
 
+    btRigidBody *GetRigidBody();
+
     glm::vec3 GetLinearVelocity();
     void SetLinearVelocity(glm::vec3 vel);
 
