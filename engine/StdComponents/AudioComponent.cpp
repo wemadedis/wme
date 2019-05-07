@@ -21,12 +21,27 @@ void AudioComponent::Initialize(
     _emitter->LoadSoundFromFile(filePath);
     _emitter->SetVolume(volume);
     _emitter->SetPlayingOffset(soundOffset);
+    state = State::Stopped;
 }
 
 
 void AudioComponent::Update(float deltaTime)
 {
+    using namespace RTE::Audio;
     _emitter->SetPosition(_transformComponent->Transform.Pos);
+
+    switch (state)
+    {
+        case State::Playing:
+            _emitter->Play();
+            break;
+        case State::Paused:
+            _emitter->Pause();
+            break;
+        case State::Stopped:
+            _emitter->Stop();
+            break;
+    }
 }
 
 Audio::Emitter *AudioComponent::GetEmitter()
@@ -36,17 +51,20 @@ Audio::Emitter *AudioComponent::GetEmitter()
 
 void AudioComponent::Play()
 {
-    _emitter->Play();
+    state = RTE::Audio::State::Playing;
+    // _emitter->Play();
 }
 
 void AudioComponent::Pause()
 {
-    _emitter->Pause();
+    state = RTE::Audio::State::Paused;
+    // _emitter->Pause();
 }
 
 void AudioComponent::Stop()
 {
-    _emitter->Stop();
+    state = RTE::Audio::State::Stopped;
+    // _emitter->Stop();
 }
 
 void AudioComponent::SetVolume(float volume)
@@ -57,6 +75,11 @@ void AudioComponent::SetVolume(float volume)
 Audio::State AudioComponent::GetState()
 {
     return _emitter->GetState();
+}
+
+void AudioComponent::SetLoop(bool loopBool)
+{
+    _emitter->SetLoop(loopBool);
 }
 
 }; // namespace RTE::StdComponents

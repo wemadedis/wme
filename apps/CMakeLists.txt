@@ -1,4 +1,4 @@
 add_subdirectory(physicsTest)
 add_subdirectory(audioTest)
 add_subdirectory(RenderingManagerTest)
-add_subdirectory(ReflectionTest)
+add_subdirectory(CornellBox)

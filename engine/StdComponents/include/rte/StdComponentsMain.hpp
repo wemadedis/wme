@@ -6,6 +6,9 @@
 #include "rte/CameraComponent.hpp"
 #include "rte/PointLightComponent.hpp"
 #include "rte/DirectionalLightComponent.hpp"
+#include "rte/AudioComponent.hpp"
+#include "rte/ListenerComponent.hpp"
+
 
 namespace RTE
 {

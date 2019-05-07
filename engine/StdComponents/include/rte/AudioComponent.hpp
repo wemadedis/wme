@@ -11,6 +11,7 @@ class AudioComponent : public Runtime::Component
 {
     Audio::Emitter *_emitter;
     TransformComponent *_transformComponent;
+    Audio::State state;
 public:
     AudioComponent();
     void Initialize(
@@ -22,6 +23,7 @@ public:
     Audio::Emitter *GetEmitter();
     Audio::State GetState();
     void SetVolume(float volume);
+    void SetLoop(bool loopBool);
     void Play();
     void Pause();
     void Stop();

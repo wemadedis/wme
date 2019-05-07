@@ -172,8 +172,7 @@ void Renderer::RecordRenderPass()
                 vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _linePipeline->GetHandle());
                 vkCmdSetLineWidth(cmdBuffer, 2.0f);
                 VkDeviceSize offsets[] = {0};
-                
-                vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline->GetLayout(), 0, 1, &_descriptorManager->GetDescriptorSets()[0], 0, nullptr);
+                vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _linePipeline->GetLayout(), 0, 1, &_descriptorManager->GetDescriptorSets()[0], 0, nullptr);
                 vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &_lineBuffer.buffer, offsets);
                 vkCmdDraw(cmdBuffer, (uint32_t)lines.size()*2, 1, 0, 0);
             }

@@ -99,11 +99,6 @@ private:
      */
     void UpdateMeshComponent(MeshComponent *meshComponent);
 
-    //TODO: Remove this?
-    /**
-     * @brief Uploads 2 primitives to the device: a quad and a cylinder. 
-     */
-    void UploadPrimitives();
 public:
     static const std::string QUAD;
     static const std::string CYLINDER;
