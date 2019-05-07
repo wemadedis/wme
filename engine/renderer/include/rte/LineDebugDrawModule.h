@@ -39,7 +39,7 @@ public:
 
     std::vector<Line> GetLineData()
     {
-        Draw();
+        RecordLines();
         return _lines;
     }
 
@@ -53,7 +53,7 @@ public:
         _lines.clear();
     }
 
-    virtual void Draw() = 0;
+    virtual void RecordLines() = 0;
 };
 
 }

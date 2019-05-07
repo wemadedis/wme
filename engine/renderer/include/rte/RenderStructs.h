@@ -251,6 +251,11 @@ struct Transform
         return TranslationMatrix() * RotationMatrix() * ScaleMatrix();
     }
 
+    glm::vec3 Transform::DirectionVector()
+    {
+        return glm::normalize(glm::vec3(ModelMatrix()*glm::vec4(0,0,1,0)));
+    }
+
     /**
      * @brief Constructor for the transform, taking all transform information.
      * @param pos The position of the transform

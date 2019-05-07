@@ -1,6 +1,5 @@
 #pragma once
 
-#include <chrono>
 #include <functional>
 #include <stdexcept>
 #include <string>
@@ -67,10 +66,6 @@ struct RendererInitInfo
      */
     SurfaceBindingFunc BindingFunc;
     /**
-     * @brief The maximum amount of frames per second to be rendered.
-     */
-    int MaxFPS = 60;
-    /**
      * @brief Boolean indicating if the renderer should enable ray tracing.
      */
     bool RayTracingOn = false;
@@ -78,10 +73,6 @@ struct RendererInitInfo
 
 class Renderer
 {
-
-typedef std::chrono::high_resolution_clock Clock;
-typedef std::chrono::time_point<std::chrono::steady_clock> TimePoint;
-using FpSeconds = std::chrono::duration<float, std::chrono::seconds::period>;
 
 private:
     /**
@@ -199,15 +190,6 @@ private:
      * @brief Buffer containing all data about instances created for the acceleration structure. Not allocated if ray tracing is disabled.
      */
     BufferInformation _instanceBuffer;
-
-    /**
-     * @brief Minimum time that needs to pass before presenting the next frame.
-     */
-    const float _minFrameTime;
-    /**
-     * @brief Last time stamp before issuing the next draw call.
-     */
-    TimePoint _lastFrameEnd;
 
     /**
      * @brief GUI module used to draw the graphical interface, if set by the user.

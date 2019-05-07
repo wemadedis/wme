@@ -166,12 +166,17 @@ void Renderer::RecordRenderPass()
             {
                 _deviceMemoryManager->CopyDataToBuffer(_lineBuffer, lines.data(), sizeof(Line)*lines.size());
             }
-            vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _linePipeline->GetHandle());
-            vkCmdSetLineWidth(cmdBuffer, 2.0f);
-            VkDeviceSize offsets[] = {0};
-            vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline->GetLayout(), 0, 1, &_descriptorManager->GetDescriptorSets()[0], 0, nullptr);
-            vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &_lineBuffer.buffer, offsets);
-            vkCmdDraw(cmdBuffer, (uint32_t)lines.size()*2, 1, 0, 0);
+            //Requires at least one mesh instance in order to draw the lines, as the drawing needs a descriptor set for the view & projection matrices.
+            if(_meshInstances.size() != 0)
+            {
+                vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _linePipeline->GetHandle());
+                vkCmdSetLineWidth(cmdBuffer, 2.0f);
+                VkDeviceSize offsets[] = {0};
+                
+                vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _pipeline->GetLayout(), 0, 1, &_descriptorManager->GetDescriptorSets()[0], 0, nullptr);
+                vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &_lineBuffer.buffer, offsets);
+                vkCmdDraw(cmdBuffer, (uint32_t)lines.size()*2, 1, 0, 0);
+            }
             _lineModule->ClearData();
         }
         _renderPass->NextSubpass(cmdBuffer, VK_SUBPASS_CONTENTS_INLINE);
@@ -343,12 +348,11 @@ void Renderer::CreateShaderBindingTable()
     });
 }
 
-Renderer::Renderer(RendererInitInfo info) : _minFrameTime(1.0f / info.MaxFPS)
+Renderer::Renderer(RendererInitInfo info)
 {
     _initInfo = info;
     _frameWidth = info.Width;
     _frameHeight = info.Height;
-    _lastFrameEnd = Clock::now();
     Initialize();
     if (_rtxOn)
     {
@@ -495,13 +499,7 @@ void Renderer::Draw()
     {
         RecordRenderPassRT();
     }
-
-    // // Delay until framerate hit
-    // float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
-    // while (time < _minFrameTime)
-    // {
-    //     time = std::chrono::duration_cast<FpSeconds>(Clock::now() - _lastFrameEnd).count();
-    // }
+    
     uint32_t imageIndex;
     VkResult result = vkAcquireNextImageKHR(_instance->GetDevice(), _swapChain->GetSwapChain(), std::numeric_limits<uint64_t>::max(), _imageAvailableSemaphores[_currentFrame], VK_NULL_HANDLE, &imageIndex);
 
@@ -568,7 +566,6 @@ void Renderer::Draw()
     {
         throw std::runtime_error("failed to present swap chain image!");
     }
-    _lastFrameEnd = Clock::now();
 }
 
 void Renderer::SetInstanceMaterial(MeshInstanceHandle instance, Material &mat)
