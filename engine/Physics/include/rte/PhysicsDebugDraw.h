@@ -52,7 +52,7 @@ public:
         return mode;
     }
 
-    void Draw()
+    void RecordLines()
     {
         _world->debugDrawWorld();
     }
