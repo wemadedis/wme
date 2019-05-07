@@ -231,13 +231,14 @@ void MonkeyTest(Runtime::Scene *scene, ComponentIds componentIds)
     Wall wallBottom = createWall(scene, componentIds,{glm::vec3(0.f, 10.f, 0.f), glm::vec3(0), glm::vec3(1)});
 
     Wall wallBack = createWall(scene, componentIds, {glm::vec3(0.f, 5.f, 5.f), glm::vec3(90, 0, 0), glm::vec3(1)});
-    Wall wallLeft = createWall(scene, componentIds, {glm::vec3(5.f, 5.f, 0.f), glm::vec3(90, 90, 0), glm::vec3(1)});
-    Wall wallRight = createWall(scene, componentIds, {glm::vec3(-5.f, 5.f, 0.f), glm::vec3(90, 90, 0), glm::vec3(1)});
+    Wall wallLeft = createWall(scene, componentIds, {glm::vec3(5.f, 5.f, 0.f), glm::vec3(0, 0, 90), glm::vec3(1)});
+    Wall wallRight = createWall(scene, componentIds, {glm::vec3(-5.f, 5.f, 0.f), glm::vec3(0, 0, 90), glm::vec3(1)});
     Wall wallFront = createWall(scene, componentIds, {glm::vec3(0.f, 5.f, -5.f), glm::vec3(90, 0, 0), glm::vec3(1)});
     
-    wallLeft.mc->Material.Reflectivity=1.f;
-    wallRight.mc->Material.Reflectivity=1.f;
+    wallLeft.mc->Material.Reflectivity=0.75f;
+    wallRight.mc->Material.Reflectivity=0.75f;
 }
+
 
 void OnGameStart(Runtime::SceneManager &sceneManager)
 {
