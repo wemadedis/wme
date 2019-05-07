@@ -8,9 +8,7 @@
 
 namespace RTE::Rendering
 {
-const std::string RenderingManager::QUAD = "quad";
-const std::string RenderingManager::CYLINDER = "cylinder";
-
+    
 RenderingManager *RenderingManager::_instance = nullptr;
 RenderingManager::RenderingManager(
     RTEConfig &config,

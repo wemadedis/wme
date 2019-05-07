@@ -6,7 +6,7 @@
 #include "rte/Utility.hpp"
 #include "imgui/imgui.h"
 #include "rte/RenderingManager.h"
-
+#include <string>
 class PlayerController : public RTE::Runtime::Component
 {
 
@@ -20,6 +20,7 @@ private:
     double dy;
     float dt = 0.0f;
     bool rtx = true;
+    float delta;
 public:
     void Initialize(
         RTE::StdComponents::TransformComponent *trans,
@@ -60,12 +61,14 @@ public:
         SetGUIDraw([=]() {
             ImGui::Begin("Inspector");
             ImGui::Checkbox("RTX ON:", &rtx);
+            ImGui::Text(std::to_string(1.0f/delta).c_str());
             ImGui::End();
         });
     }
 
     void Update(float deltaTime)
     {
+        delta = deltaTime;
         RTE::Rendering::RenderingManager::GetInstance()->SetRTEnabled(rtx);
         dt = deltaTime;
 

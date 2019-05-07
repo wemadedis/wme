@@ -100,8 +100,6 @@ private:
     void UpdateMeshComponent(MeshComponent *meshComponent);
 
 public:
-    static const std::string QUAD;
-    static const std::string CYLINDER;
 
     /**
      * @brief The constructor of the rendering manager.

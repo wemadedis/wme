@@ -17,7 +17,7 @@ void ConfigureGame(RTEConfig &config)
     config.WindowConfig.WindowWidth = 800;
     config.WindowConfig.WindowName = "Eggplant";
     config.GraphicsConfig.UseRaytracing = true;
-    config.AssetConfig.Meshes = {RTE::Utilities::GetFileFromAssets("models/monkey.ply")};
+    config.AssetConfig.Meshes = {RTE::Utilities::GetFileFromAssets("models/monkey.ply"), RTE::Utilities::GetFileFromAssets("models/plane.ply")};
     config.AssetConfig.Textures = {RTE::Utilities::GetFileFromAssets("textures/rte.png")};
 }
 
@@ -95,7 +95,7 @@ GameObject* CreateQuadObject()
     GameObject *gameObject = GO();
     auto tc = TransComp(gameObject);
     auto mc = MeshComp(gameObject);
-    mc->Initialize(tc, RenderingManager::QUAD, RTE::Utilities::GetFileFromAssets("textures/rte.png"));
+    mc->Initialize(tc, RTE::Utilities::GetFileFromAssets("models/plane.ply"), RTE::Utilities::GetFileFromAssets("textures/rte.png"));
     return gameObject;
 }
 
@@ -131,7 +131,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     GameObject *go2 = scene->CreateGameObject();
 
     CameraComponent *camera = scene->AddComponent<CameraComponent>(camIndex, go2);
-    camera->SetEnabled(true);
+    camera->BackgroundColor = Colors::White;
     TransformComponent *trans2 = scene->AddComponent<TransformComponent>(transIndex, go2);
     trans2->Transform.Pos = glm::vec3(0.0f, 0.0f, 10.0f);
     camera->Initialize(trans2);
@@ -141,14 +141,14 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     pc->Initialize(trans2, nullptr, camera);
 
 
-/*
+
     auto pointLight = CreatePointLight();
     auto plComp = GetComponent<PointLightComponent>(pointLight);
     auto plTrans = plComp->GetTransformComponent();
     plTrans->Transform.Pos = glm::vec3(0.0f, 1.0f, 2.0f);
     SetPointLightGUI("Point Light - Properties", plComp);
     SetTransformGUI("Point Light - Transform", plTrans);
-*/
+
 
 
     GameObject *go4 = scene->CreateGameObject();
@@ -164,16 +164,17 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
 
     quadMeshComp->Material.Reflectivity = 0.5f;
     quadTrans.Pos.z = -5.0f;
-    quadTrans.Scale = glm::vec3(10,10,10);
+    quadTrans.Rot.x = -90.0f;
+    quadTrans.Scale = glm::vec3(10.0,0.1,10.0);
 
-/*
+
     auto quad2 = CreateQuadObject();
     auto quadMeshComp2 = GetComponent<MeshComponent>(quad2);
     auto quadTrans2 = quadMeshComp2->GetTransformComponent();
 
     quadTrans2->Transform.Pos.y = -1.0f;
-    quadTrans2->Transform.Rot.x = -90.0f;
-    quadTrans2->Transform.Scale = glm::vec3(10,10,10);
+    
+    quadTrans2->Transform.Scale = glm::vec3(10.0,0.1,10.0);
     quadMeshComp2->Material.Reflectivity = 0.5f;
 
     quadMeshComp2->SetGUIDraw([=]() {
@@ -181,7 +182,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
         ImGui::DragFloat("Reflectivity", &quadMeshComp2->Material.Reflectivity, 0.002f, 0.0f, 1.0f);
         ImGui::DragFloat("Specular", &quadMeshComp2->Material.Specular, 0.002f, 0.0f, 1.0f);
         ImGui::DragFloat("Shininess", &quadMeshComp2->Material.Shininess, 0.1f, 0.0f, 1000.0f);
-        //ImGui::DragFloat("DirLight X Rot:", &trans4->Transform.Rot.x, 0.1f, 0.0f, 360.1f);
+        ImGui::DragFloat("DirLight X Rot:", &trans4->Transform.Rot.x, 0.1f, 0.0f, 360.1f);
         ImGui::DragFloat("Monkey X Rot:", &transComp->Transform.Scale.x, 0.1f, 0.0f, 360.1f);
         ImGui::DragFloat("Field of view:", &camera->FieldOfView, 0.1f, 0.0f, 180.0f);
         ImGui::DragFloat("Far plane:", &camera->FarPlane, 0.1f, 0.0f, 180.0f);
@@ -189,8 +190,8 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
         
         ImGui::End();
     });
-*/
+
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
-    //meshComp->Initialize(transComp, monkey);
+    meshComp->Initialize(transComp, monkey);
 
 }
