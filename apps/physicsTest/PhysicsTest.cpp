@@ -130,7 +130,7 @@ StaticBox MakeStaticBox(Scene *scene, ComponentIds &comps)
         ImGui::End();
     });
     box.Trans->Initialize({0, 10, 6}, {0, 0, 0}, {1, 1, 1});
-    box.Phys->Initialize(box.Trans, 0, {MakeBoxCollider({1, 1, 1})});
+    box.Phys->Initialize(box.Trans, 1, {MakeBoxCollider({1, 1, 1})});
     box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsBluePath);
     return box;
 }

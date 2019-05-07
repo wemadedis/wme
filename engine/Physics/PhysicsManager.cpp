@@ -104,7 +104,7 @@ PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
     SetFramesPerSecond(60);
     _physicsWorld = CreateDefaultDynamicsWorld();
     _debugDraw = new PhysicsDebugDraw(_physicsWorld);
-    _physicsWorld->setDebugDrawer(dynamic_cast<btIDebugDraw*>(_debugDraw));
+    _physicsWorld->setDebugDrawer(dynamic_cast<btIDebugDraw *>(_debugDraw));
     _collisionPool = new GenericPool<Collision>(config.PhysicsConfig.MaxCollisionCount);
     SetGravity(_defaultGravity);
 }
@@ -166,7 +166,9 @@ RigidBody *PhysicsManager::CreateRigidBody(
             GetCollisionShapeFromColliderType(col.Type, col.Data));
     }*/
 
-    btRigidBody::btRigidBodyConstructionInfo info(mass, motionState, colliderShape);
+    btVector3 fallInertia(0, 0, 0);
+    colliderShape->calculateLocalInertia(mass, fallInertia);
+    btRigidBody::btRigidBodyConstructionInfo info(mass, motionState, colliderShape, fallInertia);
     btRigidBody *bulletRigidBody = new btRigidBody(info);
 
     bulletRigidBody->setUserPointer(rigidBodyOwner);

@@ -27,6 +27,9 @@ void RTECore::RunUpdateLoop()
     float minFrameTime = 1.0f / Config.GraphicsConfig.FramesPerSecond;
     float deltaTime = 0.0f;
 
+    // std::vector<float> frameTimes;
+    // frameTimes.reserve(frameCount);
+    // for (int i = 0; i < frameCount; i++)
     while (_windowManager->ShouldClose() == false)
     {
         Platform::PollEvents();
@@ -43,8 +46,17 @@ void RTECore::RunUpdateLoop()
             time = std::chrono::duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
         }
         deltaTime = duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
+        // frameTimes.push_back(deltaTime);
         lastFrameEnd = Clock::now();
     }
+
+    // float sum = 0;
+    // for (int i = 0; i < frameTimes.size(); i++)
+    // {
+    // sum += frameTimes[i];
+    // }
+    // float avg = sum / frameCount;
+    // Debug(std::to_string(avg));
 }
 
 void RTECore::ValidateConfiguration()

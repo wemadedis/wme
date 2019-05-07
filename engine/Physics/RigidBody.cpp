@@ -10,6 +10,7 @@ namespace RTE::Physics
 RigidBody::RigidBody(btRigidBody *body, Rendering::Transform trans)
 {
     _rigidBody = body;
+    SetAngularFactor({1, 1, 1});
 
     _oldTransform = btTransform(Convert(trans.RotationMatrix()), Convert(trans.Pos));
 }
@@ -111,6 +112,13 @@ void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform)
 {
     // get phys transform
     btTransform physTransform = _rigidBody->getWorldTransform();
+
+    btQuaternion rot = physTransform.getRotation();
+
+    if (abs(rot.getX()) > 0.0001)
+    {
+        int a = 10;
+    }
 
     btVector3 dPos = physTransform.getOrigin() - _oldTransform.getOrigin();
     btQuaternion dRot = physTransform.getRotation() * _oldTransform.getRotation().inverse();
