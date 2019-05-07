@@ -35,6 +35,8 @@ public:
 
     void AddTorque(glm::vec3 torque);
 
+    void ClearForces();
+
     void SetKinematic(bool kinematic);
     bool GetKinematic();
     void SetStatic(bool isStatic);

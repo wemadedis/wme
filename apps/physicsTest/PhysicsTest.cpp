@@ -36,7 +36,7 @@ void ConfigureGame(RTEConfig &config)
     AbsCyanPath = GetFileFromAssets(CyanPath);
 
     config.WindowConfig.WindowName = "Physics Test";
-    config.GraphicsConfig.UseRaytracing = true;
+    config.GraphicsConfig.UseRaytracing = false;
     config.WindowConfig.WindowWidth = 1200;
     config.WindowConfig.WindowHeight = 800;
     config.AssetConfig.Meshes = {AbsBoxPath, AbsPlanePath};
@@ -106,10 +106,14 @@ StaticBox MakeStaticBox(Scene *scene, ComponentIds &comps)
         {
             box.Trans->Transform.Pos.y = 100;
         }
+        if (ImGui::Button("Clear forces"))
+        {
+            box.Phys->GetRigidBody()->ClearForces();
+        }
         ImGui::End();
     });
     box.Trans->Initialize({0, 25, 6}, {0, 0, 0}, {1, 1, 1});
-    box.Phys->Initialize(box.Trans, 5, {MakeBoxCollider({0.5, 0.5, 0.5})});
+    box.Phys->Initialize(box.Trans, 5, {MakeBoxCollider({1, 1, 1})});
     box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsBluePath);
     return box;
 }
@@ -140,7 +144,6 @@ Plane MakeGround(Scene *scene, ComponentIds &comps)
     });
     plane.Trans->Initialize({0, -0.5, 6}, {30, 0, 0}, {1, 1, 1});
     plane.Phys->Initialize(plane.Trans, 0, {MakeBoxCollider({5, 1, 5})});
-    plane.Phys->GetRigidBody()->SetKinematic(true);
 
     plane.Mesh->Initialize(plane.Trans, AbsPlanePath, AbsCyanPath);
 

@@ -110,14 +110,9 @@ void RigidBody::SetMass(float mass, glm::vec3 inertia)
 void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform)
 {
     // get phys transform
-    btTransform physTransform;
-    _rigidBody->getMotionState()->getWorldTransform(physTransform);
+    btTransform physTransform = _rigidBody->getWorldTransform();
 
     auto pos = physTransform.getOrigin();
-    Debug("OLD POS:");
-    Debug(std::to_string(pos.getX()));
-    Debug(std::to_string(pos.getY()));
-    Debug(std::to_string(pos.getZ()));
 
     btVector3 dPos = pos - _oldTransform.getOrigin();
     btQuaternion dRot = physTransform.getRotation() - _oldTransform.getRotation();
@@ -131,8 +126,7 @@ void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform)
 
     // Override physics change with real world change
     UpdateToPhysicsWorld(transform.Pos, transform.Rot);
-    _rigidBody->getMotionState()->getWorldTransform(physTransform);
-    _oldTransform = physTransform;
+    _oldTransform = _rigidBody->getWorldTransform();
 }
 
 void RigidBody::UpdateToPhysicsWorld(glm::vec3 position, glm::vec3 orientation)
@@ -146,6 +140,12 @@ void RigidBody::UpdateToPhysicsWorld(glm::vec3 position, glm::vec3 orientation)
                                           orientation.y,
                                           orientation.z));
     trans.setRotation(Convert(rotation));
-    _rigidBody->getMotionState()->setWorldTransform(trans);
+    _rigidBody->setWorldTransform(trans);
+}
+
+void RigidBody::ClearForces()
+{
+    _rigidBody->setLinearVelocity({0, 0, 0});
+    _rigidBody->setAngularVelocity({0, 0, 0});
 }
 } // namespace RTE::Physics
