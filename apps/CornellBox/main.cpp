@@ -12,8 +12,10 @@ const RelativeFilePath RedPath = "textures/red.png";
 const RelativeFilePath GreenPath = "textures/green.png";
 
 const RelativeFilePath BoxPath = "models/box1x1x1.ply";
-const RelativeFilePath MonkeyPath = "models/monkey.ply";
+const RelativeFilePath MonkeyPath = "models/monkey1x1x1.ply";
 const RelativeFilePath FloorPath = "models/floor.ply";
+
+const RelativeFilePath MonoSoundPath = "audio/mono.wav";
 
 AbsoluteFilePath AbsRedPath;
 AbsoluteFilePath AbsGreenPath;
@@ -22,6 +24,8 @@ AbsoluteFilePath AbsBoxPath;
 AbsoluteFilePath AbsMonkeyPath;
 AbsoluteFilePath AbsFloorPath;
 
+AbsoluteFilePath AbsMonoSoundPath;
+
 void ConfigureGame(RTEConfig &config)
 {
     AbsRedPath = GetFileFromAssets(RedPath);
@@ -29,6 +33,7 @@ void ConfigureGame(RTEConfig &config)
     AbsBoxPath = GetFileFromAssets(BoxPath);
     AbsMonkeyPath = GetFileFromAssets(MonkeyPath);
     AbsFloorPath = GetFileFromAssets(FloorPath);
+    AbsMonoSoundPath = GetFileFromAssets(MonoSoundPath);
 
     config.WindowConfig.WindowHeight = 720;
     config.WindowConfig.WindowWidth = 1280;
@@ -50,6 +55,8 @@ ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
     componentIds.playerControllerIndex = scene->DefineComponent<PlayerController, 1>();
     componentIds.cameraIndex = scene->DefineComponent<CameraComponent, 1>();
     componentIds.pointLightIndex = scene->DefineComponent<PointLightComponent, 1>();
+    componentIds.audioIndex = scene->DefineComponent<AudioComponent, 1>();
+    componentIds.listenerIndex = scene->DefineComponent<ListenerComponent, 1>();
 
     return componentIds;
 }
@@ -65,10 +72,12 @@ Player createPlayer(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform
     player.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, player.go);
     player.cc = scene->AddComponent<CameraComponent>(compIds.cameraIndex, player.go);
     player.pc = scene->AddComponent<PlayerController>(compIds.playerControllerIndex, player.go);
+    player.lc = scene->AddComponent<ListenerComponent>(compIds.listenerIndex, player.go);
 
     player.tc->Initialize(st.pos, st.rot, st.scale);
     player.cc->Initialize(player.tc);
     player.pc->Initialize(player.tc, player.cc);
+    player.lc->Initialize(player.tc);
 
     return player;
 }
@@ -82,9 +91,11 @@ Monkey createMonkey(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform
     monkey.go = scene->CreateGameObject();
     monkey.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, monkey.go);
     monkey.mc = scene->AddComponent<MeshComponent>(compIds.meshIndex, monkey.go);
+    monkey.ac = scene->AddComponent<AudioComponent>(compIds.audioIndex, monkey.go);
 
     monkey.tc->Initialize(st.pos, st.rot, st.scale);
     monkey.mc->Initialize(monkey.tc, AbsMonkeyPath, "");
+    monkey.ac->Initialize(AbsMonoSoundPath, monkey.tc);
 
     return monkey;
 }
@@ -201,10 +212,13 @@ void MonkeyTest(Runtime::Scene *scene, ComponentIds componentIds)
 
     // create monkey
     SimpleTransform monkeyTransform;
-    monkeyTransform.pos = glm::vec3(0.f,1.3f,3.f);
-    monkeyTransform.rot = glm::vec3(-90.f,180.f,0.f);
+    monkeyTransform.pos = glm::vec3(0.f,1.f,3.f);
+    // monkeyTransform.rot = glm::vec3(-90.f,180.f,0.f);
+    monkeyTransform.rot = glm::vec3(0);
     monkeyTransform.scale = glm::vec3(1);
     Monkey monkey = createMonkey(scene, componentIds, monkeyTransform);
+    monkey.ac->SetLoop(true);
+    monkey.ac->Play();
 
     // create light
     SimpleTransform lightTransform;
@@ -234,7 +248,8 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     sceneManager.SetActiveScene(scene);
     ComponentIds componentIds = initComponentPools(scene);
 
-    CornellBox(scene, componentIds);
+    // CornellBox(scene, componentIds);
+    MonkeyTest(scene, componentIds);
     
 
 }

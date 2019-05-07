@@ -21,7 +21,7 @@ void ListenerComponent::Update(float deltaTime)
     {
         using namespace RTE::Audio;
         Listener::SetPosition(_transformComponent->Transform.Pos);
-        Listener::SetDirection(_transformComponent->Transform.Rot);
+        Listener::SetDirection(-_transformComponent->Transform.DirectionVector());
     }
 }
 
