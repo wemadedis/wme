@@ -9,17 +9,17 @@
 namespace RTE::Rendering
 {
 
-SwapChain::SupportInformation SwapChain::GetSupportInformation(VkPhysicalDevice device, VkSurfaceKHR surface)
+SwapChain::SwapChainInformation SwapChain::GetSwapChainInformation(VkPhysicalDevice device, VkSurfaceKHR surface)
 {
-    SupportInformation details;
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &details._surfaceCapabilities);
+    SwapChainInformation swapChainInfo;
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(device, surface, &swapChainInfo._surfaceCapabilities);
     uint32_t formatCount;
     vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, nullptr);
 
     if (formatCount != 0)
     {
-        details._sufraceFormats.resize(formatCount);
-        vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, details._sufraceFormats.data());
+        swapChainInfo._sufraceFormats.resize(formatCount);
+        vkGetPhysicalDeviceSurfaceFormatsKHR(device, surface, &formatCount, swapChainInfo._sufraceFormats.data());
     }
 
     uint32_t presentModeCount;
@@ -27,17 +27,17 @@ SwapChain::SupportInformation SwapChain::GetSupportInformation(VkPhysicalDevice 
 
     if (presentModeCount != 0)
     {
-        details._presentModes.resize(presentModeCount);
-        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, details._presentModes.data());
+        swapChainInfo._presentModes.resize(presentModeCount);
+        vkGetPhysicalDeviceSurfacePresentModesKHR(device, surface, &presentModeCount, swapChainInfo._presentModes.data());
     }
-    return details;
+    return swapChainInfo;
 }
 
 
 //Where are my tuples?
 struct {VkSurfaceFormatKHR _surfaceFormat;
         VkPresentModeKHR _presentMode;
-        VkExtent2D _extent;} PickOptimalSwapChainProperties(SwapChain::SupportInformation &info, int framebufferWidth, int framebufferHeight)
+        VkExtent2D _extent;} PickOptimalSwapChainProperties(SwapChain::SwapChainInformation &info, int framebufferWidth, int framebufferHeight)
 {
     VkSurfaceFormatKHR optimalFormat;
     VkPresentModeKHR optimalPresentMode;
@@ -137,11 +137,11 @@ void SwapChain::CreateSwapChainImages()
 
 void SwapChain::CreateSwapChain()
 {
-    SupportInformation supportInfo = GetSupportInformation(_instance->GetPhysicalDevice(), _instance->GetSurface());
+    SwapChainInformation swapChainInfo = GetSwapChainInformation(_instance->GetPhysicalDevice(), _instance->GetSurface());
     
-    auto [capabilities, presentModes, extents] = supportInfo;
+    auto [capabilities, presentModes, extents] = swapChainInfo;
     
-    auto [optFormat, optPresentMode, optExtent] = PickOptimalSwapChainProperties(supportInfo, _framebufferWidth, _framebufferHeight);
+    auto [optFormat, optPresentMode, optExtent] = PickOptimalSwapChainProperties(swapChainInfo, _framebufferWidth, _framebufferHeight);
     
 
     //Specify minimum amount of images to function properly
@@ -185,10 +185,8 @@ void SwapChain::CreateSwapChain()
     createInfo.clipped = VK_TRUE;
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-    if (vkCreateSwapchainKHR(_instance->GetDevice(), &createInfo, nullptr, &_swapChain) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create swap chain!");
-    }
+    VkResult result = vkCreateSwapchainKHR(_instance->GetDevice(), &createInfo, nullptr, &_swapChain);
+    Utilities::CheckVkResult(result, "failed to create swap chain!");
     _swapChainImageFormat = optFormat.format;
     _swapChainExtent = optExtent;
     
@@ -210,12 +208,23 @@ SwapChain::~SwapChain()
     {
         vkDestroyFramebuffer(_instance->GetDevice(), _swapChainFramebuffers[imageIndex], nullptr);
         vkDestroyImageView(_instance->GetDevice(), _swapChainImages[imageIndex].imageView, nullptr);
+        _imageManager->DestroyImage(_depthImages[imageIndex]);
     }
     vkDestroySwapchainKHR(_instance->GetDevice(), _swapChain, nullptr);
 }
 
+void SwapChain::CreateDepthImages(ImageManager *imageManager)
+{
+    _depthImages.resize(_swapChainImageCount);
+    for(uint32_t imageIndex = 0; imageIndex < _swapChainImageCount; imageIndex++)
+    {
+        _depthImages[imageIndex] = imageManager->CreateDepthImage(_framebufferWidth, _framebufferHeight);
+    }
+}
+
 void SwapChain::CreateFramebuffers(RenderPass *renderPass, ImageManager *imageManager)
 {
+    _imageManager = imageManager;
     /*
      * If the window has been minimized or some exceptional situation arises where both
      * the width or heigh of the frame buffer are 0, set them to 1 to avoid a crash.
@@ -225,14 +234,14 @@ void SwapChain::CreateFramebuffers(RenderPass *renderPass, ImageManager *imageMa
         _framebufferWidth = 1;
         _framebufferHeight = 1;
     }
-    _depthImage = imageManager->CreateDepthImage(_framebufferWidth, _framebufferHeight);
+    CreateDepthImages(imageManager);
     
     _swapChainFramebuffers.resize(_swapChainImageCount);
-    for (size_t i = 0; i < _swapChainImageCount; i++)
+    for (size_t fbIndex = 0; fbIndex < _swapChainImageCount; fbIndex++)
     {
         std::array<VkImageView, 2> attachments = {
-            _swapChainImages[i].imageView,
-            _depthImage.imageView
+            _swapChainImages[fbIndex].imageView,
+            _depthImages[fbIndex].imageView
         };
 
         VkFramebufferCreateInfo framebufferInfo = {};
@@ -244,10 +253,8 @@ void SwapChain::CreateFramebuffers(RenderPass *renderPass, ImageManager *imageMa
         framebufferInfo.height = _swapChainExtent.height;
         framebufferInfo.layers = 1;
 
-        if (vkCreateFramebuffer(_instance->GetDevice(), &framebufferInfo, nullptr, &_swapChainFramebuffers[i]) != VK_SUCCESS)
-        {
-            throw std::runtime_error("failed to create framebuffer!");
-        }
+        VkResult result = vkCreateFramebuffer(_instance->GetDevice(), &framebufferInfo, nullptr, &_swapChainFramebuffers[fbIndex]);
+        Utilities::CheckVkResult(result, "Could not create the frame buffer!");
     }
 }
 
@@ -266,7 +273,7 @@ VkExtent2D SwapChain::GetSwapChainExtent()
     return _swapChainExtent;
 }
 
-std::vector<ImageInfo>& SwapChain::GetSwapChainImages()
+std::vector<ImageInfo> SwapChain::GetSwapChainImages()
 {
     return _swapChainImages;
 }
@@ -276,7 +283,7 @@ uint32_t SwapChain::GetSwapChainImageCount()
     return _swapChainImageCount;
 }
 
-std::vector<VkFramebuffer>& SwapChain::GetFramebuffers()
+std::vector<VkFramebuffer> SwapChain::GetFramebuffers()
 {
     return _swapChainFramebuffers;
 }

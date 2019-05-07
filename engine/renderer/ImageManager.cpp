@@ -54,8 +54,10 @@ void ImageManager::TransitionImageLayout(ImageInformation &imageInfo, VkFormat f
 
     VkPipelineStageFlags sourceStage;
     VkPipelineStageFlags destinationStage;
-    //For synchronization purposes: specifi which types of operations involvling the resource happens
-    //before the barrier, and which operations must wait on the barrier.
+    /**
+     * For synchronization purposes: specify which types of operations involving the resource happens
+     * before the barrier, and which operations must wait on the barrier.
+    */
     if (oldLayout == VK_IMAGE_LAYOUT_UNDEFINED && newLayout == VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL) {
         barrier.srcAccessMask = 0;
         barrier.dstAccessMask = VK_ACCESS_TRANSFER_WRITE_BIT;
@@ -142,6 +144,12 @@ ImageInfo ImageManager::CreateDepthImage(uint32_t width, uint32_t height) {
     VkImageView imgview = CreateImageView(imgInfo, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
     TransitionImageLayout(imgInfo, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     return {imgInfo, imgview};
+}
+
+void ImageManager::DestroyImage(ImageInfo &image)
+{
+    vkDestroyImageView(_instance->GetDevice(), image.imageView, nullptr);
+    _deviceMemoryManager->DestroyImage(image.imageInfo);
 }
 
 ImageManager::ImageManager(Instance *instance, CommandBufferManager *cmdbManager, DeviceMemoryManager *memoryManager)

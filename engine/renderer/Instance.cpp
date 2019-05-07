@@ -56,8 +56,8 @@ bool Instance::DeviceMeetsRequirements(VkPhysicalDevice device)
     bool swapChainAdequate = false;
     if (extensionsSupported)
     {
-        SwapChain::SupportInformation swapChainSupport = SwapChain::GetSupportInformation(device, _surface);
-        swapChainAdequate = !swapChainSupport._sufraceFormats.empty() && !swapChainSupport._presentModes.empty();
+        SwapChain::SwapChainInformation swapChainInfo = SwapChain::GetSwapChainInformation(device, _surface);
+        swapChainAdequate = !swapChainInfo._sufraceFormats.empty() && !swapChainInfo._presentModes.empty();
     }
 
     return indices.IsComplete() && extensionsSupported && swapChainAdequate && supportedFeatures.samplerAnisotropy;

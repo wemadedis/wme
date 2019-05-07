@@ -52,8 +52,16 @@ public:
 
     /**
      * @brief Creates a depth image to be used by the frame buffer.
+     * @param width The width of the depth image to be created.
+     * @param height The height of the depth image to be created.
      */
     ImageInfo CreateDepthImage(uint32_t width, uint32_t height);
+
+    /**
+     * @brief Deallocates the memory of the image and deletes the image view.
+     * @param image The ImageInfo object containing a valid image and an image view.
+     */
+    void DestroyImage(ImageInfo &image);
 
     /**
      * @brief Default constructor of the Image Manager.
