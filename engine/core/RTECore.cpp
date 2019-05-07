@@ -20,11 +20,6 @@ typedef high_resolution_clock Clock;
 typedef time_point<steady_clock> TimePoint;
 using FpSeconds = duration<float, seconds::period>;
 
-void RTECore::InitEngine()
-{
-
-}
-
 void RTECore::RunUpdateLoop()
 {
     using namespace Platform;
@@ -54,12 +49,8 @@ void RTECore::RunUpdateLoop()
 
 void RTECore::ValidateConfiguration()
 {
-    // todo: (danh) Sun 21/04 - 11:46: Add raytrace check
-    bool raytracingAvailable = true;
-    Config.GraphicsConfig.UseRaytracing = raytracingAvailable;
     // If the user requests raytracing while it is not available, crash
-    if (
-        Config.GraphicsConfig.UseRaytracing && raytracingAvailable == false)
+    if (Config.GraphicsConfig.UseRaytracing && Config.GraphicsConfig.RaytracingAvailable == false)
     {
         throw RTEException("Tried to use Raytracing when not available");
     }
@@ -69,20 +60,17 @@ void RTECore::ValidateConfiguration()
 RTEConfig RTECore::Config;
 RTECore::RTECore()
 {
-    // todo: (danh) Sun 21/04 - 11:46: Add raytrace check
-    bool raytracingAvailable = Rendering::RenderingManager::RayTracingAvailable();
-    Config.GraphicsConfig.UseRaytracing = Config.GraphicsConfig.UseRaytracing && raytracingAvailable;
+    Config.GraphicsConfig.RaytracingAvailable = Rendering::RenderingManager::RayTracingAvailable();
 
     if (ConfigureGame != nullptr)
     {
         ConfigureGame(Config);
     }
 
-    //ValidateConfiguration();
-    InitEngine();
+    ValidateConfiguration();
 
     Modules = new std::vector<RTEModule *>();
-    
+
     Modules->push_back(new Physics::PhysicsManager(Config));
     _windowManager = new Platform::WindowManager(Config);
     Rendering::RenderingManager *rm = new Rendering::RenderingManager(Config, *_windowManager);

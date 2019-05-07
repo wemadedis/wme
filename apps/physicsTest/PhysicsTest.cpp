@@ -102,18 +102,35 @@ StaticBox MakeStaticBox(Scene *scene, ComponentIds &comps)
         ImGui::DragFloat("rot x", &box.Trans->Transform.Rot.x);
         ImGui::DragFloat("rot y", &box.Trans->Transform.Rot.y);
         ImGui::DragFloat("rot z", &box.Trans->Transform.Rot.z);
-        if (ImGui::Button("Set to 100"))
+        if (ImGui::Button("Reset full"))
         {
-            box.Trans->Transform.Pos.y = 100;
+            box.Trans->Transform.Pos.x = 0;
+            box.Trans->Transform.Pos.y = 25;
+            box.Trans->Transform.Pos.z = 6;
+            box.Trans->Transform.Rot.x = 0;
+            box.Trans->Transform.Rot.y = 0;
+            box.Trans->Transform.Rot.z = 0;
+            box.Phys->GetRigidBody()->ClearForces();
+        }
+        if (ImGui::Button("Reset Pos"))
+        {
+            box.Trans->Transform.Pos.x = 0;
+            box.Trans->Transform.Pos.y = 25;
+            box.Trans->Transform.Pos.z = 6;
+            box.Phys->GetRigidBody()->ClearForces();
         }
         if (ImGui::Button("Clear forces"))
         {
             box.Phys->GetRigidBody()->ClearForces();
         }
+        if (ImGui::Button("Spin"))
+        {
+            box.Phys->GetRigidBody()->AddTorque({45, 0, 0});
+        }
         ImGui::End();
     });
-    box.Trans->Initialize({0, 25, 6}, {0, 0, 0}, {1, 1, 1});
-    box.Phys->Initialize(box.Trans, 5, {MakeBoxCollider({1, 1, 1})});
+    box.Trans->Initialize({0, 10, 6}, {0, 0, 0}, {1, 1, 1});
+    box.Phys->Initialize(box.Trans, 0, {MakeBoxCollider({1, 1, 1})});
     box.Mesh->Initialize(box.Trans, AbsBoxPath, AbsBluePath);
     return box;
 }

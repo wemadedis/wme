@@ -32,7 +32,6 @@ struct Vertex
      */
     glm::vec2 UV;
 
-
     /**
      * @brief Gets the Vulkan vertex input binding description, used by the renderer. 
      * @return Returns the corresponing binding description Vulkan struct.
@@ -106,7 +105,7 @@ struct Camera
      * @brief A 4x4 matrix used to transform vertices from global to camera space.
      */
     glm::mat4 ViewMatrix;
-    
+
     /**
      * @brief A 4x4 matrix used to  transform vertices from view to clip space.
      */
@@ -171,43 +170,43 @@ struct Mesh
 {
     /**
      * @brief Vector of vertices of the mesh.
-     */ 
+     */
     std::vector<Vertex> Vertices = {};
-    
+
     /**
      * @brief Vector of indices of the mesh.
-     */ 
+     */
     std::vector<uint16_t> Indices = {};
     //TODO: Remove dis as well?
     /**
      * @brief The material of the mesh.
-     */ 
+     */
     Material Material;
 };
 
 /**
  * @brief Struct containing transformation information of objects in a scene.
- */ 
+ */
 struct Transform
 {
     /**
      * @brief XYZ position.
-     */ 
+     */
     glm::vec3 Pos = glm::vec3(0);
-    
+
     /**
      * @brief XYZ rotation.
-     */ 
+     */
     glm::vec3 Rot = glm::vec3(0);
 
     /**
      * @brief XYZ scaling.
-     */ 
+     */
     glm::vec3 Scale = glm::vec3(1);
 
     /**
      * @brief Default constructor of the transform.
-     */ 
+     */
     Transform() : Transform(glm::vec3(0), glm::vec3(1), glm::vec3(0))
     {
     }
@@ -215,13 +214,13 @@ struct Transform
     /**
      * @brief Calculates the rotation matrix from the rotation of the transform.
      * @return Returns a 4x4 rotation matrix.
-     */ 
+     */
     glm::mat4 Transform::RotationMatrix()
     {
-        glm::mat4 rotZ = glm::eulerAngleZ(glm::radians(Rot.z));
-        glm::mat4 rotY = glm::eulerAngleY(glm::radians(Rot.y));
         glm::mat4 rotX = glm::eulerAngleX(glm::radians(Rot.x));
-        return rotZ * rotY * rotX;
+        glm::mat4 rotY = glm::eulerAngleY(glm::radians(Rot.y));
+        glm::mat4 rotZ = glm::eulerAngleZ(glm::radians(Rot.z));
+        return rotX * rotY * rotZ;
     }
 
     /**

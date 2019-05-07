@@ -112,13 +112,8 @@ void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform)
     // get phys transform
     btTransform physTransform = _rigidBody->getWorldTransform();
 
-    auto pos = physTransform.getOrigin();
-
-    btVector3 dPos = pos - _oldTransform.getOrigin();
-    btQuaternion dRot = physTransform.getRotation() - _oldTransform.getRotation();
-
-    // transform.Pos = Convert(physTransform.getOrigin());
-    // transform.Rot = glm::degrees(glm::eulerAngles(Convert(physTransform.getRotation())));
+    btVector3 dPos = physTransform.getOrigin() - _oldTransform.getOrigin();
+    btQuaternion dRot = physTransform.getRotation() * _oldTransform.getRotation().inverse();
 
     // Apply physics change to real transform
     transform.Pos += Convert(dPos);
