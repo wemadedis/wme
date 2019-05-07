@@ -10,9 +10,24 @@ namespace RTE::Rendering
  */
 class ImageManager
 {
+    /**
+     * @brief 
+     */
     Instance* _instance;
+
+    /**
+     * @brief Pointer to the command buffer manager 
+     */
     CommandBufferManager* _cmdbManager;
+    
+    /**
+     * @brief Pointer to the device memory manager 
+     */
     DeviceMemoryManager* _deviceMemoryManager;
+
+    /**
+     * @brief Handle to a sampler used for all textures.
+     */
     VkSampler _stdSampler;
 public:
 

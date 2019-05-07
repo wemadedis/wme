@@ -62,10 +62,10 @@ void Renderer::Initialize()
 
 MeshHandle Renderer::UploadMesh(Mesh &mesh)
 {
-    MeshInfo *info = new MeshInfo();
-    info->IndexCount = mesh.Indices.size();
-    info->VertexCount = mesh.Vertices.size();
-    size_t bufferSize = (size_t)(sizeof(mesh.Indices[0]) * info->IndexCount);
+    MeshInfo info ;
+    info.IndexCount = mesh.Indices.size();
+    info.VertexCount = mesh.Vertices.size();
+    size_t bufferSize = (size_t)(sizeof(mesh.Indices[0]) * info.IndexCount);
 
     if (bufferSize == 0)
     {
@@ -76,15 +76,15 @@ MeshHandle Renderer::UploadMesh(Mesh &mesh)
     BufferInformation stagingBuffer = {};
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, bufferSize, stagingBuffer);
     _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, (void *)mesh.Indices.data());
-    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::DEVICE, bufferSize, info->indexBuffer);
-    _deviceMemoryManager->CopyBuffer(stagingBuffer, info->indexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::DEVICE, bufferSize, info.indexBuffer);
+    _deviceMemoryManager->CopyBuffer(stagingBuffer, info.indexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
     _deviceMemoryManager->DestroyBuffer(stagingBuffer);
     //Vertices
     bufferSize = sizeof(mesh.Vertices[0]) * mesh.Vertices.size();
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, bufferSize, stagingBuffer);
     _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, (void *)mesh.Vertices.data());
-    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::DEVICE, bufferSize, info->vertexBuffer);
-    _deviceMemoryManager->CopyBuffer(stagingBuffer, info->vertexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
+    _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::DEVICE, bufferSize, info.vertexBuffer);
+    _deviceMemoryManager->CopyBuffer(stagingBuffer, info.vertexBuffer, bufferSize, _commandBufferManager->GetCommandPool(), _instance->GetGraphicsQueue());
 
     _deviceMemoryManager->DestroyBuffer(stagingBuffer);
 
@@ -142,7 +142,7 @@ void Renderer::RecordRenderPass()
 
         for (unsigned int meshIndex = 0; meshIndex < _meshInstances.size(); meshIndex++)
         {
-            MeshInfo *mesh = _meshes[_meshInstances[meshIndex].mesh];
+            MeshInfo *mesh = &_meshes[_meshInstances[meshIndex].mesh];
             VkBuffer vertexBuffers[] = {mesh->vertexBuffer.buffer};
             VkDeviceSize offsets[] = {0};
 

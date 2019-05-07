@@ -137,7 +137,7 @@ private:
     /**
      * @brief Vector of all mesh rendering data uploaded through the UploadMesh function. 
      */
-    std::vector<MeshInfo *> _meshes;
+    std::vector<MeshInfo> _meshes;
     /**
      * @brief Vector of all texture rendering data uploaded through the UploadTexture function. 
      */

@@ -203,7 +203,7 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
     Utilities::CheckVkResult(code, "Failed to create texture descriptor set layout (RT)!");
 }
 
-void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo*> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures)
+void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures)
 {
     _descriptorsetsRT.resize(4);
 
@@ -328,12 +328,12 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     _meshBufferInfos.resize(instances.size());
     for(uint32_t meshIndex = 0; meshIndex < meshes.size(); meshIndex++)
     {
-        bufferViewInfo.buffer = meshes[meshIndex]->indexBuffer.buffer;
+        bufferViewInfo.buffer = meshes[meshIndex].indexBuffer.buffer;
         bufferViewInfo.format = VK_FORMAT_R16_UINT;
         code = vkCreateBufferView(_instance->GetDevice(), &bufferViewInfo, nullptr, &_indexViews[meshIndex]);
         Utilities::CheckVkResult(code, "Could not create index buffer view!");
 
-        bufferViewInfo.buffer = meshes[meshIndex]->vertexBuffer.buffer;
+        bufferViewInfo.buffer = meshes[meshIndex].vertexBuffer.buffer;
         bufferViewInfo.format = VK_FORMAT_R32_SFLOAT;
         code = vkCreateBufferView(_instance->GetDevice(), &bufferViewInfo, nullptr, &_vertexViews[meshIndex]);
         Utilities::CheckVkResult(code, "Could not create vertex buffer view!");
