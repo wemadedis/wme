@@ -13,6 +13,8 @@ struct ComponentIds {
     ComponentId playerControllerIndex;
     ComponentId cameraIndex;
     ComponentId pointLightIndex;
+    ComponentId audioIndex;
+    ComponentId listenerIndex;
 };
 
 struct Player {
@@ -20,6 +22,7 @@ struct Player {
     TransformComponent *tc;
     CameraComponent *cc;
     PlayerController *pc;
+    ListenerComponent *lc;
 };
 
 struct SimpleTransform {
@@ -32,6 +35,7 @@ struct Monkey {
     GameObject *go;
     TransformComponent *tc;
     MeshComponent *mc;
+    AudioComponent *ac;
 };
 
 struct PLight {

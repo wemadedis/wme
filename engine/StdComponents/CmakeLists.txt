@@ -3,6 +3,7 @@ add_library(StdComponents
     TransformComponent
     PhysicsComponent
     AudioComponent
+    ListenerComponent
     CameraComponent
     PointLightComponent
     DirectionalLightComponent

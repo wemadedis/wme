@@ -55,7 +55,10 @@ void Emitter::SetPlayingOffset(float offset)
 
 void Emitter::Play()
 {
-    _sound.play();
+    if (_sound.getStatus() != sf::Sound::Status::Playing)
+    {
+        _sound.play();
+    }
     SetState(Playing);
 }
 
