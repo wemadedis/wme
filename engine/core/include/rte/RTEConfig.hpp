@@ -21,9 +21,10 @@ struct GraphicsConfig
      * @details
      * Default value of this variable is whether or not Raytracing is available.
      * Setting this to false when Raytracing is not available will result in an
-     * immediate error.
+     * error.
      */
     bool UseRaytracing = false;
+    bool RaytracingAvailable = false;
 };
 
 struct WindowConfig

@@ -24,7 +24,6 @@ class RTECore
 private:
     std::vector<RTEModule *> *Modules = nullptr;
     Platform::WindowManager *_windowManager = nullptr;
-    void InitEngine();
     void RunUpdateLoop();
     void ValidateConfiguration();
 
