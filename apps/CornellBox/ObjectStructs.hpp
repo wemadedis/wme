@@ -2,6 +2,7 @@
 
 #include "rte/RTE.hpp";
 #include "PlayerController.hpp"
+#include "Rotator.hpp"
 
 using namespace RTE::StdComponents;
 using namespace RTE::Runtime;
@@ -16,6 +17,7 @@ struct ComponentIds {
     ComponentId audioIndex;
     ComponentId listenerIndex;
     ComponentId directLightIndex;
+    ComponentId rotatorIndex;
 };
 
 struct Player {
@@ -37,6 +39,7 @@ struct Monkey {
     TransformComponent *tc;
     MeshComponent *mc;
     AudioComponent *ac;
+    Rotator *rc;
 };
 
 struct PLight {

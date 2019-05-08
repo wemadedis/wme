@@ -2,8 +2,6 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "glm/glm.hpp"
-#include "glm/gtx/euler_angles.hpp";
-
 #include "SFML/Audio.hpp"
 
 namespace RTE::Audio

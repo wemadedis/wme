@@ -28,16 +28,16 @@ public:
         _transform = trans;
         _camera = cam;
         _transform->Transform.Rot.x = glm::radians(-90.0f);
-        // SetGUIDraw([&](){
-        //     ImGui::Begin("Wazzup");
-        //     ImGui::DragFloat("X", &_transform->Transform.Rot.x, 0.1f, -0.1f, 360.1f);
-        //     ImGui::DragFloat("Y", &_transform->Transform.Rot.y, 0.1f, -0.1f, 360.1f);
-        //     ImGui::Text(std::to_string(oldX).c_str());
-        //     ImGui::Text(std::to_string(oldY).c_str());
-        //     ImGui::Text(std::to_string(dx).c_str());
-        //     ImGui::Text(std::to_string(dy).c_str());
-        //     ImGui::End();
-        // });
+        SetGUIDraw([&](){
+            ImGui::Begin("Wazzup");
+            ImGui::DragFloat("X", &_transform->Transform.Rot.x, 0.1f, -0.1f, 360.1f);
+            ImGui::DragFloat("Y", &_transform->Transform.Rot.y, 0.1f, -0.1f, 360.1f);
+            ImGui::Text(std::to_string(oldX).c_str());
+            ImGui::Text(std::to_string(oldY).c_str());
+            ImGui::Text(std::to_string(dx).c_str());
+            ImGui::Text(std::to_string(dy).c_str());
+            ImGui::End();
+        });
         RTE::Platform::WindowManager::GetInstance()->RegisterMousePositionCallback([&](double x, double y){
             if (cursor){
                 if(oldX != x)

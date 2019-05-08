@@ -1,5 +1,6 @@
 #include <rte/RTE.hpp>
 #include "PlayerController.hpp"
+#include "Rotator.hpp"
 #include "ObjectStructs.hpp"
 #include "rte/Utility.hpp"
 
@@ -50,9 +51,10 @@ ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
     using namespace StdComponents;
     ComponentIds componentIds;
 
-    componentIds.transformIndex = scene->DefineComponent<TransformComponent, 10010>();
-    componentIds.meshIndex = scene->DefineComponent<MeshComponent, 10010>();
-    componentIds.audioIndex = scene->DefineComponent<AudioComponent, 10010>();
+    componentIds.transformIndex = scene->DefineComponent<TransformComponent, 5010>();
+    componentIds.meshIndex = scene->DefineComponent<MeshComponent, 5010>();
+    componentIds.audioIndex = scene->DefineComponent<AudioComponent, 5010>();
+    componentIds.rotatorIndex = scene->DefineComponent<Rotator, 5010>();
 
     componentIds.playerControllerIndex = scene->DefineComponent<PlayerController, 1>();
     componentIds.cameraIndex = scene->DefineComponent<CameraComponent, 1>();
@@ -97,6 +99,24 @@ Monkey createMonkey(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform
 
     monkey.tc->Initialize(st.pos, st.rot, st.scale);
     monkey.mc->Initialize(monkey.tc, AbsMonkeyPath, "");
+
+    return monkey;
+}
+
+Monkey createRotatingMonkey(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform st)
+{
+    using namespace Runtime;
+    using namespace StdComponents;
+    Monkey monkey;
+
+    monkey.go = scene->CreateGameObject();
+    monkey.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, monkey.go);
+    monkey.mc = scene->AddComponent<MeshComponent>(compIds.meshIndex, monkey.go);
+    monkey.rc = scene->AddComponent<Rotator>(compIds.rotatorIndex, monkey.go);
+
+    monkey.tc->Initialize(st.pos, st.rot, st.scale);
+    monkey.mc->Initialize(monkey.tc, AbsMonkeyPath, "");
+    monkey.rc->Initialize(monkey.tc);
 
     return monkey;
 }
@@ -285,9 +305,9 @@ void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
     Box floor = createBox(scene, componentIds, floorSt);
 
     SimpleTransform monkeyTs;
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < 10; i++)
     {
-        for (int j = 0; j < 15; j++)
+        for (int j = 0; j < 10; j++)
         {
             monkeyTs = {
                 glm::vec3(2.5f*i, 1.f, 2.5f*j), // * Position
@@ -295,7 +315,9 @@ void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
                 glm::vec3(1) // * Scale
             };
 
-            Monkey monkey = createMonkey(scene, componentIds, monkeyTs);
+            Monkey monkey = createRotatingMonkey(scene, componentIds, monkeyTs);
+            // monkey.ac->Play();
+            monkey.rc->setRotMagnitude(glm::vec3(20.f, 20.f, 20.f));
         }
     }
 }
