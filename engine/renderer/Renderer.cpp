@@ -281,7 +281,8 @@ void Renderer::RecreateSwapChain()
                                      _swapChain->GetSwapChainExtent(),
                                      _descriptorManager,
                                      _instance,
-                                     _renderPass, false);
+                                     _renderPass, 
+                                     VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
     RecordRenderPass();
 }
@@ -378,7 +379,8 @@ void Renderer::Finalize()
                                      _swapChain->GetSwapChainExtent(),
                                      _descriptorManager,
                                      _instance,
-                                     _renderPass, false);
+                                     _renderPass,
+                                     VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
     if(_lineModule != nullptr)
     {
         auto vertexShader = Utilities::GetStandardLineVertexShader(_instance->GetDevice());
@@ -389,7 +391,7 @@ void Renderer::Finalize()
                                                 _descriptorManager,
                                                 _instance,
                                                 _renderPass,
-                                                true); 
+                                                VK_PRIMITIVE_TOPOLOGY_LINE_LIST); 
     }
     if (_rtxOn)
     {

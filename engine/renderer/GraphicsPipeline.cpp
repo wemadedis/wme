@@ -26,7 +26,7 @@ VkPipelineVertexInputStateCreateInfo GraphicsPipeline::GetVertexInputInfo(VkVert
     return vertexInputInfo;
 }
 
-VkPipelineInputAssemblyStateCreateInfo GraphicsPipeline::GetInputAssemblyCreateInfo()
+VkPipelineInputAssemblyStateCreateInfo GraphicsPipeline::GetInputAssemblyCreateInfo(VkPrimitiveTopology primitiveTopology)
 {
     VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
     inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
@@ -34,16 +34,6 @@ VkPipelineInputAssemblyStateCreateInfo GraphicsPipeline::GetInputAssemblyCreateI
     inputAssembly.primitiveRestartEnable = VK_FALSE;
     return inputAssembly;
 }
-
-VkPipelineInputAssemblyStateCreateInfo GraphicsPipeline::GetLineInputAssemblyCreateInfo()
-{
-    VkPipelineInputAssemblyStateCreateInfo inputAssembly = {};
-    inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
-    inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_LINE_LIST;
-    inputAssembly.primitiveRestartEnable = VK_FALSE;
-    return inputAssembly;
-}
-
 VkPipelineDepthStencilStateCreateInfo GraphicsPipeline::GetDepthStencilCreateInfo()
 {
     VkPipelineDepthStencilStateCreateInfo depthStencil = {};
@@ -166,7 +156,7 @@ void GraphicsPipeline::CreatePipelineLayout()
     }
 }
 
-void GraphicsPipeline::CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader)
+void GraphicsPipeline::CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader, VkPrimitiveTopology primitiveTopology)
 {
     VkPipelineShaderStageCreateInfo vShaderStageInfo = GetPipelineStageInfo(VK_SHADER_STAGE_VERTEX_BIT, vertexShader);
     VkPipelineShaderStageCreateInfo fShaderStageInfo = GetPipelineStageInfo(VK_SHADER_STAGE_FRAGMENT_BIT, fragmentShader);
@@ -176,7 +166,7 @@ void GraphicsPipeline::CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragme
     auto vBindDesc =  Vertex::getBindingDescription();
 
     VkPipelineVertexInputStateCreateInfo vInputInfo =  GetVertexInputInfo(vBindDesc, vAttDesc.data(), vAttDesc.size());
-    VkPipelineInputAssemblyStateCreateInfo inputAssembly = GetInputAssemblyCreateInfo();
+    VkPipelineInputAssemblyStateCreateInfo inputAssembly = GetInputAssemblyCreateInfo(primitiveTopology);
     VkViewport viewport = GetViewport();
     VkRect2D scissor = GetScissor();
     VkPipelineViewportStateCreateInfo viewportState = GetViewPortCreateInfo(viewport, scissor);
@@ -210,59 +200,6 @@ void GraphicsPipeline::CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragme
     if (vkCreateGraphicsPipelines(_instance->GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create graphics pipeline!");
-    }
-
-    //After creating the pipeline the modules can be deleted
-    //vkDestroyShaderModule(_device, _vertexShaderModule, nullptr);
-    //vkDestroyShaderModule(_device, _vertexShaderModule, nullptr);
-}
-
-void GraphicsPipeline::CreateLinePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader)
-{
-    VkPipelineShaderStageCreateInfo vShaderStageInfo = GetPipelineStageInfo(VK_SHADER_STAGE_VERTEX_BIT, vertexShader);
-    VkPipelineShaderStageCreateInfo fShaderStageInfo = GetPipelineStageInfo(VK_SHADER_STAGE_FRAGMENT_BIT, fragmentShader);
-    
-    VkPipelineShaderStageCreateInfo shaderStages[] = {vShaderStageInfo, fShaderStageInfo};
-    auto vAttDesc = Vertex::getAttributeDescriptions();
-    auto vBindDesc =  Vertex::getBindingDescription();
-
-    VkPipelineVertexInputStateCreateInfo vInputInfo =  GetVertexInputInfo(vBindDesc, vAttDesc.data(), vAttDesc.size());
-
-    VkPipelineInputAssemblyStateCreateInfo inputAssembly = GetLineInputAssemblyCreateInfo(); //THIS
-
-    VkViewport viewport = GetViewport();
-    VkRect2D scissor = GetScissor();
-    VkPipelineViewportStateCreateInfo viewportState = GetViewPortCreateInfo(viewport, scissor);
-    VkPipelineRasterizationStateCreateInfo rasterizer = GetRasterizerCreateInfo();
-    VkPipelineMultisampleStateCreateInfo multisampleInfo = GetMultisampleCreateInfo();
-    VkPipelineDepthStencilStateCreateInfo depthStencil = GetDepthStencilCreateInfo();
-    VkPipelineColorBlendAttachmentState colBlendAttachment = GetColorBlendAttachment();
-    VkPipelineColorBlendStateCreateInfo colorBlend = GetColorBlendCreateInfo(colBlendAttachment);
-
-
-    VkGraphicsPipelineCreateInfo pipelineInfo = {};
-    pipelineInfo.sType = VK_STRUCTURE_TYPE_GRAPHICS_PIPELINE_CREATE_INFO;
-    pipelineInfo.stageCount = 2;
-    pipelineInfo.pStages = shaderStages;
-    pipelineInfo.pVertexInputState = &vInputInfo;
-    pipelineInfo.pInputAssemblyState = &inputAssembly;
-    pipelineInfo.pViewportState = &viewportState;
-    pipelineInfo.pRasterizationState = &rasterizer;
-    pipelineInfo.pMultisampleState = &multisampleInfo;
-    pipelineInfo.pDepthStencilState = &depthStencil;
-    pipelineInfo.pColorBlendState = &colorBlend;
-    //pipelineInfo.pDynamicState = nullptr; // Optional
-    CreatePipelineLayout();
-    pipelineInfo.layout = _pipelineLayout;
-    pipelineInfo.renderPass = _renderPass->GetHandle();
-    pipelineInfo.subpass = 0;
-
-    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
-    pipelineInfo.basePipelineIndex = -1;			  // Optional
-
-    if (vkCreateGraphicsPipelines(_instance->GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create line graphics pipeline!");
     }
 
     //After creating the pipeline the modules can be deleted
@@ -333,20 +270,13 @@ GraphicsPipeline::GraphicsPipeline( ShaderInfo vertexShader,
                                     DescriptorManager *descriptorManager, 
                                     Instance *instance, 
                                     RenderPass* renderPass, 
-                                    bool lines)
+                                    VkPrimitiveTopology primitiveTopology)
 {
     _swapChainExtent = swapChainExtent;
     _descriptorManager = descriptorManager;
     _instance = instance;
     _renderPass = renderPass;
-    if(lines)
-    {
-        CreateLinePipeline(vertexShader, fragmentShader);
-    }
-    else
-    {
-        CreatePipeline(vertexShader, fragmentShader);
-    }
+    CreatePipeline(vertexShader, fragmentShader, primitiveTopology);
     
 }
 
