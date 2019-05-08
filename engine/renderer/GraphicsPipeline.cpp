@@ -328,21 +328,6 @@ void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, Sha
 }
 
 GraphicsPipeline::GraphicsPipeline( ShaderInfo vertexShader, 
-                                    ShaderInfo fragmentShader,
-                                    VkExtent2D swapChainExtent, 
-                                    DescriptorManager *descriptorManager, 
-                                    Instance *instance, 
-                                    RenderPass* renderPass) 
-{
-    _swapChainExtent = swapChainExtent;
-    _descriptorManager = descriptorManager;
-    _instance = instance;
-    _renderPass = renderPass;
-
-    CreatePipeline(vertexShader, fragmentShader);
-}
-
-GraphicsPipeline::GraphicsPipeline( ShaderInfo vertexShader, 
                                     ShaderInfo fragmentShader, 
                                     VkExtent2D swapChainExtent, 
                                     DescriptorManager *descriptorManager, 
@@ -354,8 +339,15 @@ GraphicsPipeline::GraphicsPipeline( ShaderInfo vertexShader,
     _descriptorManager = descriptorManager;
     _instance = instance;
     _renderPass = renderPass;
-
-    CreateLinePipeline(vertexShader, fragmentShader);
+    if(lines)
+    {
+        CreateLinePipeline(vertexShader, fragmentShader);
+    }
+    else
+    {
+        CreatePipeline(vertexShader, fragmentShader);
+    }
+    
 }
 
 GraphicsPipeline::GraphicsPipeline( ShaderInfo rayGen, 

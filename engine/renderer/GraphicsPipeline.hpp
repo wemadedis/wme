@@ -94,43 +94,48 @@ private:
      * @brief Creates the pipeline multisample info.
      */
     VkPipelineMultisampleStateCreateInfo GetMultisampleCreateInfo();
-    
+        
     /**
-     * @brief
-     */
-    VkPipelineColorBlendAttachmentState GetColorBlendAttachment();
-    
-    /**
-     * @brief
+     * @brief Defines the color blend attachment create info.
      */
     VkPipelineColorBlendStateCreateInfo GetColorBlendCreateInfo(VkPipelineColorBlendAttachmentState &colorBlendAttachment);
     
     /**
-     * @brief
+     * @brief Creates the color blend attachment.
+     */
+    VkPipelineColorBlendAttachmentState GetColorBlendAttachment();
+
+    /**
+     * @brief Creates the pipeline layout.
      */
     void CreatePipelineLayout();
     
     /**
-     * @brief
+     * @brief Creates the triangle rasterization pipeline.
+     * @param vertexShader The vertex shader info.
+     * @param fragmentShader The fragment shader info.
      */
     void CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader);
     
     /**
-     * @brief
+     * @brief Creates the line rasterization pipeline.
+     * @param vertexShader The vertex shader info.
+     * @param fragmentShader The fragment shader info.
      */
     void CreateLinePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader);
     
     /**
-     * @brief
+     * @brief Creates the ray tracing pipeline.
+     * @param rayGen The ray generation shader info.
+     * @param rchit The closest hit shader info.
+     * @param rmiss The ray miss shader info.
+     * @param srchit The shadow ray closest hit shader info.
+     * @param srmiss The shadow ray miss shader info.
      */
     void CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, ShaderInfo rmiss, ShaderInfo srchit, ShaderInfo srmiss);
 public:
     GraphicsPipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader, 
                      VkExtent2D swapChainExtent, DescriptorManager *descriptorManager, 
-                    Instance *instance, RenderPass* renderPass);
-
-    GraphicsPipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader, 
-                    VkExtent2D swapChainExtent, DescriptorManager *descriptorManager, 
                     Instance *instance, RenderPass* renderPass, bool lines);
 
     GraphicsPipeline(ShaderInfo rayGen, 

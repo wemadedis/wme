@@ -127,6 +127,8 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     TransformComponent *transComp = scene->AddComponent<TransformComponent>(transIndex, go);
     MeshComponent *meshComp = scene->AddComponent<MeshComponent>(meshIndex, go);
     transComp->Transform.Rot.x = -90;
+    auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
+    meshComp->Initialize(transComp, monkey);
 
     GameObject *go2 = scene->CreateGameObject();
 
@@ -191,7 +193,5 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
         ImGui::End();
     });
 
-    auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
-    meshComp->Initialize(transComp, monkey);
 
 }

@@ -162,21 +162,18 @@ void Renderer::RecordRenderPass()
             {
                 _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, MemProps::HOST , sizeof(Line)*1000, _lineBuffer);
             }
-            if(lines.size() != 0)
+            //Requires at least one mesh instance in order to draw the lines, as the drawing needs a descriptor set for the view & projection matrices.
+            if(lines.size() > 0 && _meshInstances.size() > 0)
             {
                 _deviceMemoryManager->CopyDataToBuffer(_lineBuffer, lines.data(), sizeof(Line)*lines.size());
-            }
-            //Requires at least one mesh instance in order to draw the lines, as the drawing needs a descriptor set for the view & projection matrices.
-            if(_meshInstances.size() != 0)
-            {
+                
                 vkCmdBindPipeline(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _linePipeline->GetHandle());
-                vkCmdSetLineWidth(cmdBuffer, 2.0f);
                 VkDeviceSize offsets[] = {0};
                 vkCmdBindDescriptorSets(cmdBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, _linePipeline->GetLayout(), 0, 1, &_descriptorManager->GetDescriptorSets()[0], 0, nullptr);
                 vkCmdBindVertexBuffers(cmdBuffer, 0, 1, &_lineBuffer.buffer, offsets);
                 vkCmdDraw(cmdBuffer, (uint32_t)lines.size()*2, 1, 0, 0);
+                _lineModule->ClearData();
             }
-            _lineModule->ClearData();
         }
         _renderPass->NextSubpass(cmdBuffer, VK_SUBPASS_CONTENTS_INLINE);
         if (_guiModule != nullptr)
@@ -284,7 +281,7 @@ void Renderer::RecreateSwapChain()
                                      _swapChain->GetSwapChainExtent(),
                                      _descriptorManager,
                                      _instance,
-                                     _renderPass);
+                                     _renderPass, false);
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
     RecordRenderPass();
 }
@@ -381,7 +378,7 @@ void Renderer::Finalize()
                                      _swapChain->GetSwapChainExtent(),
                                      _descriptorManager,
                                      _instance,
-                                     _renderPass);
+                                     _renderPass, false);
     if(_lineModule != nullptr)
     {
         auto vertexShader = Utilities::GetStandardLineVertexShader(_instance->GetDevice());
