@@ -11,7 +11,7 @@ namespace RTE::Rendering
 class ImageManager
 {
     /**
-     * @brief 
+     * @brief Pointer to the instance.
      */
     Instance* _instance;
 

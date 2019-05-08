@@ -10,7 +10,10 @@
 namespace RTE::Rendering
 {
 
-
+/**
+ * @brief Acceleration structure used for ray tracing. 
+ *        Encapsulates the creation of Vulkan bot and top level structures along with rebuilding the top structures when instance transforms change.
+ */
 class AccelerationStructure
 {
     /**
