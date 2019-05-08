@@ -10,6 +10,9 @@ namespace RTE::Rendering
 
 class GraphicsPipeline;
 
+/**
+ * @brief Abstraction of the Vulkan render pass. Exposes the begin and end renderpass functions used for recording draw commands.
+ */
 class RenderPass 
 {
 
