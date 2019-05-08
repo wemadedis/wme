@@ -24,6 +24,7 @@ layout(binding = 0) uniform InstanceUniformData {
     float Shininess;
     float Reflectivity;
     float Transparency;
+    vec4 Color;
     uint Texture;
     bool HasTexture;
 } InstanceUniform;

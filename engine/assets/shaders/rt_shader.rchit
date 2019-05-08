@@ -69,6 +69,7 @@ layout(set = 2, binding = 4) uniform InstanceUniformData
     float Shininess;
     float Reflectivity;
     float Transparency;
+    vec4 Color;
     uint Texture;
     bool HasTexture;
 } InstanceData[];
@@ -168,12 +169,12 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light, HitInfo hitInfo)
 
 vec4 CalculatePerLightShading(HitInfo hitinfo)
 {
-    vec4 color = vec4(InstanceData[gl_InstanceCustomIndexNV].Ambient);
+    vec4 color = InstanceData[gl_InstanceCustomIndexNV].Color*InstanceData[gl_InstanceCustomIndexNV].Ambient;
     
     if(InstanceData[gl_InstanceCustomIndexNV].HasTexture)
     {
         uint texIndex = InstanceData[gl_InstanceCustomIndexNV].Texture;
-        color *= texture(TextureSamplers[texIndex], hitValue.UV);    
+        color = texture(TextureSamplers[texIndex], hitValue.UV)*InstanceData[gl_InstanceCustomIndexNV].Ambient;
     }
     for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
     {

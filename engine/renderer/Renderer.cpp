@@ -127,7 +127,8 @@ void Renderer::BindTextureToMeshInstance(TextureHandle texture, MeshInstanceHand
     _meshInstances[instance].texture = texture;
     _deviceMemoryManager->ModifyBufferData<MeshInstanceUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshInstanceUniformData *data) {
         data->Texture = texture;
-        data->HasTexture = true;
+        //If set to empty texture do not use texture mapping, otherwise do.
+        data->HasTexture = texture != Renderer::EMPTY_TEXTURE;
     });
 }
 
@@ -480,6 +481,8 @@ void Renderer::Finalize()
 
 void Renderer::SetRenderMode(RenderMode mode)
 {
+    //If trying to set to ray tracing and it is not available, do not change to render mode.
+    if(mode == RenderMode::RAYTRACE && !_rtxOn) return;
     _renderMode = mode;
 }
 
@@ -574,7 +577,7 @@ void Renderer::SetInstanceMaterial(MeshInstanceHandle instance, Material &mat)
         data->Shininess = mat.Shininess;
         data->Reflectivity = mat.Reflectivity;
         data->Transparency = mat.Transparency;
-        //data->HasTexture = mat.Texture != null;
+        data->Color = mat.Color;
     });
 }
 

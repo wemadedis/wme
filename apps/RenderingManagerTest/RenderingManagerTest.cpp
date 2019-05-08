@@ -128,6 +128,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     MeshComponent *meshComp = scene->AddComponent<MeshComponent>(meshIndex, go);
     transComp->Transform.Rot.x = -90;
     auto monkey = RTE::Utilities::GetFileFromAssets("models/monkey.ply");
+    meshComp->Material.Color = Colors::Red;
     meshComp->Initialize(transComp, monkey);
 
     GameObject *go2 = scene->CreateGameObject();
@@ -189,7 +190,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
         ImGui::DragFloat("Field of view:", &camera->FieldOfView, 0.1f, 0.0f, 180.0f);
         ImGui::DragFloat("Far plane:", &camera->FarPlane, 0.1f, 0.0f, 180.0f);
         ImGui::DragFloat("Near plane:", &camera->NearPlane, 0.1f, 0.0f, 180.0f);
-        ImGui::ColorPicker4("Color", &camera->BackgroundColor[0]);
+        ImGui::ColorPicker4("Color", &meshComp->Material.Color[0]);
         
         ImGui::End();
     });

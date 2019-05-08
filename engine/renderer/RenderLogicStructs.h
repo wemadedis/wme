@@ -132,12 +132,16 @@ struct MeshInstanceUniformData
 	 * @brief Transparency of the surface. Used for ray tracing.
 	 */
     float Transparency = 0.0f;
+	int padding[2];
+	/**
+	 * @brief The color of the mesh.
+	 */
+	glm::vec4 Color = glm::vec4(0.5f);
 
 	/**
 	 * @brief Handle to the texture bound to this instance.
 	 */
 	TextureHandle Texture;
-
 	/**
 	 * @brief Boolean indicating if the instance has a texture bound to it.
 	 */

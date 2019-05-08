@@ -158,7 +158,7 @@ struct Material
     float Transparency = 0.0f;
 
     //TODO: We currently do not use color, and texture should be defined by path (for the rendering manager). Remove these?
-    //glm::vec4 Color;
+    glm::vec4 Color;
 
     //Texture *Texture;
 };
