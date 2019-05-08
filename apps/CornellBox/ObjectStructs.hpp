@@ -15,6 +15,7 @@ struct ComponentIds {
     ComponentId pointLightIndex;
     ComponentId audioIndex;
     ComponentId listenerIndex;
+    ComponentId directLightIndex;
 };
 
 struct Player {
@@ -56,7 +57,8 @@ struct Wall {
     MeshComponent *mc;
 };
 
-struct DirectionalLight {
+struct DirectLight {
     GameObject *go;
-    
+    TransformComponent *tc;
+    DirectionalLightComponent *dlc;
 };

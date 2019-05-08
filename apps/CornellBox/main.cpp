@@ -50,13 +50,16 @@ ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
     using namespace StdComponents;
     ComponentIds componentIds;
 
-    componentIds.transformIndex = scene->DefineComponent<TransformComponent, 10>();
-    componentIds.meshIndex = scene->DefineComponent<MeshComponent, 10>();
+    componentIds.transformIndex = scene->DefineComponent<TransformComponent, 10010>();
+    componentIds.meshIndex = scene->DefineComponent<MeshComponent, 10010>();
+    componentIds.audioIndex = scene->DefineComponent<AudioComponent, 10010>();
+
     componentIds.playerControllerIndex = scene->DefineComponent<PlayerController, 1>();
     componentIds.cameraIndex = scene->DefineComponent<CameraComponent, 1>();
-    componentIds.pointLightIndex = scene->DefineComponent<PointLightComponent, 1>();
-    componentIds.audioIndex = scene->DefineComponent<AudioComponent, 1>();
     componentIds.listenerIndex = scene->DefineComponent<ListenerComponent, 1>();
+    
+    componentIds.pointLightIndex = scene->DefineComponent<PointLightComponent, 1>();
+    componentIds.directLightIndex = scene->DefineComponent<DirectionalLightComponent, 1>();
 
     return componentIds;
 }
@@ -83,6 +86,22 @@ Player createPlayer(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform
 }
 
 Monkey createMonkey(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform st)
+{
+    using namespace Runtime;
+    using namespace StdComponents;
+    Monkey monkey;
+
+    monkey.go = scene->CreateGameObject();
+    monkey.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, monkey.go);
+    monkey.mc = scene->AddComponent<MeshComponent>(compIds.meshIndex, monkey.go);
+
+    monkey.tc->Initialize(st.pos, st.rot, st.scale);
+    monkey.mc->Initialize(monkey.tc, AbsMonkeyPath, "");
+
+    return monkey;
+}
+
+Monkey createSoundMonkey(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform st)
 {
     using namespace Runtime;
     using namespace StdComponents;
@@ -150,6 +169,22 @@ Wall createWall(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform ts)
     return wall;
 }
 
+DirectLight createDirectLight(Runtime::Scene *scene, ComponentIds compIds, SimpleTransform st)
+{
+    using namespace Runtime;
+    using namespace StdComponents;
+    DirectLight directLight;
+
+    directLight.go = scene->CreateGameObject();
+    directLight.tc = scene->AddComponent<TransformComponent>(compIds.transformIndex, directLight.go);
+    directLight.dlc = scene->AddComponent<DirectionalLightComponent>(compIds.directLightIndex, directLight.go);
+
+    directLight.tc->Initialize(st.pos, st.rot, st.scale);
+    directLight.dlc->Initialize(directLight.tc, Colors::White);
+
+    return directLight;
+}
+
 void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
 {
     using namespace Runtime;
@@ -204,7 +239,7 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
     box2.mc->Material.Reflectivity = 0.15f;
 }
 
-void MonkeyTest(Runtime::Scene *scene, ComponentIds componentIds)
+void MonkeySoundTest(Runtime::Scene *scene, ComponentIds componentIds)
 {
     // create player + camera
     SimpleTransform playerSt = {glm::vec3(0.f, 1.f, -4.f), glm::vec3(0.f, 180.f, 0.f), glm::vec3(1)};
@@ -216,7 +251,7 @@ void MonkeyTest(Runtime::Scene *scene, ComponentIds componentIds)
     // monkeyTransform.rot = glm::vec3(-90.f,180.f,0.f);
     monkeyTransform.rot = glm::vec3(0);
     monkeyTransform.scale = glm::vec3(1);
-    Monkey monkey = createMonkey(scene, componentIds, monkeyTransform);
+    Monkey monkey = createSoundMonkey(scene, componentIds, monkeyTransform);
     monkey.ac->SetLoop(true);
     monkey.ac->Play();
 
@@ -239,6 +274,32 @@ void MonkeyTest(Runtime::Scene *scene, ComponentIds componentIds)
     wallRight.mc->Material.Reflectivity=0.75f;
 }
 
+void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
+{
+    SimpleTransform playerSt = {glm::vec3(0.f, 1.f, -4.f), glm::vec3(0.f, 180.f, 0.f), glm::vec3(1)};
+    Player player = createPlayer(scene, componentIds, playerSt);
+
+    DirectLight directLight = createDirectLight(scene, componentIds, {glm::vec3(0), glm::vec3(-90.f, 0.f, 0.f), glm::vec3(1)});
+
+    SimpleTransform floorSt = {glm::vec3(0), glm::vec3(0), glm::vec3(300.f, 0.1f, 300.f)};
+    Box floor = createBox(scene, componentIds, floorSt);
+
+    SimpleTransform monkeyTs;
+    for (int i = 0; i < 12; i++)
+    {
+        for (int j = 0; j < 15; j++)
+        {
+            monkeyTs = {
+                glm::vec3(2.5f*i, 1.f, 2.5f*j), // * Position
+                glm::vec3(0), // * Rotation
+                glm::vec3(1) // * Scale
+            };
+
+            Monkey monkey = createMonkey(scene, componentIds, monkeyTs);
+        }
+    }
+}
+
 
 void OnGameStart(Runtime::SceneManager &sceneManager)
 {
@@ -250,7 +311,8 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     ComponentIds componentIds = initComponentPools(scene);
 
     // CornellBox(scene, componentIds);
-    MonkeyTest(scene, componentIds);
+    // MonkeySoundTest(scene, componentIds);
+    LotsOfMonkeys(scene, componentIds);
     
 
 }
