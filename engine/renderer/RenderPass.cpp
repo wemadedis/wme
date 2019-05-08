@@ -62,18 +62,6 @@ VkSubpassDescription RenderPass::GetSubpassDescription(VkAttachmentReference &co
     return subpass;
 }
 
-VkSubpassDependency RenderPass::GetSubpassDependency()
-{
-    VkSubpassDependency dependency = {};
-    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-    dependency.dstSubpass = 0;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.srcAccessMask = 0;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_READ_BIT | VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    return dependency;
-}
-
 void RenderPass::CreateRenderPass()
 {
     VkAttachmentDescription colorAttachment = GetColorAttachment();
@@ -82,8 +70,7 @@ void RenderPass::CreateRenderPass()
     VkAttachmentReference colorAttachmentReference = GetColorAttachmentReference();
     VkAttachmentReference depthAttachmentReference = GetDepthAttachmentReference();
     VkSubpassDescription subpassDescription = GetSubpassDescription(colorAttachmentReference, depthAttachmentReference);
-    VkSubpassDescription subpassDescription2 = GetSubpassDescription(colorAttachmentReference, depthAttachmentReference);
-    VkSubpassDescription descriptions[2] = { subpassDescription, subpassDescription2};
+    VkSubpassDescription subpasses[2] = { subpassDescription, subpassDescription};
     
     std::vector<VkSubpassDependency> dependencies(2);
 
@@ -112,14 +99,12 @@ void RenderPass::CreateRenderPass()
     renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
     renderPassInfo.pAttachments = attachments.data();
     renderPassInfo.subpassCount = 2;
-    renderPassInfo.pSubpasses = descriptions;
+    renderPassInfo.pSubpasses = subpasses;
     renderPassInfo.dependencyCount = 2;
     renderPassInfo.pDependencies = dependencies.data();
 
-    if (vkCreateRenderPass(_instance->GetDevice(), &renderPassInfo, nullptr, &_vkrpHandle) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create render pass!");
-    }
+    VkResult code = vkCreateRenderPass(_instance->GetDevice(), &renderPassInfo, nullptr, &_vkrpHandle);
+    Utilities::CheckVkResult(code, "Failed to create the render pass!");
 }
 
 RenderPass::RenderPass(Instance *instance, SwapChain *swapChain)

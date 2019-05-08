@@ -183,7 +183,6 @@ void Renderer::RecordRenderPass()
         {
             _guiModule->Draw(cmdBuffer, _frameWidth, _frameHeight);
         }
-
         _renderPass->EndRenderPass(cmdBuffer);
     }
 }
