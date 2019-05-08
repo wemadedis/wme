@@ -193,7 +193,7 @@ void Renderer::RecordRenderPassRT()
 
     for (uint32_t bufferIndex = 0; bufferIndex < _commandBufferManager->GetCommandBufferCount(); bufferIndex++)
     {
-        const VkCommandBuffer commandBuffer = _commandBufferManager->GetCommandBufferRT(bufferIndex);
+        const VkCommandBuffer commandBuffer = _commandBufferManager->GetCommandBuffer(bufferIndex);
         _renderPass->BeginRenderPass(commandBuffer, _swapChain->GetFramebuffers()[bufferIndex], _globalUniform.ClearColor);
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetHandle());
@@ -245,12 +245,10 @@ void Renderer::CreateSyncObjects()
 void Renderer::CleanupSwapChain()
 {
     _commandBufferManager->DeallocateCommandBuffers();
-    if (_rtxOn)
-    {
-        _commandBufferManager->DeallocateCommandBuffersRT();
-    }
 
     delete _pipeline;
+
+    if(_lineModule != nullptr) delete _linePipeline;
 
     delete _renderPass;
 
@@ -266,10 +264,6 @@ void Renderer::RecreateSwapChain()
 
     CleanupSwapChain();
     _commandBufferManager->AllocateCommandBuffers();
-    if (_rtxOn)
-    {
-        _commandBufferManager->AllocateCommandBuffersRT();
-    }
 
     _swapChain = new SwapChain(_instance, width, height);
     _renderPass = new RenderPass(_instance, _swapChain);
@@ -284,6 +278,20 @@ void Renderer::RecreateSwapChain()
                                      _instance,
                                      _renderPass, 
                                      VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST);
+
+    if(_lineModule != nullptr)
+    {
+        vertexShader = Utilities::GetStandardLineVertexShader(_instance->GetDevice());
+        fragmentShader = Utilities::GetStandardLineFragmentShader(_instance->GetDevice());
+        _linePipeline = new GraphicsPipeline(   vertexShader,
+                                                fragmentShader,
+                                                _swapChain->GetSwapChainExtent(),
+                                                _descriptorManager,
+                                                _instance,
+                                                _renderPass,
+                                                VK_PRIMITIVE_TOPOLOGY_LINE_LIST); 
+    } 
+
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
     RecordRenderPass();
 }
@@ -520,7 +528,7 @@ void Renderer::Draw()
     }
     else
     {
-        cmdBuffer = _commandBufferManager->GetCommandBufferRT(imageIndex);
+        cmdBuffer = _commandBufferManager->GetCommandBuffer(imageIndex);
     }
 
     VkSemaphore waitSemaphores[] = {_imageAvailableSemaphores[_currentFrame]};
