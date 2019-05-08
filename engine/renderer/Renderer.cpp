@@ -441,7 +441,7 @@ void Renderer::Finalize()
         _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _swapChain->GetSwapChainImages()[_currentFrame].imageView, _globalUniformBuffer, _meshes, _meshInstances, _instanceBuffer, _textures);
     }
 
-    _descriptorManager->CreateDescriptorPool(_swapChain, _meshInstances);
+    _descriptorManager->CreateDescriptorPools(_swapChain, _meshInstances);
     _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
     UploadGlobalUniform();
 

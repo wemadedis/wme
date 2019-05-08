@@ -136,7 +136,7 @@ struct MeshInstanceUniformData
 	/**
 	 * @brief The color of the mesh.
 	 */
-	glm::vec4 Color = glm::vec4(0.5f);
+	glm::vec4 Color = glm::vec4(1.0f);
 
 	/**
 	 * @brief Handle to the texture bound to this instance.

@@ -26,42 +26,42 @@ class DescriptorManager
     VkDescriptorSetLayout _layout;
     
     /**
-     * @brief 
+     * @brief Vulkan handle to the descriptor pool used by a GUI module.
      */
     VkDescriptorPool _pool;
     
     /**
-     * @brief
+     * @brief Vulkan handles to the descriptor pool used for meshes (rasterization).
      */
     std::vector<VkDescriptorPool> _pools;
     
     /**
-     * @brief
+     * @brief Vulkan handles to the descriptor sets used for meshes (rasterization).
      */
     std::vector<VkDescriptorSet> _descriptorSets;
 
     /**
-     * @brief
+     * @brief Vulkan handles to descriptor set layouts (ray tracing).
      */
     std::vector<VkDescriptorSetLayout> _layoutsRT;
     
     /**
-     * @brief
+     * @brief Vulkan handle to the descriptor pool (ray tracing).
      */
     VkDescriptorPool _poolRT;
 
     /**
-     * @brief
+     * @brief Vulkan handles to descriptor sets (ray tracing).
      */
     std::vector<VkDescriptorSet> _descriptorsetsRT;
 
     /**
-     * @brief
+     * @brief Acceleration structure descriptor set write info.
      */
     VkWriteDescriptorSetAccelerationStructureNV _descriptorAccelerationStructureInfo = {};
 
     /**
-     * @brief
+     * @brief Image descriptor info.
      */
     VkDescriptorImageInfo _descriptorOutputImageInfo = {};
 
@@ -102,62 +102,71 @@ class DescriptorManager
 public:
 
     /**
-     * @brief
+     * @brief The Descriptor Manager constructor.
+     * @param instance Pointer to the instance.
      */
     DescriptorManager(Instance *instance);
 
     /**
-     * @brief
+     * @brief Creates the descriptor pools used for rasterization.
+     * @param swapChain Pointer to the swap chain.
+     * @param instances Mesh instances used for rendering.
      */
-    void CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInstance> &meshes);
+    void CreateDescriptorPools(SwapChain *swapChain, std::vector<MeshInstance> &instances);
 
     /**
-     * @brief
+     * @brief Creates the descriptor set layout (rasterization).
      */
     void CreateDescriptorSetLayout();
 
     /**
-     * @brief
+     * @brief Creates the descriptor set layout (ray tracing).
+     * @param meshCount The total number of meshes.
+     * @instanceCount The total number of instances.
+     * @textureCount The total number of textures.
      */
     void CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount, uint32_t textureCount);
 
     /**
-     * @brief
+     * @brief Creates the descriptor set (ray tracing).
      */
     void CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures);
     
     /**
-     * @brief
+     * @brief Creates the descriptor sets (rasterization)
+     * @param instances Vector of instances.
+     * @param textures Vector of texture infos.
+     * @param globalUniformData Global uniform buffer memory allocation information.
      */
     void CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData);
 
     /**
-     * @brief
+     * @brief Updated the current framebuffer image view for ray tracing.
      */
     void UpdateRTTargetImage(VkImageView imageViewRT);
     
     /**
-     * @brief
+     * @brief Gets the descriptor set layout (rasterization)
      */
     VkDescriptorSetLayout* GetDescriptorLayout();
 
     /**
-     * @brief
+     * @brief Gets the descriptor set layouts (ray tracing)
      */
     std::vector<VkDescriptorSetLayout> GetDescriptorLayoutRT();
 
     /**
-     * @brief
+     * @brief Gets the descriptor pool (for GUI).
      */
     VkDescriptorPool GetDescriptorPool();
 
     /**
-     * @brief
+     * @brief Gets the descriptor sets (rasterization)
      */
     std::vector<VkDescriptorSet> GetDescriptorSets();
 
     /**
-     * @brief
+     * @brief Gets the descriptor sets (ray tracing)
      */
     std::vector<VkDescriptorSet> GetDescriptorSetRT();
 };
