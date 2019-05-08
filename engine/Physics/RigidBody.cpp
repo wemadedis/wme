@@ -115,11 +115,6 @@ void RigidBody::UpdateFromPhysicsWorld(Rendering::Transform &transform)
 
     btQuaternion rot = physTransform.getRotation();
 
-    if (abs(rot.getX()) > 0.0001)
-    {
-        int a = 10;
-    }
-
     btVector3 dPos = physTransform.getOrigin() - _oldTransform.getOrigin();
     btQuaternion dRot = physTransform.getRotation() * _oldTransform.getRotation().inverse();
 
@@ -139,9 +134,9 @@ void RigidBody::UpdateToPhysicsWorld(glm::vec3 position, glm::vec3 orientation)
     trans.setOrigin(Convert(position));
 
     orientation = glm::radians(orientation);
-    glm::quat rotation(glm::eulerAngleXYZ(orientation.x,
+    glm::quat rotation(glm::eulerAngleZYX(orientation.z,
                                           orientation.y,
-                                          orientation.z));
+                                          orientation.x));
     trans.setRotation(Convert(rotation));
     _rigidBody->setWorldTransform(trans);
 }

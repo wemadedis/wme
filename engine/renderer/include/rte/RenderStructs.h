@@ -220,7 +220,7 @@ struct Transform
         glm::mat4 rotX = glm::eulerAngleX(glm::radians(Rot.x));
         glm::mat4 rotY = glm::eulerAngleY(glm::radians(Rot.y));
         glm::mat4 rotZ = glm::eulerAngleZ(glm::radians(Rot.z));
-        return rotX * rotY * rotZ;
+        return rotZ * rotY * rotX;
     }
 
     /**
