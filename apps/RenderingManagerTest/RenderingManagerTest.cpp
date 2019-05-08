@@ -53,7 +53,7 @@ void SetPointLightGUI(std::string name, PointLightComponent *pl)
         ImGui::Begin("Inspector");
         ImGui::Text(name.c_str());
         ImGui::DragFloat("X Radius:", &pl->Radius, 0.1f);
-        ImGui::ColorPicker4("Color", &pl->Color[0]);
+        //ImGui::ColorPicker4("Color", &pl->Color[0]);
         ImGui::End();
     });
 }
@@ -137,7 +137,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     TransformComponent *trans2 = scene->AddComponent<TransformComponent>(transIndex, go2);
     trans2->Transform.Pos = glm::vec3(0.0f, 0.0f, 10.0f);
     camera->Initialize(trans2);
-    camera->BackgroundColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
+    //camera->BackgroundColor = glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
     PlayerController *pc = scene->AddComponent<PlayerController>(pcIndex, go);
     pc->SetEnabled(true);
     pc->Initialize(trans2, nullptr, camera);
@@ -189,6 +189,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
         ImGui::DragFloat("Field of view:", &camera->FieldOfView, 0.1f, 0.0f, 180.0f);
         ImGui::DragFloat("Far plane:", &camera->FarPlane, 0.1f, 0.0f, 180.0f);
         ImGui::DragFloat("Near plane:", &camera->NearPlane, 0.1f, 0.0f, 180.0f);
+        ImGui::ColorPicker4("Color", &camera->BackgroundColor[0]);
         
         ImGui::End();
     });

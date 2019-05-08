@@ -210,8 +210,8 @@ void RenderingManager::UpdateMainCamera()
     camera.FieldOfView = _mainCamera->FieldOfView;
     camera.NearPlane = _mainCamera->NearPlane;
     camera.FarPlane = _mainCamera->FarPlane;
-    _renderer->SetCamera(camera);
     _renderer->SetClearColor(_mainCamera->BackgroundColor);
+    _renderer->SetCamera(camera);
 }
 
 void RenderingManager::RegisterPointLight(StdComponents::PointLightComponent *pointLight)

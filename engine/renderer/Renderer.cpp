@@ -635,6 +635,7 @@ void Renderer::SetPointLightProperties(PointLightHandle light, std::function<voi
 void Renderer::SetClearColor(glm::vec4 color)
 {
     _globalUniform.ClearColor = color;
+    UploadGlobalUniform();
 }
 
 void Renderer::SetCamera(Camera camera)
