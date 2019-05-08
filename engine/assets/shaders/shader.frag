@@ -82,10 +82,10 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light)
 
 vec4 CalculatePerLightShading()
 {
-    vec4 color = vec4(InstanceUniform.Ambient);
+    vec4 color = InstanceUniform.Color*InstanceUniform.Ambient;
     if(HasTexture != 0)
     {
-        color *= texture(texSampler, UV);
+        color = texture(texSampler, UV)*InstanceUniform.Ambient;
     }
     for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
     {
