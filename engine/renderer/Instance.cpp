@@ -38,7 +38,7 @@ void Instance::CreateInstance(std::vector<const char*> &extensions)
     createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
     createInfo.ppEnabledLayerNames = validationLayers.data();
     #else
-    createInfo.ppenabledLayerNames = 0;
+    createInfo.enabledLayerCount = 0;
     #endif
 
     VkResult code = vkCreateInstance(&createInfo, nullptr, &_instance);
