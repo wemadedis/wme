@@ -1,5 +1,6 @@
 #include "rte/RTEException.h"
 
+#include "rte/Renderer.h"
 #include "Instance.hpp"
 #include "SwapChain.hpp"
 #include "Utilities.h"
@@ -8,23 +9,17 @@
 #include <set>
 #include <iostream>
 
-#ifdef NDEBUG
-const bool enableValidationLayers = false;
-#else
-const bool enableValidationLayers = true;
-#endif
-
 namespace RTE::Rendering
 {
 
 
-void Instance::CreateInstance(std::vector<const char*> &extensions)
+void Instance::CreateInstance(const char* appName, std::vector<const char*> &extensions)
 {
     VkApplicationInfo appInfo = {};
     appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
-    appInfo.pApplicationName = "Hello Triangle";
+    appInfo.pApplicationName = appName;
     appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
-    appInfo.pEngineName = "No Engine";
+    appInfo.pEngineName = "RTE";
     appInfo.engineVersion = VK_MAKE_VERSION(1, 0, 0);
     appInfo.apiVersion = VK_API_VERSION_1_1;
     
@@ -179,11 +174,11 @@ void Instance::SetupDebugCallBack()
     Utilities::CheckVkResult(code, "Failed to set up debug callback!");
 }
 
-Instance::Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction, bool isRayTracing)
+Instance::Instance(RendererInitInfo initInfo)
 {
-    CreateInstance(extensions);
-    surfaceBindingFunction(_surface, _instance);
-    ChoosePhysicalDevice(isRayTracing);
+    CreateInstance(initInfo.ApplicationName, initInfo.extensions);
+    initInfo.BindingFunc(_surface, _instance);
+    ChoosePhysicalDevice(initInfo.RayTracingOn);
     CreateLogicalDevice();
     
     #ifndef NDEBUG

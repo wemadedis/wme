@@ -101,6 +101,11 @@ RTECore::RTECore()
 
         OnGameStart(*sceneManager);
     }
+    if(Config.PhysicsConfig.DebugDrawColliders)
+    {
+        rm->SetLineDebugModule(Physics::PhysicsManager::GetInstance()->GetPhysicsDebugDraw());
+    }
+
     rm->FinalizeRenderer();
     // Here user is done setting up scene.
     RunUpdateLoop();

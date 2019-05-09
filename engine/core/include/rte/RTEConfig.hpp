@@ -42,6 +42,8 @@ struct WindowConfig
 struct PhysicsConfig
 {
     uint32_t MaxCollisionCount = 1000;
+    
+    bool DebugDrawColliders = true;
 };
 
 struct AssetConfig

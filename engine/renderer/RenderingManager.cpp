@@ -15,6 +15,7 @@ RenderingManager::RenderingManager(
     Platform::WindowManager &windowManager)
 {
     RendererInitInfo info;
+    info.ApplicationName = config.WindowConfig.WindowName.c_str();
     info.Width = config.WindowConfig.WindowWidth;
     info.Height = config.WindowConfig.WindowHeight;
     info.extensions = windowManager.GetRequiredExtensions();
@@ -55,8 +56,12 @@ bool RenderingManager::RayTracingAvailable()
 
 void RenderingManager::FinalizeRenderer()
 {
-    _renderer->SetLineDebugDraw(Physics::PhysicsManager::GetInstance()->GetPhysicsDebugDraw());
     _renderer->Finalize();
+}
+
+void RenderingManager::SetLineDebugModule(LineDebugDrawModule *module)
+{
+    _renderer->SetLineDebugDraw(module);
 }
 
 RenderingManager *RenderingManager::GetInstance()

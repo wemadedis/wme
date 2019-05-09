@@ -124,6 +124,12 @@ public:
     void FinalizeRenderer();
 
     /**
+     * @brief Sets the line debug draw module for the renderer.
+     * @param module Pointer to the line debug draw module.
+     */
+    void SetLineDebugModule(LineDebugDrawModule *module);
+
+    /**
      * @brief Gets the instance of the rendering manager. Used by various runtime components to communicate with the manager.
      * @return Returns an instance of the manager, if it has been created previously. Otherwise returns a null pointer.
      */

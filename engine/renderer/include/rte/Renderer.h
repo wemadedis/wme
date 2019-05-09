@@ -54,6 +54,11 @@ struct TextureInfo;
 struct RendererInitInfo
 {
     /**
+     * @brief The application name.
+     * 
+     */
+    const char *ApplicationName = "";
+    /**
      * @brief The required vulkan extensions to be enabled by the renderer.
      */
     std::vector<const char *> extensions;

@@ -20,21 +20,7 @@ private:
 public:
     LineDebugDrawModule()
     {
-        Line l;
-        Vertex v;
-        v.Position = glm::vec3(0.0, 0.0, -20.0);
-        l.Start = v;
-        v.Position = glm::vec3(0.0, 100.0, 100.0);
-        l.End = v;
-        _lines.push_back(l);
-        v.Position = glm::vec3(0.0, 0.0, -40.0);
-        l.End = v;
-        _lines.push_back(l);
-        _lines.push_back(l);
-        _lines.push_back(l);
-        _lines.push_back(l);
-        _lines.push_back(l);
-        _lines.push_back(l);
+
     }
 
     std::vector<Line> GetLineData()
