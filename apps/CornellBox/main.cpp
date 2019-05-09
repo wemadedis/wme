@@ -40,7 +40,7 @@ void ConfigureGame(RTEConfig &config)
     config.WindowConfig.WindowWidth = 1280;
     config.WindowConfig.WindowName = "rEfLeCtIoNs ArE tHinGs";
     config.GraphicsConfig.UseRaytracing = true;
-    config.GraphicsConfig.FramesPerSecond = 120;
+    config.GraphicsConfig.FramesPerSecond = 1000;
     config.AssetConfig.Meshes = { AbsMonkeyPath, AbsBoxPath, AbsFloorPath };
     config.AssetConfig.Textures = { AbsGreenPath, AbsRedPath };
 }
@@ -262,7 +262,7 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
 void MonkeySoundTest(Runtime::Scene *scene, ComponentIds componentIds)
 {
     // create player + camera
-    SimpleTransform playerSt = {glm::vec3(0.f, 1.f, -4.f), glm::vec3(0.f, 180.f, 0.f), glm::vec3(1)};
+    SimpleTransform playerSt = {glm::vec3(0.f, 25.f, -4.f), glm::vec3(-45.f, 180.f, 0.f), glm::vec3(1)};
     Player player = createPlayer(scene, componentIds, playerSt);
 
     // create monkey
@@ -305,9 +305,9 @@ void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
     Box floor = createBox(scene, componentIds, floorSt);
 
     SimpleTransform monkeyTs;
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 12; i++)
     {
-        for (int j = 0; j < 10; j++)
+        for (int j = 0; j < 14; j++)
         {
             monkeyTs = {
                 glm::vec3(2.5f*i, 1.f, 2.5f*j), // * Position
@@ -318,6 +318,7 @@ void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
             Monkey monkey = createRotatingMonkey(scene, componentIds, monkeyTs);
             // monkey.ac->Play();
             monkey.rc->setRotMagnitude(glm::vec3(20.f, 20.f, 20.f));
+            player.pc->addGeometryData(monkey.verts, monkey.faces, monkey.triangles);
         }
     }
 }
