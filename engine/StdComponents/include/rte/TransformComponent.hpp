@@ -40,6 +40,11 @@ public:
      */
     void Initialize(glm::vec3 pos, glm::vec3 rot, glm::vec3 scale);
 
+    TransformComponent *WithPosition(glm::vec3 pos);
+    TransformComponent *WithRotation(glm::vec3 rot);
+    TransformComponent *WithScale(glm::vec3 scale);
+    TransformComponent *WithTransform(Rendering::Transform trans);
+
     void FromPos(glm::vec3 pos);
     /**
      * @brief Does nothing

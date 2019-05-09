@@ -15,6 +15,7 @@ class Scene
 {
 private:
     std::vector<ComponentPool *> _componentPools;
+    std::vector<GameObject> _gameObjects;
 
 public:
     void UpdateComponents(float deltaTime);

@@ -6,9 +6,8 @@
 namespace RTE::Runtime
 {
 
-GameObject::GameObject(GameObjectId id)
+GameObject::GameObject()
 {
-    SetId(id);
     _components = new std::vector<Component *>();
 }
 

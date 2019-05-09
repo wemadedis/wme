@@ -45,6 +45,8 @@ public:
 
     glm::vec3 GetAngularFactor();
     void SetAngularFactor(glm::vec3 fac);
+    glm::vec3 GetGravity();
+    void SetGravity(glm::vec3 gravity);
 
     glm::vec3 GetLinearFactor();
     void SetLinearFactor(glm::vec3 fac);

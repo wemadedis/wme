@@ -10,7 +10,6 @@ namespace RTE::Physics
 RigidBody::RigidBody(btRigidBody *body, Rendering::Transform trans)
 {
     _rigidBody = body;
-    SetAngularFactor({1, 1, 1});
 
     _oldTransform = btTransform(Convert(trans.RotationMatrix()), Convert(trans.Pos));
 }
@@ -22,6 +21,7 @@ btRigidBody *RigidBody::GetRigidBody()
 
 void RigidBody::SetLinearVelocity(glm::vec3 vel)
 {
+    _rigidBody->activate();
     _rigidBody->setLinearVelocity(Convert(vel));
 }
 
@@ -91,6 +91,15 @@ glm::vec3 RigidBody::GetLinearFactor()
 void RigidBody::SetAngularFactor(glm::vec3 fac)
 {
     _rigidBody->setAngularFactor(Convert(fac));
+}
+
+void RigidBody::SetGravity(glm::vec3 gravity)
+{
+    _rigidBody->setGravity(Convert(gravity));
+}
+glm::vec3 RigidBody::GetGravity()
+{
+    return Convert(_rigidBody->getGravity());
 }
 
 void RigidBody::AddForce(glm::vec3 force, glm::vec3 relPos = glm::vec3(0))

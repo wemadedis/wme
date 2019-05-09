@@ -19,9 +19,10 @@ void Scene::UpdateComponents(float deltaTime)
 
 GameObject *Scene::CreateGameObject()
 {
-    // todo: (danh) Mon 22/04 - 01:26: Fix this
-    static uint64_t id = 0;
-    return new GameObject(id++);
+    GameObject go;
+    go.SetId(_gameObjects.size());
+    _gameObjects.push_back(go);
+    return &_gameObjects[_gameObjects.size() - 1];
 }
 
 } // namespace Runtime

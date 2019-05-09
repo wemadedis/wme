@@ -6,5 +6,6 @@
 #include "rte/StdComponentsMain.hpp"
 #include "rte/UtilityMain.hpp"
 #include "rte/WindowManager.h"
+#include "rte/Definitions.hpp"
 
 #undef APIENTRY

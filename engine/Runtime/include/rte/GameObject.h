@@ -27,11 +27,10 @@ private:
 
 public:
     /**
-     * @brief Construct a new GameObject with the given ID 
+     * @brief Construct a new GameObject
      * 
-     * @param id The ID of this GameObject
      */
-    GameObject(GameObjectId id);
+    GameObject();
 
     /**
      * @brief Get the #RTE::Runtime::Component's attachted to this GameObject
