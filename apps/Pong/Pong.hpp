@@ -1,7 +1,9 @@
 #pragma once
 #include <rte/RTE.hpp>
-#include "PaddleController.hpp"
+
 #include "BallController.hpp"
+#include "GameController.hpp"
+#include "PaddleController.hpp"
 
 #include <string>
 
@@ -21,6 +23,7 @@ struct Components
     ComponentPoolId MeshId;
     ComponentPoolId PaddleControllerId;
     ComponentPoolId BallControllerId;
+    ComponentPoolId GameControllerId;
 };
 
 struct CameraGO
@@ -59,6 +62,7 @@ struct BallGO
     RTE::StdComponents::MeshComponent *Mesh;
     RTE::StdComponents::PhysicsComponent *Phys;
     BallController *Controller;
+    GameController *GameController;
 };
 
 struct PaddleGO

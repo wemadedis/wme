@@ -16,13 +16,22 @@ void BallController::Update(float deltaTime)
     while (!_phys->Collisions->empty())
     {
         RTE::Physics::OnCollisionData col = _phys->Collisions->front();
-        if (col.GoId == _leftCollider)
+        if (col.NewCollision)
         {
-            Debug("LEFT");
-        }
-        if (col.GoId = _rightCollider)
-        {
-            Debug("RIGHT");
+
+            if (col.GoId == _leftCollider)
+            {
+                Debug("LEFT");
+            }
+
+            if (col.GoId == _rightCollider)
+            {
+                Debug("RIGHT");
+            }
+            else
+            {
+                _dir = glm::normalize(glm::reflect(_dir, col.Normal));
+            }
         }
         _phys->Collisions->pop();
     }

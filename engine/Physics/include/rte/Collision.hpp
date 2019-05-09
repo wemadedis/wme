@@ -26,6 +26,7 @@ struct OnCollisionData
     CollisionId Id;
     GameObjectId GoId;
     glm::vec3 Point;
+    glm::vec3 Normal;
     bool NewCollision;
 };
 

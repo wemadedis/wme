@@ -2,6 +2,7 @@ add_executable(Pong
     Pong
     PaddleController
     BallController
+    GameController
 )
 target_include_directories(Pong PUBLIC .)
 # Link with RTE

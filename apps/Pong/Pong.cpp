@@ -1,4 +1,5 @@
 #include "Pong.hpp"
+
 using namespace RTE;
 using namespace RTE::StdComponents;
 using namespace RTE::Runtime;
@@ -36,6 +37,7 @@ Components GetComponentPoolIds(Scene &scene)
     c.DirectionalLightId = scene.DefineComponent<DirectionalLightComponent, 1>();
     c.PaddleControllerId = scene.DefineComponent<PaddleController, 2>();
     c.BallControllerId = scene.DefineComponent<BallController, 1>();
+    c.GameControllerId = scene.DefineComponent<GameController, 1>();
     return c;
 }
 
@@ -64,7 +66,7 @@ TriggerGO MakeLeftTrigger(Scene &scene, Components &comps)
 TriggerGO MakeRightTrigger(Scene &scene, Components &comps)
 {
     TriggerGO go = MakeTrigger(scene, comps);
-    go.Trans->WithPosition({5.1, -10, 0});
+    go.Trans->WithPosition({5.1, 0, 0});
     return go;
 }
 
@@ -114,9 +116,15 @@ BallGO MakeBall(Scene &scene, Components &comps, GameObjectId left, GameObjectId
     col.Type = ColliderType::SPHERE;
     go.Phys->Initialize(go.Trans, 10, {col}, true);
     go.Phys->GetRigidBody()->SetGravity({0, 0, 0});
+    go.Phys->GetRigidBody()->SetAngularFactor({0, 0, 0});
+    go.Phys->GetRigidBody()->SetLinearFactor({1, 1, 0});
 
     go.Controller = scene.AddComponent<BallController>(comps.BallControllerId, go.GO);
     go.Controller->Initialize(go.Phys, go.Trans, left, right);
+
+    go.GameController = scene.AddComponent<GameController>(comps.GameControllerId, go.GO);
+    go.GameController->Initialize(go.Trans, 3);
+
     return go;
 }
 
@@ -222,7 +230,7 @@ void OnGameStart(SceneManager &sceneManager)
 
     BallGO ball = MakeBall(scene, comps, leftGoal.GO->GetId(), rightGoal.GO->GetId());
 
-    BoxGO go = MakeBackground(scene, comps);
+    BoxGO bg = MakeBackground(scene, comps);
 
     CollidableGO top = MakeTopWall(scene, comps);
     CollidableGO bottom = MakeBottomWall(scene, comps);

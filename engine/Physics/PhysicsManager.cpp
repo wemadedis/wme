@@ -20,7 +20,6 @@ static bool ContactProcessedCallback(
     void *bodyA,
     void *bodyB)
 {
-
     auto compA = GetPhysicsComponent(bodyA);
     auto compB = GetPhysicsComponent(bodyB);
 
@@ -45,6 +44,7 @@ static bool ContactProcessedCallback(
         colDataA.Id = col->Id;
         colDataA.GoId = compB->GetGameObjectId();
         colDataA.Point = Convert(cp.getPositionWorldOnA());
+        colDataA.Normal = Convert(cp.m_normalWorldOnB);
         colDataA.NewCollision = collisionBegin;
         compA->Collisions->push(colDataA);
     }
@@ -55,11 +55,12 @@ static bool ContactProcessedCallback(
         colDataB.Id = col->Id;
         colDataB.GoId = compA->GetGameObjectId();
         colDataB.Point = Convert(cp.getPositionWorldOnB());
+        colDataB.Normal = Convert(cp.m_normalWorldOnB);
         colDataB.NewCollision = collisionBegin;
         compB->Collisions->push(colDataB);
     }
 
-    return true;
+    return false;
 }
 
 static bool ContactDestroyedCallback(void *data)
@@ -123,7 +124,6 @@ PhysicsManager::
 
 void PhysicsManager::Step(float deltaTime)
 {
-    // Debug(std::to_string(1.0f / deltaTime));
     _physicsWorld->stepSimulation(deltaTime);
 }
 
