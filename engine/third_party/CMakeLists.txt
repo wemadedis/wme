@@ -41,12 +41,26 @@ add_subdirectory(glfw)
 
 add_library(bullet INTERFACE)
 target_include_directories(bullet INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/bullet/include")
-target_link_libraries(bullet INTERFACE 
+set(BULLET_LIBS_DEBUG 
     "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletCollision_vs2010_x64_debug.lib" 
     "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletDynamics_vs2010_x64_debug.lib"
     "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/LinearMath_vs2010_x64_debug.lib" 
     "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/debug/BulletSoftBody_vs2010_x64_debug.lib"
 )
+set(BULLET_LIBS_RELEASE 
+    "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/BulletCollision_vs2010_x64_release.lib" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/BulletDynamics_vs2010_x64_release.lib"
+    "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/LinearMath_vs2010_x64_release.lib" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/BulletSoftBody_vs2010_x64_release.lib"
+)
+
+message(${CMAKE_BUILD_TYPE})
+if (${CMAKE_BUILD_TYPE} EQUAL "")
+    message("Egg")
+else ()
+    message("Edgy")
+endif ()
+target_link_libraries(bullet INTERFACE ${BULLET_LIBS_DEBUG}) 
 ###</BULLET>
 
 

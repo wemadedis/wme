@@ -18,19 +18,23 @@ void BallController::Update(float deltaTime)
         RTE::Physics::OnCollisionData col = _phys->Collisions->front();
         if (col.NewCollision)
         {
+            Debug(std::to_string(col.GoId));
+
+            const bool is_in = _collisionIds.find(col.Id) != _collisionIds.end();
+            _dir = glm::normalize(glm::reflect(_dir, col.Normal));
 
             if (col.GoId == _leftCollider)
             {
                 Debug("LEFT");
             }
 
-            if (col.GoId == _rightCollider)
+            else if (col.GoId == _rightCollider)
             {
                 Debug("RIGHT");
             }
+
             else
             {
-                _dir = glm::normalize(glm::reflect(_dir, col.Normal));
             }
         }
         _phys->Collisions->pop();

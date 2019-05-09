@@ -23,8 +23,8 @@ static bool ContactProcessedCallback(
     auto compA = GetPhysicsComponent(bodyA);
     auto compB = GetPhysicsComponent(bodyB);
 
+    bool collisionBegin = cp.m_userPersistentData == nullptr;
     Collision *col = (Collision *)cp.m_userPersistentData;
-    bool collisionBegin = (col == nullptr);
 
     // New collision
     if (collisionBegin)
@@ -47,17 +47,6 @@ static bool ContactProcessedCallback(
         colDataA.Normal = Convert(cp.m_normalWorldOnB);
         colDataA.NewCollision = collisionBegin;
         compA->Collisions->push(colDataA);
-    }
-
-    if (compB->ReceiveCollisionCallbacks)
-    {
-        OnCollisionData colDataB;
-        colDataB.Id = col->Id;
-        colDataB.GoId = compA->GetGameObjectId();
-        colDataB.Point = Convert(cp.getPositionWorldOnB());
-        colDataB.Normal = Convert(cp.m_normalWorldOnB);
-        colDataB.NewCollision = collisionBegin;
-        compB->Collisions->push(colDataB);
     }
 
     return false;
