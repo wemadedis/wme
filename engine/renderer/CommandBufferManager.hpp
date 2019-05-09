@@ -34,11 +34,8 @@ public:
     VkCommandBuffer BeginCommandBufferInstance();
     void SubmitCommandBufferInstance(VkCommandBuffer buffer, VkQueue queue);
     VkCommandBuffer GetCommandBuffer(uint32_t index);
-    VkCommandBuffer GetCommandBufferRT(uint32_t index);
     void AllocateCommandBuffers();
-    void AllocateCommandBuffersRT();
     void DeallocateCommandBuffers();
-    void DeallocateCommandBuffersRT();
     uint32_t GetCommandBufferCount();
     VkCommandPool GetCommandPool();
 

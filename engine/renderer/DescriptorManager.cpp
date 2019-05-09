@@ -13,9 +13,9 @@ DescriptorManager::DescriptorManager(Instance *instance)
     _instance = instance;
 }
 
-void DescriptorManager::CreateDescriptorPool(SwapChain *swapChain, std::vector<MeshInstance> &meshes)
+void DescriptorManager::CreateDescriptorPools(SwapChain *swapChain, std::vector<MeshInstance> &instances)
 {
-    size_t poolsCount = meshes.size();
+    size_t poolsCount = instances.size();
     _pools.resize(poolsCount);
     for(uint32_t poolIndex = 0; poolIndex < poolsCount; poolIndex++)
     {
@@ -33,10 +33,8 @@ void DescriptorManager::CreateDescriptorPool(SwapChain *swapChain, std::vector<M
         poolInfo.pPoolSizes = poolSizes.data();
         poolInfo.maxSets = static_cast<uint32_t>(swapChain->GetSwapChainImageCount());
 
-        if (vkCreateDescriptorPool(_instance->GetDevice(), &poolInfo, nullptr, &_pools[poolIndex]) != VK_SUCCESS)
-        {
-            throw std::runtime_error("DescriptorManager: Failed to create descriptor pool!");
-        }
+        VkResult code = vkCreateDescriptorPool(_instance->GetDevice(), &poolInfo, nullptr, &_pools[poolIndex]);
+        Utilities::CheckVkResult(code, "Failed to create descriptor pool!");
     }
 
     VkDescriptorPoolSize pool_sizes[] =
@@ -93,10 +91,9 @@ void DescriptorManager::CreateDescriptorSetLayout()
     layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
     layoutInfo.pBindings = bindings.data();
 
-    if (vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layout) != VK_SUCCESS)
-    {
-        throw std::runtime_error("DescriptorManager: Failed to create descriptor set layout!");
-    }
+    VkResult code = vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layout);
+    Utilities::CheckVkResult(code, "DescriptorManager: Failed to create descriptor set layout!");
+
 }
 
 void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount, uint32_t textureCount)
