@@ -40,6 +40,9 @@ struct Monkey {
     MeshComponent *mc;
     AudioComponent *ac;
     Rotator *rc;
+    const int verts = 507;
+    const int faces = 500;
+    const int triangles = 968;
 };
 
 struct PLight {

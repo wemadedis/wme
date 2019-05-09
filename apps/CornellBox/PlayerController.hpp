@@ -1,5 +1,7 @@
 #pragma once
 
+#include <chrono>
+
 #include <rte/RTE.hpp>
 
 #include "rte/WindowManager.h"
@@ -20,6 +22,17 @@ private:
     float dt = 0.0f;
     bool cursor = true;
     float speed = 3.0f;
+
+    float frameCount = 0.f;
+    float fps = 0.f;
+    float updateRate = 0.5f;
+    float dtCount = 0.f;
+    bool runningFpsCount = false;
+
+    int _verts = 0;
+    int _faces = 0;
+    int _tris = 0;
+
 public:
     void Initialize(
         RTE::StdComponents::TransformComponent *trans,
@@ -28,16 +41,25 @@ public:
         _transform = trans;
         _camera = cam;
         _transform->Transform.Rot.x = glm::radians(-90.0f);
-        SetGUIDraw([&](){
+        /*SetGUIDraw([=](){
             ImGui::Begin("Wazzup");
+            ImGui::SetWindowSize({200, 300});
             ImGui::DragFloat("X", &_transform->Transform.Rot.x, 0.1f, -0.1f, 360.1f);
             ImGui::DragFloat("Y", &_transform->Transform.Rot.y, 0.1f, -0.1f, 360.1f);
             ImGui::Text(std::to_string(oldX).c_str());
             ImGui::Text(std::to_string(oldY).c_str());
             ImGui::Text(std::to_string(dx).c_str());
             ImGui::Text(std::to_string(dy).c_str());
+            ImGui::Text("FPS:");
+            ImGui::Text(std::to_string(fps).c_str());
+            ImGui::Text("verts:");
+            ImGui::Text(std::to_string(_verts).c_str());
+            ImGui::Text("faces:");
+            ImGui::Text(std::to_string(_faces).c_str());
+            ImGui::Text("tris:");
+            ImGui::Text(std::to_string(_tris).c_str());
             ImGui::End();
-        });
+        });*/
         RTE::Platform::WindowManager::GetInstance()->RegisterMousePositionCallback([&](double x, double y){
             if (cursor){
                 if(oldX != x)
@@ -60,8 +82,39 @@ public:
         });
     }
 
+    void addGeometryData(int verts, int faces, int tris)
+    {
+        _verts += verts;
+        _faces += faces;
+        _tris += tris;
+    }
+
+    void calculateFps(float deltaTime)
+    {
+        frameCount += 1.f;
+        dtCount += deltaTime;
+
+        if (dtCount > updateRate)
+        {
+            fps = frameCount / updateRate;
+            frameCount = 0.f;
+            dtCount = 0.f;
+			Debug(std::to_string(fps));
+        }
+    }
+
     void Update(float deltaTime)
     {
+        if (!runningFpsCount)
+        {
+            runningFpsCount = true;
+            calculateFps(deltaTime);
+        }
+        else
+        {
+            calculateFps(deltaTime);
+        }
+        
         dt = deltaTime;
         if (cursor){
             if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_W) == GLFW_PRESS)
