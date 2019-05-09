@@ -98,10 +98,8 @@ TextureInfo ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigne
     ImageInformation texture = _deviceMemoryManager->CreateImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT); 
     
     TransitionImageLayout(texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
-    
-    VkCommandBuffer commandBuffer = _cmdbManager->BeginCommandBufferInstance();
-    _deviceMemoryManager->CopyBufferToImage(stagingBuffer, texture, width, height, commandBuffer);
-    _cmdbManager->SubmitCommandBufferInstance(commandBuffer, _instance->GetGraphicsQueue());
+
+    _deviceMemoryManager->CopyBufferToImage(stagingBuffer, texture);
 
     TransitionImageLayout(texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL);
 
