@@ -57,14 +57,14 @@ TriggerGO MakeTrigger(Scene &scene, Components &comps)
 TriggerGO MakeLeftTrigger(Scene &scene, Components &comps)
 {
     TriggerGO go = MakeTrigger(scene, comps);
-    go.Trans->WithPosition({-5, 0, 0});
+    go.Trans->WithPosition({-5.1, 0, 0});
     return go;
 }
 
 TriggerGO MakeRightTrigger(Scene &scene, Components &comps)
 {
     TriggerGO go = MakeTrigger(scene, comps);
-    go.Trans->WithPosition({-15, 0, 0});
+    go.Trans->WithPosition({5.1, -10, 0});
     return go;
 }
 
@@ -85,14 +85,13 @@ BoxGO MakeBackground(Scene &scene, Components &comps)
 {
     BoxGO go;
     go.GO = scene.CreateGameObject();
-
     go.Trans = scene.AddComponent<TransformComponent>(comps.TransformId, go.GO)
                    ->WithPosition({0, 0, -5})
-                   ->WithScale({40, 40, 1});
+                   ->WithScale({20, 20, 1});
 
     go.Mesh = scene.AddComponent<MeshComponent>(comps.MeshId, go.GO);
     go.Mesh->Initialize(go.Trans, models.BoxPath);
-    go.Mesh->Material.Reflectivity = 0.5f;
+    go.Mesh->Material.Reflectivity = 0.2f;
     go.Mesh->Material.Color = Colors::Red;
     return go;
 }
@@ -113,7 +112,7 @@ BallGO MakeBall(Scene &scene, Components &comps, GameObjectId left, GameObjectId
     Collider col;
     col.Data.Sphere.Radius = 0.25f;
     col.Type = ColliderType::SPHERE;
-    go.Phys->Initialize(go.Trans, 10, {col});
+    go.Phys->Initialize(go.Trans, 10, {col}, true);
     go.Phys->GetRigidBody()->SetGravity({0, 0, 0});
 
     go.Controller = scene.AddComponent<BallController>(comps.BallControllerId, go.GO);
@@ -160,14 +159,15 @@ PaddleGO MakePaddle(Scene &scene, Components &comps)
     PaddleGO go;
     go.GO = scene.CreateGameObject();
     go.Trans = scene.AddComponent<TransformComponent>(comps.TransformId, go.GO)
-                   ->WithScale({1, 4, 1});
+                   ->WithScale({0.25, 4, 1});
 
     go.Mesh = scene.AddComponent<MeshComponent>(comps.MeshId, go.GO);
     go.Mesh->Initialize(go.Trans, models.BoxPath);
+    go.Mesh->Material.Color = Colors::Yellow;
 
     go.Phys = scene.AddComponent<PhysicsComponent>(comps.PhysicsId, go.GO);
     Collider col;
-    col.Data.Box.HalfExtents = {0.5, 2, 0.5};
+    col.Data.Box.HalfExtents = {0.125, 2, 0.5};
     col.Type = ColliderType::BOX;
 
     go.Phys->Initialize(go.Trans, 1, {col});

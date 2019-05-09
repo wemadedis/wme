@@ -1,6 +1,6 @@
-#pragma once
 
 #include <queue>
+#pragma once
 #include <vector>
 
 #include "rte/Collision.hpp"
@@ -33,21 +33,33 @@ private:
     Physics::RigidBody *_rigidBody;
 
 public:
+    /**
+     * @brief If this is false, this component wont receive collision callbacks.
+     * It can still interact with other components in the physics system.
+     * 
+     */
+    bool ReceiveCollisionCallbacks = false;
     // queue of collision starts
     std::queue<Physics::OnCollisionData> *Collisions;
     // queue of collision ends
     std::queue<Physics::EndCollisionData> *EndCollisions;
 
     /**
-     * @brief Initializes this component using a TransformComponent* that will 
-     * be synced
+     * @brief Initializes this physics component 
      * 
-     * @param transformComp Transform to sync physics world with
+     * @param transformComp real-world position of the object. This will be 
+     *  synced with the physics-world 
+     * @param mass Mass of this object.
+     * @param colliders The colliders for this object
+     * @param receiveCallbacks Whether or not this component should receive callbacks.
+     *          Do not pass true to this unless the component using this empties out the
+     *          collision queues.
      */
     void Initialize(
         TransformComponent *transformComp,
         float mass,
-        std::vector<Physics::Collider> colliders);
+        std::vector<Physics::Collider> colliders,
+        bool receiveCallbacks = false);
 
     /**
      * @brief Updates this component's transformation related to the physics

@@ -20,16 +20,13 @@ void BallController::Update(float deltaTime)
         {
             Debug("LEFT");
         }
-        if(col.GoId = _rightCollider)
+        if (col.GoId = _rightCollider)
         {
             Debug("RIGHT");
         }
-        else
-        {
-        }
         _phys->Collisions->pop();
     }
-    while(!_phys->EndCollisions->empty())
+    while (!_phys->EndCollisions->empty())
     {
         _phys->EndCollisions->pop();
     }

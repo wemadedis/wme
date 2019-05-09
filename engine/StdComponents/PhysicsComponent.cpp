@@ -11,9 +11,12 @@ namespace RTE::StdComponents
 void PhysicsComponent::Initialize(
     TransformComponent *transformComp,
     float mass,
-    std::vector<Physics::Collider> colliders)
+    std::vector<Physics::Collider> colliders,
+    bool receiveCallbacks)
 {
     using namespace Physics;
+    ReceiveCollisionCallbacks = receiveCallbacks;
+
     PhysicsManager *physManager = PhysicsManager::GetInstance();
     _transformComponent = transformComp;
 

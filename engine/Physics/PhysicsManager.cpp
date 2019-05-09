@@ -9,15 +9,17 @@
 namespace RTE::Physics
 {
 
+StdComponents::PhysicsComponent *GetPhysicsComponent(void *src)
+{
+    btRigidBody *rb = static_cast<btRigidBody *>(src);
+    return static_cast<StdComponents::PhysicsComponent *>(rb->getUserPointer());
+};
+
 static bool ContactProcessedCallback(
     btManifoldPoint &cp,
     void *bodyA,
     void *bodyB)
 {
-    auto GetPhysicsComponent = [=](void *src) {
-        auto rb = static_cast<btRigidBody *>(src);
-        return static_cast<StdComponents::PhysicsComponent *>(rb->getUserPointer());
-    };
 
     auto compA = GetPhysicsComponent(bodyA);
     auto compB = GetPhysicsComponent(bodyB);
@@ -37,19 +39,25 @@ static bool ContactProcessedCallback(
         cp.m_userPersistentData = col;
     }
 
-    OnCollisionData colDataA;
-    colDataA.Id = col->Id;
-    colDataA.GoId = compB->GetGameObjectId();
-    colDataA.Point = Convert(cp.getPositionWorldOnA());
-    colDataA.NewCollision = collisionBegin;
-    compA->Collisions->push(colDataA);
+    if (compA->ReceiveCollisionCallbacks)
+    {
+        OnCollisionData colDataA;
+        colDataA.Id = col->Id;
+        colDataA.GoId = compB->GetGameObjectId();
+        colDataA.Point = Convert(cp.getPositionWorldOnA());
+        colDataA.NewCollision = collisionBegin;
+        compA->Collisions->push(colDataA);
+    }
 
-    OnCollisionData colDataB;
-    colDataB.Id = col->Id;
-    colDataB.GoId = compA->GetGameObjectId();
-    colDataB.Point = Convert(cp.getPositionWorldOnB());
-    colDataB.NewCollision = collisionBegin;
-    compB->Collisions->push(colDataB);
+    if (compB->ReceiveCollisionCallbacks)
+    {
+        OnCollisionData colDataB;
+        colDataB.Id = col->Id;
+        colDataB.GoId = compA->GetGameObjectId();
+        colDataB.Point = Convert(cp.getPositionWorldOnB());
+        colDataB.NewCollision = collisionBegin;
+        compB->Collisions->push(colDataB);
+    }
 
     return true;
 }
@@ -77,8 +85,6 @@ btDiscreteDynamicsWorld *PhysicsManager::CreateDefaultDynamicsWorld()
 {
     SetupBulletCallbacks();
 
-    //* Extend: Make this extendable
-    // todo: (danh) Mon 29/04 - 22:26: Allocator? Struct?
     auto Broadphase = new btDbvtBroadphase();
     auto CollisionConfiguration = new btDefaultCollisionConfiguration();
     auto CollisionDispatcher = new btCollisionDispatcher(CollisionConfiguration);
@@ -152,9 +158,10 @@ RigidBody *PhysicsManager::CreateRigidBody(
 {
     btMotionState *motionState = new btDefaultMotionState(Convert(trans));
 
-    Collider col = colliders[0];
-    btCollisionShape *colliderShape = GetCollisionShapeFromColliderType(col.Type, col.Data);
-    /*
+    // Collider col = colliders[0];
+    // btCollisionShape *colliderShape = GetCollisionShapeFromColliderType(col.Type, col.Data);
+    // btCompoundShape *colliderShape = nullptr;
+
     btCompoundShape *colliderShape = new btCompoundShape();
     for (int32_t colliderIndex = 0;
          colliderIndex < colliders.size();
@@ -164,7 +171,7 @@ RigidBody *PhysicsManager::CreateRigidBody(
         colliderShape->addChildShape(
             Convert(col.ColliderTransform),
             GetCollisionShapeFromColliderType(col.Type, col.Data));
-    }*/
+    }
 
     btVector3 fallInertia(0, 0, 0);
     colliderShape->calculateLocalInertia(mass, fallInertia);

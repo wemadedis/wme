@@ -15,7 +15,6 @@ class Scene
 {
 private:
     std::vector<ComponentPool *> _componentPools;
-    std::vector<GameObject> _gameObjects;
 
 public:
     void UpdateComponents(float deltaTime);
@@ -33,6 +32,7 @@ public:
     TComp *AddComponent(ComponentPoolId compId, GameObject *go)
     {
         Component *comp = _componentPools[compId]->AddComponent(go->GetId());
+        comp->SetGameObjectId(go->GetId());
         TComp *tp = dynamic_cast<TComp *>(comp);
         if (tp == nullptr)
         {
