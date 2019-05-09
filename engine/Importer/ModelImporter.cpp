@@ -144,7 +144,7 @@ RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, uint32_t vertexIndex, Missing
 
     if (mesh->HasTextureCoords(0))
     {
-        v.UV = ConvertTexture(mesh->mTextureCoords[0]);
+        v.UV = ConvertTexture(&mesh->mTextureCoords[0][vertexIndex]);
     }
     return v;
 }

@@ -26,12 +26,10 @@ void CommandBufferManager::AllocateCommandBuffers()
     allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
     allocInfo.commandPool = _commandPool;
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
-    allocInfo.commandBufferCount = _commandBufferCount;
+    allocInfo.commandBufferCount = (uint32_t)_commandBuffers.size();
 
-    if (vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, _commandBuffers.data()) != VK_SUCCESS)
-    {
-        throw RTEException("Failed to allocate command buffers!");
-    }
+    VkResult code = vkAllocateCommandBuffers(_instance->GetDevice(), &allocInfo, _commandBuffers.data());
+    Utilities::CheckVkResult(code, "Failed to allocate command buffers!");
 }
 
 
@@ -82,9 +80,7 @@ void CommandBufferManager::SubmitCommandBufferInstance(VkCommandBuffer buffer, V
 CommandBufferManager::CommandBufferManager(Instance *instance, uint32_t commandBufferCount)
 {
     _instance = instance;
-    _commandBufferCount = commandBufferCount;
-    _commandBuffers.resize(_commandBufferCount);
-    _commandBuffersRT.resize(_commandBufferCount);
+    _commandBuffers.resize(commandBufferCount);
     CreateCommandPool();
     AllocateCommandBuffers();
 }
@@ -97,7 +93,7 @@ CommandBufferManager::~CommandBufferManager()
 
 VkCommandBuffer CommandBufferManager::GetCommandBuffer(uint32_t index)
 {
-    if(index < _commandBufferCount)
+    if(index < _commandBuffers.size())
     {
         return _commandBuffers[index];
     }
@@ -107,10 +103,9 @@ VkCommandBuffer CommandBufferManager::GetCommandBuffer(uint32_t index)
     }   
 }
 
-
 uint32_t CommandBufferManager::GetCommandBufferCount()
 {
-    return _commandBufferCount;
+    return (uint32_t)_commandBuffers.size();
 }
 
 VkCommandPool CommandBufferManager::GetCommandPool()

@@ -17,7 +17,7 @@ void ConfigureGame(RTEConfig &config)
     config.WindowConfig.WindowWidth = 800;
     config.WindowConfig.WindowName = "Eggplant";
     config.GraphicsConfig.UseRaytracing = true;
-    config.AssetConfig.Meshes = {RTE::Utilities::GetFileFromAssets("models/monkey.ply"), RTE::Utilities::GetFileFromAssets("models/plane.ply")};
+    config.AssetConfig.Meshes = {RTE::Utilities::GetFileFromAssets("models/monkey.ply"), RTE::Utilities::GetFileFromAssets("models/realPlane.fbx")};
     config.AssetConfig.Textures = {RTE::Utilities::GetFileFromAssets("textures/rte.png")};
 }
 
@@ -95,7 +95,7 @@ GameObject* CreateQuadObject()
     GameObject *gameObject = GO();
     auto tc = TransComp(gameObject);
     auto mc = MeshComp(gameObject);
-    mc->Initialize(tc, RTE::Utilities::GetFileFromAssets("models/plane.ply"), RTE::Utilities::GetFileFromAssets("textures/rte.png"));
+    mc->Initialize(tc, RTE::Utilities::GetFileFromAssets("models/realPlane.fbx"), RTE::Utilities::GetFileFromAssets("textures/rte.png"));
     return gameObject;
 }
 
@@ -165,10 +165,10 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     auto quadMeshComp = GetComponent<MeshComponent>(quad);
     auto &quadTrans = quadMeshComp->GetTransformComponent()->Transform;
 
-    quadMeshComp->Material.Reflectivity = 0.5f;
-    quadTrans.Pos.z = -5.0f;
+    quadMeshComp->Material.Reflectivity = 0.0f;
+    quadTrans.Pos.z = -10.0f;
     quadTrans.Rot.x = -90.0f;
-    quadTrans.Scale = glm::vec3(10.0,0.1,10.0);
+    quadTrans.Scale = glm::vec3(0.5,1.0,0.5);
 
 
     auto quad2 = CreateQuadObject();
@@ -177,7 +177,7 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
 
     quadTrans2->Transform.Pos.y = -1.0f;
     
-    quadTrans2->Transform.Scale = glm::vec3(10.0,0.1,10.0);
+    quadTrans2->Transform.Scale = glm::vec3(0.5,1.0,0.5);
     quadMeshComp2->Material.Reflectivity = 0.5f;
 
     quadMeshComp2->SetGUIDraw([=]() {

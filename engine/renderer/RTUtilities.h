@@ -21,17 +21,7 @@ class RTUtilities
             throw RTEException((std::string("Could not resolve function address: ")+std::string(""#funcName)).c_str()); \
         } \
     }
-/*
-    PFN_vkVoidFunction ResolveFuntionAddress(VkDevice device, const char *functionName)
-    {
-        auto func = vkGetDeviceProcAddr(device, functionName);
-        if(func == nullptr)
-        {
-            throw RTEException((std::string("Could not resolve function address: ")+std::string(functionName)).c_str());
-        }
-        return func;
-    }
-*/
+
     RTUtilities(VkDevice device)
     {
         NVVK_RESOLVE_DEVICE_FUNCTION_ADDRESS(device, vkCreateAccelerationStructureNV);

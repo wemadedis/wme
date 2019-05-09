@@ -29,10 +29,11 @@ uint32_t DeviceMemoryManager::GetMemoryType(VkMemoryRequirements& memoryRequirim
     
 DeviceMemoryManager::DeviceMemoryManager(Instance *instance, CommandBufferManager *commandBufferManager)
 {
-    //FIX THIS MALLOC PLS <--------------------------------------------------------------------------------------------------------
+    //TODO: FIX THIS MALLOC PLS <--------------------------------------------------------------------------------------------------------
     _allocator = (VmaAllocator *)malloc(sizeof(VmaAllocator));
     VmaAllocatorCreateInfo info = {};
     _instance = instance;
+    _cmdbManager = commandBufferManager;
     info.physicalDevice = _instance->GetPhysicalDevice();
     info.device = _instance->GetDevice();
     vmaCreateAllocator(&info, _allocator);
@@ -169,7 +170,7 @@ ImageInformation DeviceMemoryManager::CreateImage(uint32_t width, uint32_t heigh
     return imgInfo;
 }
 
-void DeviceMemoryManager::CopyBufferToImage(BufferInformation &srcBuffer, ImageInformation &dstImage, uint32_t width, uint32_t height, VkCommandBuffer &commandBuffer) {
+void DeviceMemoryManager::CopyBufferToImage(BufferInformation &srcBuffer, ImageInformation &dstImage) {
     //Specify which part of the buffer will be copied to which part of the image
     VkBufferImageCopy region = {};
     region.bufferOffset = 0;
@@ -183,11 +184,11 @@ void DeviceMemoryManager::CopyBufferToImage(BufferInformation &srcBuffer, ImageI
 
     region.imageOffset = {0, 0, 0};
     region.imageExtent = {
-        width,
-        height,
+        dstImage.width,
+        dstImage.height,
         1
     };
-    
+    VkCommandBuffer commandBuffer = _cmdbManager->BeginCommandBufferInstance();
     vkCmdCopyBufferToImage(
         commandBuffer,
         srcBuffer.buffer,
@@ -196,6 +197,7 @@ void DeviceMemoryManager::CopyBufferToImage(BufferInformation &srcBuffer, ImageI
         1,
         &region
     );
+    _cmdbManager->SubmitCommandBufferInstance(commandBuffer, _instance->GetGraphicsQueue());
 }
 
 void DeviceMemoryManager::DestroyImage(ImageInformation& imageInfo){
@@ -265,11 +267,6 @@ void DeviceMemoryManager::CreateScratchBuffer(std::vector<VkAccelerationStructur
     }
     CreateBuffer(VK_BUFFER_USAGE_RAY_TRACING_BIT_NV, MemProps::DEVICE, size, buffer);
 
-}
-
-char* DeviceMemoryManager::GetMemoryState()
-{
-    throw std::runtime_error("NotImplementedException(GetMemoryState): \"Lel get rekt son\"");
 }
 
 }; // namespace DeviceMemoryManager

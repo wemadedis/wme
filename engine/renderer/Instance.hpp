@@ -8,6 +8,8 @@
 namespace RTE::Rendering
 {
 
+struct RendererInitInfo;
+
 /**
  *  @brief Encapsulates and manages Vulkan abstractions used for initialization: VkInstance, VkDevice. Also creates VKQueues used for submitting commands to the GPU.  
  */
@@ -70,7 +72,7 @@ private:
      * @brief Creates the Vulkan instance.
      * @param extensions The extenstions provided by the windowing system.
      */
-    void CreateInstance(std::vector<const char*> &extensions);
+    void CreateInstance(const char* appName, std::vector<const char*> &extensions);
 
     /**
      * @brief Determines if a physical device meets the requirements of the renderer.
@@ -94,8 +96,6 @@ private:
      */
     void SetupDebugCallBack();
     
-    
-    
 public:
     /**
      * @brief The default constructor.
@@ -103,7 +103,7 @@ public:
      * @param surfaceBindingFunction Function that binds the surface of a window with the Vulkan instance.
      * @param isRayTracing If true, enables ray tracing if it is provided by the GPU.
      */ 
-    Instance(std::vector<const char*> &extensions, std::function<void(VkSurfaceKHR &surface, VkInstance instance)> surfaceBindingFunction, bool isRayTracing); 
+    Instance(RendererInitInfo initInfo); 
 
     ~Instance();
     

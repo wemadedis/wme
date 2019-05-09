@@ -45,7 +45,7 @@ glm::ivec2 Renderer::GetFrameSize()
 
 void Renderer::Initialize()
 {
-    _instance = new Instance(_initInfo.extensions, _initInfo.BindingFunc, _initInfo.RayTracingOn);
+    _instance = new Instance(_initInfo);
     _rtxOn = _initInfo.RayTracingOn;
 
     _swapChain = new SwapChain(_instance, _initInfo.Width, _initInfo.Height);
