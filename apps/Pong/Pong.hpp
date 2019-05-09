@@ -61,6 +61,7 @@ struct BallGO
     RTE::StdComponents::TransformComponent *Trans;
     RTE::StdComponents::MeshComponent *Mesh;
     RTE::StdComponents::PhysicsComponent *Phys;
+    RTE::StdComponents::PointLightComponent *Light;
     BallController *Controller;
     GameController *GameController;
 };

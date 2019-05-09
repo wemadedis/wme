@@ -11,7 +11,7 @@ Models models;
 
 void ConfigureGame(RTEConfig &config)
 {
-    config.GraphicsConfig.UseRaytracing = false;
+    config.GraphicsConfig.UseRaytracing = true;
     config.GraphicsConfig.FramesPerSecond = 120;
     config.WindowConfig.WindowWidth = 1000;
     config.WindowConfig.WindowHeight = 800;
@@ -36,6 +36,7 @@ Components GetComponentPoolIds(Scene &scene)
     c.CameraId = scene.DefineComponent<CameraComponent, 1>();
     c.DirectionalLightId = scene.DefineComponent<DirectionalLightComponent, 1>();
     c.PaddleControllerId = scene.DefineComponent<PaddleController, 2>();
+    c.PointLightId = scene.DefineComponent<PointLightComponent, 1>();
     c.BallControllerId = scene.DefineComponent<BallController, 1>();
     c.GameControllerId = scene.DefineComponent<GameController, 1>();
     return c;
@@ -46,13 +47,15 @@ TriggerGO MakeTrigger(Scene &scene, Components &comps)
     TriggerGO go;
     go.GO = scene.CreateGameObject();
 
-    go.Trans = scene.AddComponent<TransformComponent>(comps.TransformId, go.GO);
+    go.Trans = scene.AddComponent<TransformComponent>(comps.TransformId, go.GO)
+                   ->WithScale({1, 1, 1});
 
     go.Phys = scene.AddComponent<PhysicsComponent>(comps.PhysicsId, go.GO);
     Collider c;
     c.Data.Box.HalfExtents = {0.5, 4.5, 0.5};
     c.Type = ColliderType::BOX;
-    go.Phys->Initialize(go.Trans, 0, {c});
+    go.Phys->Initialize(go.Trans, 1, {c});
+    go.Phys->GetRigidBody()->SetStatic(true);
     return go;
 }
 
@@ -75,7 +78,7 @@ CameraGO MakeCamera(Scene &scene, Components &comps)
     CameraGO go;
     go.GO = scene.CreateGameObject();
     go.Trans = scene.AddComponent<TransformComponent>(comps.TransformId, go.GO)
-                   ->WithPosition({0, 0, 20});
+                   ->WithPosition({0, 0, 15});
 
     go.Cam = scene.AddComponent<CameraComponent>(comps.CameraId, go.GO);
     go.Cam->Initialize(go.Trans);
@@ -88,7 +91,7 @@ BoxGO MakeBackground(Scene &scene, Components &comps)
     BoxGO go;
     go.GO = scene.CreateGameObject();
     go.Trans = scene.AddComponent<TransformComponent>(comps.TransformId, go.GO)
-                   ->WithPosition({0, 0, -5})
+                   ->WithPosition({0, 0, -3})
                    ->WithScale({20, 20, 1});
 
     go.Mesh = scene.AddComponent<MeshComponent>(comps.MeshId, go.GO);
@@ -125,6 +128,8 @@ BallGO MakeBall(Scene &scene, Components &comps, GameObjectId left, GameObjectId
     go.GameController = scene.AddComponent<GameController>(comps.GameControllerId, go.GO);
     go.GameController->Initialize(go.Trans, 3);
 
+    go.Light = scene.AddComponent<PointLightComponent>(comps.PointLightId, go.GO);
+    go.Light->Initialize(go.Trans, Colors::Cyan, 1.5);
     return go;
 }
 
@@ -178,7 +183,7 @@ PaddleGO MakePaddle(Scene &scene, Components &comps)
     col.Data.Box.HalfExtents = {0.125, 2, 0.5};
     col.Type = ColliderType::BOX;
 
-    go.Phys->Initialize(go.Trans, 1, {col});
+    go.Phys->Initialize(go.Trans, 1000, {col});
     go.Phys->GetRigidBody()->SetGravity({0, 0, 0});
     go.Phys->GetRigidBody()->SetLinearFactor({0, 1, 0});
     go.Phys->GetRigidBody()->SetAngularFactor({0, 0, 0});
@@ -190,7 +195,7 @@ PaddleGO MakePaddle(Scene &scene, Components &comps)
 PaddleGO MakeLeftPaddle(Scene &scene, Components &comps)
 {
     PaddleGO go = MakePaddle(scene, comps);
-    go.Trans->WithPosition({4, 0, 0});
+    go.Trans->WithPosition({-3.5, 0, 0});
     go.Controller->Initialize(go.Phys, go.Trans, true);
     return go;
 }
@@ -198,7 +203,7 @@ PaddleGO MakeLeftPaddle(Scene &scene, Components &comps)
 PaddleGO MakeRightPaddle(Scene &scene, Components &comps)
 {
     PaddleGO go = MakePaddle(scene, comps);
-    go.Trans->WithPosition({-4, 0, 0});
+    go.Trans->WithPosition({3.5, 0, 0});
     go.Controller->Initialize(go.Phys, go.Trans, false);
     return go;
 }

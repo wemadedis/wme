@@ -16,12 +16,14 @@ void BallController::Update(float deltaTime)
     while (!_phys->Collisions->empty())
     {
         RTE::Physics::OnCollisionData col = _phys->Collisions->front();
+        _phys->Collisions->pop();
         if (col.NewCollision)
         {
-            Debug(std::to_string(col.GoId));
-
-            const bool is_in = _collisionIds.find(col.Id) != _collisionIds.end();
-            _dir = glm::normalize(glm::reflect(_dir, col.Normal));
+            float angle = glm::dot(_dir, col.Normal);
+            if (angle < 0)
+            {
+                _dir = glm::normalize(glm::reflect(_dir, col.Normal));
+            }
 
             if (col.GoId == _leftCollider)
             {
@@ -32,12 +34,7 @@ void BallController::Update(float deltaTime)
             {
                 Debug("RIGHT");
             }
-
-            else
-            {
-            }
         }
-        _phys->Collisions->pop();
     }
     while (!_phys->EndCollisions->empty())
     {

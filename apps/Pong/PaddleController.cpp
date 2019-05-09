@@ -19,13 +19,13 @@ void PaddleController::Update(float deltaTime)
     bool moveDown = false;
     if (_isLeft)
     {
-        moveUp = WindowManager::GetKey(GLFW_KEY_UP);
-        moveDown = WindowManager::GetKey(GLFW_KEY_DOWN);
+        moveUp = WindowManager::GetKey(GLFW_KEY_W);
+        moveDown = WindowManager::GetKey(GLFW_KEY_S);
     }
     else
     {
-        moveUp = WindowManager::GetKey(GLFW_KEY_W);
-        moveDown = WindowManager::GetKey(GLFW_KEY_S);
+        moveUp = WindowManager::GetKey(GLFW_KEY_UP);
+        moveDown = WindowManager::GetKey(GLFW_KEY_DOWN);
     }
 
     Direction dir = Direction::NONE;
