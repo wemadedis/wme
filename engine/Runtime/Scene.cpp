@@ -19,11 +19,10 @@ void Scene::UpdateComponents(float deltaTime)
 
 GameObject *Scene::CreateGameObject()
 {
-    GameObject go;
-    go.SetId(_gameObjects.size());
-    _gameObjects.push_back(go);
-    return &_gameObjects[_gameObjects.size() - 1];
+    static GameObjectId goId = 0;
+    GameObject *go = new GameObject();
+    go->SetId(goId++);
+    return go;
 }
-
 } // namespace Runtime
 } // namespace RTE
