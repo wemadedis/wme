@@ -8,7 +8,7 @@ namespace RTE::Physics
 
 class PhysicsDebugDraw : public btIDebugDraw, public Rendering::LineDebugDrawModule
 {
-    DebugDrawModes mode = DBG_DrawContactPoints;
+    DebugDrawModes mode = (DebugDrawModes)(DBG_DrawWireframe | DBG_DrawContactPoints);
     btDiscreteDynamicsWorld *_world;
 public:
 
@@ -22,7 +22,7 @@ public:
         Rendering::Line l;
         l.Start.Position = {from.x(), from.y(), from.z()};
         l.End.Position = {to.x(), to.y(), to.z()};
-        //RecordLine(l);
+        RecordLine(l);
     }
 
     void drawContactPoint(const btVector3 &PointOnB, const btVector3 &normalOnB, btScalar distance, int lifeTime,
@@ -30,7 +30,7 @@ public:
     {
         Rendering::Line l;
         l.Start.Position = { PointOnB.x(), PointOnB.y(), PointOnB.z()};
-        l.End.Position = l.Start.Position + glm::vec3(normalOnB.x(), normalOnB.y(), normalOnB.z())*2.0f;
+        l.End.Position = l.Start.Position + glm::vec3(normalOnB.x(), normalOnB.y(), normalOnB.z())*3.0f;
         RecordLine(l);
     }
 
