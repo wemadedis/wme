@@ -293,7 +293,8 @@ void Renderer::RecreateSwapChain()
     } 
 
     _swapChain->CreateFramebuffers(_renderPass, _imageManager);
-    RecordRenderPass();
+    if(_rtxOn) RecordRenderPassRT();
+    else RecordRenderPass();
 }
 
 void Renderer::UploadGlobalUniform()
@@ -478,11 +479,8 @@ void Renderer::Finalize()
     }
 
 
-    if (_rtxOn)
-    {
-        RecordRenderPassRT();
-    }
-    RecordRenderPass();
+    if (_rtxOn) RecordRenderPassRT();
+    else RecordRenderPass();
 
     CreateSyncObjects();
 }
