@@ -108,7 +108,6 @@ void PhysicsManager::SetupBulletCallbacks()
 PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
 {
     _instance = this;
-    SetFramesPerSecond(60);
     _physicsWorld = CreateDefaultDynamicsWorld();
     _debugDraw = new PhysicsDebugDraw(_physicsWorld);
     _physicsWorld->setDebugDrawer(dynamic_cast<btIDebugDraw *>(_debugDraw));
@@ -116,10 +115,12 @@ PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
     SetGravity(_defaultGravity);
 }
 
-PhysicsManager::
-    ~PhysicsManager()
+PhysicsManager::~PhysicsManager()
 {
     delete _physicsWorld;
+    delete _instance;
+    delete _debugDraw;
+    delete _collisionPool;
 }
 
 void PhysicsManager::Step(float deltaTime)
@@ -204,11 +205,6 @@ void PhysicsManager::SetGravity(glm::vec3 gravity)
     SetGravity(gravity.x, gravity.y, gravity.z);
 }
 
-uint32_t PhysicsManager::GetFramesPerSecond()
-{
-    return _framesPerSecond;
-}
-
 Collision *PhysicsManager::GetCollisionSlot()
 {
     return _instance->_collisionPool->CreateObject();
@@ -217,12 +213,6 @@ Collision *PhysicsManager::GetCollisionSlot()
 void PhysicsManager::FreeCollisionSlot(Collision *col)
 {
     _instance->_collisionPool->FreeObject(col);
-}
-
-void PhysicsManager::SetFramesPerSecond(uint32_t framesPerSecond)
-{
-    _framesPerSecond = framesPerSecond;
-    _fixedTimeStep = 1 / (float)framesPerSecond;
 }
 
 PhysicsManager *PhysicsManager::GetInstance()
