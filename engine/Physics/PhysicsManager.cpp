@@ -40,13 +40,25 @@ static bool ContactProcessedCallback(
 
     if (compA->ReceiveCollisionCallbacks)
     {
-        OnCollisionData colDataA;
-        colDataA.Id = col->Id;
-        colDataA.GoId = compB->GetGameObjectId();
-        colDataA.Point = Convert(cp.getPositionWorldOnA());
-        colDataA.Normal = Convert(cp.m_normalWorldOnB);
-        colDataA.NewCollision = collisionBegin;
-        compA->Collisions->push(colDataA);
+        OnCollisionData colData;
+        colData.Id = col->Id;
+        colData.GoId = compB->GetGameObjectId();
+        colData.Point = Convert(cp.getPositionWorldOnA());
+        colData.Normal = Convert(cp.m_normalWorldOnB);
+        colData.NewCollision = collisionBegin;
+        compA->Collisions->push(colData);
+    }
+
+
+    if (compB->ReceiveCollisionCallbacks)
+    {
+        OnCollisionData colData;
+        colData.Id = col->Id;
+        colData.GoId = compA->GetGameObjectId();
+        colData.Point = Convert(cp.getPositionWorldOnB());
+        colData.Normal = Convert(cp.m_normalWorldOnB);
+        colData.NewCollision = collisionBegin;
+        compB->Collisions->push(colData);
     }
 
     return false;

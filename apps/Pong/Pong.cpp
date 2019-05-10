@@ -11,8 +11,9 @@ Models models;
 
 void ConfigureGame(RTEConfig &config)
 {
-    config.GraphicsConfig.UseRaytracing = true;
+    config.GraphicsConfig.UseRaytracing = false;
     config.GraphicsConfig.FramesPerSecond = 120;
+    config.PhysicsConfig.DebugDrawColliders = false;
     config.WindowConfig.WindowWidth = 1000;
     config.WindowConfig.WindowHeight = 800;
     config.WindowConfig.WindowName = "RAYTRACING: PO(N)G-CHAMP!";
@@ -123,13 +124,14 @@ BallGO MakeBall(Scene &scene, Components &comps, GameObjectId left, GameObjectId
     go.Phys->GetRigidBody()->SetLinearFactor({1, 1, 0});
 
     go.Controller = scene.AddComponent<BallController>(comps.BallControllerId, go.GO);
-    go.Controller->Initialize(go.Phys, go.Trans, left, right);
-
     go.GameController = scene.AddComponent<GameController>(comps.GameControllerId, go.GO);
-    go.GameController->Initialize(go.Trans, 3);
 
-    go.Light = scene.AddComponent<PointLightComponent>(comps.PointLightId, go.GO);
-    go.Light->Initialize(go.Trans, Colors::Cyan, 1.5);
+    go.Controller->Initialize(go.Phys, go.Trans, go.GameController, left, right);
+
+    go.GameController->Initialize(go.Controller, go.Trans, 3);
+    go.GameController->SetGUIDraw([=]() {
+        go.GameController->ShowScore();
+    });
     return go;
 }
 

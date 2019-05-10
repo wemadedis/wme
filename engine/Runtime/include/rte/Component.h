@@ -16,7 +16,10 @@ private:
     bool _enabled = true;
 
     GameObjectId _gameObjectId = 0;
+
+protected:
     GUIDrawFunction  GUIDraw;
+
 public:
     /**
      * @brief 
