@@ -310,6 +310,17 @@ public:
     MeshInstanceHandle CreateMeshInstance(MeshHandle mesh);
 
     /**
+     * @brief Sets the Mesh Instance Properties.
+     * 
+     * @param instance The mesh instance handle.
+     * @param modelMatrix The model matrix of the instance.
+     * @param mat The material of the instance.
+     * @param texture The texture of the instance.
+     * @param mesh The mesh of the instance.
+     */
+    void SetMeshInstanceProperties(MeshInstanceHandle instance, glm::mat4 &modelMatrix, Material &mat, TextureHandle texture, MeshHandle mesh);
+
+    /**
      * @brief Binds a mesh to a mesh instance. Used to swap between different meshes.
      * @param mesh The mesh handle.
      * @param instance The mesh instance handle.

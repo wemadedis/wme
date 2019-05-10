@@ -111,6 +111,43 @@ MeshInstanceHandle Renderer::CreateMeshInstance(MeshHandle mesh)
     return (MeshInstanceHandle)_meshInstances.size() - 1;
 }
 
+
+void Renderer::SetMeshInstanceProperties(MeshInstanceHandle instance, glm::mat4 &modelMatrix, Material &mat, TextureHandle texture, MeshHandle mesh)
+{
+    _meshInstances[instance].texture = texture;
+    _meshInstances[instance].mesh = mesh;
+
+    glm::mat4 normalMatrix;
+    //Calculate the normal matrix
+    if(_renderMode == RenderMode::RAYTRACE)
+    {
+        normalMatrix = glm::transpose(glm::inverse(modelMatrix));
+    }
+    else 
+    {
+        //The normal is transformed to view space for further calculations in rasterization.
+        normalMatrix = glm::transpose(glm::inverse(_globalUniform.ViewMatrix*modelMatrix));
+    }
+    
+    if (_accelerationStructure != nullptr)
+    {
+        _accelerationStructure->UpdateInstanceTransform(instance, modelMatrix);
+    }
+    _deviceMemoryManager->ModifyBufferData<MeshInstanceUniformData>(_meshInstances[instance].uniformBuffer, [&](MeshInstanceUniformData *data){
+        data->Texture = texture;
+        data->ModelMatrix = modelMatrix;
+        data->NormalMatrix = normalMatrix;
+        data->Ambient = mat.Ambient;
+        data->Diffuse = mat.Diffuse;
+        data->Specular = mat.Specular;
+        data->Shininess = mat.Shininess;
+        data->Reflectivity = mat.Reflectivity;
+        data->Transparency = mat.Transparency;
+        data->Color = mat.Color;
+        data->HasTexture = texture != Renderer::EMPTY_TEXTURE;
+    });
+}
+
 void Renderer::BindMeshToInstance(MeshHandle mesh, MeshInstanceHandle instance)
 {
     _meshInstances[instance].mesh = mesh;

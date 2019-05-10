@@ -169,13 +169,12 @@ std::vector<VkAccelerationStructureNV> AccelerationStructure::GetBotStructures()
 
 void AccelerationStructure::UpdateInstanceTransform(MeshInstanceHandle instanceHandle, glm::mat4 modelMatrix)
 {
-    _memoryManager->ModifyBufferData<VkGeometryInstance>(_instanceBuffer, [&](VkGeometryInstance *instances) {
-        memcpy(instances[instanceHandle].transform, &glm::transpose(modelMatrix)[0], sizeof(instances[instanceHandle].transform));
-    });
+    memcpy(_instances[instanceHandle].transform, &glm::transpose(modelMatrix)[0], sizeof(_instances[instanceHandle].transform));
 }
 
 void AccelerationStructure::RebuildTopStructureCmd(VkCommandBuffer commandBuffer)
 {
+    _memoryManager->CopyDataToBuffer(_instanceBuffer, _instances.data());
     VkAccelerationStructureInfoNV asInfo;
     asInfo.sType = VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_INFO_NV;
     asInfo.pNext = NULL;

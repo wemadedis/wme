@@ -6,6 +6,9 @@
 
 #include "imgui/imgui.h"
 
+#include <algorithm>
+#include <execution>
+
 namespace RTE::Rendering
 {
     
@@ -76,13 +79,17 @@ void RenderingManager::FrameResized(int32_t width, int32_t height)
 
 void RenderingManager::Update(float deltaTime)
 {
-
+    std::for_each(std::execution::par, _instances.begin(), _instances.end(), [&](auto&& pair){
+        StdComponents::MeshComponent *comp = pair.first;
+        UpdateMeshComponent(comp);
+    });
+    /*
     for (auto iter = _instances.begin(); iter != _instances.end(); iter++)
     {
         StdComponents::MeshComponent *comp = iter->first;
         UpdateMeshComponent(comp);
     }
-
+    */
     for (auto iter = _pointLights.begin(); iter != _pointLights.end(); iter++)
     {
         auto pl = iter->first;
@@ -180,10 +187,13 @@ void RenderingManager::UpdateMeshComponent(StdComponents::MeshComponent *meshCom
     TextureHandle texture = _textures.at(meshComponent->GetTexture());
     MeshInstanceHandle instance = _instances.at(meshComponent);
     Transform &trans = meshComponent->GetTransformComponent()->Transform;
-    _renderer->BindMeshToInstance(mesh, instance);
-    _renderer->BindTextureToMeshInstance(texture, instance);
-    _renderer->SetInstanceTransform(instance, trans.ModelMatrix());
-    _renderer->SetInstanceMaterial(instance, meshComponent->Material);
+    //_renderer->BindMeshToInstance(mesh, instance);
+    //_renderer->BindTextureToMeshInstance(texture, instance);
+    //_renderer->SetInstanceTransform(instance, trans.ModelMatrix());
+    //_renderer->SetInstanceMaterial(instance, meshComponent->Material);
+    auto model = trans.ModelMatrix();
+    auto mat = meshComponent->Material;
+    _renderer->SetMeshInstanceProperties(instance, model, mat, texture, mesh);
 }
 
 void RenderingManager::RegisterCameraComponent(StdComponents::CameraComponent *cc)
