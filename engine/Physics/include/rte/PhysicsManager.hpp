@@ -8,10 +8,10 @@
 
 #include "rte/Collision.hpp"
 #include "rte/GenericPool.hpp"
+#include "rte/PhysicsDebugDraw.h"
 #include "rte/RTEConfig.hpp"
 #include "rte/RTEModule.hpp"
 #include "rte/RigidBody.hpp"
-#include "rte/PhysicsDebugDraw.h"
 
 // Forward declaration
 class RigidBody;
@@ -176,23 +176,9 @@ private:
     void SetupBulletCallbacks();
 
     /**
-     * @brief Init for 
-     * 
+     * @brief The default gravity of the physics system.
      */
     const glm::vec3 _defaultGravity = {0, -9.8f, 0};
-
-    /**
-     * @brief The number of frames per second used for the physics system
-     *  Changed by the default constructor, or via setter 
-     * method RTE::Physics::PhysicsManager(RTEConfig &config)
-     */
-    uint32_t _framesPerSecond = 0;
-
-    /**
-     * @brief The fixed time step used for physics simulation
-     * 
-     */
-    float _fixedTimeStep = 0;
 
     /**
      * @brief Maximum number of substeps
@@ -255,11 +241,11 @@ public:
     /**
      * @brief Get the Gravity of the physics world
      * 
-     * @return glm::vec3 Gravity
      */
     glm::vec3 GetGravity();
     /**
      * @brief Set the world gravity using individual x, y, z components.
+     * @return glm::vec3 Gravity
      * 
      * @param x Gravity X
      * @param y Gravity Y
@@ -284,18 +270,6 @@ public:
 
     static Collision *PhysicsManager::GetCollisionSlot();
     static void PhysicsManager::FreeCollisionSlot(Collision *col);
-    /**
-     * @brief Get the Frames Per Second
-     * @return uint32_t Frames per second
-     */
-    uint32_t GetFramesPerSecond();
-
-    /**
-     * @brief Set the Frames Per Second. This also updates the fixed time step.
-     * 
-     * @param framesPerSecond 
-     */
-    void SetFramesPerSecond(uint32_t framesPerSecond);
 
     PhysicsDebugDraw *GetPhysicsDebugDraw();
 };
