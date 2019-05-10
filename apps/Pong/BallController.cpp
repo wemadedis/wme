@@ -57,9 +57,9 @@ void BallController::Update(float deltaTime)
 
 void BallController::SetBallMoveState(bool shouldMove)
 {
-    if(shouldMove)
+    if (shouldMove)
     {
-        _dir = _startingDirections[_directionIndex++];
+        _dir = _startingDirections[_directionIndex++ % 4];
     }
     else
     {

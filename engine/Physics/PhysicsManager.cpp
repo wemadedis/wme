@@ -49,7 +49,6 @@ static bool ContactProcessedCallback(
         compA->Collisions->push(colData);
     }
 
-
     if (compB->ReceiveCollisionCallbacks)
     {
         OnCollisionData colData;

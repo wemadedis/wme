@@ -55,12 +55,12 @@ set(BULLET_LIBS_RELEASE
 )
 
 message(${CMAKE_BUILD_TYPE})
-if (${CMAKE_BUILD_TYPE} EQUAL "")
-    message("Egg")
-else ()
-    message("Edgy")
+if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
+    message("RELEASE MODE ACTIVATED")
+    target_link_libraries(bullet INTERFACE ${BULLET_LIBS_RELEASE}) 
+elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    target_link_libraries(bullet INTERFACE ${BULLET_LIBS_DEBUG}) 
 endif ()
-target_link_libraries(bullet INTERFACE ${BULLET_LIBS_DEBUG}) 
 ###</BULLET>
 
 

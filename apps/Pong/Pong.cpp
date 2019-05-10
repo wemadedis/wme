@@ -11,7 +11,7 @@ Models models;
 
 void ConfigureGame(RTEConfig &config)
 {
-    config.GraphicsConfig.UseRaytracing = false;
+    config.GraphicsConfig.UseRaytracing = true;
     config.GraphicsConfig.FramesPerSecond = 120;
     config.PhysicsConfig.DebugDrawColliders = false;
     config.WindowConfig.WindowWidth = 1000;
