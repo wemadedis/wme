@@ -13,6 +13,11 @@ struct Models
     std::string SpherePath = "models/sphere.ply";
 };
 
+struct Sounds 
+{
+    std::string PongHitPath = "audio/pong_hit.wav";
+};
+
 struct Components
 {
     ComponentPoolId TransformId;
@@ -24,6 +29,8 @@ struct Components
     ComponentPoolId PaddleControllerId;
     ComponentPoolId BallControllerId;
     ComponentPoolId GameControllerId;
+    ComponentPoolId AudioCompId;
+    ComponentPoolId ListenerId;
 };
 
 struct CameraGO
@@ -31,6 +38,7 @@ struct CameraGO
     RTE::Runtime::GameObject *GO;
     RTE::StdComponents::TransformComponent *Trans;
     RTE::StdComponents::CameraComponent *Cam;
+    RTE::StdComponents::ListenerComponent *Listener;
 };
 
 struct DirLightGO
@@ -62,6 +70,7 @@ struct BallGO
     RTE::StdComponents::MeshComponent *Mesh;
     RTE::StdComponents::PhysicsComponent *Phys;
     RTE::StdComponents::PointLightComponent *Light;
+    RTE::StdComponents::AudioComponent *Audio;
     BallController *Controller;
     GameController *GameController;
 };

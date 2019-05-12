@@ -8,6 +8,7 @@ using namespace RTE::Platform;
 using namespace RTE::Utilities;
 
 Models models;
+Sounds sounds;
 
 void ConfigureGame(RTEConfig &config)
 {
@@ -24,6 +25,8 @@ void ConfigureGame(RTEConfig &config)
     config.AssetConfig.Meshes = {
         models.BoxPath,
         models.SpherePath};
+
+    sounds.PongHitPath = GetFileFromAssets(sounds.PongHitPath);
 }
 
 Components GetComponentPoolIds(Scene &scene)
@@ -40,6 +43,9 @@ Components GetComponentPoolIds(Scene &scene)
     c.PointLightId = scene.DefineComponent<PointLightComponent, 1>();
     c.BallControllerId = scene.DefineComponent<BallController, 1>();
     c.GameControllerId = scene.DefineComponent<GameController, 1>();
+    c.AudioCompId = scene.DefineComponent<AudioComponent, 1>();
+    c.ListenerId = scene.DefineComponent<ListenerComponent, 1>();
+
     return c;
 }
 
@@ -84,6 +90,8 @@ CameraGO MakeCamera(Scene &scene, Components &comps)
     go.Cam = scene.AddComponent<CameraComponent>(comps.CameraId, go.GO);
     go.Cam->Initialize(go.Trans);
     go.Cam->BackgroundColor = Colors::Cyan;
+    go.Listener = scene.AddComponent<ListenerComponent>(comps.ListenerId, go.GO);
+    go.Listener->Initialize(go.Trans);
     return go;
 }
 
@@ -122,16 +130,20 @@ BallGO MakeBall(Scene &scene, Components &comps, GameObjectId left, GameObjectId
     go.Phys->GetRigidBody()->SetGravity({0, 0, 0});
     go.Phys->GetRigidBody()->SetAngularFactor({0, 0, 0});
     go.Phys->GetRigidBody()->SetLinearFactor({1, 1, 0});
+    go.Audio = scene.AddComponent<AudioComponent>(comps.AudioCompId, go.GO);
+    go.Audio->Initialize(sounds.PongHitPath, go.Trans);
 
     go.Controller = scene.AddComponent<BallController>(comps.BallControllerId, go.GO);
     go.GameController = scene.AddComponent<GameController>(comps.GameControllerId, go.GO);
 
-    go.Controller->Initialize(go.Phys, go.Trans, go.GameController, left, right);
+    go.Controller->Initialize(go.Phys, go.Trans, go.Audio, go.GameController, left, right);
 
     go.GameController->Initialize(go.Controller, go.Trans, 3);
     go.GameController->SetGUIDraw([=]() {
         go.GameController->ShowScore();
     });
+
+
     return go;
 }
 

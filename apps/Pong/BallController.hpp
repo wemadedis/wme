@@ -19,11 +19,14 @@ private:
     GameObjectId _rightCollider;
     RTE::StdComponents::PhysicsComponent *_phys;
     RTE::StdComponents::TransformComponent *_trans;
+    RTE::StdComponents::AudioComponent *_ac;
     GameController *_gameController;
     std::unordered_set<CollisionId> _collisionIds;
+    
 public:
     void Initialize(RTE::StdComponents::PhysicsComponent *phys,
                     RTE::StdComponents::TransformComponent *trans,
+                    RTE::StdComponents::AudioComponent *ac,
                     GameController *gameController,
                     GameObjectId leftCollider,
                     GameObjectId rightCollider);

@@ -4,12 +4,14 @@
 
 void BallController::Initialize(RTE::StdComponents::PhysicsComponent *phys,
                                 RTE::StdComponents::TransformComponent *trans,
+                                RTE::StdComponents::AudioComponent *ac,
                                 GameController *gameController,
                                 GameObjectId leftCollider,
                                 GameObjectId rightCollider)
 {
     _phys = phys;
     _trans = trans;
+    _ac = ac;
     _gameController = gameController;
     _leftCollider = leftCollider;
     _rightCollider = rightCollider;
@@ -38,12 +40,16 @@ void BallController::Update(float deltaTime)
             {
                 Debug("Hit left");
                 _gameController->AddScore(false);
+                _ac->GetEmitter()->SetPosition(_trans->Transform.Pos);
+                _ac->Play();
             }
 
             else if (col.GoId == _rightCollider)
             {
                 Debug("Hit right");
                 _gameController->AddScore(true);
+                _ac->GetEmitter()->SetPosition(_trans->Transform.Pos);
+                _ac->Play();
             }
         }
     }
