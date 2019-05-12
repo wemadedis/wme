@@ -188,23 +188,13 @@ void GraphicsPipeline::CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragme
     pipelineInfo.pMultisampleState = &multisampleInfo;
     pipelineInfo.pDepthStencilState = &depthStencil;
     pipelineInfo.pColorBlendState = &colorBlend;
-    //pipelineInfo.pDynamicState = nullptr; // Optional
     CreatePipelineLayout();
     pipelineInfo.layout = _pipelineLayout;
     pipelineInfo.renderPass = _renderPass->GetHandle();
     pipelineInfo.subpass = 0;
 
-    pipelineInfo.basePipelineHandle = VK_NULL_HANDLE; // Optional
-    pipelineInfo.basePipelineIndex = -1;			  // Optional
-
-    if (vkCreateGraphicsPipelines(_instance->GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline) != VK_SUCCESS)
-    {
-        throw std::runtime_error("failed to create graphics pipeline!");
-    }
-
-    //After creating the pipeline the modules can be deleted
-    //vkDestroyShaderModule(_device, _vertexShaderModule, nullptr);
-    //vkDestroyShaderModule(_device, _vertexShaderModule, nullptr);
+    VkResult code = vkCreateGraphicsPipelines(_instance->GetDevice(), VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &_pipeline);
+    Utilities::CheckVkResult(code, "failed to create graphics pipeline!");
 }
 
 

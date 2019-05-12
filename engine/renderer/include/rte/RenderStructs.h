@@ -153,14 +153,16 @@ struct Material
 
     //TODO: need dis?
     /**
-     * @brief The transparency of the surface. To be used for ray tracing. 
+     * @brief The transparency of the surface. (Warning: Currently not in use)
      */
     float Transparency = 0.0f;
 
-    //TODO: We currently do not use color, and texture should be defined by path (for the rendering manager). Remove these?
+    /**
+     * @brief Color of the surface. Not used if a mesh component has a texture.
+     * 
+     */
     glm::vec4 Color;
 
-    //Texture *Texture;
 };
 
 /**

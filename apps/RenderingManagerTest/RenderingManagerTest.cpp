@@ -17,7 +17,7 @@ void ConfigureGame(RTEConfig &config)
     config.WindowConfig.WindowWidth = 800;
     config.WindowConfig.WindowName = "Eggplant";
     config.GraphicsConfig.UseRaytracing = true;
-    config.GraphicsConfig.FramesPerSecond = 1000.0f;
+    config.GraphicsConfig.FramesPerSecond = 144;
     config.AssetConfig.Meshes = {RTE::Utilities::GetFileFromAssets("models/monkey.ply"), RTE::Utilities::GetFileFromAssets("models/realPlane.fbx")};
     config.AssetConfig.Textures = {RTE::Utilities::GetFileFromAssets("textures/rte.png")};
 }
@@ -149,13 +149,13 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     sceneManager.SetActiveScene(scene);
 
     // Init components pools
-    transIndex = scene->DefineComponent<TransformComponent, 10000>();
-    meshIndex = scene->DefineComponent<MeshComponent, 10000>();
+    transIndex = scene->DefineComponent<TransformComponent, 11000>();
+    meshIndex = scene->DefineComponent<MeshComponent, 11000>();
     pcIndex = scene->DefineComponent<PlayerController, 50>();
     camIndex = scene->DefineComponent<CameraComponent, 50>();
     plIndex = scene->DefineComponent<PointLightComponent, 50>();
     dlIndex = scene->DefineComponent<DirectionalLightComponent, 50>();
-    orIndex = scene->DefineComponent<ObjectRotator, 10000>();
+    orIndex = scene->DefineComponent<ObjectRotator, 11000>();
 
     // Setup our game object
     GameObject *go = scene->CreateGameObject();
@@ -178,14 +178,13 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     pc->SetEnabled(true);
     pc->Initialize(trans2, nullptr, camera);
 
-    for(int x = 0; x < 20; x++)
+    for(int x = 0; x < 50; x++)
     {
-        for(int z = 0; z < 20; z++)
+        for(int z = 0; z < 50; z++)
         {
             CreateMeshObject("models/monkey.ply", glm::vec3(x*2,0.0f,z*2));
         }
     }
-
 
     auto pointLight = CreatePointLight();
     auto plComp = GetComponent<PointLightComponent>(pointLight);
@@ -233,7 +232,6 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
         ImGui::DragFloat("Far plane:", &camera->FarPlane, 0.1f, 0.0f, 180.0f);
         ImGui::DragFloat("Near plane:", &camera->NearPlane, 0.1f, 0.0f, 180.0f);
         ImGui::ColorPicker4("Color", &meshComp->Material.Color[0]);
-        
         ImGui::End();
     });
 
