@@ -132,6 +132,7 @@ BallGO MakeBall(Scene &scene, Components &comps, GameObjectId left, GameObjectId
     go.Phys->GetRigidBody()->SetLinearFactor({1, 1, 0});
     go.Audio = scene.AddComponent<AudioComponent>(comps.AudioCompId, go.GO);
     go.Audio->Initialize(sounds.PongHitPath, go.Trans);
+	go.Audio->SetLoop(false);
 
     go.Controller = scene.AddComponent<BallController>(comps.BallControllerId, go.GO);
     go.GameController = scene.AddComponent<GameController>(comps.GameControllerId, go.GO);

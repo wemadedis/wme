@@ -30,18 +30,18 @@ void AudioComponent::Update(float deltaTime)
     using namespace RTE::Audio;
     _emitter->SetPosition(_transformComponent->Transform.Pos);
 
-    switch (state)
-    {
-        case State::Playing:
-            _emitter->Play();
-            break;
-        case State::Paused:
-            _emitter->Pause();
-            break;
-        case State::Stopped:
-            _emitter->Stop();
-            break;
-    }
+    // switch (state)
+    // {
+    //     case State::Playing:
+    //         _emitter->Play();
+    //         break;
+    //     case State::Paused:
+    //         _emitter->Pause();
+    //         break;
+    //     case State::Stopped:
+    //         _emitter->Stop();
+    //         break;
+    // }
 }
 
 Audio::Emitter *AudioComponent::GetEmitter()
@@ -52,19 +52,19 @@ Audio::Emitter *AudioComponent::GetEmitter()
 void AudioComponent::Play()
 {
     state = RTE::Audio::State::Playing;
-    // _emitter->Play();
+    _emitter->Play();
 }
 
 void AudioComponent::Pause()
 {
     state = RTE::Audio::State::Paused;
-    // _emitter->Pause();
+    _emitter->Pause();
 }
 
 void AudioComponent::Stop()
 {
     state = RTE::Audio::State::Stopped;
-    // _emitter->Stop();
+    _emitter->Stop();
 }
 
 void AudioComponent::SetVolume(float volume)

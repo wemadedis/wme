@@ -34,22 +34,19 @@ void BallController::Update(float deltaTime)
             if (angle < 0)
             {
                 _dir = glm::normalize(glm::reflect(_dir, col.Normal));
+                _ac->Play();
             }
 
             if (col.GoId == _leftCollider)
             {
                 Debug("Hit left");
                 _gameController->AddScore(false);
-                _ac->GetEmitter()->SetPosition(_trans->Transform.Pos);
-                _ac->Play();
             }
 
             else if (col.GoId == _rightCollider)
             {
                 Debug("Hit right");
                 _gameController->AddScore(true);
-                _ac->GetEmitter()->SetPosition(_trans->Transform.Pos);
-                _ac->Play();
             }
         }
     }
