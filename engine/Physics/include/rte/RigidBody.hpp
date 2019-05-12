@@ -53,7 +53,6 @@ public:
 
     void SetMass(float mass, glm::vec3 inertia);
 
-    // malloc(sizeof(TransformComponent*) * NumTransforms)
     void UpdateFromPhysicsWorld(Rendering::Transform &trans);
     void UpdateToPhysicsWorld(glm::vec3 position, glm::vec3 orientation);
 };

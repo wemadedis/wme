@@ -32,7 +32,6 @@ void RTECore::RunUpdateLoop()
     // for (int i = 0; i < frameCount; i++)
     while (_windowManager->ShouldClose() == false)
     {
-        Platform::PollEvents();
         for (int32_t moduleIndex = 0;
              moduleIndex < Modules->size();
              moduleIndex++)
@@ -83,11 +82,11 @@ RTECore::RTECore()
 
     Modules = new std::vector<RTEModule *>();
 
-    Modules->push_back(new Physics::PhysicsManager(Config));
     _windowManager = new Platform::WindowManager(Config);
+    Modules->push_back(_windowManager);
+    Modules->push_back(new Physics::PhysicsManager(Config));
     Rendering::RenderingManager *rm = new Rendering::RenderingManager(Config, *_windowManager);
     _windowManager->SetRenderingManager(rm);
-    Modules->push_back(_windowManager);
     Runtime::SceneManager *sceneManager = new Runtime::SceneManager();
 
     Modules->push_back(sceneManager);
