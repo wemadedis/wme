@@ -210,7 +210,7 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
     using namespace Runtime;
     using namespace StdComponents;
 
-    SimpleTransform playerSt = {glm::vec3(0.f, 1.f, 6.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1)};
+    SimpleTransform playerSt = {glm::vec3(0.f, 2.5f, 9.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1)};
     Player player = createPlayer(scene, componentIds, playerSt);
     SimpleTransform st = {
         glm::vec3(0.f, 4.3f, 0.f), //* Position
@@ -341,9 +341,9 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     sceneManager.SetActiveScene(scene);
     ComponentIds componentIds = initComponentPools(scene);
 
-    // CornellBox(scene, componentIds);
+    CornellBox(scene, componentIds);
     // MonkeySoundTest(scene, componentIds);
-    LotsOfMonkeys(scene, componentIds);
+    //LotsOfMonkeys(scene, componentIds);
     
 
 }
