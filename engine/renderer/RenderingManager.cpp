@@ -40,7 +40,6 @@ RenderingManager::RenderingManager(
     };
 
     _renderer = new Renderer(info, _guiModule);
-    //TODO: Handle cases where RT is requested but not available
     _rtEnabled = config.GraphicsConfig.UseRaytracing;
     _textures.insert({std::string(""), Renderer::EMPTY_TEXTURE});
     ImportRenderingResources(config.AssetConfig.Meshes, config.AssetConfig.Textures);
