@@ -41,7 +41,7 @@ public:
         _transform = trans;
         _camera = cam;
         _transform->Transform.Rot.x = glm::radians(-90.0f);
-        /*SetGUIDraw([=](){
+        SetGUIDraw([=](){
             ImGui::Begin("Wazzup");
             ImGui::SetWindowSize({200, 300});
             ImGui::DragFloat("X", &_transform->Transform.Rot.x, 0.1f, -0.1f, 360.1f);
@@ -59,9 +59,9 @@ public:
             ImGui::Text("tris:");
             ImGui::Text(std::to_string(_tris).c_str());
             ImGui::End();
-        });*/
+        });
         RTE::Platform::WindowManager::GetInstance()->RegisterMousePositionCallback([&](double x, double y){
-            if (cursor){
+
                 if(oldX != x)
                 {
                     dx = oldX - x;
@@ -78,7 +78,7 @@ public:
                     if(_transform->Transform.Rot.x > 35) _transform->Transform.Rot.x = 35;
                     if(_transform->Transform.Rot.x < -35) _transform->Transform.Rot.x = -35;
                 }
-            }
+
         });
     }
 
@@ -116,7 +116,6 @@ public:
         }
         
         dt = deltaTime;
-        if (cursor){
             if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_W) == GLFW_PRESS)
             {
                 _transform->Transform.Pos += glm::vec3(_transform->Transform.ModelMatrix() * glm::vec4(0.0f,0.0f,-1.0f,0.0f))*deltaTime*speed;
@@ -149,19 +148,19 @@ public:
             {
                 if (speed > 2.f) speed -= 1.0f;
             }
-        }
-        // if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_T) == GLFW_PRESS)
-        // {
-        //     if(cursor){
-        //         RTE::Platform::WindowManager::CursorHide();
-        //         cursor = false;
-        //     }
-        //     else
-        //     {
-        //         RTE::Platform::WindowManager::CursorShow();
-        //         cursor = true;
-        //     }
-        // }
+
+         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_T) == GLFW_PRESS)
+         {
+             if(cursor){
+                 cursor = false;
+                 RTE::Platform::WindowManager::CursorHide();
+             }
+             else
+             {
+                 cursor = true;
+                 RTE::Platform::WindowManager::CursorShow();
+             }
+         }
         if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
             std::exit(0);

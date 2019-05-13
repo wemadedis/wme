@@ -39,7 +39,7 @@ void ConfigureGame(RTEConfig &config)
     config.WindowConfig.WindowHeight = 720;
     config.WindowConfig.WindowWidth = 1280;
     config.WindowConfig.WindowName = "rEfLeCtIoNs ArE tHinGs";
-    config.GraphicsConfig.UseRaytracing = true;
+    config.GraphicsConfig.UseRaytracing = false;
     config.GraphicsConfig.FramesPerSecond = 1000;
     config.AssetConfig.Meshes = { AbsMonkeyPath, AbsBoxPath, AbsFloorPath };
     config.AssetConfig.Textures = { AbsGreenPath, AbsRedPath };
