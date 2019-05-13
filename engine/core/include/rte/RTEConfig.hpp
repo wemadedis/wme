@@ -62,8 +62,9 @@ struct AssetConfig
 /**
  * @brief Describes RTE project settings
  */
-struct RTEConfig
+class RTEConfig
 {
+public:
     GraphicsConfig GraphicsConfig;
     WindowConfig WindowConfig;
     AssetConfig AssetConfig;
