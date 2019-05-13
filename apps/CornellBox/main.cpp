@@ -51,10 +51,10 @@ ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
     using namespace StdComponents;
     ComponentIds componentIds;
 
-    componentIds.transformIndex = scene->DefineComponent<TransformComponent, 5010>();
-    componentIds.meshIndex = scene->DefineComponent<MeshComponent, 5010>();
-    componentIds.audioIndex = scene->DefineComponent<AudioComponent, 5010>();
-    componentIds.rotatorIndex = scene->DefineComponent<Rotator, 5010>();
+    componentIds.transformIndex = scene->DefineComponent<TransformComponent, 50000>();
+    componentIds.meshIndex = scene->DefineComponent<MeshComponent, 50000>();
+    componentIds.audioIndex = scene->DefineComponent<AudioComponent, 50000>();
+    componentIds.rotatorIndex = scene->DefineComponent<Rotator, 50000>();
 
     componentIds.playerControllerIndex = scene->DefineComponent<PlayerController, 1>();
     componentIds.cameraIndex = scene->DefineComponent<CameraComponent, 1>();
@@ -228,6 +228,7 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
 
     wallSt.pos = glm::vec3(0.f, 5.f, 0.f);
     Box ceiling = createBox(scene, componentIds, wallSt);
+    ceiling.mc->Material.Specular = 0.0f;
 
     wallSt.pos = glm::vec3(3.0f, 2.5f, 0.f);
     wallSt.rot = glm::vec3(0.f, 0.f, 0.f);
@@ -301,20 +302,21 @@ void MonkeySoundTest(Runtime::Scene* scene, ComponentIds componentIds)
 void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
 {
 	SimpleTransform playerSt;
-	playerSt.pos = glm::vec3(10.f, 10.f, -15.f);
-	playerSt.rot = glm::vec3(-30.f, 180.f, 0.f);
+    int size = 200;
+	playerSt.pos = glm::vec3(0.5f*2.5f*(size-1), 30.f, -45.f);
+	playerSt.rot = glm::vec3(-25.f, 180.f, 0.f);
 	playerSt.scale = glm::vec3(1);
     Player player = createPlayer(scene, componentIds, playerSt);
 
     DirectLight directLight = createDirectLight(scene, componentIds, {glm::vec3(0), glm::vec3(-90.f, 0.f, 0.f), glm::vec3(1)});
 
-    SimpleTransform floorSt = {glm::vec3(0), glm::vec3(0), glm::vec3(300.f, 0.1f, 300.f)};
+    SimpleTransform floorSt = {glm::vec3(0), glm::vec3(0), glm::vec3(1000.f, 0.1f, 1000.f)};
     Box floor = createBox(scene, componentIds, floorSt);
 
     SimpleTransform monkeyTs;
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < 14; j++)
+        for (int j = 0; j < size; j++)
         {
             monkeyTs = {
                 glm::vec3(2.5f*i, 1.f, 2.5f*j), // * Position
@@ -341,8 +343,8 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     sceneManager.SetActiveScene(scene);
     ComponentIds componentIds = initComponentPools(scene);
 
-    CornellBox(scene, componentIds);
-    // MonkeySoundTest(scene, componentIds);
+    //CornellBox(scene, componentIds);
+     MonkeySoundTest(scene, componentIds);
     //LotsOfMonkeys(scene, componentIds);
     
 
