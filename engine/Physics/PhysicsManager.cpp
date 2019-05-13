@@ -112,7 +112,7 @@ PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
     _debugDraw = new PhysicsDebugDraw(_physicsWorld);
     _physicsWorld->setDebugDrawer(dynamic_cast<btIDebugDraw *>(_debugDraw));
     _collisionPool = new GenericPool<Collision>(config.PhysicsConfig.MaxCollisionCount);
-    SetGravity(_defaultGravity);
+    SetGravity(config.PhysicsConfig.Gravity);
 }
 
 PhysicsManager::~PhysicsManager()

@@ -69,7 +69,12 @@ static inline btQuaternion Convert(glm::quat quat)
  */
 static inline glm::quat Convert(btQuaternion quat)
 {
-    return glm::highp_quat(quat.getW(), quat.getX(), quat.getY(), quat.getZ());
+    return glm::quat(
+        static_cast<float>(quat.getW()),
+        static_cast<float>(quat.getX()),
+        static_cast<float>(quat.getY()),
+        static_cast<float>(quat.getZ())
+        );
 }
 
 /**
@@ -174,11 +179,6 @@ private:
      * 
      */
     void SetupBulletCallbacks();
-
-    /**
-     * @brief The default gravity of the physics system.
-     */
-    const glm::vec3 _defaultGravity = {0, -9.8f, 0};
 
     /**
      * @brief Maximum number of substeps
