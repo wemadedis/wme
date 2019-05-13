@@ -38,8 +38,8 @@ void ConfigureGame(RTEConfig &config)
 
     config.WindowConfig.WindowHeight = 720;
     config.WindowConfig.WindowWidth = 1280;
-    config.WindowConfig.WindowName = "rEfLeCtIoNs ArE tHinGs";
-    config.GraphicsConfig.UseRaytracing = false;
+    config.WindowConfig.WindowName = "Test";
+    config.GraphicsConfig.UseRaytracing = true;
     config.GraphicsConfig.FramesPerSecond = 1000;
     config.AssetConfig.Meshes = { AbsMonkeyPath, AbsBoxPath, AbsFloorPath };
     config.AssetConfig.Textures = { AbsGreenPath, AbsRedPath };
@@ -259,10 +259,14 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
     box2.mc->Material.Reflectivity = 0.15f;
 }
 
-void MonkeySoundTest(Runtime::Scene *scene, ComponentIds componentIds)
+void MonkeySoundTest(Runtime::Scene* scene, ComponentIds componentIds)
 {
-    // create player + camera
-    SimpleTransform playerSt = {glm::vec3(0.f, 25.f, -4.f), glm::vec3(-45.f, 180.f, 0.f), glm::vec3(1)};
+	// create player + camera
+	SimpleTransform playerSt;
+	playerSt.pos = glm::vec3(0.f, 1.f, -4.f);
+	playerSt.rot = glm::vec3(-45.f, 180.f, 0.f);
+	playerSt.scale = glm::vec3(1);
+
     Player player = createPlayer(scene, componentIds, playerSt);
 
     // create monkey
@@ -296,7 +300,10 @@ void MonkeySoundTest(Runtime::Scene *scene, ComponentIds componentIds)
 
 void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
 {
-    SimpleTransform playerSt = {glm::vec3(0.f, 1.f, -4.f), glm::vec3(0.f, 180.f, 0.f), glm::vec3(1)};
+	SimpleTransform playerSt;
+	playerSt.pos = glm::vec3(10.f, 10.f, -15.f);
+	playerSt.rot = glm::vec3(-30.f, 180.f, 0.f);
+	playerSt.scale = glm::vec3(1);
     Player player = createPlayer(scene, componentIds, playerSt);
 
     DirectLight directLight = createDirectLight(scene, componentIds, {glm::vec3(0), glm::vec3(-90.f, 0.f, 0.f), glm::vec3(1)});
@@ -318,6 +325,7 @@ void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
             Monkey monkey = createRotatingMonkey(scene, componentIds, monkeyTs);
             // monkey.ac->Play();
             monkey.rc->setRotMagnitude(glm::vec3(20.f, 20.f, 20.f));
+			monkey.mc->Material.Color = Colors::Blue;
             player.pc->addGeometryData(monkey.verts, monkey.faces, monkey.triangles);
         }
     }
