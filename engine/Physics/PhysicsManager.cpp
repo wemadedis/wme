@@ -125,7 +125,7 @@ PhysicsManager::~PhysicsManager()
 
 void PhysicsManager::Step(float deltaTime)
 {
-    _physicsWorld->stepSimulation(deltaTime);
+    _physicsWorld->stepSimulation(deltaTime, 0, 1.0f / 120.0f);
 }
 
 PhysicsManager *PhysicsManager::_instance = nullptr;
