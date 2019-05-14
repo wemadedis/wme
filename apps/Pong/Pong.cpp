@@ -9,6 +9,7 @@ using namespace RTE::Utilities;
 
 Models models;
 Sounds sounds;
+Textures textures;
 
 void ConfigureGame(RTEConfig &config)
 {
@@ -22,9 +23,13 @@ void ConfigureGame(RTEConfig &config)
     models.BoxPath = GetFileFromAssets(models.BoxPath);
     models.SpherePath = GetFileFromAssets(models.SpherePath);
 
+    textures.BrickPath = GetFileFromAssets(textures.BrickPath);
+
     config.AssetConfig.Meshes = {
         models.BoxPath,
         models.SpherePath};
+    config.AssetConfig.Textures = {
+        textures.BrickPath};
 
     sounds.PongHitPath = GetFileFromAssets(sounds.PongHitPath);
 }
@@ -38,7 +43,6 @@ Components GetComponentPoolIds(Scene &scene)
     c.MeshId = scene.DefineComponent<MeshComponent, 6>();
     c.PhysicsId = scene.DefineComponent<PhysicsComponent, 7>();
     c.CameraId = scene.DefineComponent<CameraComponent, 1>();
-    c.DirectionalLightId = scene.DefineComponent<DirectionalLightComponent, 1>();
     c.PaddleControllerId = scene.DefineComponent<PaddleController, 2>();
     c.PointLightId = scene.DefineComponent<PointLightComponent, 1>();
     c.BallControllerId = scene.DefineComponent<BallController, 1>();
@@ -100,12 +104,12 @@ BoxGO MakeBackground(Scene &scene, Components &comps)
     BoxGO go;
     go.GO = scene.CreateGameObject();
     go.Trans = scene.AddComponent<TransformComponent>(comps.TransformId, go.GO)
-                   ->WithPosition({0, 0, -3})
+                   ->WithPosition({0, 0, -1})
                    ->WithScale({20, 20, 1});
 
     go.Mesh = scene.AddComponent<MeshComponent>(comps.MeshId, go.GO);
     go.Mesh->Initialize(go.Trans, models.BoxPath);
-    go.Mesh->Material.Reflectivity = 0.2f;
+    go.Mesh->Material.Reflectivity = 0.5;
     go.Mesh->Material.Color = Colors::Red;
     return go;
 }
@@ -132,7 +136,7 @@ BallGO MakeBall(Scene &scene, Components &comps, GameObjectId left, GameObjectId
     go.Phys->GetRigidBody()->SetLinearFactor({1, 1, 0});
     go.Audio = scene.AddComponent<AudioComponent>(comps.AudioCompId, go.GO);
     go.Audio->Initialize(sounds.PongHitPath, go.Trans);
-	go.Audio->SetLoop(false);
+    go.Audio->SetLoop(false);
 
     go.Controller = scene.AddComponent<BallController>(comps.BallControllerId, go.GO);
     go.GameController = scene.AddComponent<GameController>(comps.GameControllerId, go.GO);
@@ -143,7 +147,6 @@ BallGO MakeBall(Scene &scene, Components &comps, GameObjectId left, GameObjectId
     go.GameController->SetGUIDraw([=]() {
         go.GameController->ShowScore();
     });
-
 
     return go;
 }
@@ -156,8 +159,7 @@ CollidableGO MakeWall(Scene &scene, Components &comps)
                    ->WithScale({9, 1, 1});
 
     go.Mesh = scene.AddComponent<MeshComponent>(comps.MeshId, go.GO);
-    go.Mesh->Initialize(go.Trans, models.BoxPath);
-    go.Mesh->Material.Color = Colors::Magenta;
+    go.Mesh->Initialize(go.Trans, models.BoxPath, textures.BrickPath);
 
     go.Phys = scene.AddComponent<PhysicsComponent>(comps.PhysicsId, go.GO);
     Collider col;
@@ -223,15 +225,15 @@ PaddleGO MakeRightPaddle(Scene &scene, Components &comps)
     return go;
 }
 
-DirLightGO MakeSunlight(Scene &scene, Components &comps)
+PointLightGO MakeSunlight(Scene &scene, Components &comps)
 {
-    DirLightGO go;
+    PointLightGO go;
     go.GO = scene.CreateGameObject();
     go.Trans = scene.AddComponent<TransformComponent>(comps.TransformId, go.GO)
-                   ->WithRotation({45, 20, 0});
+                   ->WithPosition({0, 0, 5});
 
-    go.DirLight = scene.AddComponent<DirectionalLightComponent>(comps.DirectionalLightId, go.GO);
-    go.DirLight->Initialize(go.Trans, Colors::White);
+    go.DirLight = scene.AddComponent<PointLightComponent>(comps.PointLightId, go.GO);
+    go.DirLight->Initialize(go.Trans, Colors::White, 20);
     return go;
 }
 
@@ -246,7 +248,7 @@ void OnGameStart(SceneManager &sceneManager)
     TriggerGO leftGoal = MakeLeftTrigger(scene, comps);
     TriggerGO rightGoal = MakeRightTrigger(scene, comps);
 
-    DirLightGO sunLight = MakeSunlight(scene, comps);
+    PointLightGO sunLight = MakeSunlight(scene, comps);
 
     BallGO ball = MakeBall(scene, comps, leftGoal.GO->GetId(), rightGoal.GO->GetId());
 

@@ -23,7 +23,6 @@ void SceneManager::Update(float deltaTime)
     {
         _activeScene->UpdateComponents(deltaTime);
     }
-    //throw NotImplementedException();
 }
 
 void SceneManager::SetActiveScene(Scene *scene)

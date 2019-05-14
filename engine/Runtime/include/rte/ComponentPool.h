@@ -18,7 +18,6 @@ private:
 public:
     virtual void UpdateAll(float deltaTime) = 0;
     virtual Component *AddComponent(GameObjectId goId) = 0;
-    virtual Component *GetComponent(ComponentId compId) = 0;
 };
 
 template <typename TComp, int MaxComponents>
@@ -56,11 +55,6 @@ public:
         }
         TComp *c = new (Components + ComponentCount) TComp();
         return &Components[ComponentCount++];
-    }
-
-    Component *GetComponent(ComponentId compId)
-    {
-        return nullptr;
     }
 };
 } // namespace RTE::Runtime
