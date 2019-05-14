@@ -43,6 +43,7 @@ void ConfigureGame(RTEConfig &config)
     config.GraphicsConfig.FramesPerSecond = 1000;
     config.AssetConfig.Meshes = { AbsMonkeyPath, AbsBoxPath, AbsFloorPath };
     config.AssetConfig.Textures = { AbsGreenPath, AbsRedPath };
+	config.PhysicsConfig.MaxCollisionCount = 100000;
 }
 
 ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
@@ -55,6 +56,7 @@ ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
     componentIds.meshIndex = scene->DefineComponent<MeshComponent, 50000>();
     componentIds.audioIndex = scene->DefineComponent<AudioComponent, 50000>();
     componentIds.rotatorIndex = scene->DefineComponent<Rotator, 50000>();
+	componentIds.physicsIndex = scene->DefineComponent<PhysicsComponent, 50000>();
 
     componentIds.playerControllerIndex = scene->DefineComponent<PlayerController, 1>();
     componentIds.cameraIndex = scene->DefineComponent<CameraComponent, 1>();
@@ -333,6 +335,58 @@ void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
     }
 }
 
+void PhysicsBoxTest(Runtime::Scene* scene, ComponentIds componentIds)
+{
+	using namespace RTE::Physics;
+	SimpleTransform playerSt;
+	playerSt.pos = glm::vec3(-3.5f, 10.f, -10.f);
+	playerSt.rot = glm::vec3(-40.f, 180.f, 0.f);
+	playerSt.scale = glm::vec3(1);
+	Player player = createPlayer(scene, componentIds, playerSt);
+
+	DirectLight directLight = createDirectLight(scene, componentIds, { glm::vec3(0), glm::vec3(-90.f, 0.f, 0.f), glm::vec3(1) });
+
+	SimpleTransform floorSt = { glm::vec3(0), glm::vec3(0,0,10.f), glm::vec3(1000.f, 0.1f, 1000.f) };
+	Box floor = createBox(scene, componentIds, floorSt);
+	floor.pc = scene->AddComponent<PhysicsComponent>(componentIds.physicsIndex, floor.go);
+	Collider col;
+	col.Data.Box.HalfExtents = { 500, 0.05f, 500 };
+	col.Type = ColliderType::BOX;
+
+	floor.pc->Initialize(floor.tc, 100.f, { col });
+	floor.pc->GetRigidBody()->SetGravity({ 0, 0, 0 });
+	floor.pc->GetRigidBody()->SetLinearFactor({ 0, 0, 0 });
+	floor.pc->GetRigidBody()->SetAngularFactor({ 0, 0, 0 });
+
+	int size = 5;
+	for (int x = 0; x < size; x++)
+	{
+		for (int y = 0; y < size; y++)
+		{
+			for (int z = 0; z < size; z++)
+			{
+				Collider boxCol;
+				boxCol.Data.Box.HalfExtents = { 0.4, 0.4, 0.4 };
+				boxCol.Type = ColliderType::BOX;
+
+				SimpleTransform boxTs;
+				boxTs.pos = glm::vec3(x, y + 10.5f, z);
+				boxTs.rot = glm::vec3(0);
+				boxTs.scale = glm::vec3(0.8);
+
+				auto box = createBox(scene, componentIds, boxTs);
+				box.pc = scene->AddComponent<PhysicsComponent>(componentIds.physicsIndex, box.go);
+				box.pc->Initialize(box.tc, 5.f, { boxCol });
+				box.pc->GetRigidBody()->SetGravity({ 0, -1, 0 });
+
+				// box.mc->Material.Color = glm::vec4(x * 25, y * 25, z * 25, 0);
+				box.mc->Material.Color = Colors::Blue;
+
+			}
+		}
+	}
+}
+
 
 void OnGameStart(Runtime::SceneManager &sceneManager)
 {
@@ -344,8 +398,9 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     ComponentIds componentIds = initComponentPools(scene);
 
     //CornellBox(scene, componentIds);
-     MonkeySoundTest(scene, componentIds);
+    //MonkeySoundTest(scene, componentIds);
     //LotsOfMonkeys(scene, componentIds);
+	PhysicsBoxTest(scene, componentIds);
     
 
 }
