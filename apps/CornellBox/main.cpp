@@ -38,7 +38,7 @@ void ConfigureGame(RTEConfig &config)
 
     config.WindowConfig.WindowHeight = 720;
     config.WindowConfig.WindowWidth = 1280;
-    config.WindowConfig.WindowName = "rEfLeCtIoNs ArE tHinGs";
+    config.WindowConfig.WindowName = "Test";
     config.GraphicsConfig.UseRaytracing = true;
     config.GraphicsConfig.FramesPerSecond = 1000;
     config.AssetConfig.Meshes = { AbsMonkeyPath, AbsBoxPath, AbsFloorPath };
@@ -51,10 +51,10 @@ ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
     using namespace StdComponents;
     ComponentIds componentIds;
 
-    componentIds.transformIndex = scene->DefineComponent<TransformComponent, 5010>();
-    componentIds.meshIndex = scene->DefineComponent<MeshComponent, 5010>();
-    componentIds.audioIndex = scene->DefineComponent<AudioComponent, 5010>();
-    componentIds.rotatorIndex = scene->DefineComponent<Rotator, 5010>();
+    componentIds.transformIndex = scene->DefineComponent<TransformComponent, 50000>();
+    componentIds.meshIndex = scene->DefineComponent<MeshComponent, 50000>();
+    componentIds.audioIndex = scene->DefineComponent<AudioComponent, 50000>();
+    componentIds.rotatorIndex = scene->DefineComponent<Rotator, 50000>();
 
     componentIds.playerControllerIndex = scene->DefineComponent<PlayerController, 1>();
     componentIds.cameraIndex = scene->DefineComponent<CameraComponent, 1>();
@@ -210,7 +210,7 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
     using namespace Runtime;
     using namespace StdComponents;
 
-    SimpleTransform playerSt = {glm::vec3(0.f, 1.f, 6.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1)};
+    SimpleTransform playerSt = {glm::vec3(0.f, 2.5f, 9.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1)};
     Player player = createPlayer(scene, componentIds, playerSt);
     SimpleTransform st = {
         glm::vec3(0.f, 4.3f, 0.f), //* Position
@@ -228,6 +228,7 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
 
     wallSt.pos = glm::vec3(0.f, 5.f, 0.f);
     Box ceiling = createBox(scene, componentIds, wallSt);
+    ceiling.mc->Material.Specular = 0.0f;
 
     wallSt.pos = glm::vec3(3.0f, 2.5f, 0.f);
     wallSt.rot = glm::vec3(0.f, 0.f, 0.f);
@@ -259,10 +260,14 @@ void CornellBox(Runtime::Scene *scene, ComponentIds componentIds)
     box2.mc->Material.Reflectivity = 0.15f;
 }
 
-void MonkeySoundTest(Runtime::Scene *scene, ComponentIds componentIds)
+void MonkeySoundTest(Runtime::Scene* scene, ComponentIds componentIds)
 {
-    // create player + camera
-    SimpleTransform playerSt = {glm::vec3(0.f, 25.f, -4.f), glm::vec3(-45.f, 180.f, 0.f), glm::vec3(1)};
+	// create player + camera
+	SimpleTransform playerSt;
+	playerSt.pos = glm::vec3(0.f, 1.f, -4.f);
+	playerSt.rot = glm::vec3(-45.f, 180.f, 0.f);
+	playerSt.scale = glm::vec3(1);
+
     Player player = createPlayer(scene, componentIds, playerSt);
 
     // create monkey
@@ -296,18 +301,22 @@ void MonkeySoundTest(Runtime::Scene *scene, ComponentIds componentIds)
 
 void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
 {
-    SimpleTransform playerSt = {glm::vec3(0.f, 1.f, -4.f), glm::vec3(0.f, 180.f, 0.f), glm::vec3(1)};
+	SimpleTransform playerSt;
+    int size = 200;
+	playerSt.pos = glm::vec3(0.5f*2.5f*(size-1), 30.f, -45.f);
+	playerSt.rot = glm::vec3(-25.f, 180.f, 0.f);
+	playerSt.scale = glm::vec3(1);
     Player player = createPlayer(scene, componentIds, playerSt);
 
     DirectLight directLight = createDirectLight(scene, componentIds, {glm::vec3(0), glm::vec3(-90.f, 0.f, 0.f), glm::vec3(1)});
 
-    SimpleTransform floorSt = {glm::vec3(0), glm::vec3(0), glm::vec3(300.f, 0.1f, 300.f)};
+    SimpleTransform floorSt = {glm::vec3(0), glm::vec3(0), glm::vec3(1000.f, 0.1f, 1000.f)};
     Box floor = createBox(scene, componentIds, floorSt);
 
     SimpleTransform monkeyTs;
-    for (int i = 0; i < 12; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < 14; j++)
+        for (int j = 0; j < size; j++)
         {
             monkeyTs = {
                 glm::vec3(2.5f*i, 1.f, 2.5f*j), // * Position
@@ -318,6 +327,7 @@ void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
             Monkey monkey = createRotatingMonkey(scene, componentIds, monkeyTs);
             // monkey.ac->Play();
             monkey.rc->setRotMagnitude(glm::vec3(20.f, 20.f, 20.f));
+			monkey.mc->Material.Color = Colors::Blue;
             player.pc->addGeometryData(monkey.verts, monkey.faces, monkey.triangles);
         }
     }
@@ -333,9 +343,9 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     sceneManager.SetActiveScene(scene);
     ComponentIds componentIds = initComponentPools(scene);
 
-    // CornellBox(scene, componentIds);
-    // MonkeySoundTest(scene, componentIds);
-    LotsOfMonkeys(scene, componentIds);
+    //CornellBox(scene, componentIds);
+     MonkeySoundTest(scene, componentIds);
+    //LotsOfMonkeys(scene, componentIds);
     
 
 }

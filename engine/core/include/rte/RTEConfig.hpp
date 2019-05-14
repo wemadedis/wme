@@ -42,7 +42,7 @@ struct WindowConfig
 struct PhysicsConfig
 {
     uint32_t MaxCollisionCount = 1000;
-    
+    glm::vec3 Gravity = {0, -9.8f, 0};
     bool DebugDrawColliders = true;
 };
 

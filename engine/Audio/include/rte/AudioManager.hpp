@@ -16,7 +16,5 @@ public:
     
     static AudioManager *GetInstance();
     Emitter* CreateEmitter();
-
 };
-
 } // namespace RTE
