@@ -54,11 +54,11 @@ set(BULLET_LIBS_RELEASE
     "${CMAKE_CURRENT_SOURCE_DIR}/bullet/lib/release/BulletSoftBody_vs2010_x64_release.lib"
 )
 
-message(${CMAKE_BUILD_TYPE})
-if (${CMAKE_BUILD_TYPE} STREQUAL "Release")
-    message("RELEASE MODE ACTIVATED")
+if (NOT DEFINED CMAKE_BUILD_TYPE)
+    message(FATAL_ERROR "CMAKE_BUILD_TYPE undefined!")
+elseif (${CMAKE_BUILD_TYPE} STREQUAL "Release")
     target_link_libraries(bullet INTERFACE ${BULLET_LIBS_RELEASE}) 
-elseif(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+else(${CMAKE_BUILD_TYPE})
     target_link_libraries(bullet INTERFACE ${BULLET_LIBS_DEBUG}) 
 endif ()
 ###</BULLET>
