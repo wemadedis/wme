@@ -11,25 +11,23 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
+#include <thread>
 #include <vector>
 
 namespace RTE
 {
-using namespace std::chrono;
-typedef high_resolution_clock Clock;
-typedef time_point<steady_clock> TimePoint;
-using FpSeconds = duration<float, seconds::period>;
+using Time = std::chrono::steady_clock;
+using double_sec = std::chrono::duration<double>;
+using double_time_point = std::chrono::time_point<Time, double_sec>;
 
 void RTECore::RunUpdateLoop()
 {
     using namespace Platform;
-    TimePoint lastFrameEnd = Clock::now();
-    float minFrameTime = 1.0f / Config.GraphicsConfig.FramesPerSecond;
+    double_time_point lastFrameEnd = Time::now();
+
+    double_sec minFrameTime = double_sec(1.0 / Config.GraphicsConfig.FramesPerSecond);
     float deltaTime = 0.0f;
 
-    // std::vector<float> frameTimes;
-    // frameTimes.reserve(frameCount);
-    // for (int i = 0; i < frameCount; i++)
     while (_windowManager->ShouldClose() == false)
     {
         for (int32_t moduleIndex = 0;
@@ -39,23 +37,18 @@ void RTECore::RunUpdateLoop()
             Modules->at(moduleIndex)->Update(deltaTime);
         }
 
-        float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
-        while (time < minFrameTime)
+        double_sec timePassed = double_sec(Time::now() - lastFrameEnd);
+        auto timeToSleep = minFrameTime - timePassed;
+        if (timePassed < minFrameTime)
         {
-            time = std::chrono::duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
+            std::this_thread::sleep_for(timeToSleep);
         }
-        deltaTime = duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
-        // frameTimes.push_back(deltaTime);
-        lastFrameEnd = Clock::now();
-    }
 
-    // float sum = 0;
-    // for (int i = 0; i < frameTimes.size(); i++)
-    // {
-    // sum += frameTimes[i];
-    // }
-    // float avg = sum / frameCount;
-    // Debug(std::to_string(avg));
+        timePassed = double_sec(Time::now() - lastFrameEnd);
+        deltaTime = static_cast<float>(double_sec(Time::now() - lastFrameEnd).count());
+        Debug(std::to_string(deltaTime));
+        lastFrameEnd = Time::now();
+    }
 }
 
 void RTECore::ValidateConfiguration()
@@ -100,7 +93,7 @@ RTECore::RTECore()
 
         OnGameStart(*sceneManager);
     }
-    if(Config.PhysicsConfig.DebugDrawColliders)
+    if (Config.PhysicsConfig.DebugDrawColliders)
     {
         rm->SetLineDebugModule(Physics::PhysicsManager::GetInstance()->GetPhysicsDebugDraw());
     }
