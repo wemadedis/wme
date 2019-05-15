@@ -1,4 +1,0 @@
-<map id="RTE::Physics::Convert" name="RTE::Physics::Convert">
-<area shape="rect" id="node1" title="Converts an RTE transform transform into a bullet transform." alt="" coords="5,5,159,32"/>
-<area shape="rect" id="node2" href="$d4/d3e/namespace_r_t_e_1_1_physics.html#a4650c1eecee51d0440d40d9b03a4b34f" title="Converts a bullet vector3 to a glm vector3." alt="" coords="207,5,360,32"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="RTE::Rendering::GlobalUniformData" name="RTE::Rendering::GlobalUniformData">
-<area shape="rect" id="node1" title="Struct containing the global data for rendering." alt="" coords="83,109,312,136"/>
-<area shape="rect" id="node2" href="$df/d29/struct_r_t_e_1_1_rendering_1_1_point_light.html" title="Struct encapsulating the point light information." alt="" coords="5,13,184,39"/>
-<area shape="rect" id="node3" href="$d2/de6/struct_r_t_e_1_1_rendering_1_1_directional_light.html" title="Struct encapsulating the directional light information." alt="" coords="209,5,391,47"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="RTE::RTE::Rendering::RenderingManager::RegisterMeshComponent" name="RTE::RTE::Rendering::RenderingManager::RegisterMeshComponent">
-<area shape="rect" id="node1" title="Registers a mesh component and creates a corresponding mesh instance with the renderer." alt="" coords="5,31,173,87"/>
-<area shape="rect" id="node2" href="$d5/d3f/class_r_t_e_1_1_r_t_e_1_1_std_components_1_1_mesh_component.html#afcd5c4feb67a6f18d8fe9ace5c6cab15" title="Gets the mesh file path." alt="" coords="227,5,416,47"/>
-<area shape="rect" id="node3" href="$d5/d3f/class_r_t_e_1_1_r_t_e_1_1_std_components_1_1_mesh_component.html#ab4c8339ea4449ab0ba075e9ad5cbaf44" title="Gets the texture file path." alt="" coords="221,71,421,112"/>
-</map>

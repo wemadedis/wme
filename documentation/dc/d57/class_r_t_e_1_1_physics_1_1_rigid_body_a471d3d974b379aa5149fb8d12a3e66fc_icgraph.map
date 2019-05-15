@@ -1,4 +1,0 @@
-<map id="RTE::Physics::RigidBody::GetRigidBody" name="RTE::Physics::RigidBody::GetRigidBody">
-<area shape="rect" id="node1" title=" " alt="" coords="260,5,429,47"/>
-<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#aee477381d10e9304c20cd1e73a4b00d4" title="Removes a rigidbody from the physics world." alt="" coords="5,5,212,47"/>
-</map>

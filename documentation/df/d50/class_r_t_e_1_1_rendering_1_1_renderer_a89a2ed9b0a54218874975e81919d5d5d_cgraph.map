@@ -1,9 +1,0 @@
-<map id="RTE::Rendering::Renderer::UploadMesh" name="RTE::Rendering::Renderer::UploadMesh">
-<area shape="rect" id="node1" title="Uploads a mesh to the device." alt="" coords="5,169,179,211"/>
-<area shape="rect" id="node2" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#a2ac96c5e4312ac6e30293c22de633e7c" title="Creates a buffer resource and allocates memory for it." alt="" coords="230,5,437,47"/>
-<area shape="rect" id="node3" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#aa1aa469dcfbfef7d6717cf71dd81408a" title="Copies data to a buffer." alt="" coords="230,71,437,112"/>
-<area shape="rect" id="node4" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#a170a6c08950789f273a24deb0728406a" title="Copy data from on buffer to another. Used to transfer data from a host visible buffer to a device loc..." alt="" coords="230,136,437,177"/>
-<area shape="rect" id="node5" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#a4b90fa2cd299a151199afbade1321ae0" title="Gets the command pool." alt="" coords="227,201,440,243"/>
-<area shape="rect" id="node6" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#aff9257f61991539bb331a77d4019d221" title="Getter for the graphics queue." alt="" coords="248,267,419,308"/>
-<area shape="rect" id="node7" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#a82dcf3d4c599b1fd069a9697446ebb8c" title="Destroys a buffer and deallocates the related memory." alt="" coords="230,332,437,373"/>
-</map>

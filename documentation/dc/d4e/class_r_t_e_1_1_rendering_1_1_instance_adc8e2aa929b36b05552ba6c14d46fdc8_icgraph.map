@@ -1,4 +1,0 @@
-<map id="RTE::Rendering::Instance::ChoosePhysicalDevice" name="RTE::Rendering::Instance::ChoosePhysicalDevice">
-<area shape="rect" id="node1" title="Scans through the physical devices available and picks the optimal one." alt="" coords="224,5,395,47"/>
-<area shape="rect" id="node2" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a7075888fc0d89405330d56ba67802e7a" title="The default constructor." alt="" coords="5,5,176,47"/>
-</map>

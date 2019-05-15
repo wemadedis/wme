@@ -1,4 +1,0 @@
-<map id="RTE::Physics::PhysicsManager::GetCollisionShapeFromColliderType" name="RTE::Physics::PhysicsManager::GetCollisionShapeFromColliderType">
-<area shape="rect" id="node1" title="Takes the information from the collider type and data and use it to initialize the corresponding btCo..." alt="" coords="5,5,244,47"/>
-<area shape="rect" id="node2" href="$d4/d3e/namespace_r_t_e_1_1_physics.html#a4650c1eecee51d0440d40d9b03a4b34f" title="Converts a bullet vector3 to a glm vector3." alt="" coords="292,13,445,39"/>
-</map>

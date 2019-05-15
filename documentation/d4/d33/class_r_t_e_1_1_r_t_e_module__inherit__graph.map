@@ -1,7 +1,0 @@
-<map id="RTE::RTEModule" name="RTE::RTEModule">
-<area shape="rect" id="node1" title=" " alt="" coords="5,85,128,112"/>
-<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html" title="Manages physics the physics of RTE." alt="" coords="176,5,383,32"/>
-<area shape="rect" id="node3" href="$dd/d44/class_r_t_e_1_1_platform_1_1_window_manager.html" title=" " alt="" coords="176,56,383,83"/>
-<area shape="rect" id="node4" href="$d4/d07/class_r_t_e_1_1_r_t_e_1_1_rendering_1_1_rendering_manager.html" title=" " alt="" coords="206,107,353,149"/>
-<area shape="rect" id="node5" href="$d5/d0f/class_r_t_e_1_1_runtime_1_1_scene_manager.html" title="Manages Scenes. You&#39;re welcome." alt="" coords="180,173,379,200"/>
-</map>

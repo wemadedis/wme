@@ -1,4 +1,0 @@
-<map id="RTE::Rendering::RenderPass::GetColorAttachment" name="RTE::Rendering::RenderPass::GetColorAttachment">
-<area shape="rect" id="node1" title="Creates the color attachment for the render pass creation." alt="" coords="5,5,197,47"/>
-<area shape="rect" id="node2" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a6a43f9ca27faa3b929fd14a74f18b8b1" title="Gets the swap chain format." alt="" coords="245,5,437,47"/>
-</map>

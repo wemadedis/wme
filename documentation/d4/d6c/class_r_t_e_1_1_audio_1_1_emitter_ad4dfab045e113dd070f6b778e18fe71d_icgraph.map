@@ -1,4 +1,0 @@
-<map id="RTE::Audio::Emitter::SetPosition" name="RTE::Audio::Emitter::SetPosition">
-<area shape="rect" id="node1" title="Sets the position for the sound emitter." alt="" coords="232,5,371,47"/>
-<area shape="rect" id="node2" href="$d0/dcd/class_r_t_e_1_1_std_components_1_1_audio_component.html#af8069c1522edddfc3384b10bf089e385" title="Virtual update function, called every frame unless GetEnabled returns false." alt="" coords="5,5,184,47"/>
-</map>

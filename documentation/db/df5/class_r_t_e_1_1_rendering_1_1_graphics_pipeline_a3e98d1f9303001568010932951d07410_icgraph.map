@@ -1,5 +1,0 @@
-<map id="RTE::Rendering::GraphicsPipeline::GetScissor" name="RTE::Rendering::GraphicsPipeline::GetScissor">
-<area shape="rect" id="node1" title="Defines the scissor used for the pipeline." alt="" coords="449,5,623,47"/>
-<area shape="rect" id="node2" href="$db/df5/class_r_t_e_1_1_rendering_1_1_graphics_pipeline.html#a5c55d6d252c66923fc9d92bc59202bf1" title="Creates the triangle rasterization pipeline." alt="" coords="228,5,401,47"/>
-<area shape="rect" id="node3" href="$db/df5/class_r_t_e_1_1_rendering_1_1_graphics_pipeline.html#a02a3bcbf550743c260ea6d153de6642e" title="Contructor for the rasterization pipeline." alt="" coords="5,5,180,47"/>
-</map>

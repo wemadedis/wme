@@ -1,7 +1,0 @@
-<map id="RTE::Rendering::SwapChain" name="RTE::Rendering::SwapChain">
-<area shape="rect" id="node1" title=" " alt="" coords="5,392,192,419"/>
-<area shape="rect" id="node2" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html" title="Encapsulates and manages Vulkan abstractions used for initialization: VkInstance, VkDevice...." alt="" coords="101,5,272,32"/>
-<area shape="rect" id="node3" href="$dd/d79/class_r_t_e_1_1_rendering_1_1_image_manager.html" title="Encapsulates functions related to image and texture creation/modification." alt="" coords="107,303,314,329"/>
-<area shape="rect" id="node4" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html" title="Manages memory allocation for buffer and image resources, along with data transfer to the resources." alt="" coords="185,199,391,240"/>
-<area shape="rect" id="node5" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html" title="Creates commands pools and provides command buffers for rendering, along with one time usage commands..." alt="" coords="313,95,527,136"/>
-</map>

@@ -1,8 +1,0 @@
-<map id="RTE::Rendering::AccelerationStructure" name="RTE::Rendering::AccelerationStructure">
-<area shape="rect" id="node1" title="Acceleration structure used for ray tracing. Encapsulates the creation of Vulkan bot and top level st..." alt="" coords="1015,99,1208,141"/>
-<area shape="rect" id="node2" href="$d4/de8/struct_r_t_e_1_1_rendering_1_1_buffer_information.html" title="Struct describing a buffer allocation." alt="" coords="640,5,857,32"/>
-<area shape="rect" id="node3" href="$d3/d01/class_r_t_e_1_1_rendering_1_1_r_t_utilities.html" title=" " alt="" coords="659,56,839,83"/>
-<area shape="rect" id="node4" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html" title="Manages memory allocation for buffer and image resources, along with data transfer to the resources." alt="" coords="645,158,852,199"/>
-<area shape="rect" id="node5" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html" title="Encapsulates and manages Vulkan abstractions used for initialization: VkInstance, VkDevice...." alt="" coords="5,159,176,185"/>
-<area shape="rect" id="node6" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html" title="Creates commands pools and provides command buffers for rendering, along with one time usage commands..." alt="" coords="285,221,499,262"/>
-</map>

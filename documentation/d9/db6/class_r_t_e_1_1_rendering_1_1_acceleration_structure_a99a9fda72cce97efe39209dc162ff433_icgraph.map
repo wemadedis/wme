@@ -1,5 +1,0 @@
-<map id="RTE::Rendering::AccelerationStructure::GetTopStructure" name="RTE::Rendering::AccelerationStructure::GetTopStructure">
-<area shape="rect" id="node1" title="Gets the top level acceleration structure handle." alt="" coords="488,5,681,47"/>
-<area shape="rect" id="node2" href="$de/df2/class_r_t_e_1_1_rendering_1_1_descriptor_manager.html#aa389a2e2e13eca52b38bc266d953c208" title="Creates the descriptor set (ray tracing)." alt="" coords="227,5,440,47"/>
-<area shape="rect" id="node3" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a956b7654bf9b7279ea632f49793fc3d1" title="To be called after all necessary data has been uploaded. Creates all necessary information for the re..." alt="" coords="5,5,179,47"/>
-</map>

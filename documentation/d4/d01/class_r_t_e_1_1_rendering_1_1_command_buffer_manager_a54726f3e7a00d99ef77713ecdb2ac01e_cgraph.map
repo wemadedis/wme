@@ -1,5 +1,0 @@
-<map id="RTE::Rendering::CommandBufferManager::~CommandBufferManager" name="RTE::Rendering::CommandBufferManager::~CommandBufferManager">
-<area shape="rect" id="node1" title=" " alt="" coords="5,35,236,76"/>
-<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#a93b2a3621291e1be9dd04de078cc1be5" title="Deallocates the draw command buffers." alt="" coords="284,5,524,47"/>
-<area shape="rect" id="node3" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="572,35,743,76"/>
-</map>

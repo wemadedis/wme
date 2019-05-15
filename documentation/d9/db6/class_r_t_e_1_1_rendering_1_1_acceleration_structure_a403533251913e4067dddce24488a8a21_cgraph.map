@@ -1,4 +1,0 @@
-<map id="RTE::Rendering::AccelerationStructure::ConvertInstance" name="RTE::Rendering::AccelerationStructure::ConvertInstance">
-<area shape="rect" id="node1" title="Converts a MeshInstance object to VkGeometryInstance object required for the top level structure." alt="" coords="5,5,199,47"/>
-<area shape="rect" id="node2" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#abbeb1e41f895effc35053f54b62fa869" title="Modifies data in a buffer in the host space." alt="" coords="247,5,453,47"/>
-</map>

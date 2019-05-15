@@ -1,7 +1,0 @@
-<map id="RTE::Rendering::Instance::GetSurface" name="RTE::Rendering::Instance::GetSurface">
-<area shape="rect" id="node1" title="Getter for the target surface." alt="" coords="537,39,708,80"/>
-<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#acd19d3ff0b13b2c686f31b60fb7f3033" title="Creates the command pool used to allocate command buffers." alt="" coords="276,5,489,47"/>
-<area shape="rect" id="node4" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a346fa8b1fa02512bbf9cace2f04d0ef7" title="Encapsulates the Vulkan swap chain creation process." alt="" coords="289,71,476,112"/>
-<area shape="rect" id="node3" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#aa5318adcc6aee749c3c332e26ba51c3c" title="Construct a new Command Buffer Manager object." alt="" coords="5,5,228,47"/>
-<area shape="rect" id="node5" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a68d6cb8ef1aef61850393331881f2bb4" title="The swap chain cosntructor." alt="" coords="23,71,210,112"/>
-</map>

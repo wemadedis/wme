@@ -1,8 +1,0 @@
-<map id="RTE::Rendering::AccelerationStructure::FillStructures" name="RTE::Rendering::AccelerationStructure::FillStructures">
-<area shape="rect" id="node1" title="Fills the bottom level structures with the geometry data and the top level structure with the intance..." alt="" coords="5,104,199,145"/>
-<area shape="rect" id="node2" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#ae39ac56d5c4ed04838c828970a6e30cb" title="Creates a Scratch Buffer and allocates memory for it. Used for acceleration structures." alt="" coords="275,5,481,47"/>
-<area shape="rect" id="node3" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#abdd524adce617f30652bc55893273846" title="Begins a one time usage command buffer." alt="" coords="251,71,505,112"/>
-<area shape="rect" id="node5" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#ac16563267ef712eb5dd02eb14131aec0" title="Submits a one time use command buffer to a queue." alt="" coords="247,136,509,177"/>
-<area shape="rect" id="node6" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#aff9257f61991539bb331a77d4019d221" title="Getter for the graphics queue." alt="" coords="293,201,463,243"/>
-<area shape="rect" id="node4" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="557,104,728,145"/>
-</map>

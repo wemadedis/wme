@@ -1,4 +1,0 @@
-<map id="RTE::Rendering::CommandBufferManager::CreateCommandPool" name="RTE::Rendering::CommandBufferManager::CreateCommandPool">
-<area shape="rect" id="node1" title="Creates the command pool used to allocate command buffers." alt="" coords="276,5,489,47"/>
-<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#aa5318adcc6aee749c3c332e26ba51c3c" title="Construct a new Command Buffer Manager object." alt="" coords="5,5,228,47"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="RTE::Audio::Emitter::SetState" name="RTE::Audio::Emitter::SetState">
-<area shape="rect" id="node1" title="sets the audio state" alt="" coords="415,71,553,112"/>
-<area shape="rect" id="node2" href="$d4/d6c/class_r_t_e_1_1_audio_1_1_emitter.html#a7b0800cbb0cbc56b7adb4093ee811543" title="Starts audio playback." alt="" coords="228,5,367,47"/>
-<area shape="rect" id="node4" href="$d4/d6c/class_r_t_e_1_1_audio_1_1_emitter.html#a8f8fe8d94b3d84244e51f879427d4b8e" title="Pauses audio playback." alt="" coords="228,71,367,112"/>
-<area shape="rect" id="node6" href="$d4/d6c/class_r_t_e_1_1_audio_1_1_emitter.html#ad7f77ae98e55b560e9570ba0cba4ce99" title="Stopps audio playback (resets the audio to 0 seconds)" alt="" coords="228,136,367,177"/>
-<area shape="rect" id="node3" href="$d0/dcd/class_r_t_e_1_1_std_components_1_1_audio_component.html#aa8c01c98c6354b80f33756f3f5025cdd" title=" " alt="" coords="11,5,174,47"/>
-<area shape="rect" id="node5" href="$d0/dcd/class_r_t_e_1_1_std_components_1_1_audio_component.html#a94c027599b87372564b0af29649dee4b" title=" " alt="" coords="5,71,180,112"/>
-<area shape="rect" id="node7" href="$d0/dcd/class_r_t_e_1_1_std_components_1_1_audio_component.html#a131bd6e6270dc43f8bec101b2816e855" title=" " alt="" coords="11,136,175,177"/>
-</map>

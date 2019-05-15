@@ -1,6 +1,0 @@
-<map id="RTE::Physics::ContactProcessedCallback" name="RTE::Physics::ContactProcessedCallback">
-<area shape="rect" id="node1" title="Bullet physics callback for callback processed. This is called whenever two rigidbodies are colliding..." alt="" coords="769,5,987,47"/>
-<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#abd9929763fb7ceb918afbef66132be7a" title="Initializes Bullet global collision callbacks with RTE functions so they can be used." alt="" coords="515,5,721,47"/>
-<area shape="rect" id="node3" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#ac4c3ee4d45df83717bcf3b25ae422df6" title="Create a Default Dynamics World object." alt="" coords="260,5,467,47"/>
-<area shape="rect" id="node4" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#a5826d512e3cf09703b9c35ad22560d30" title="Construct a new Physics Manager object." alt="" coords="5,5,212,47"/>
-</map>

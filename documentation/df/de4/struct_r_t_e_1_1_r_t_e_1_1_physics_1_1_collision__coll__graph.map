@@ -1,8 +1,0 @@
-<map id="RTE::RTE::Physics::Collision" name="RTE::RTE::Physics::Collision">
-<area shape="rect" id="node1" title=" " alt="" coords="883,47,1025,89"/>
-<area shape="rect" id="node2" href="$d0/d6d/class_r_t_e_1_1_std_components_1_1_physics_component.html" title="Standard component which contains a RigidBody and takes care of interaction with the physics world." alt="" coords="643,47,791,89"/>
-<area shape="rect" id="node3" href="$d3/d2c/class_r_t_e_1_1_runtime_1_1_component.html" title=" " alt="" coords="6,5,183,32"/>
-<area shape="rect" id="node5" href="$d7/d81/class_r_t_e_1_1_std_components_1_1_transform_component.html" title="Holds transform information for use in other components." alt="" coords="301,47,455,89"/>
-<area shape="rect" id="node4" href="$dc/d57/class_r_t_e_1_1_physics_1_1_rigid_body.html" title=" " alt="" coords="293,113,463,140"/>
-<area shape="rect" id="node6" href="$d5/da1/struct_r_t_e_1_1_rendering_1_1_transform.html" title="Struct containing transformation information of objects in a scene." alt="" coords="5,64,184,91"/>
-</map>

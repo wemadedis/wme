@@ -1,4 +1,0 @@
-<map id="RTE::Rendering::Renderer::RecreateSwapChain" name="RTE::Rendering::Renderer::RecreateSwapChain">
-<area shape="rect" id="node1" title="Function used to recreate all data related to the swap chain." alt="" coords="227,5,400,47"/>
-<area shape="rect" id="node2" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#ac0067d1185af386fea36170aa46759c7" title="Issue the renderer to draw a frame. If called again, the renderer waits until the _minFrameTime since..." alt="" coords="5,5,179,47"/>
-</map>

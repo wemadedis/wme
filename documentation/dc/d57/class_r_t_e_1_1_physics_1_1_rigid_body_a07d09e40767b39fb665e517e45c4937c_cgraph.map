@@ -1,5 +1,0 @@
-<map id="RTE::Physics::RigidBody::UpdateFromPhysicsWorld" name="RTE::Physics::RigidBody::UpdateFromPhysicsWorld">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,188,47"/>
-<area shape="rect" id="node2" href="$d4/d3e/namespace_r_t_e_1_1_physics.html#a4650c1eecee51d0440d40d9b03a4b34f" title="Converts a bullet vector3 to a glm vector3." alt="" coords="453,13,607,39"/>
-<area shape="rect" id="node3" href="$dc/d57/class_r_t_e_1_1_physics_1_1_rigid_body.html#a44f514e9e4d431465854e05c8cb659e9" title=" " alt="" coords="236,35,405,76"/>
-</map>

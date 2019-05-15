@@ -1,5 +1,0 @@
-<map id="RTE::StdComponents::AudioComponent::Pause" name="RTE::StdComponents::AudioComponent::Pause">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,180,47"/>
-<area shape="rect" id="node2" href="$d4/d6c/class_r_t_e_1_1_audio_1_1_emitter.html#a8f8fe8d94b3d84244e51f879427d4b8e" title="Pauses audio playback." alt="" coords="228,5,367,47"/>
-<area shape="rect" id="node3" href="$d4/d6c/class_r_t_e_1_1_audio_1_1_emitter.html#ae0dc69b76758a40522a6b0125bec7c64" title="sets the audio state" alt="" coords="415,5,553,47"/>
-</map>

@@ -1,9 +1,0 @@
-<map id="RTE::Importing::ModelImporter::HandleNode" name="RTE::Importing::ModelImporter::HandleNode">
-<area shape="rect" id="node1" title=" " alt="" coords="5,39,204,80"/>
-<area shape="rect" id="node2" href="$dd/d2a/class_r_t_e_1_1_importing_1_1_model_importer.html#a5a45e56370cbc2e455100b80e2a2efe9" title="Extracts the position, scalar, and rotation information from this node, and converts it into a RTE::R..." alt="" coords="252,5,451,47"/>
-<area shape="rect" id="node3" href="$dd/d2a/class_r_t_e_1_1_importing_1_1_model_importer.html#ae027d233401b3c39894776fc95b33cc5" title=" " alt="" coords="252,71,451,112"/>
-<area shape="rect" id="node4" href="$da/d00/namespace_r_t_e_1_1_importing.html#aeae996653d2fed97afad8bb02a7350e5" title=" " alt="" coords="499,78,696,105"/>
-<area shape="rect" id="node5" href="$da/d00/namespace_r_t_e_1_1_importing.html#a72ada06ec954332bcfb0c7ccf8dc01d5" title=" " alt="" coords="744,27,948,54"/>
-<area shape="rect" id="node6" href="$da/d00/namespace_r_t_e_1_1_importing.html#ad1cad6ab37d2f34095be9550dc03902f" title=" " alt="" coords="751,78,941,105"/>
-<area shape="rect" id="node7" href="$da/d00/namespace_r_t_e_1_1_importing.html#a7fe13d8caaaf10d02fafd2766188706e" title=" " alt="" coords="745,129,947,155"/>
-</map>

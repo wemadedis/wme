@@ -1,4 +1,0 @@
-<map id="RTE::Rendering::RenderPass::EndRenderPass" name="RTE::Rendering::RenderPass::EndRenderPass">
-<area shape="rect" id="node1" title="Ends a render pass, disabling recording the draw commands to it." alt="" coords="5,5,197,47"/>
-<area shape="rect" id="node2" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="245,5,409,47"/>
-</map>

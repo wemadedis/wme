@@ -1,5 +1,0 @@
-<map id="RTE::Rendering::DeviceMemoryManager" name="RTE::Rendering::DeviceMemoryManager">
-<area shape="rect" id="node1" title="Manages memory allocation for buffer and image resources, along with data transfer to the resources." alt="" coords="5,199,212,240"/>
-<area shape="rect" id="node2" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html" title="Encapsulates and manages Vulkan abstractions used for initialization: VkInstance, VkDevice...." alt="" coords="61,5,231,32"/>
-<area shape="rect" id="node3" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html" title="Creates commands pools and provides command buffers for rendering, along with one time usage commands..." alt="" coords="173,95,386,136"/>
-</map>

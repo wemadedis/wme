@@ -1,6 +1,0 @@
-<map id="RTE::Rendering::SwapChain::GetSwapChainImageFormat" name="RTE::Rendering::SwapChain::GetSwapChainImageFormat">
-<area shape="rect" id="node1" title="Gets the swap chain format." alt="" coords="725,5,917,47"/>
-<area shape="rect" id="node2" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a07f0cbf7bbefad2a123b97554821c57b" title="Creates the color attachment for the render pass creation." alt="" coords="485,5,677,47"/>
-<area shape="rect" id="node3" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a6e8f84379eb4ca868a14280e6068543d" title="Creates the vulkan render pass." alt="" coords="245,5,437,47"/>
-<area shape="rect" id="node4" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a8882ffc9ee2fd014afb984f9186d9ce0" title=" " alt="" coords="5,5,197,47"/>
-</map>

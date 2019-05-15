@@ -1,4 +1,0 @@
-<map id="RTE::Rendering::SwapChain::CreateSwapChainImageView" name="RTE::Rendering::SwapChain::CreateSwapChainImageView">
-<area shape="rect" id="node1" title="Creates an image view for a swap chain image." alt="" coords="5,5,201,47"/>
-<area shape="rect" id="node2" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="249,5,420,47"/>
-</map>

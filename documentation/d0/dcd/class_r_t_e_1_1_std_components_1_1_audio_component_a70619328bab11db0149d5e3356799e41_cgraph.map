@@ -1,4 +1,0 @@
-<map id="RTE::StdComponents::AudioComponent::GetState" name="RTE::StdComponents::AudioComponent::GetState">
-<area shape="rect" id="node1" title=" " alt="" coords="5,5,195,47"/>
-<area shape="rect" id="node2" href="$d4/d6c/class_r_t_e_1_1_audio_1_1_emitter.html#a8ba317b983cfadd3f0dbe617bf64f5d9" title="Gets the playback state of the emitter." alt="" coords="243,5,381,47"/>
-</map>

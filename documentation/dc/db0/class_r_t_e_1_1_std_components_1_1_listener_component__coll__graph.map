@@ -1,6 +1,0 @@
-<map id="RTE::StdComponents::ListenerComponent" name="RTE::StdComponents::ListenerComponent">
-<area shape="rect" id="node1" title=" " alt="" coords="59,199,207,240"/>
-<area shape="rect" id="node2" href="$d3/d2c/class_r_t_e_1_1_runtime_1_1_component.html" title=" " alt="" coords="5,5,183,32"/>
-<area shape="rect" id="node3" href="$d7/d81/class_r_t_e_1_1_std_components_1_1_transform_component.html" title="Holds transform information for use in other components." alt="" coords="132,95,285,136"/>
-<area shape="rect" id="node4" href="$d5/da1/struct_r_t_e_1_1_rendering_1_1_transform.html" title="Struct containing transformation information of objects in a scene." alt="" coords="207,5,386,32"/>
-</map>

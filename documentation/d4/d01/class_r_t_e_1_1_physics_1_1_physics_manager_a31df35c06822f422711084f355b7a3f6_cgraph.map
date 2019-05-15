@@ -1,5 +1,0 @@
-<map id="RTE::Physics::PhysicsManager::CreateRigidBody" name="RTE::Physics::PhysicsManager::CreateRigidBody">
-<area shape="rect" id="node1" title="Create a Rigid Body object and add it to the physics world." alt="" coords="5,5,212,47"/>
-<area shape="rect" id="node2" href="$d4/d3e/namespace_r_t_e_1_1_physics.html#a4650c1eecee51d0440d40d9b03a4b34f" title="Converts a bullet vector3 to a glm vector3." alt="" coords="547,13,700,39"/>
-<area shape="rect" id="node3" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#a7cabb3be789989e91033f0451bf2f750" title="Takes the information from the collider type and data and use it to initialize the corresponding btCo..." alt="" coords="260,35,499,76"/>
-</map>

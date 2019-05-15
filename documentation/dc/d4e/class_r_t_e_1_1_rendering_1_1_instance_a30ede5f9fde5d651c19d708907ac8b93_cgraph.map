@@ -1,6 +1,0 @@
-<map id="RTE::Rendering::Instance::SetupDebugCallBack" name="RTE::Rendering::Instance::SetupDebugCallBack">
-<area shape="rect" id="node1" title="Sets up the debug callback that provides necessary warnings or errors." alt="" coords="5,57,176,98"/>
-<area shape="rect" id="node2" href="$d2/d50/namespace_r_t_e_1_1_rendering.html#a41088c0786c4a7a923dc4f32785898fa" title=" " alt="" coords="230,5,437,32"/>
-<area shape="rect" id="node3" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a37c1f91ec36c0fa50b0b953601c3fa50" title="Creates a Vulkan debug messenger." alt="" coords="224,57,443,98"/>
-<area shape="rect" id="node4" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="251,122,415,163"/>
-</map>

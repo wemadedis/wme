@@ -1,5 +1,0 @@
-<map id="RTE::Physics::PhysicsManager::SetupBulletCallbacks" name="RTE::Physics::PhysicsManager::SetupBulletCallbacks">
-<area shape="rect" id="node1" title="Initializes Bullet global collision callbacks with RTE functions so they can be used." alt="" coords="5,39,212,80"/>
-<area shape="rect" id="node2" href="$d4/d3e/namespace_r_t_e_1_1_physics.html#a084e491fcafa065237c8c25533ffb655" title="Bullet physics callback for callback processed. This is called whenever two rigidbodies are colliding..." alt="" coords="260,5,477,47"/>
-<area shape="rect" id="node3" href="$d4/d3e/namespace_r_t_e_1_1_physics.html#a8de02aca0d5b77974915f682fcb54889" title="Bullet Physics callback for contact destroyed." alt="" coords="261,71,476,112"/>
-</map>

@@ -1,5 +1,0 @@
-<map id="RTE::Rendering::AccelerationStructure::UpdateInstanceTransform" name="RTE::Rendering::AccelerationStructure::UpdateInstanceTransform">
-<area shape="rect" id="node1" title="Updates an instance transform." alt="" coords="244,39,475,80"/>
-<area shape="rect" id="node2" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#aedb6c52bc550dbe3b37637c065ef8ddd" title="Sets the Mesh Instance Properties." alt="" coords="5,5,196,47"/>
-<area shape="rect" id="node3" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a12cf549e7d63af3cce6ba42592681f4d" title="Sets the material of a mesh instance." alt="" coords="14,71,187,112"/>
-</map>

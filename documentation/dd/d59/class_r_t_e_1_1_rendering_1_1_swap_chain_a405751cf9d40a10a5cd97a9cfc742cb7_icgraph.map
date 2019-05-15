@@ -1,7 +1,0 @@
-<map id="RTE::Rendering::SwapChain::CreateFramebuffers" name="RTE::Rendering::SwapChain::CreateFramebuffers">
-<area shape="rect" id="node1" title="Creates the frame buffers used for rendering." alt="" coords="448,39,635,80"/>
-<area shape="rect" id="node2" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#ae7028fbbdee06cccca1240e94e121f69" title="Called at renderer creation, instantiating the necessary structure before the user can upload renderi..." alt="" coords="227,5,400,47"/>
-<area shape="rect" id="node4" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a047ceb35e66f86a384185d5866b0c6c4" title="Function used to recreate all data related to the swap chain." alt="" coords="227,71,400,112"/>
-<area shape="rect" id="node3" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a97f7395554269c295aee8f88a9f6a9aa" title="Default contructor for the renderer." alt="" coords="5,5,179,47"/>
-<area shape="rect" id="node5" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#ac0067d1185af386fea36170aa46759c7" title="Issue the renderer to draw a frame. If called again, the renderer waits until the _minFrameTime since..." alt="" coords="5,71,179,112"/>
-</map>

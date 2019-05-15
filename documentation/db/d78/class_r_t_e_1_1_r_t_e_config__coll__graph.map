@@ -1,7 +1,0 @@
-<map id="RTE::RTEConfig" name="RTE::RTEConfig">
-<area shape="rect" id="node1" title="Describes RTE project settings." alt="" coords="250,95,366,121"/>
-<area shape="rect" id="node2" href="$d1/d04/struct_r_t_e_1_1_physics_config.html" title=" " alt="" coords="5,5,144,32"/>
-<area shape="rect" id="node3" href="$df/d96/struct_r_t_e_1_1_asset_config.html" title=" " alt="" coords="168,5,293,32"/>
-<area shape="rect" id="node4" href="$d8/d56/struct_r_t_e_1_1_window_config.html" title=" " alt="" coords="318,5,455,32"/>
-<area shape="rect" id="node5" href="$d2/d12/struct_r_t_e_1_1_graphics_config.html" title=" " alt="" coords="479,5,622,32"/>
-</map>

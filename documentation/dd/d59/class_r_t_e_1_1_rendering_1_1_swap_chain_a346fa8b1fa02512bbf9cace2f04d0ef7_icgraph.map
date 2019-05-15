@@ -1,4 +1,0 @@
-<map id="RTE::Rendering::SwapChain::CreateSwapChain" name="RTE::Rendering::SwapChain::CreateSwapChain">
-<area shape="rect" id="node1" title="Encapsulates the Vulkan swap chain creation process." alt="" coords="240,5,427,47"/>
-<area shape="rect" id="node2" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a68d6cb8ef1aef61850393331881f2bb4" title="The swap chain cosntructor." alt="" coords="5,5,192,47"/>
-</map>

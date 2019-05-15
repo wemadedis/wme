@@ -1,4 +1,0 @@
-<map id="RTE::Rendering::Instance::CreateInstance" name="RTE::Rendering::Instance::CreateInstance">
-<area shape="rect" id="node1" title="Creates the Vulkan instance." alt="" coords="5,5,176,47"/>
-<area shape="rect" id="node2" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="224,5,388,47"/>
-</map>

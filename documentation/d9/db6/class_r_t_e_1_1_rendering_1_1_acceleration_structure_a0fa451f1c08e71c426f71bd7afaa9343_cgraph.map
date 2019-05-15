@@ -1,8 +1,0 @@
-<map id="RTE::Rendering::AccelerationStructure::CreateBotStructures" name="RTE::Rendering::AccelerationStructure::CreateBotStructures">
-<area shape="rect" id="node1" title="Creates the bottom level acceleration structures, one for each mesh." alt="" coords="5,93,207,135"/>
-<area shape="rect" id="node2" href="$d9/db6/class_r_t_e_1_1_rendering_1_1_acceleration_structure.html#a7f66a968f8dd32b398f8fc188d59ce60" title="Converts a MeshInfo object to VkGeometry object required for the bottom level structure." alt="" coords="255,5,448,47"/>
-<area shape="rect" id="node3" href="$d9/db6/class_r_t_e_1_1_rendering_1_1_acceleration_structure.html#a28032c38ffcc210f58a08525625b9273" title="Creates an acceleration structure." alt="" coords="255,123,448,164"/>
-<area shape="rect" id="node4" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="537,49,707,91"/>
-<area shape="rect" id="node5" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="540,196,704,237"/>
-<area shape="rect" id="node6" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#a71a4752ace0a5cf85938155d5e91e63d" title="Allocates memory of an acceleration structure." alt="" coords="496,115,748,171"/>
-</map>

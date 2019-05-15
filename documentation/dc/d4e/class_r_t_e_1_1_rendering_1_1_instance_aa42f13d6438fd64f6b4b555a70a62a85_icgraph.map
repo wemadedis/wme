@@ -1,5 +1,0 @@
-<map id="RTE::Rendering::Instance::IsRayTracingCapable" name="RTE::Rendering::Instance::IsRayTracingCapable">
-<area shape="rect" id="node1" title="Determines wheter the GPU(s) connected support ray tracing." alt="" coords="421,13,592,54"/>
-<area shape="rect" id="node2" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a6c3a992ae388c1743900256f93682cd2" title="Function determining the ray tracing capabilities of the device. Should used before renderer creation..." alt="" coords="200,13,373,54"/>
-<area shape="rect" id="node3" href="$d4/d07/class_r_t_e_1_1_r_t_e_1_1_rendering_1_1_rendering_manager.html#acd8ef539a1cad67b04a771551b4aa1e9" title="Checks whether ray tracing is supported by the GPU device." alt="" coords="5,5,152,61"/>
-</map>

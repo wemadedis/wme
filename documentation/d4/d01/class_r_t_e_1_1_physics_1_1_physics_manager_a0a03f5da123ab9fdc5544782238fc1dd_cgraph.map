@@ -1,4 +1,0 @@
-<map id="RTE::Physics::PhysicsManager::SetGravity" name="RTE::Physics::PhysicsManager::SetGravity">
-<area shape="rect" id="node1" title="Set the world gravity using a glm vector." alt="" coords="5,5,212,47"/>
-<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#a6daf83ec36ad5880dab9a26fad8fe488" title="Set the world gravity using individual x, y, z components." alt="" coords="260,5,467,47"/>
-</map>

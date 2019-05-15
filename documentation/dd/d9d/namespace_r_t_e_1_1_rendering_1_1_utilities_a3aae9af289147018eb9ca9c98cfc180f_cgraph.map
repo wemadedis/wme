@@ -1,6 +1,0 @@
-<map id="RTE::Rendering::Utilities::GetShadowdRayMissShader" name="RTE::Rendering::Utilities::GetShadowdRayMissShader">
-<area shape="rect" id="node1" title="Creates a ShaderInfo struct from a standard shadow ray miss file." alt="" coords="5,39,201,80"/>
-<area shape="rect" id="node2" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a4273a65f1c6d89da9e77cfaee23efb1b" title="Creates a shader module from shader code." alt="" coords="249,5,413,47"/>
-<area shape="rect" id="node3" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#aea15050b2837c03974029854f7af32a4" title="Reads a file&#39;s content." alt="" coords="249,71,413,112"/>
-<area shape="rect" id="node4" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#ae5729499b28642029a409f05a6a733dd" title="Reads a file&#39;s content." alt="" coords="461,71,625,112"/>
-</map>

@@ -1,4 +1,0 @@
-<map id="RTE::Physics::PhysicsManager::GetCollisionShapeFromColliderType" name="RTE::Physics::PhysicsManager::GetCollisionShapeFromColliderType">
-<area shape="rect" id="node1" title="Takes the information from the collider type and data and use it to initialize the corresponding btCo..." alt="" coords="260,5,499,47"/>
-<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#a31df35c06822f422711084f355b7a3f6" title="Create a Rigid Body object and add it to the physics world." alt="" coords="5,5,212,47"/>
-</map>
