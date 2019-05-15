@@ -125,7 +125,6 @@ void Instance::CreateLogicalDevice()
     deviceFeatures.samplerAnisotropy = VK_TRUE;
 
 
-    //TODO: FIRST CHECK IF THE FEATURE IS AVAILABLE?
     VkPhysicalDeviceDescriptorIndexingFeaturesEXT ext = {};
     ext.sType = VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DESCRIPTOR_INDEXING_FEATURES_EXT;
     ext.descriptorBindingVariableDescriptorCount = true;

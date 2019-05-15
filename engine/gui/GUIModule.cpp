@@ -36,7 +36,7 @@ void GUIModule::SetupInputCallbacks()
     auto wm = Platform::WindowManager::GetInstance();
     
     wm->RegisterMouseButtonCallback([&](int button, int action){
-        if(button >= 0 && button < 3) //TODO: Revisit. Dunno what other buttons are, followed the NV tutorial here
+        if(button >= 0 && button < 3)
         {
             io.MouseDown[button] = action == GLFW_PRESS;
         }

@@ -288,7 +288,6 @@ struct MeshInstance
 	BufferInformation uniformBuffer = {};
 };
 
-//TODO: Explain that this struct should have been defined by Vulkan but is not?
 /**
  * @brief Struct encapsulating mesh instance information for creation of the top level acceleration structure used for ray tracing.
  */

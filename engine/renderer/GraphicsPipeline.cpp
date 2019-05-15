@@ -284,7 +284,6 @@ GraphicsPipeline::GraphicsPipeline( ShaderInfo rayGen,
     _descriptorManager = descriptorManager;
     _instance = instance;
     _renderPass = renderPass;
-    //TODO: Check shader type!
     CreatePipelineRT(rayGen, rchit, rmiss, srchit, srmiss);
 }
 

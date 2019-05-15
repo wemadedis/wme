@@ -443,7 +443,6 @@ void Renderer::Finalize()
     if (_rtxOn)
     {
         auto rayGen = Utilities::GetStandardRayGenShader(_instance->GetDevice());
-        //TODO: Change name to GetStandardRayClosestHitShader
         auto rchit = Utilities::GetStandardRayHitShader(_instance->GetDevice());
         auto rmiss = Utilities::GetStandardRayMissShader(_instance->GetDevice());
         auto srchit = Utilities::GetShadowRayHitShader(_instance->GetDevice());
@@ -568,8 +567,7 @@ void Renderer::Draw()
 
     VkSemaphore waitSemaphores[] = {_imageAvailableSemaphores[_currentFrame]};
 
-    _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT; //TODO: ANALYZE THIS: WAS AT THE END OF THIS FUNC BEFORE AND INTRODUCED INCONSISTENCY IN SUBMITTING & RECORDING COMMAND BUFFERS
-
+    _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT; 
     VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
 
     VkSubmitInfo submitInfo = {};
@@ -664,7 +662,6 @@ PointLightHandle Renderer::AddPointLight(PointLight light)
 
 void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::function<void(DirectionalLight &)> mutator)
 {
-    //TODO: CLEAN THIS. Can the light in device memory be updated along with all other lights in one call instead?
     mutator(_directionalLights[light]);
     _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData *data) {
         mutator(data->DirectionalLights[light]);
@@ -673,7 +670,6 @@ void Renderer::SetDirectionalLightProperties(DirectionalLightHandle light, std::
 
 void Renderer::SetPointLightProperties(PointLightHandle light, std::function<void(PointLight &)> mutator)
 {
-    //TODO: CLEAN THIS
     mutator(_pointLights[light]);
     _deviceMemoryManager->ModifyBufferData<GlobalUniformData>(_globalUniformBuffer, [mutator, light](GlobalUniformData *data) {
         mutator(data->PointLights[light]);
