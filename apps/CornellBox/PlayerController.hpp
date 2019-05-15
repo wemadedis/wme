@@ -54,15 +54,15 @@ public:
             ImGui::Text(std::to_string(fps).c_str());
 			ImGui::Text("FrameTime:");
 			ImGui::Text(std::to_string(1/fps).c_str());
-            ImGui::Text("Vertecies:");
+            /*ImGui::Text("Vertecies:");
             ImGui::Text(std::to_string(_verts).c_str());
             ImGui::Text("Faces:");
             ImGui::Text(std::to_string(_faces).c_str());
             ImGui::Text("Triangles:");
-            ImGui::Text(std::to_string(_tris).c_str());
+            ImGui::Text(std::to_string(_tris).c_str());*/
             ImGui::End();
         });
-        /*RTE::Platform::WindowManager::GetInstance()->RegisterMousePositionCallback([&](double x, double y){
+        RTE::Platform::WindowManager::GetInstance()->RegisterMousePositionCallback([&](double x, double y){
 
 			if(oldX != x)
 			{
@@ -81,7 +81,7 @@ public:
 			    if(_transform->Transform.Rot.x < -35) _transform->Transform.Rot.x = -35;
 			}
 
-        });*/
+        });
     }
 
     void addGeometryData(int verts, int faces, int tris)
@@ -118,7 +118,7 @@ public:
         }
         
         dt = deltaTime;
-		if (false)
+		if (true)
 		{
 			if (RTE::Platform::WindowManager::GetKey(GLFW_KEY_W) == GLFW_PRESS)
 			{

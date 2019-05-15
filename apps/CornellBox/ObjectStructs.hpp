@@ -18,6 +18,7 @@ struct ComponentIds {
     ComponentId listenerIndex;
     ComponentId directLightIndex;
     ComponentId rotatorIndex;
+	ComponentId physicsIndex;
 };
 
 struct Player {
@@ -39,6 +40,7 @@ struct Monkey {
     TransformComponent *tc;
     MeshComponent *mc;
     AudioComponent *ac;
+	PhysicsComponent* pc;
     Rotator *rc;
     const int verts = 507;
     const int faces = 500;
@@ -55,6 +57,7 @@ struct Box {
     GameObject *go;
     TransformComponent *tc;
     MeshComponent *mc;
+	PhysicsComponent* pc;
 };
 
 struct Wall {

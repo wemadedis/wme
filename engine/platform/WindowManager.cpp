@@ -56,7 +56,6 @@ WindowManager::WindowManager(RTEConfig &config)
         config.WindowConfig.WindowWidth,
         config.WindowConfig.WindowHeight,
         config.WindowConfig.WindowName);
-    SetConsoleTitleA("Egg asdalsjdkasld");
     SetupGLFWCallbacks();
 }
 
@@ -129,41 +128,41 @@ void WindowManager::RegisterCharCallback(CharCallback cb)
 
 void WindowManager::SetupGLFWCallbacks()
 {
-    glfwSetMouseButtonCallback(Window, [](GLFWwindow*, int b, int a, int){
+    glfwSetMouseButtonCallback(Window, [](GLFWwindow *, int b, int a, int) {
         auto wm = WindowManager::GetInstance();
-        for(uint32_t cbIndex = 0; cbIndex < wm->_mbCallbacks.size(); cbIndex++)
+        for (uint32_t cbIndex = 0; cbIndex < wm->_mbCallbacks.size(); cbIndex++)
         {
-            wm->_mbCallbacks[cbIndex](b,a);
+            wm->_mbCallbacks[cbIndex](b, a);
         }
     });
 
-    glfwSetScrollCallback(Window, [](GLFWwindow*, double x, double y){
+    glfwSetScrollCallback(Window, [](GLFWwindow *, double x, double y) {
         auto wm = WindowManager::GetInstance();
-        for(uint32_t cbIndex = 0; cbIndex < wm->_mwCallbacks.size(); cbIndex++)
+        for (uint32_t cbIndex = 0; cbIndex < wm->_mwCallbacks.size(); cbIndex++)
         {
-            wm->_mwCallbacks[cbIndex](x,y);
+            wm->_mwCallbacks[cbIndex](x, y);
         }
     });
 
-    glfwSetCursorPosCallback(Window, [](GLFWwindow*, double x, double y){
+    glfwSetCursorPosCallback(Window, [](GLFWwindow *, double x, double y) {
         auto wm = WindowManager::GetInstance();
-        for(uint32_t cbIndex = 0; cbIndex < wm->_mpCallbacks.size(); cbIndex++)
+        for (uint32_t cbIndex = 0; cbIndex < wm->_mpCallbacks.size(); cbIndex++)
         {
-            wm->_mpCallbacks[cbIndex](x,y);
+            wm->_mpCallbacks[cbIndex](x, y);
         }
     });
 
-    glfwSetKeyCallback(Window, [](GLFWwindow*, int key, int, int action, int){
+    glfwSetKeyCallback(Window, [](GLFWwindow *, int key, int, int action, int) {
         auto wm = WindowManager::GetInstance();
-        for(uint32_t cbIndex = 0; cbIndex < wm->_keyCallbacks.size(); cbIndex++)
+        for (uint32_t cbIndex = 0; cbIndex < wm->_keyCallbacks.size(); cbIndex++)
         {
-            wm->_keyCallbacks[cbIndex](key,action);
+            wm->_keyCallbacks[cbIndex](key, action);
         }
     });
 
-    glfwSetCharCallback(Window, [](GLFWwindow*, unsigned int c){
+    glfwSetCharCallback(Window, [](GLFWwindow *, unsigned int c) {
         auto wm = WindowManager::GetInstance();
-        for(uint32_t cbIndex = 0; cbIndex < wm->_charCallbacks.size(); cbIndex++)
+        for (uint32_t cbIndex = 0; cbIndex < wm->_charCallbacks.size(); cbIndex++)
         {
             wm->_charCallbacks[cbIndex](c);
         }
@@ -171,7 +170,7 @@ void WindowManager::SetupGLFWCallbacks()
 }
 
 void WindowManager::CursorHide()
-{   
+{
     glfwSetInputMode(GetInstance()->Window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
     glfwSetInputMode(GetInstance()->Window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }

@@ -9,13 +9,18 @@
 
 struct Models
 {
-    std::string BoxPath = "models/box1x1x1.ply";
+    std::string BoxPath = "models/box.ply";
     std::string SpherePath = "models/sphere.ply";
 };
 
-struct Sounds 
+struct Sounds
 {
     std::string PongHitPath = "audio/pong_hit.wav";
+};
+
+struct Textures
+{
+    std::string BrickPath = "textures/bricks.png";
 };
 
 struct Components
@@ -41,11 +46,11 @@ struct CameraGO
     RTE::StdComponents::ListenerComponent *Listener;
 };
 
-struct DirLightGO
+struct PointLightGO
 {
     RTE::Runtime::GameObject *GO;
     RTE::StdComponents::TransformComponent *Trans;
-    RTE::StdComponents::DirectionalLightComponent *DirLight;
+    RTE::StdComponents::PointLightComponent *DirLight;
 };
 
 struct BoxGO
