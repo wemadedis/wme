@@ -73,8 +73,7 @@ static inline glm::quat Convert(btQuaternion quat)
         static_cast<float>(quat.getW()),
         static_cast<float>(quat.getX()),
         static_cast<float>(quat.getY()),
-        static_cast<float>(quat.getZ())
-        );
+        static_cast<float>(quat.getZ()));
 }
 
 /**
@@ -88,6 +87,12 @@ static inline btVector3 Convert(glm::vec3 vec)
     return btVector3(vec.x, vec.y, vec.z);
 }
 
+/**
+ * @brief Converts a bullet transform into an RTE transform
+ * 
+ * @param t Transform to convert
+ * @return RTE::Rendering::Transform Converted transform
+ */
 static inline Rendering::Transform Convert(btTransform t)
 {
     Rendering::Transform trans;
@@ -97,6 +102,12 @@ static inline Rendering::Transform Convert(btTransform t)
     return trans;
 }
 
+/**
+ * @brief Converts an RTE transform transform into a bullet transform
+ * 
+ * @param t Transform to convert
+ * @return btTransform Converted transform
+ */
 static inline btTransform Convert(Rendering::Transform t)
 {
     btTransform trans;
@@ -106,6 +117,10 @@ static inline btTransform Convert(Rendering::Transform t)
     return trans;
 }
 
+/**
+ * @brief The different types of colliders
+ * 
+ */
 enum class ColliderType
 {
     BOX = 0,
@@ -115,6 +130,10 @@ enum class ColliderType
     SPHERE
 };
 
+/**
+ * @brief The data required to initialize a collider type
+ * 
+ */
 union ColliderData {
     struct
     {
@@ -138,6 +157,10 @@ union ColliderData {
     } Capsule;
 };
 
+/**
+ * @brief Combines local collider offset with collider type and initialization data.
+ * 
+ */
 struct Collider
 {
     Rendering::Transform ColliderTransform;
@@ -146,7 +169,9 @@ struct Collider
 };
 
 /**
- * @brief Manages physics
+ * @brief Manages physics the physics of RTE
+ * 
+ * Does physics stepping every update.
  * 
  */
 class PhysicsManager : public RTEModule
@@ -189,7 +214,10 @@ private:
      */
     uint32_t _maxSubSteps = 10;
 
-    //TODO: DOC THIS
+    /**
+     * @brief Draws the collider boundaries
+     * 
+     */
     PhysicsDebugDraw *_debugDraw = nullptr;
 
 public:
@@ -219,6 +247,14 @@ public:
      */
     void Update(float deltaTime) override;
 
+    /**
+     * @brief Takes the information from the collider type and data and use it 
+     * to initialize the corresponding btCollisionShape
+     * 
+     * @param type Type of collider to make
+     * @param data Data used to make that collider
+     * @return btCollisionShape* The created collider
+     */
     btCollisionShape *GetCollisionShapeFromColliderType(
         ColliderType type,
         ColliderData data);
@@ -237,6 +273,11 @@ public:
         std::vector<Collider> colliders,
         void *rigidBodyOwner);
 
+    /**
+     * @brief Removes a rigidbody from the physics world
+     * 
+     * @param rb rigidbody to remove
+     */
     void RemoveRigidBody(RigidBody *rb);
     /**
      * @brief Get the Gravity of the physics world
@@ -268,9 +309,25 @@ public:
      */
     static PhysicsManager *GetInstance();
 
+    /**
+     * @brief Gets a free collision slot from the collision pool 
+     * 
+     * @return Collision* Available collision
+     */
     static Collision *PhysicsManager::GetCollisionSlot();
+
+    /**
+     * @brief Frees the collision slot taken by passed collision
+     * 
+     * @param col Collision to free
+     */
     static void PhysicsManager::FreeCollisionSlot(Collision *col);
 
+    /**
+     * @brief Get the Physics Debug Drawer
+     * 
+     * @return PhysicsDebugDraw* The drawer
+     */
     PhysicsDebugDraw *GetPhysicsDebugDraw();
 };
 } // namespace RTE::Physics
