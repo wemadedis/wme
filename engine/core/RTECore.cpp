@@ -11,23 +11,25 @@
 #include <cstdint>
 #include <iostream>
 #include <string>
-#include <thread>
 #include <vector>
 
 namespace RTE
 {
-using Time = std::chrono::steady_clock;
-using double_sec = std::chrono::duration<double>;
-using double_time_point = std::chrono::time_point<Time, double_sec>;
+using namespace std::chrono;
+typedef high_resolution_clock Clock;
+typedef time_point<steady_clock> TimePoint;
+using FpSeconds = duration<float, seconds::period>;
 
 void RTECore::RunUpdateLoop()
 {
     using namespace Platform;
-    double_time_point lastFrameEnd = Time::now();
-
-    double_sec minFrameTime = double_sec(1.0 / Config.GraphicsConfig.FramesPerSecond);
+    TimePoint lastFrameEnd = Clock::now();
+    float minFrameTime = 1.0f / Config.GraphicsConfig.FramesPerSecond;
     float deltaTime = 0.0f;
 
+    // std::vector<float> frameTimes;
+    // frameTimes.reserve(frameCount);
+    // for (int i = 0; i < frameCount; i++)
     while (_windowManager->ShouldClose() == false)
     {
         for (int32_t moduleIndex = 0;
@@ -37,18 +39,23 @@ void RTECore::RunUpdateLoop()
             Modules->at(moduleIndex)->Update(deltaTime);
         }
 
-        double_sec timePassed = double_sec(Time::now() - lastFrameEnd);
-        auto timeToSleep = minFrameTime - timePassed;
-        if (timePassed < minFrameTime)
+        float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
+        while (time < minFrameTime)
         {
-            std::this_thread::sleep_for(timeToSleep);
+            time = std::chrono::duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
         }
-
-        timePassed = double_sec(Time::now() - lastFrameEnd);
-        deltaTime = static_cast<float>(double_sec(Time::now() - lastFrameEnd).count());
-        Debug(std::to_string(deltaTime));
-        lastFrameEnd = Time::now();
+        deltaTime = duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
+        // frameTimes.push_back(deltaTime);
+        lastFrameEnd = Clock::now();
     }
+
+    // float sum = 0;
+    // for (int i = 0; i < frameTimes.size(); i++)
+    // {
+    // sum += frameTimes[i];
+    // }
+    // float avg = sum / frameCount;
+    // Debug(std::to_string(avg));
 }
 
 void RTECore::ValidateConfiguration()
