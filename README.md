@@ -68,8 +68,8 @@ CameraComponent          |Transform                                             
 PointLightComponent      | Transform, color, radius                                         | Lights the scene from the transform's position, with the passed color radius
 DirectionalLightComponent|Transform, color                                                  | Lights the scene from the direction of the transforms rotation with the color
 PhysicsComponent         | Transform, mass, List of colliders                               | Lets this gameobject interact with the physics system by adding a rigidbody
-AudioComponent           | Path to sound file, transform, (volume = 100), (soundOffset = 0) | Plays sounds   
-ListenerComponent        | Transform, enabled                                               | Listens for sounds, there can only be one in a scene
+AudioComponent           | Path to sound file, transform, (volume = 100), (soundOffset = 0) | Plays sounds
+ListenerComponent        | Transform, enabled                                               | Listens for sounds, only one listener can be active at one time
 
 The [Pong](apps/Pong "A simple pong game in RTE") example gives an overview of how custom components are made, used, and interact with the rest of the engine.
 
