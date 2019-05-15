@@ -61,7 +61,7 @@ public:
             ImGui::Text("Triangles:");
             ImGui::Text(std::to_string(_tris).c_str());*/
             ImGui::End();
-        });
+        });/*
         RTE::Platform::WindowManager::GetInstance()->RegisterMousePositionCallback([&](double x, double y){
 
 			if(oldX != x)
@@ -81,7 +81,7 @@ public:
 			    if(_transform->Transform.Rot.x < -35) _transform->Transform.Rot.x = -35;
 			}
 
-        });
+        });*/
     }
 
     void addGeometryData(int verts, int faces, int tris)

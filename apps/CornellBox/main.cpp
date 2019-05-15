@@ -43,7 +43,7 @@ void ConfigureGame(RTEConfig &config)
     config.GraphicsConfig.FramesPerSecond = 1000;
     config.AssetConfig.Meshes = { AbsMonkeyPath, AbsBoxPath, AbsFloorPath };
     config.AssetConfig.Textures = { AbsGreenPath, AbsRedPath };
-	config.PhysicsConfig.MaxCollisionCount = 100000;
+	config.PhysicsConfig.MaxCollisionCount = 1000000;
 }
 
 ComponentIds initComponentPools(RTE::Runtime::Scene *scene)
@@ -339,7 +339,7 @@ void PhysicsBoxTest(Runtime::Scene* scene, ComponentIds componentIds)
 {
 	using namespace RTE::Physics;
 	SimpleTransform playerSt;
-	playerSt.pos = glm::vec3(-3.5f, 10.f, -10.f);
+	playerSt.pos = glm::vec3(-3.5f, 25.f, -20.f);
 	playerSt.rot = glm::vec3(-40.f, 180.f, 0.f);
 	playerSt.scale = glm::vec3(1);
 	Player player = createPlayer(scene, componentIds, playerSt);
@@ -358,7 +358,7 @@ void PhysicsBoxTest(Runtime::Scene* scene, ComponentIds componentIds)
 	floor.pc->GetRigidBody()->SetLinearFactor({ 0, 0, 0 });
 	floor.pc->GetRigidBody()->SetAngularFactor({ 0, 0, 0 });
 
-	int size = 5;
+	int size = 20;
 	for (int x = 0; x < size; x++)
 	{
 		for (int y = 0; y < size; y++)

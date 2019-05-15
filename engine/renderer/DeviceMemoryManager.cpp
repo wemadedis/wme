@@ -29,7 +29,6 @@ uint32_t DeviceMemoryManager::GetMemoryType(VkMemoryRequirements& memoryRequirim
     
 DeviceMemoryManager::DeviceMemoryManager(Instance *instance, CommandBufferManager *commandBufferManager)
 {
-    //TODO: FIX THIS MALLOC PLS <--------------------------------------------------------------------------------------------------------
     _allocator = (VmaAllocator *)malloc(sizeof(VmaAllocator));
     VmaAllocatorCreateInfo info = {};
     _instance = instance;

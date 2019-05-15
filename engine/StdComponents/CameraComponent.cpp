@@ -23,7 +23,7 @@ TransformComponent* CameraComponent::GetTransformComponent()
 {
     return _transform;
 }
-//TODO: How to document that?
+
 //https://www.3dgep.com/understanding-the-view-matrix/#The_View_Matrix
 glm::mat4 CameraComponent::ViewMatrix()
 {

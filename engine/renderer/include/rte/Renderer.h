@@ -160,7 +160,6 @@ private:
      */
     std::vector<DirectionalLight> _directionalLights;
 
-    //TODO: read up on semaphores vs fences!
     std::vector<VkSemaphore> _imageAvailableSemaphores;
     std::vector<VkSemaphore> _renderFinishedSemaphores;
     std::vector<VkFence> _inFlightFences;

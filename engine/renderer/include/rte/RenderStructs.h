@@ -151,7 +151,6 @@ struct Material
      */
     float Reflectivity = 0.0f;
 
-    //TODO: need dis?
     /**
      * @brief The transparency of the surface. (Warning: Currently not in use)
      */
@@ -179,7 +178,7 @@ struct Mesh
      * @brief Vector of indices of the mesh.
      */
     std::vector<uint16_t> Indices = {};
-    //TODO: Remove dis as well?
+
     /**
      * @brief The material of the mesh.
      */
