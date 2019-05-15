@@ -1,0 +1,4 @@
+<map id="RTE::Physics::PhysicsManager::CreateDefaultDynamicsWorld" name="RTE::Physics::PhysicsManager::CreateDefaultDynamicsWorld">
+<area shape="rect" id="node1" title="Create a Default Dynamics World object." alt="" coords="260,5,467,47"/>
+<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#a5826d512e3cf09703b9c35ad22560d30" title="Construct a new Physics Manager object." alt="" coords="5,5,212,47"/>
+</map>

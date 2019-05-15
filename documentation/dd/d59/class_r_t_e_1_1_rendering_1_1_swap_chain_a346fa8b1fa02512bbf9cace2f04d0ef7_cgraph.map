@@ -1,0 +1,12 @@
+<map id="RTE::Rendering::SwapChain::CreateSwapChain" name="RTE::Rendering::SwapChain::CreateSwapChain">
+<area shape="rect" id="node1" title="Encapsulates the Vulkan swap chain creation process." alt="" coords="5,201,192,243"/>
+<area shape="rect" id="node2" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#abc52f97cce680da28001f8e21f641538" title="Retrieves the swap chain information on surface capabilities, formats, and present modes." alt="" coords="240,5,427,47"/>
+<area shape="rect" id="node3" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a3c18b9e336787eee51714633de15dd7d" title="Getter for the physical device." alt="" coords="248,71,419,112"/>
+<area shape="rect" id="node4" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a83220e9349f49b3338303fd1425b0828" title="Getter for the target surface." alt="" coords="248,136,419,177"/>
+<area shape="rect" id="node5" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a59134ac3112f61066996f520feed34f7" title="Attempts to get the graphics and present queue family indices." alt="" coords="251,201,415,243"/>
+<area shape="rect" id="node7" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="744,325,915,367"/>
+<area shape="rect" id="node8" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="251,319,415,360"/>
+<area shape="rect" id="node9" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#acafd868dde37b13c9e8f26bf36de9de0" title="Creates the swap chain images." alt="" coords="240,384,427,425"/>
+<area shape="rect" id="node6" href="$d5/d78/struct_r_t_e_1_1_rendering_1_1_utilities_1_1_queue_family_indices.html#a1c3188f53e1da3d905d1fbbc8c245f7e" title="Checks if both family indices are present." alt="" coords="475,201,696,243"/>
+<area shape="rect" id="node10" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a91cc75bed0f8f9ec303127e8ca666845" title="Creates an image view for a swap chain image." alt="" coords="487,384,683,425"/>
+</map>

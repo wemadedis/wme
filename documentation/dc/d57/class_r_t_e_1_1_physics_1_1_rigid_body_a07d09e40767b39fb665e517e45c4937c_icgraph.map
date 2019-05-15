@@ -1,0 +1,4 @@
+<map id="RTE::Physics::RigidBody::UpdateFromPhysicsWorld" name="RTE::Physics::RigidBody::UpdateFromPhysicsWorld">
+<area shape="rect" id="node1" title=" " alt="" coords="204,13,387,54"/>
+<area shape="rect" id="node2" href="$d0/d6d/class_r_t_e_1_1_std_components_1_1_physics_component.html#a216a945e66bd81d74c7d9ae60bc8fc0a" title="Updates this component&#39;s transformation related to the physics world." alt="" coords="5,5,156,61"/>
+</map>

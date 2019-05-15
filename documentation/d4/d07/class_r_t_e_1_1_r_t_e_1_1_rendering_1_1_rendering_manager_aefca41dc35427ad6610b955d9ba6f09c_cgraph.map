@@ -1,0 +1,4 @@
+<map id="RTE::RTE::Rendering::RenderingManager::RegisterPointLight" name="RTE::RTE::Rendering::RenderingManager::RegisterPointLight">
+<area shape="rect" id="node1" title="Registers a point light component and adds a corresponding point light to the renderer." alt="" coords="5,5,152,61"/>
+<area shape="rect" id="node2" href="$d8/dcc/class_r_t_e_1_1_r_t_e_1_1_std_components_1_1_point_light_component.html#a97bbf569419eaa731d5855ddb562d72d" title="Gets the transform component." alt="" coords="200,5,381,61"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="RTE::Runtime::Scene::AddComponent" name="RTE::Runtime::Scene::AddComponent">
+<area shape="rect" id="node1" title=" " alt="" coords="5,71,153,112"/>
+<area shape="rect" id="node2" href="$d0/d49/class_r_t_e_1_1_runtime_1_1_game_object.html#a5d69cac2406128524317eaf80201d56b" title="Get the ID of this GameObject." alt="" coords="201,5,385,47"/>
+<area shape="rect" id="node3" href="$d3/d2c/class_r_t_e_1_1_runtime_1_1_component.html#a833f456c2eef0d6a5a8eb8c3d0a9bb38" title=" " alt="" coords="205,71,382,112"/>
+<area shape="rect" id="node4" href="$d0/d49/class_r_t_e_1_1_runtime_1_1_game_object.html#a5afb34cfded1de89cad0b777031a58e9" title="Get the RTE::Runtime::Component&#39;s attachted to this GameObject." alt="" coords="201,136,385,177"/>
+</map>

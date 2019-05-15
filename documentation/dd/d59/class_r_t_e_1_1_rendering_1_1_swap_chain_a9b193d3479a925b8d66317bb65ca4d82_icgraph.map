@@ -1,0 +1,9 @@
+<map id="RTE::Rendering::SwapChain::GetSwapChainExtent" name="RTE::Rendering::SwapChain::GetSwapChainExtent">
+<area shape="rect" id="node1" title="Gets the swap chain extent." alt="" coords="909,58,1096,99"/>
+<area shape="rect" id="node2" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#aca509f72a7151ea1cae2ee72709c65f8" title="Function used to record the render pass for ray tracing." alt="" coords="448,28,621,70"/>
+<area shape="rect" id="node3" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a047ceb35e66f86a384185d5866b0c6c4" title="Function used to recreate all data related to the swap chain." alt="" coords="227,150,400,191"/>
+<area shape="rect" id="node5" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a956b7654bf9b7279ea632f49793fc3d1" title="To be called after all necessary data has been uploaded. Creates all necessary information for the re..." alt="" coords="227,32,400,74"/>
+<area shape="rect" id="node6" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a39d22030d14e01b8ddb8bf5f95bb0cae" title="Begins a render pass for recording of draw commands." alt="" coords="669,87,861,128"/>
+<area shape="rect" id="node4" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#ac0067d1185af386fea36170aa46759c7" title="Issue the renderer to draw a frame. If called again, the renderer waits until the _minFrameTime since..." alt="" coords="5,91,179,132"/>
+<area shape="rect" id="node7" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#aa18ff38be6edf054b798f596b796c3af" title="Function used to record the render pass for rasterization." alt="" coords="448,94,621,135"/>
+</map>

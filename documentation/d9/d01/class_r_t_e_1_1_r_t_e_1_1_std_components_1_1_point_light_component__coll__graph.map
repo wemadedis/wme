@@ -1,0 +1,9 @@
+<map id="RTE::RTE::StdComponents::PointLightComponent" name="RTE::RTE::StdComponents::PointLightComponent">
+<area shape="rect" id="node1" title=" " alt="" coords="15,303,197,344"/>
+<area shape="rect" id="node2" href="$d3/d2c/class_r_t_e_1_1_runtime_1_1_component.html" title=" " alt="" coords="5,5,183,32"/>
+<area shape="rect" id="node7" href="$de/ddc/class_r_t_e_1_1_r_t_e_1_1_std_components_1_1_camera_component.html" title=" " alt="" coords="90,95,271,136"/>
+<area shape="rect" id="node3" href="$d4/d07/class_r_t_e_1_1_r_t_e_1_1_rendering_1_1_rendering_manager.html" title=" " alt="" coords="149,199,295,240"/>
+<area shape="rect" id="node4" href="$d7/dc8/class_r_t_e_1_1_r_t_e_module.html" title=" " alt="" coords="295,102,418,129"/>
+<area shape="rect" id="node5" href="$d5/db4/class_r_t_e_1_1_g_u_i_1_1_g_u_i_module.html" title=" " alt="" coords="442,102,591,129"/>
+<area shape="rect" id="node6" href="$dd/d1f/struct_r_t_e_1_1_g_u_i_1_1_g_u_i_init_info.html" title=" " alt="" coords="445,5,589,32"/>
+</map>

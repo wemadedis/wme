@@ -1,0 +1,4 @@
+<map id="RTE::Audio::Emitter::Stop" name="RTE::Audio::Emitter::Stop">
+<area shape="rect" id="node1" title="Stopps audio playback (resets the audio to 0 seconds)" alt="" coords="217,5,356,47"/>
+<area shape="rect" id="node2" href="$d0/dcd/class_r_t_e_1_1_std_components_1_1_audio_component.html#a131bd6e6270dc43f8bec101b2816e855" title=" " alt="" coords="5,5,169,47"/>
+</map>

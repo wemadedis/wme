@@ -1,0 +1,6 @@
+<map id="RTE::Rendering::Instance::CreateLogicalDevice" name="RTE::Rendering::Instance::CreateLogicalDevice">
+<area shape="rect" id="node1" title="Creates the logical device." alt="" coords="5,39,176,80"/>
+<area shape="rect" id="node2" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a59134ac3112f61066996f520feed34f7" title="Attempts to get the graphics and present queue family indices." alt="" coords="224,5,388,47"/>
+<area shape="rect" id="node4" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="224,71,388,112"/>
+<area shape="rect" id="node3" href="$d5/d78/struct_r_t_e_1_1_rendering_1_1_utilities_1_1_queue_family_indices.html#a1c3188f53e1da3d905d1fbbc8c245f7e" title="Checks if both family indices are present." alt="" coords="436,5,657,47"/>
+</map>

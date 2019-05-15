@@ -1,0 +1,9 @@
+<map id="RTE::Rendering::CommandBufferManager::CreateCommandPool" name="RTE::Rendering::CommandBufferManager::CreateCommandPool">
+<area shape="rect" id="node1" title="Creates the command pool used to allocate command buffers." alt="" coords="5,136,219,177"/>
+<area shape="rect" id="node2" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a59134ac3112f61066996f520feed34f7" title="Attempts to get the graphics and present queue family indices." alt="" coords="270,5,434,47"/>
+<area shape="rect" id="node4" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a3c18b9e336787eee51714633de15dd7d" title="Getter for the physical device." alt="" coords="267,71,437,112"/>
+<area shape="rect" id="node5" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a83220e9349f49b3338303fd1425b0828" title="Getter for the target surface." alt="" coords="267,136,437,177"/>
+<area shape="rect" id="node6" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="267,201,437,243"/>
+<area shape="rect" id="node7" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="270,267,434,308"/>
+<area shape="rect" id="node3" href="$d5/d78/struct_r_t_e_1_1_rendering_1_1_utilities_1_1_queue_family_indices.html#a1c3188f53e1da3d905d1fbbc8c245f7e" title="Checks if both family indices are present." alt="" coords="485,5,707,47"/>
+</map>

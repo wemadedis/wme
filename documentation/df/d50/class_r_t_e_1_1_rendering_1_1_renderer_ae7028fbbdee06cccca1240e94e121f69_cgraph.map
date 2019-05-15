@@ -1,0 +1,24 @@
+<map id="RTE::Rendering::Renderer::Initialize" name="RTE::Rendering::Renderer::Initialize">
+<area shape="rect" id="node1" title="Called at renderer creation, instantiating the necessary structure before the user can upload renderi..." alt="" coords="5,255,179,296"/>
+<area shape="rect" id="node2" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a79cb3ea3b4a05592dee7d52eab45b32e" title="Gets the swap chain image count." alt="" coords="227,127,413,168"/>
+<area shape="rect" id="node3" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a405751cf9d40a10a5cd97a9cfc742cb7" title="Creates the frame buffers used for rendering." alt="" coords="227,192,413,233"/>
+<area shape="rect" id="node16" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#a2ac96c5e4312ac6e30293c22de633e7c" title="Creates a buffer resource and allocates memory for it." alt="" coords="956,449,1163,491"/>
+<area shape="rect" id="node17" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#ab5f9adb8bd678c6b5cb8a3e09310961f" title="Creates an empty texture for instances with no texture bound." alt="" coords="233,415,407,456"/>
+<area shape="rect" id="node4" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a24d21771742536935402eceeced212e6" title="Creates the depth images used by the frame buffers." alt="" coords="464,253,651,295"/>
+<area shape="rect" id="node9" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="1521,224,1692,265"/>
+<area shape="rect" id="node14" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a4e6fe1ca9f62773da258022e0909c6f9" title="Get the render pass handle." alt="" coords="461,5,653,47"/>
+<area shape="rect" id="node15" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="475,71,639,112"/>
+<area shape="rect" id="node5" href="$dd/d79/class_r_t_e_1_1_rendering_1_1_image_manager.html#a5cbb9cd27e902bfaa5117ccc2d748c86" title="Creates a depth image to be used by the frame buffer." alt="" coords="701,253,908,295"/>
+<area shape="rect" id="node6" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#abca58701a2e93512b586e0b95b7190f3" title="Finds the optimal depth format supported by the physical device." alt="" coords="974,188,1145,229"/>
+<area shape="rect" id="node7" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#a111aa4c1535355c5cd1d81356ae41ae6" title="Creates a Vulkan image resource and allocates memory for it." alt="" coords="956,384,1163,425"/>
+<area shape="rect" id="node8" href="$dd/d79/class_r_t_e_1_1_rendering_1_1_image_manager.html#aad132944208da1c710a6ce8556d9a1d2" title="Create an image view based on previously allocated image resource." alt="" coords="956,253,1163,295"/>
+<area shape="rect" id="node10" href="$dd/d79/class_r_t_e_1_1_rendering_1_1_image_manager.html#a348e98a0ab14b0961cc426a61d9e23bc" title="Transitions the layout of an image from its old layout to a new one." alt="" coords="956,319,1163,360"/>
+<area shape="rect" id="node11" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#abdd524adce617f30652bc55893273846" title="Begins a one time usage command buffer." alt="" coords="1215,319,1469,360"/>
+<area shape="rect" id="node12" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#ac16563267ef712eb5dd02eb14131aec0" title="Submits a one time use command buffer to a queue." alt="" coords="1211,253,1473,295"/>
+<area shape="rect" id="node13" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#aff9257f61991539bb331a77d4019d221" title="Getter for the graphics queue." alt="" coords="1257,384,1427,425"/>
+<area shape="rect" id="node18" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a927c57cec8995a4a4e2e5780bd4d2a7a" title="Uploads a texture to the device." alt="" coords="471,420,644,461"/>
+<area shape="rect" id="node19" href="$dd/d79/class_r_t_e_1_1_rendering_1_1_image_manager.html#a1f587da8d6dfdcd60138109c1d35d3f9" title="Uploads texture image data to the GPU and creates a texture info." alt="" coords="701,429,908,471"/>
+<area shape="rect" id="node20" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#aa1aa469dcfbfef7d6717cf71dd81408a" title="Copies data to a buffer." alt="" coords="956,515,1163,556"/>
+<area shape="rect" id="node21" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#a21816b81ff026446acfef125a9a727af" title="Copies data from a buffer to an image." alt="" coords="956,580,1163,621"/>
+<area shape="rect" id="node22" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#a82dcf3d4c599b1fd069a9697446ebb8c" title="Destroys a buffer and deallocates the related memory." alt="" coords="956,645,1163,687"/>
+</map>

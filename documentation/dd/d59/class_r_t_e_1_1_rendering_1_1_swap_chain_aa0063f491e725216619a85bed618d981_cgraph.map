@@ -1,0 +1,6 @@
+<map id="RTE::Rendering::SwapChain::~SwapChain" name="RTE::Rendering::SwapChain::~SwapChain">
+<area shape="rect" id="node1" title=" " alt="" coords="5,35,192,76"/>
+<area shape="rect" id="node2" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="513,5,683,47"/>
+<area shape="rect" id="node3" href="$dd/d79/class_r_t_e_1_1_rendering_1_1_image_manager.html#a1cdf5c9de5f9d9aee96dba05e8e2dfd3" title="Deallocates the memory of the image and deletes the image view." alt="" coords="240,64,447,105"/>
+<area shape="rect" id="node4" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#ab692ab59bb4dbf4c7d5c12867cfad836" title="Destroys the image resource and deallocates the related memory." alt="" coords="495,71,701,112"/>
+</map>

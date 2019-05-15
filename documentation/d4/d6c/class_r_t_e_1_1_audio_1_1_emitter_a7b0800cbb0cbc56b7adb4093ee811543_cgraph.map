@@ -1,0 +1,4 @@
+<map id="RTE::Audio::Emitter::Play" name="RTE::Audio::Emitter::Play">
+<area shape="rect" id="node1" title="Starts audio playback." alt="" coords="5,5,144,47"/>
+<area shape="rect" id="node2" href="$d4/d6c/class_r_t_e_1_1_audio_1_1_emitter.html#ae0dc69b76758a40522a6b0125bec7c64" title="sets the audio state" alt="" coords="192,5,331,47"/>
+</map>

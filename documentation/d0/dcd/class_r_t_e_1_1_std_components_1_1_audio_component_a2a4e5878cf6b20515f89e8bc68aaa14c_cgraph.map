@@ -1,0 +1,6 @@
+<map id="RTE::StdComponents::AudioComponent::Initialize" name="RTE::StdComponents::AudioComponent::Initialize">
+<area shape="rect" id="node1" title=" " alt="" coords="5,71,189,112"/>
+<area shape="rect" id="node2" href="$d4/d6c/class_r_t_e_1_1_audio_1_1_emitter.html#aa6eeb425d58b551ea8fc7cfc0b838a73" title="Load sound from soundfile." alt="" coords="237,5,384,47"/>
+<area shape="rect" id="node3" href="$d4/d6c/class_r_t_e_1_1_audio_1_1_emitter.html#a2441355a507d1470943f0a710aa4db34" title="Set volume." alt="" coords="241,71,380,112"/>
+<area shape="rect" id="node4" href="$d4/d6c/class_r_t_e_1_1_audio_1_1_emitter.html#af6e3b64cede6e85b15a395491693f32f" title="Sets playback offset." alt="" coords="241,136,380,177"/>
+</map>

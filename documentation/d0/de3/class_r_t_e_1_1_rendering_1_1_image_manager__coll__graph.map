@@ -1,0 +1,6 @@
+<map id="RTE::Rendering::ImageManager" name="RTE::Rendering::ImageManager">
+<area shape="rect" id="node1" title="Encapsulates functions related to image and texture creation/modification." alt="" coords="1040,51,1247,77"/>
+<area shape="rect" id="node2" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html" title="Manages memory allocation for buffer and image resources, along with data transfer to the resources." alt="" coords="640,43,847,85"/>
+<area shape="rect" id="node3" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html" title="Encapsulates and manages Vulkan abstractions used for initialization: VkInstance, VkDevice...." alt="" coords="5,37,176,64"/>
+<area shape="rect" id="node4" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html" title="Creates commands pools and provides command buffers for rendering, along with one time usage commands..." alt="" coords="285,99,499,141"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="RTE::StdComponents::PhysicsComponent::Update" name="RTE::StdComponents::PhysicsComponent::Update">
+<area shape="rect" id="node1" title="Updates this component&#39;s transformation related to the physics world." alt="" coords="5,5,156,61"/>
+<area shape="rect" id="node2" href="$dc/d57/class_r_t_e_1_1_physics_1_1_rigid_body.html#a07d09e40767b39fb665e517e45c4937c" title=" " alt="" coords="204,13,387,54"/>
+<area shape="rect" id="node3" href="$d4/d3e/namespace_r_t_e_1_1_physics.html#a4650c1eecee51d0440d40d9b03a4b34f" title="Converts a bullet vector3 to a glm vector3." alt="" coords="652,20,805,47"/>
+<area shape="rect" id="node4" href="$dc/d57/class_r_t_e_1_1_physics_1_1_rigid_body.html#a44f514e9e4d431465854e05c8cb659e9" title=" " alt="" coords="435,42,604,83"/>
+</map>

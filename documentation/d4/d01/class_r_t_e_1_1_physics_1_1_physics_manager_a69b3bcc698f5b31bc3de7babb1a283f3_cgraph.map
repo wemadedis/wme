@@ -1,0 +1,4 @@
+<map id="RTE::Physics::PhysicsManager::GetGravity" name="RTE::Physics::PhysicsManager::GetGravity">
+<area shape="rect" id="node1" title="Get the Gravity of the physics world." alt="" coords="5,5,212,47"/>
+<area shape="rect" id="node2" href="$d4/d3e/namespace_r_t_e_1_1_physics.html#a4650c1eecee51d0440d40d9b03a4b34f" title="Converts a bullet vector3 to a glm vector3." alt="" coords="260,13,413,39"/>
+</map>

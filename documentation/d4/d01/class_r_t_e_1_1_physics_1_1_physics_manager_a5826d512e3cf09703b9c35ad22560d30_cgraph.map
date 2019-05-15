@@ -1,0 +1,8 @@
+<map id="RTE::Physics::PhysicsManager::PhysicsManager" name="RTE::Physics::PhysicsManager::PhysicsManager">
+<area shape="rect" id="node1" title="Construct a new Physics Manager object." alt="" coords="5,72,212,113"/>
+<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#ac4c3ee4d45df83717bcf3b25ae422df6" title="Create a Default Dynamics World object." alt="" coords="260,39,467,80"/>
+<area shape="rect" id="node6" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#a6daf83ec36ad5880dab9a26fad8fe488" title="Set the world gravity using individual x, y, z components." alt="" coords="260,104,467,145"/>
+<area shape="rect" id="node3" href="$d4/d01/class_r_t_e_1_1_physics_1_1_physics_manager.html#abd9929763fb7ceb918afbef66132be7a" title="Initializes Bullet global collision callbacks with RTE functions so they can be used." alt="" coords="515,39,721,80"/>
+<area shape="rect" id="node4" href="$d4/d3e/namespace_r_t_e_1_1_physics.html#a084e491fcafa065237c8c25533ffb655" title="Bullet physics callback for callback processed. This is called whenever two rigidbodies are colliding..." alt="" coords="769,5,987,47"/>
+<area shape="rect" id="node5" href="$d4/d3e/namespace_r_t_e_1_1_physics.html#a8de02aca0d5b77974915f682fcb54889" title="Bullet Physics callback for contact destroyed." alt="" coords="771,71,985,112"/>
+</map>

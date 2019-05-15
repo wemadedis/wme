@@ -1,0 +1,5 @@
+<map id="RTE::Rendering::ImageManager::DestroyImage" name="RTE::Rendering::ImageManager::DestroyImage">
+<area shape="rect" id="node1" title="Deallocates the memory of the image and deletes the image view." alt="" coords="5,39,212,80"/>
+<area shape="rect" id="node2" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="278,5,449,47"/>
+<area shape="rect" id="node3" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#ab692ab59bb4dbf4c7d5c12867cfad836" title="Destroys the image resource and deallocates the related memory." alt="" coords="260,71,467,112"/>
+</map>

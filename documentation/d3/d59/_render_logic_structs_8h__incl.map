@@ -1,0 +1,28 @@
+<map id="engine/renderer/RenderLogicStructs.h" name="engine/renderer/RenderLogicStructs.h">
+<area shape="rect" id="node1" title=" " alt="" coords="538,5,725,47"/>
+<area shape="rect" id="node2" href="$dc/d16/_device_memory_manager_8h.html" title=" " alt="" coords="381,95,549,121"/>
+<area shape="rect" id="node18" href="$dc/d41/_renderer_handles_8h.html" title=" " alt="" coords="673,95,824,121"/>
+<area shape="rect" id="node20" href="$d4/dc6/_render_structs_8h.html" title=" " alt="" coords="459,319,593,345"/>
+<area shape="rect" id="node3" title=" " alt="" coords="658,393,767,420"/>
+<area shape="rect" id="node4" title=" " alt="" coords="290,169,405,196"/>
+<area shape="rect" id="node5" title=" " alt="" coords="429,169,501,196"/>
+<area shape="rect" id="node6" title=" " alt="" coords="525,169,594,196"/>
+<area shape="rect" id="node7" title=" " alt="" coords="5,169,52,196"/>
+<area shape="rect" id="node8" href="$d6/d43/_command_buffer_manager_8hpp.html" title=" " alt="" coords="77,169,266,196"/>
+<area shape="rect" id="node9" title=" " alt="" coords="15,393,71,420"/>
+<area shape="rect" id="node10" href="$dd/d19/_instance_8hpp.html" title=" " alt="" coords="142,244,238,271"/>
+<area shape="rect" id="node11" title=" " alt="" coords="253,319,330,345"/>
+<area shape="rect" id="node12" href="$db/d72/_utilities_8h.html" title=" " alt="" coords="152,319,228,345"/>
+<area shape="rect" id="node13" title=" " alt="" coords="62,468,155,495"/>
+<area shape="rect" id="node14" title=" " alt="" coords="421,393,471,420"/>
+<area shape="rect" id="node15" title=" " alt="" coords="146,393,213,420"/>
+<area shape="rect" id="node16" title=" " alt="" coords="237,393,303,420"/>
+<area shape="rect" id="node17" title=" " alt="" coords="327,393,397,420"/>
+<area shape="rect" id="node19" title=" " alt="" coords="720,169,785,196"/>
+<area shape="rect" id="node21" href="$db/d7a/_glm_wrapper_8hpp.html" title=" " alt="" coords="495,393,634,420"/>
+<area shape="rect" id="node22" title=" " alt="" coords="737,468,891,495"/>
+<area shape="rect" id="node23" title=" " alt="" coords="916,468,1107,495"/>
+<area shape="rect" id="node24" title=" " alt="" coords="180,468,347,495"/>
+<area shape="rect" id="node25" title=" " alt="" coords="371,468,539,495"/>
+<area shape="rect" id="node26" title=" " alt="" coords="564,468,712,495"/>
+</map>

@@ -1,0 +1,4 @@
+<map id="RTE::Audio::Emitter::SetLoop" name="RTE::Audio::Emitter::SetLoop">
+<area shape="rect" id="node1" title="Enables or disables looping of audio." alt="" coords="239,5,377,47"/>
+<area shape="rect" id="node2" href="$d0/dcd/class_r_t_e_1_1_std_components_1_1_audio_component.html#a190064cfa784f58356173702a248fd40" title=" " alt="" coords="5,5,191,47"/>
+</map>

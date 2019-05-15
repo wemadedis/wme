@@ -1,0 +1,8 @@
+<map id="RTE::Rendering::Instance::ChoosePhysicalDevice" name="RTE::Rendering::Instance::ChoosePhysicalDevice">
+<area shape="rect" id="node1" title="Scans through the physical devices available and picks the optimal one." alt="" coords="5,153,176,195"/>
+<area shape="rect" id="node2" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a914ccd94f07092add102477817dc4dd2" title="Determines if a physical device meets the requirements of the renderer." alt="" coords="224,123,408,164"/>
+<area shape="rect" id="node5" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8a5d7d9f43dce9d5414ca6814a5c0643" title="Checks whether a device supports the reuquested extensions." alt="" coords="457,188,642,229"/>
+<area shape="rect" id="node3" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a59134ac3112f61066996f520feed34f7" title="Attempts to get the graphics and present queue family indices." alt="" coords="467,5,631,47"/>
+<area shape="rect" id="node4" href="$d5/d78/struct_r_t_e_1_1_rendering_1_1_utilities_1_1_queue_family_indices.html#a1c3188f53e1da3d905d1fbbc8c245f7e" title="Checks if both family indices are present." alt="" coords="691,35,912,76"/>
+<area shape="rect" id="node6" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#abc52f97cce680da28001f8e21f641538" title="Retrieves the swap chain information on surface capabilities, formats, and present modes." alt="" coords="456,123,643,164"/>
+</map>

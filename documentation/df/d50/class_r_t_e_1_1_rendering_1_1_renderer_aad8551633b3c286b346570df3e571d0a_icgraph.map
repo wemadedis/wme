@@ -1,0 +1,6 @@
+<map id="RTE::Rendering::Renderer::UploadGlobalUniform" name="RTE::Rendering::Renderer::UploadGlobalUniform">
+<area shape="rect" id="node1" title="Uploads the global uniform data to the device." alt="" coords="227,71,400,112"/>
+<area shape="rect" id="node2" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a956b7654bf9b7279ea632f49793fc3d1" title="To be called after all necessary data has been uploaded. Creates all necessary information for the re..." alt="" coords="5,5,179,47"/>
+<area shape="rect" id="node3" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a4058a2ba406ba4a379b8e2e17ae30424" title="Sets the clear color after each frame draw." alt="" coords="5,71,179,112"/>
+<area shape="rect" id="node4" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a66bd4967c68da58992607bca687f3b54" title="Sets the camera used to provide the necessary information for rendering." alt="" coords="5,136,179,177"/>
+</map>

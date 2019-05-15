@@ -1,0 +1,5 @@
+<map id="RTE::Rendering::Instance::DeviceMeetsRequirements" name="RTE::Rendering::Instance::DeviceMeetsRequirements">
+<area shape="rect" id="node1" title="Determines if a physical device meets the requirements of the renderer." alt="" coords="443,5,627,47"/>
+<area shape="rect" id="node2" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#adc8e2aa929b36b05552ba6c14d46fdc8" title="Scans through the physical devices available and picks the optimal one." alt="" coords="224,5,395,47"/>
+<area shape="rect" id="node3" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a7075888fc0d89405330d56ba67802e7a" title="The default constructor." alt="" coords="5,5,176,47"/>
+</map>

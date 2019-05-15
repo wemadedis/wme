@@ -1,0 +1,5 @@
+<map id="RTE::Physics::Collider" name="RTE::Physics::Collider">
+<area shape="rect" id="node1" title="Combines local collider offset with collider type and initialization data." alt="" coords="120,95,273,121"/>
+<area shape="rect" id="node2" href="$d5/d18/union_r_t_e_1_1_physics_1_1_collider_data.html" title="The data required to initialize a collider type." alt="" coords="5,5,185,32"/>
+<area shape="rect" id="node3" href="$d5/da1/struct_r_t_e_1_1_rendering_1_1_transform.html" title="Struct containing transformation information of objects in a scene." alt="" coords="210,5,389,32"/>
+</map>

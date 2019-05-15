@@ -1,0 +1,4 @@
+<map id="RTE::Rendering::DescriptorManager::CreateDescriptorPools" name="RTE::Rendering::DescriptorManager::CreateDescriptorPools">
+<area shape="rect" id="node1" title="Creates the descriptor pools used for rasterization." alt="" coords="227,5,437,47"/>
+<area shape="rect" id="node2" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a956b7654bf9b7279ea632f49793fc3d1" title="To be called after all necessary data has been uploaded. Creates all necessary information for the re..." alt="" coords="5,5,179,47"/>
+</map>

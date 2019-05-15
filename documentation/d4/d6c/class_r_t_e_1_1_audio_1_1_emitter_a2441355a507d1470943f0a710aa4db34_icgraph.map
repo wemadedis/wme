@@ -1,0 +1,5 @@
+<map id="RTE::Audio::Emitter::SetVolume" name="RTE::Audio::Emitter::SetVolume">
+<area shape="rect" id="node1" title="Set volume." alt="" coords="255,39,393,80"/>
+<area shape="rect" id="node2" href="$d0/dcd/class_r_t_e_1_1_std_components_1_1_audio_component.html#a2a4e5878cf6b20515f89e8bc68aaa14c" title=" " alt="" coords="14,5,198,47"/>
+<area shape="rect" id="node3" href="$d0/dcd/class_r_t_e_1_1_std_components_1_1_audio_component.html#ab249f03b58029725a0da53d0feb46374" title=" " alt="" coords="5,71,207,112"/>
+</map>

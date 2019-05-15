@@ -1,0 +1,11 @@
+<map id="RTE::Rendering::ImageManager::CreateDepthImage" name="RTE::Rendering::ImageManager::CreateDepthImage">
+<area shape="rect" id="node1" title="Creates a depth image to be used by the frame buffer." alt="" coords="5,100,212,141"/>
+<area shape="rect" id="node2" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#abca58701a2e93512b586e0b95b7190f3" title="Finds the optimal depth format supported by the physical device." alt="" coords="278,5,449,47"/>
+<area shape="rect" id="node3" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#a111aa4c1535355c5cd1d81356ae41ae6" title="Creates a Vulkan image resource and allocates memory for it." alt="" coords="260,71,467,112"/>
+<area shape="rect" id="node4" href="$dd/d79/class_r_t_e_1_1_rendering_1_1_image_manager.html#aad132944208da1c710a6ce8556d9a1d2" title="Create an image view based on previously allocated image resource." alt="" coords="543,111,749,152"/>
+<area shape="rect" id="node6" href="$dd/d79/class_r_t_e_1_1_rendering_1_1_image_manager.html#a348e98a0ab14b0961cc426a61d9e23bc" title="Transitions the layout of an image from its old layout to a new one." alt="" coords="260,224,467,265"/>
+<area shape="rect" id="node5" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="825,176,996,217"/>
+<area shape="rect" id="node7" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#abdd524adce617f30652bc55893273846" title="Begins a one time usage command buffer." alt="" coords="519,176,773,217"/>
+<area shape="rect" id="node8" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#ac16563267ef712eb5dd02eb14131aec0" title="Submits a one time use command buffer to a queue." alt="" coords="515,241,777,283"/>
+<area shape="rect" id="node9" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#aff9257f61991539bb331a77d4019d221" title="Getter for the graphics queue." alt="" coords="561,307,731,348"/>
+</map>

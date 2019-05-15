@@ -1,0 +1,9 @@
+<map id="RTE::Physics::PhysicsManager" name="RTE::Physics::PhysicsManager">
+<area shape="rect" id="node1" title="Manages physics the physics of RTE." alt="" coords="149,213,355,240"/>
+<area shape="rect" id="node2" href="$d7/dc8/class_r_t_e_1_1_r_t_e_module.html" title=" " alt="" coords="5,124,128,151"/>
+<area shape="rect" id="node3" href="$d4/d97/class_r_t_e_1_1_generic_pool.html" title=" " alt="" coords="153,124,351,151"/>
+<area shape="rect" id="node4" href="$d6/dae/union_r_t_e_1_1_generic_pool_1_1_t_wrapper.html" title=" " alt="" coords="179,5,325,47"/>
+<area shape="rect" id="node5" href="$df/d7e/class_r_t_e_1_1_physics_1_1_physics_debug_draw.html" title=" " alt="" coords="375,124,598,151"/>
+<area shape="rect" id="node6" title=" " alt="" coords="419,13,522,39"/>
+<area shape="rect" id="node7" href="$da/d07/class_r_t_e_1_1_rendering_1_1_line_debug_draw_module.html" title=" " alt="" coords="546,5,729,47"/>
+</map>

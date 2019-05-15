@@ -1,0 +1,4 @@
+<map id="RTE::StdComponents::TransformComponent" name="RTE::StdComponents::TransformComponent">
+<area shape="rect" id="node1" title="Holds transform information for use in other components." alt="" coords="17,80,171,121"/>
+<area shape="rect" id="node2" href="$d3/d2c/class_r_t_e_1_1_runtime_1_1_component.html" title=" " alt="" coords="5,5,183,32"/>
+</map>

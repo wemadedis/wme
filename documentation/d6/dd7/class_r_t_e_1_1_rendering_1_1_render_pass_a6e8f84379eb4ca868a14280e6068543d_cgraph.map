@@ -1,0 +1,12 @@
+<map id="RTE::Rendering::RenderPass::CreateRenderPass" name="RTE::Rendering::RenderPass::CreateRenderPass">
+<area shape="rect" id="node1" title="Creates the vulkan render pass." alt="" coords="5,201,197,243"/>
+<area shape="rect" id="node2" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a07f0cbf7bbefad2a123b97554821c57b" title="Creates the color attachment for the render pass creation." alt="" coords="255,5,447,47"/>
+<area shape="rect" id="node4" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#aed7166e2370b3fde8db029a0628833c0" title="Creates the depth attachment for the render pass creation." alt="" coords="255,71,447,112"/>
+<area shape="rect" id="node6" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a3cd2bf79dc970437bbe3435fa777c2d0" title="Creates the color attachment reference for the render pass creation." alt="" coords="247,136,454,177"/>
+<area shape="rect" id="node7" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#abb20a88e9261559093ccac8d96aa610f" title="Creates the depth attachment reference for the render pass creation." alt="" coords="245,201,456,243"/>
+<area shape="rect" id="node8" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a4510e48a3400e4c293a0ad904d8b4234" title="Creates a sub pass description." alt="" coords="255,267,447,308"/>
+<area shape="rect" id="node9" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#a2e36e0b8664fbd13d3878fc40524fc47" title="Getter for the Vulkan device." alt="" coords="265,332,436,373"/>
+<area shape="rect" id="node10" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="269,397,433,439"/>
+<area shape="rect" id="node3" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a6a43f9ca27faa3b929fd14a74f18b8b1" title="Gets the swap chain format." alt="" coords="504,5,696,47"/>
+<area shape="rect" id="node5" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#abca58701a2e93512b586e0b95b7190f3" title="Finds the optimal depth format supported by the physical device." alt="" coords="515,71,685,112"/>
+</map>

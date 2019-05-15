@@ -1,0 +1,4 @@
+<map id="RTE::Rendering::Renderer::Initialize" name="RTE::Rendering::Renderer::Initialize">
+<area shape="rect" id="node1" title="Called at renderer creation, instantiating the necessary structure before the user can upload renderi..." alt="" coords="227,5,400,47"/>
+<area shape="rect" id="node2" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a97f7395554269c295aee8f88a9f6a9aa" title="Default contructor for the renderer." alt="" coords="5,5,179,47"/>
+</map>

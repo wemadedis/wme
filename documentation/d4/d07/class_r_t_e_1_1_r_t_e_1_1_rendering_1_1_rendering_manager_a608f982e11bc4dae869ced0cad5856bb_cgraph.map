@@ -1,0 +1,4 @@
+<map id="RTE::RTE::Rendering::RenderingManager::RegisterDirectionalLight" name="RTE::RTE::Rendering::RenderingManager::RegisterDirectionalLight">
+<area shape="rect" id="node1" title="Registers a directional light component and adds a corresponding directional light to the renderer." alt="" coords="5,5,164,61"/>
+<area shape="rect" id="node2" href="$d9/d28/class_r_t_e_1_1_r_t_e_1_1_std_components_1_1_directional_light_component.html#a196a3d3246c120f4584dbe2964bf4dac" title="Calculates the direction of the light based on the transform component." alt="" coords="212,5,397,61"/>
+</map>

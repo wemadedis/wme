@@ -1,0 +1,6 @@
+<map id="RTE::Rendering::Renderer::IsRaytracingCapable" name="RTE::Rendering::Renderer::IsRaytracingCapable">
+<area shape="rect" id="node1" title="Function determining the ray tracing capabilities of the device. Should used before renderer creation..." alt="" coords="5,39,179,80"/>
+<area shape="rect" id="node2" href="$dc/d4e/class_r_t_e_1_1_rendering_1_1_instance.html#aa42f13d6438fd64f6b4b555a70a62a85" title="Determines wheter the GPU(s) connected support ray tracing." alt="" coords="227,39,397,80"/>
+<area shape="rect" id="node3" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="456,5,620,47"/>
+<area shape="rect" id="node4" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8a5d7d9f43dce9d5414ca6814a5c0643" title="Checks whether a device supports the reuquested extensions." alt="" coords="445,71,631,112"/>
+</map>

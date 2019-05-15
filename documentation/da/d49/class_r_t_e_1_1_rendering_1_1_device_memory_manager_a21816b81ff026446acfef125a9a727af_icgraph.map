@@ -1,0 +1,8 @@
+<map id="RTE::Rendering::DeviceMemoryManager::CopyBufferToImage" name="RTE::Rendering::DeviceMemoryManager::CopyBufferToImage">
+<area shape="rect" id="node1" title="Copies data from a buffer to an image." alt="" coords="1145,5,1352,47"/>
+<area shape="rect" id="node2" href="$dd/d79/class_r_t_e_1_1_rendering_1_1_image_manager.html#a1f587da8d6dfdcd60138109c1d35d3f9" title="Uploads texture image data to the GPU and creates a texture info." alt="" coords="891,5,1097,47"/>
+<area shape="rect" id="node3" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a927c57cec8995a4a4e2e5780bd4d2a7a" title="Uploads a texture to the device." alt="" coords="669,5,843,47"/>
+<area shape="rect" id="node4" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#ab5f9adb8bd678c6b5cb8a3e09310961f" title="Creates an empty texture for instances with no texture bound." alt="" coords="448,5,621,47"/>
+<area shape="rect" id="node5" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#ae7028fbbdee06cccca1240e94e121f69" title="Called at renderer creation, instantiating the necessary structure before the user can upload renderi..." alt="" coords="227,5,400,47"/>
+<area shape="rect" id="node6" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a97f7395554269c295aee8f88a9f6a9aa" title="Default contructor for the renderer." alt="" coords="5,5,179,47"/>
+</map>

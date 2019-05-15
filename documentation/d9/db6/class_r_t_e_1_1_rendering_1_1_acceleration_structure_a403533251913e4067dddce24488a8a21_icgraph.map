@@ -1,0 +1,5 @@
+<map id="RTE::Rendering::AccelerationStructure::ConvertInstance" name="RTE::Rendering::AccelerationStructure::ConvertInstance">
+<area shape="rect" id="node1" title="Converts a MeshInstance object to VkGeometryInstance object required for the top level structure." alt="" coords="504,5,697,47"/>
+<area shape="rect" id="node2" href="$d9/db6/class_r_t_e_1_1_rendering_1_1_acceleration_structure.html#ac6318ef707e4fcac11828ca72157e7fa" title="Creates the top level acceleration structure." alt="" coords="261,5,456,47"/>
+<area shape="rect" id="node3" href="$d9/db6/class_r_t_e_1_1_rendering_1_1_acceleration_structure.html#a05ac67d907ac37c36966dc7fbb2481b0" title=" " alt="" coords="5,5,213,47"/>
+</map>

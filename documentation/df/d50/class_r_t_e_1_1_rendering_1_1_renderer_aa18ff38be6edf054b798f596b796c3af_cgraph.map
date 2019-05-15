@@ -1,0 +1,23 @@
+<map id="RTE::Rendering::Renderer::RecordRenderPass" name="RTE::Rendering::Renderer::RecordRenderPass">
+<area shape="rect" id="node1" title="Function used to record the render pass for rasterization." alt="" coords="5,431,179,472"/>
+<area shape="rect" id="node2" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#ab00258bb0c190e63644e3232b1726c61" title="Gets the count of draw command buffers." alt="" coords="227,5,453,47"/>
+<area shape="rect" id="node3" href="$d4/d01/class_r_t_e_1_1_rendering_1_1_command_buffer_manager.html#a227cbbf5c3a6d13760bd7ea5b9cebe07" title="Get a command buffer for draw command recording." alt="" coords="233,71,447,112"/>
+<area shape="rect" id="node4" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a39d22030d14e01b8ddb8bf5f95bb0cae" title="Begins a render pass for recording of draw commands." alt="" coords="244,136,436,177"/>
+<area shape="rect" id="node7" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a8428507f7344d4deaa5219b966d96020" title="Gets the frame buuffers." alt="" coords="247,201,433,243"/>
+<area shape="rect" id="node8" href="$db/df5/class_r_t_e_1_1_rendering_1_1_graphics_pipeline.html#a5f065d6b9ceb81ebd775539a2196bba6" title="Gets the pipeline handle." alt="" coords="253,267,427,308"/>
+<area shape="rect" id="node9" href="$db/df5/class_r_t_e_1_1_rendering_1_1_graphics_pipeline.html#a6366ae83cac40513e0cbd984f87d6f41" title="Gets the pipeline layout handle." alt="" coords="253,332,427,373"/>
+<area shape="rect" id="node10" href="$de/df2/class_r_t_e_1_1_rendering_1_1_descriptor_manager.html#ac12bcf0f9f8f82aefce157c37affee6b" title="Gets the descriptor sets (rasterization)" alt="" coords="247,397,433,439"/>
+<area shape="rect" id="node11" href="$da/d07/class_r_t_e_1_1_rendering_1_1_line_debug_draw_module.html#a9b78f99270382b2d5c26bc65f7040bde" title=" " alt="" coords="249,789,431,831"/>
+<area shape="rect" id="node13" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#a2ac96c5e4312ac6e30293c22de633e7c" title="Creates a buffer resource and allocates memory for it." alt="" coords="237,528,443,569"/>
+<area shape="rect" id="node14" href="$da/d49/class_r_t_e_1_1_rendering_1_1_device_memory_manager.html#aa1aa469dcfbfef7d6717cf71dd81408a" title="Copies data to a buffer." alt="" coords="237,593,443,635"/>
+<area shape="rect" id="node15" href="$da/d07/class_r_t_e_1_1_rendering_1_1_line_debug_draw_module.html#a647f87f2c272152d305c90d1f09dd44a" title=" " alt="" coords="249,659,431,700"/>
+<area shape="rect" id="node16" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a74742077da46b7d584c4cd2c40b4bb81" title="Transitions to the next subpass." alt="" coords="244,724,436,765"/>
+<area shape="rect" id="node17" href="$d5/db4/class_r_t_e_1_1_g_u_i_1_1_g_u_i_module.html#aa3e805f41c6c66cde8fa338a05c39592" title=" " alt="" coords="265,855,415,896"/>
+<area shape="rect" id="node21" href="$d6/dd7/class_r_t_e_1_1_rendering_1_1_render_pass.html#a9457751c2156c75a6829a1678bc061e3" title="Ends a render pass, disabling recording the draw commands to it." alt="" coords="244,463,436,504"/>
+<area shape="rect" id="node5" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8d8208a4c1799949a99762c6c11870ac" title="Checks a Vulkan result. If it is not a VK_SUCCESS, it throws an exception." alt="" coords="535,332,699,373"/>
+<area shape="rect" id="node6" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#a9b193d3479a925b8d66317bb65ca4d82" title="Gets the swap chain extent." alt="" coords="523,136,710,177"/>
+<area shape="rect" id="node12" href="$da/d07/class_r_t_e_1_1_rendering_1_1_line_debug_draw_module.html#a3564468a07a9325dfe2cac0e14dc4b3c" title=" " alt="" coords="525,789,708,831"/>
+<area shape="rect" id="node18" href="$df/d3c/imgui__impl__vulkan_8cpp.html#af0971a5d1f96143e36ffd633d4039874" title=" " alt="" coords="501,862,732,889"/>
+<area shape="rect" id="node19" href="$df/d3c/imgui__impl__vulkan_8cpp.html#a73a1987daf1552a15f239f00baa0cd51" title=" " alt="" coords="780,837,927,863"/>
+<area shape="rect" id="node20" href="$df/d3c/imgui__impl__vulkan_8cpp.html#a1ea6c63eab2860beea5e3c89c1afbbc1" title=" " alt="" coords="975,862,1089,889"/>
+</map>

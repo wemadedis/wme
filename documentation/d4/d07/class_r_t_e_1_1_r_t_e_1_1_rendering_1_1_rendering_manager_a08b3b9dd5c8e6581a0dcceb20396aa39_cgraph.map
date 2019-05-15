@@ -1,0 +1,4 @@
+<map id="RTE::RTE::Rendering::RenderingManager::UpdateMainCamera" name="RTE::RTE::Rendering::RenderingManager::UpdateMainCamera">
+<area shape="rect" id="node1" title="Synchronizes the main camera data with the renderer." alt="" coords="5,5,152,61"/>
+<area shape="rect" id="node2" href="$de/ddc/class_r_t_e_1_1_r_t_e_1_1_std_components_1_1_camera_component.html#a3bbe71e9ffe173187c237daee974abba" title=" " alt="" coords="200,5,427,61"/>
+</map>

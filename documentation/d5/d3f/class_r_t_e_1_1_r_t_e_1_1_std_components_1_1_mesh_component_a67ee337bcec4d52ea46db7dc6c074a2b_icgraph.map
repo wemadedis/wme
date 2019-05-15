@@ -1,0 +1,4 @@
+<map id="RTE::RTE::StdComponents::MeshComponent::GetTransformComponent" name="RTE::RTE::StdComponents::MeshComponent::GetTransformComponent">
+<area shape="rect" id="node1" title="Gets the transform component." alt="" coords="215,5,429,61"/>
+<area shape="rect" id="node2" href="$d4/d07/class_r_t_e_1_1_r_t_e_1_1_rendering_1_1_rendering_manager.html#abb708ef994a25ffc855d9884defb5f90" title="Synchronizes the renderer mesh instance with the mesh component data." alt="" coords="5,5,167,61"/>
+</map>

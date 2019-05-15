@@ -1,0 +1,6 @@
+<map id="RTE::RTE::Rendering::RenderingManager::UpdateMeshComponent" name="RTE::RTE::Rendering::RenderingManager::UpdateMeshComponent">
+<area shape="rect" id="node1" title="Synchronizes the renderer mesh instance with the mesh component data." alt="" coords="5,63,167,119"/>
+<area shape="rect" id="node2" href="$d5/d3f/class_r_t_e_1_1_r_t_e_1_1_std_components_1_1_mesh_component.html#afcd5c4feb67a6f18d8fe9ace5c6cab15" title="Gets the mesh file path." alt="" coords="227,5,417,47"/>
+<area shape="rect" id="node3" href="$d5/d3f/class_r_t_e_1_1_r_t_e_1_1_std_components_1_1_mesh_component.html#ab4c8339ea4449ab0ba075e9ad5cbaf44" title="Gets the texture file path." alt="" coords="222,71,422,112"/>
+<area shape="rect" id="node4" href="$d5/d3f/class_r_t_e_1_1_r_t_e_1_1_std_components_1_1_mesh_component.html#a67ee337bcec4d52ea46db7dc6c074a2b" title="Gets the transform component." alt="" coords="215,137,429,193"/>
+</map>

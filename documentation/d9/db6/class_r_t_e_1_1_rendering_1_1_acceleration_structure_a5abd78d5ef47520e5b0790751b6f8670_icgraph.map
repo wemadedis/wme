@@ -1,0 +1,7 @@
+<map id="RTE::Rendering::AccelerationStructure::RebuildTopStructureCmd" name="RTE::Rendering::AccelerationStructure::RebuildTopStructureCmd">
+<area shape="rect" id="node1" title="Rebuilds the top level acceleration structure. Needed after modifying instance transforms." alt="" coords="669,64,896,105"/>
+<area shape="rect" id="node2" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#aca509f72a7151ea1cae2ee72709c65f8" title="Function used to record the render pass for ray tracing." alt="" coords="448,64,621,105"/>
+<area shape="rect" id="node3" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a047ceb35e66f86a384185d5866b0c6c4" title="Function used to recreate all data related to the swap chain." alt="" coords="227,5,400,47"/>
+<area shape="rect" id="node4" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#ac0067d1185af386fea36170aa46759c7" title="Issue the renderer to draw a frame. If called again, the renderer waits until the _minFrameTime since..." alt="" coords="5,35,179,76"/>
+<area shape="rect" id="node5" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a956b7654bf9b7279ea632f49793fc3d1" title="To be called after all necessary data has been uploaded. Creates all necessary information for the re..." alt="" coords="227,123,400,164"/>
+</map>

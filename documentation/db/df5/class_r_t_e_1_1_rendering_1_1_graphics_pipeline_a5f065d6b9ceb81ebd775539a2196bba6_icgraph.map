@@ -1,0 +1,9 @@
+<map id="RTE::Rendering::GraphicsPipeline::GetHandle" name="RTE::Rendering::GraphicsPipeline::GetHandle">
+<area shape="rect" id="node1" title="Gets the pipeline handle." alt="" coords="679,71,852,112"/>
+<area shape="rect" id="node2" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#aa18ff38be6edf054b798f596b796c3af" title="Function used to record the render pass for rasterization." alt="" coords="453,136,626,177"/>
+<area shape="rect" id="node6" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#aca509f72a7151ea1cae2ee72709c65f8" title="Function used to record the render pass for ray tracing." alt="" coords="453,71,626,112"/>
+<area shape="rect" id="node7" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a6a529434c4aaf361b49db01588ca96fc" title="Allocates memory and uploads the shader binding table data." alt="" coords="448,5,631,47"/>
+<area shape="rect" id="node3" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a047ceb35e66f86a384185d5866b0c6c4" title="Function used to recreate all data related to the swap chain." alt="" coords="227,136,400,177"/>
+<area shape="rect" id="node4" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#ac0067d1185af386fea36170aa46759c7" title="Issue the renderer to draw a frame. If called again, the renderer waits until the _minFrameTime since..." alt="" coords="5,136,179,177"/>
+<area shape="rect" id="node5" href="$df/d50/class_r_t_e_1_1_rendering_1_1_renderer.html#a956b7654bf9b7279ea632f49793fc3d1" title="To be called after all necessary data has been uploaded. Creates all necessary information for the re..." alt="" coords="227,71,400,112"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="RTE::Rendering::Instance::DeviceMeetsRequirements" name="RTE::Rendering::Instance::DeviceMeetsRequirements">
+<area shape="rect" id="node1" title="Determines if a physical device meets the requirements of the renderer." alt="" coords="5,93,189,135"/>
+<area shape="rect" id="node2" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a59134ac3112f61066996f520feed34f7" title="Attempts to get the graphics and present queue family indices." alt="" coords="249,5,413,47"/>
+<area shape="rect" id="node3" href="$d5/d78/struct_r_t_e_1_1_rendering_1_1_utilities_1_1_queue_family_indices.html#a1c3188f53e1da3d905d1fbbc8c245f7e" title="Checks if both family indices are present." alt="" coords="472,35,693,76"/>
+<area shape="rect" id="node4" href="$dd/d9d/namespace_r_t_e_1_1_rendering_1_1_utilities.html#a8a5d7d9f43dce9d5414ca6814a5c0643" title="Checks whether a device supports the reuquested extensions." alt="" coords="238,123,423,164"/>
+<area shape="rect" id="node5" href="$dd/d59/class_r_t_e_1_1_rendering_1_1_swap_chain.html#abc52f97cce680da28001f8e21f641538" title="Retrieves the swap chain information on surface capabilities, formats, and present modes." alt="" coords="237,188,424,229"/>
+</map>
