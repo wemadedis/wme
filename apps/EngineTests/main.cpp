@@ -267,7 +267,7 @@ void MonkeySoundTest(Runtime::Scene* scene, ComponentIds componentIds)
 	// create player + camera
 	SimpleTransform playerSt;
 	playerSt.pos = glm::vec3(0.f, 1.f, -4.f);
-	playerSt.rot = glm::vec3(-45.f, 180.f, 0.f);
+	playerSt.rot = glm::vec3(0.f, 180.f, 0.f);
 	playerSt.scale = glm::vec3(1);
 
     Player player = createPlayer(scene, componentIds, playerSt);
@@ -304,7 +304,7 @@ void MonkeySoundTest(Runtime::Scene* scene, ComponentIds componentIds)
 void LotsOfMonkeys(Runtime::Scene *scene, ComponentIds componentIds)
 {
 	SimpleTransform playerSt;
-    int size = 200;
+    int size = 10;
 	playerSt.pos = glm::vec3(0.5f*2.5f*(size-1), 30.f, -45.f);
 	playerSt.rot = glm::vec3(-25.f, 180.f, 0.f);
 	playerSt.scale = glm::vec3(1);
@@ -358,7 +358,7 @@ void PhysicsBoxTest(Runtime::Scene* scene, ComponentIds componentIds)
 	floor.pc->GetRigidBody()->SetLinearFactor({ 0, 0, 0 });
 	floor.pc->GetRigidBody()->SetAngularFactor({ 0, 0, 0 });
 
-	int size = 20;
+	int size = 5;
 	for (int x = 0; x < size; x++)
 	{
 		for (int y = 0; y < size; y++)
@@ -398,9 +398,9 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     ComponentIds componentIds = initComponentPools(scene);
 
     //CornellBox(scene, componentIds);
-    //MonkeySoundTest(scene, componentIds);
+    MonkeySoundTest(scene, componentIds);
     //LotsOfMonkeys(scene, componentIds);
-	PhysicsBoxTest(scene, componentIds);
+	//PhysicsBoxTest(scene, componentIds);
     
 
 }
