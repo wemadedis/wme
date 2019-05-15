@@ -71,7 +71,7 @@ PhysicsComponent         | Transform, mass, List of colliders                   
 AudioComponent           | Path to sound file, transform, (volume = 100), (soundOffset = 0) | Plays sounds   
 ListenerComponent        | Transform, enabled                                               | Listens for sounds, there can only be one in a scene
 
-The [Pong](https://github.itu.dk/danh/rte/tree/master/apps/Pong "A simple pong game in RTE") example gives an overview of how custom components are made, used, and interact with the rest of the engine.
+The [Pong](apps/Pong "A simple pong game in RTE") example gives an overview of how custom components are made, used, and interact with the rest of the engine.
 
 ## How do I contribute?
 
