@@ -17,7 +17,6 @@ target_compile_definitions(rte INTERFACE ENGINE_ASSET_DIR="${ENGINE_ASSETS}/")
 add_subdirectory(engine)
 add_subdirectory(apps)
 
-
 target_link_libraries(rte INTERFACE
     core
     physics
