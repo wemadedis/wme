@@ -178,9 +178,9 @@ void OnGameStart(Runtime::SceneManager &sceneManager)
     pc->SetEnabled(true);
     pc->Initialize(trans2, nullptr, camera);
 
-    for(int x = 0; x < 5; x++)
+    for(int x = 0; x < 2; x++)
     {
-        for(int z = 0; z < 5; z++)
+        for(int z = 0; z < 2; z++)
         {
             CreateMeshObject("models/monkey.ply", glm::vec3(x*2,0.0f,z*2));
         }
