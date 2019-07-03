@@ -1,4 +1,4 @@
-# Ray Tracing Game Engine - RTE
+# We Made Dis Engine - WME
 
 This repository hosts the game engine produced during an elective project at in Spring 2019.
 
@@ -11,7 +11,7 @@ The engine has these features:
  - Spatial sound via SFML
  - Input via GLFW
  - GameObject-Component based runtime architecture
- 
+ 0
 ## How do I build it?
 
 The engine uses CMake to make a build system.
