@@ -7,7 +7,7 @@
 #include "SwapChain.hpp"
 #include "RenderLogicStructs.h"
 #include "AccelerationStructureRT.h"
-
+#include "DescriptorSet.h"
 namespace RTE::Rendering
 {
 /**
