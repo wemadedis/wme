@@ -19,7 +19,7 @@ private:
         bool HasVariableSizeBinding = false;
         std::map<std::string, VkDescriptorSetLayoutBinding> Bindings = {};
     };
-    DescriptorSet(std::vector<LayoutInfo> setLayouts);
+    DescriptorSet(std::vector<LayoutInfo>* setLayouts);
 
     std::vector<LayoutInfo> _setLayouts;
 

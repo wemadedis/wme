@@ -69,9 +69,9 @@ DescriptorSetBuilder& DescriptorSetBuilder::WithAccelerationStructure(std::strin
 DescriptorSet* DescriptorSetBuilder::Build(Instance* instance)
 {
     
-    std::vector<LayoutInfo> layoutInfos = {};
+    std::vector<LayoutInfo>* layoutInfos = {};
     //Push an empty LayoutInfo, used for all descriptors of count 1
-    layoutInfos.push_back({});
+    layoutInfos->push_back({});
 
     //Add bindings to different "bins" (LayoutInfos).
     std::map<std::string, VkDescriptorSetLayoutBinding>::iterator bindingIterator;
@@ -81,18 +81,18 @@ DescriptorSet* DescriptorSetBuilder::Build(Instance* instance)
         VkDescriptorSetLayoutBinding binding = bindingIterator->second;
         if(binding.descriptorCount == 1)
         {
-            layoutInfos[0].Bindings.insert({name, binding});
+            layoutInfos->at(0).Bindings.insert({name, binding});
         }
         else
         {
             LayoutInfo variableSizeBindingLayoutInfo = {};
             variableSizeBindingLayoutInfo.HasVariableSizeBinding = true;
             variableSizeBindingLayoutInfo.Bindings.insert({name, binding});
-            layoutInfos.push_back(variableSizeBindingLayoutInfo);
+            layoutInfos->push_back(variableSizeBindingLayoutInfo);
         }
     }
 
-    for(LayoutInfo layoutInfo : layoutInfos)
+    for(LayoutInfo layoutInfo : *layoutInfos)
     {
         uint32_t bindingsCount = static_cast<uint32_t>(layoutInfo.Bindings.size()); 
         
@@ -127,16 +127,24 @@ DescriptorSet* DescriptorSetBuilder::Build(Instance* instance)
             bindingFlags.pNext = nullptr;
             bindingFlags.pBindingFlags = &flag;
             bindingFlags.bindingCount = 1; //Layouts with variable sized descriptors has only that one binding
+
+            VkDescriptorSetLayoutCreateInfo layoutCreateInfo;
+            layoutCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
+            layoutCreateInfo.pNext = &bindingFlags;
+            layoutCreateInfo.flags = 0;
+            layoutCreateInfo.bindingCount = 1;
+            //Can safely assume that there is only one layout binding struct.
+            layoutCreateInfo.pBindings = &layoutInfo.Bindings[0];
+            VkResult code = vkCreateDescriptorSetLayout(instance->GetDevice(), &layoutCreateInfo, nullptr, &layoutInfo.Layout);
         }
     }
 
-
-    return new DescriptorSet({});
+    return new DescriptorSet(layoutInfos);
 }
 
 uint32_t DescriptorSet::Allocate()
 {
-
+    return 0;
 }
 
 };
