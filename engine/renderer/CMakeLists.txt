@@ -9,6 +9,7 @@ add_library(renderer
     CommandBufferManager.cpp 
     ImageManager.cpp 
     DescriptorManager.cpp
+    DescriptorSet.cpp
     AccelerationStructureRT.cpp
     RenderingManager.cpp
 )

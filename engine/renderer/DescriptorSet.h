@@ -4,20 +4,24 @@
 #include <string>
 #include <vector>
 
+
+#include "Instance.hpp"
+
 namespace RTE::Rendering
 {
 
 class DescriptorSet
 {
 private:
-    struct DescriptorSetLayoutInfo
+    struct LayoutInfo
     {
-        VkDescriptorSetLayout Layout;
-        std::map<std::string, VkDescriptorSetLayoutBinding> Bindings;
+        VkDescriptorSetLayout Layout = {};
+        bool HasVariableSizeBinding = false;
+        std::map<std::string, VkDescriptorSetLayoutBinding> Bindings = {};
     };
-    DescriptorSet(std::vector<DescriptorSetLayoutInfo> setLayouts);
+    DescriptorSet(std::vector<LayoutInfo> setLayouts);
 
-    std::vector<DescriptorSetLayoutInfo> _setLayouts;
+    std::vector<LayoutInfo> _setLayouts;
 
 
 public:
@@ -25,10 +29,14 @@ public:
     {
     private:
         std::map<std::string,VkDescriptorSetLayoutBinding> _layoutBindings = {};
-        std::map<std::string,VkWriteDescriptorSet> _setWrites = {};
         uint32_t _currentBinding = 0;
 
-        DescriptorSetBuilder& AddLayoutBinding(std::string name, VkDescriptorType descriptorType, uint32_t descriptorCount, VkShaderStageFlags shaderStages);
+        void CreateDescriptorSetLayout(LayoutInfo& layoutInfo);
+
+        DescriptorSetBuilder& AddLayoutBinding(std::string name, 
+                                               VkDescriptorType descriptorType, 
+                                               uint32_t descriptorCount, 
+                                               VkShaderStageFlags shaderStages);
     public:
         DescriptorSetBuilder& WithUniformBuffer(std::string name,
                                                 uint32_t descriptorCount,
@@ -49,7 +57,7 @@ public:
         DescriptorSetBuilder& WithAccelerationStructure(std::string name,
                                                         uint32_t descriptorCount,
                                                         VkShaderStageFlags shaderStages);
-        DescriptorSet* Build();
+        DescriptorSet* Build(Instance* instance);
     };
 
     uint32_t Allocate();
