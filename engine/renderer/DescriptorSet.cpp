@@ -241,19 +241,53 @@ VkPipelineLayout DescriptorSet::GetPipelineLayout()
     return _pipelineLayout;
 }
 
-uint32_t DescriptorSet::Allocate()
+SetInstanceHandle DescriptorSet::Allocate()
 {
-    
     VkDescriptorSet descriptorSet;
     VkResult code = vkAllocateDescriptorSets(_instance->GetDevice(), &_allocationInfo.DescriptorSetAllocateInfo, &descriptorSet);
     Utilities::CheckVkResult(code, "Failed to allocate a descriptor set!");
     _descriptorSets.push_back(descriptorSet);
     _poolAllocationCount += (uint32_t)_setLayouts.size();
-    return 0;
+    return _descriptorSets.size()-1;
 }
 
 
-void DescriptorSet::UpdateUnifromBuffer()
+void DescriptorSet::UpdateDescriptor(SetInstanceHandle handle, VkDescriptorSetLayoutBinding binding)
+{
+    VkWriteDescriptorSet descriptorWrite;
+    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrite.dstSet = _descriptorSets[handle];
+    descriptorWrite.dstBinding = binding.binding;
+    descriptorWrite.dstArrayElement = 0; //Wut is dis?
+    descriptorWrite.descriptorType = binding.descriptorType;
+    descriptorWrite.descriptorCount = binding.descriptorCount;
+    
+    switch (binding.descriptorType)
+    {
+    case VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV:
+        /* code */
+        break;
+    case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
+        /* code */
+        break;
+    case VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER:
+        /* code */
+        break;
+    case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
+        /* code */
+        break;
+    case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
+        /* code */
+        break;
+    
+    default:
+        break;
+    }
+
+
+}
+
+void DescriptorSet::UpdateUnifromBuffer(SetInstanceHandle handle)
 {
     // VkWriteDescriptorSet descriptorWrite = {};
     // descriptorWrites.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;

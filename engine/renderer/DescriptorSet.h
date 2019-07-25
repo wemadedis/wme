@@ -10,6 +10,8 @@
 namespace RTE::Rendering
 {
 
+typedef uint32_t SetInstanceHandle;
+
 class DescriptorSet
 {
 private:
@@ -46,6 +48,7 @@ private:
     void CreatePipelineLayout();
     void CreateDescriptorPool();
     void CreateSetAllocationInfo();
+    void UpdateDescriptor(SetInstanceHandle handle);
 public:
     class DescriptorSetBuilder
     {
@@ -83,9 +86,9 @@ public:
     };
 
     VkPipelineLayout GetPipelineLayout();
-    uint32_t Allocate();
+    SetInstanceHandle Allocate();
 
-    void UpdateUnifromBuffer();
+    void UpdateUnifromBuffer(SetInstanceHandle handle);
     void UpdateUniformTexelBuffer();
     void UpdateCombinedImageSampler();
     void UpdateStorageImage();
