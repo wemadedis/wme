@@ -77,6 +77,12 @@ class AccelerationStructure
     BufferInformation _instanceBuffer; 
 
     /**
+     * @brief Descriptor write for the acceleration structure. WARNING: Allows descriptor count of 1 only (cannot have arrays of acceleration structures in the shader)
+     * 
+     */
+    VkWriteDescriptorSetAccelerationStructureNV _descriptorWrite;
+
+    /**
      * @brief Creates an acceleration structure.
      * @param type The type of the acceleration structure.
      * @param geometryCount The number of geometries, if creating a bottom level structure.
@@ -134,6 +140,15 @@ public:
      * @return Returns a vector of Vulkan acceleration structure hanles.
      */
     std::vector<VkAccelerationStructureNV> GetBotStructures();
+
+    
+    /**
+     * @brief Get the Descriptor Write for the descriptor set.
+     * 
+     * @return Vulkan VkWriteDescriptorSetAccelerationStructureNV struct.
+     */
+    VkWriteDescriptorSetAccelerationStructureNV& GetDescriptorWrite();
+
 
     /**
      * @brief Updates an instance transform.

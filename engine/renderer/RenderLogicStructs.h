@@ -71,6 +71,11 @@ struct ImageInfo
 	 * @brief The Vulkan image view handle.
 	 */
     VkImageView imageView;
+
+	/**
+	 * @brief The Vulkan descriptor image info struct.
+	 */
+	VkDescriptorImageInfo descriptorImageInfo;
 };
 
 /**

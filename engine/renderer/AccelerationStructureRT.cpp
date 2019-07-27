@@ -141,6 +141,12 @@ void AccelerationStructure::CreateTopStructure(std::vector<MeshInstance> &instan
     }
     //Create the top structure (previous steps not necessary, but related to the top structure)
     CreateStructure(VK_ACCELERATION_STRUCTURE_TYPE_TOP_LEVEL_NV, 0, nullptr, static_cast<uint32_t>(_instances.size()), _top);
+    
+    //Create the descriptor write 
+    _descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_NV;
+    _descriptorWrite.pNext = nullptr;
+    _descriptorWrite.accelerationStructureCount = 1;
+    _descriptorWrite.pAccelerationStructures = &_top;
 }
 
 AccelerationStructure::AccelerationStructure(Instance *instance, DeviceMemoryManager *deviceMemoryManager,
@@ -165,6 +171,11 @@ VkAccelerationStructureNV& AccelerationStructure::GetTopStructure()
 std::vector<VkAccelerationStructureNV> AccelerationStructure::GetBotStructures()
 {
     return _botStructures;
+}
+
+VkWriteDescriptorSetAccelerationStructureNV& AccelerationStructure::GetDescriptorWrite()
+{
+    return _descriptorWrite;
 }
 
 void AccelerationStructure::UpdateInstanceTransform(MeshInstanceHandle instanceHandle, glm::mat4 modelMatrix)

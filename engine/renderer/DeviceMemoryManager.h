@@ -23,6 +23,7 @@ struct BufferInformation {
 	size_t size;
 	VkBuffer buffer = VK_NULL_HANDLE;
 	VkBufferView BufferView = VK_NULL_HANDLE;
+	VkDescriptorBufferInfo descriptorBufferInfo = {};
 };
 
 /**

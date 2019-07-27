@@ -150,14 +150,15 @@ DescriptorSet::DescriptorSet(std::vector<LayoutInfo>* layoutInfos, Instance* ins
 {
     _layoutInfos = layoutInfos;
     _instance = instance;
-    _maxSetsPerPool = maxSets * layoutInfos->size();
+    _maxSetsPerPool = static_cast<uint32_t>(maxSets * layoutInfos->size());
     for(LayoutInfo info : *_layoutInfos)
     {
         _setLayouts.push_back(info.Layout);
         for(auto nameMapping : info.Bindings)
         {
             //Map binding name to the binding and layout it belongs to. Binding to keep track of type and layout for updating the data.
-            _bindingMap.insert({nameMapping.first, {nameMapping.second, info.Layout}});
+            _bindingMap.insert({nameMapping.first, {nameMapping.second, info.Layout, _descriptorsCount}});
+            _descriptorsCount++;
         }
     }
 }
@@ -187,7 +188,7 @@ void DescriptorSet::CreateDescriptorPool()
         for(auto binding : _bindingMap)
         {
             //                          Hella ugly
-            auto bindingInfo = binding.second.first;
+            auto bindingInfo = binding.second.Binding;
             auto bindingType = bindingInfo.descriptorType;
             auto poolSize = std::find_if(_poolSizes.begin(), _poolSizes.end(), 
                                         [bindingType](VkDescriptorPoolSize ps) { return ps.type == bindingType; });
@@ -236,6 +237,25 @@ void DescriptorSet::CreateSetAllocationInfo()
     _allocationInfo.DescriptorSetAllocateInfo.pSetLayouts = _setLayouts.data();
 }
 
+
+VkWriteDescriptorSet DescriptorSet::GetDescriptorWrite(std::string descriptorName, VkDescriptorSet set)
+{
+    VkDescriptorSetLayoutBinding binding = _bindingMap[descriptorName].Binding;
+    VkWriteDescriptorSet descriptorWrite = {};
+    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
+    descriptorWrite.pNext = nullptr;
+    descriptorWrite.dstSet = set;
+    descriptorWrite.dstBinding = binding.binding;
+    descriptorWrite.dstArrayElement = 0; //Wut is dis?
+    descriptorWrite.descriptorCount = binding.descriptorCount;
+    descriptorWrite.descriptorType = binding.descriptorType;
+    descriptorWrite.pImageInfo = nullptr;
+    descriptorWrite.pBufferInfo = nullptr;
+    descriptorWrite.pTexelBufferView = nullptr;
+    return descriptorWrite;
+}
+
+
 VkPipelineLayout DescriptorSet::GetPipelineLayout()
 {
     return _pipelineLayout;
@@ -246,78 +266,91 @@ SetInstanceHandle DescriptorSet::Allocate()
     VkDescriptorSet descriptorSet;
     VkResult code = vkAllocateDescriptorSets(_instance->GetDevice(), &_allocationInfo.DescriptorSetAllocateInfo, &descriptorSet);
     Utilities::CheckVkResult(code, "Failed to allocate a descriptor set!");
-    _descriptorSets.push_back(descriptorSet);
+    
+    SetInstance instance = {};
+    instance.Set = descriptorSet;
+    instance.SetWrites = new VkWriteDescriptorSet[_descriptorsCount];
+    
+    int bindingIndex = 0;
+    for(auto bindingMapping : _bindingMap)
+        instance.SetWrites[bindingIndex++] = GetDescriptorWrite(bindingMapping.first, instance.Set);
+    
+    _instances.insert({_setAllocationsCount, instance});
+
     _poolAllocationCount += (uint32_t)_setLayouts.size();
-    return _descriptorSets.size()-1;
+    
+    return static_cast<SetInstanceHandle>(_setAllocationsCount++);
 }
 
-
-void DescriptorSet::UpdateDescriptor(SetInstanceHandle handle, VkDescriptorSetLayoutBinding binding)
+void DescriptorSet::UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, BufferInformation *bufferInfos, uint32_t bufferCount)
 {
-    VkWriteDescriptorSet descriptorWrite;
-    descriptorWrite.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    descriptorWrite.dstSet = _descriptorSets[handle];
-    descriptorWrite.dstBinding = binding.binding;
-    descriptorWrite.dstArrayElement = 0; //Wut is dis?
-    descriptorWrite.descriptorType = binding.descriptorType;
-    descriptorWrite.descriptorCount = binding.descriptorCount;
+    auto descriptorInfo = _bindingMap[descriptorName];
+    VkDescriptorBufferInfo* descriptorBufferInfos = nullptr;
+    VkBufferView* bufferViews = nullptr;
     
-    switch (binding.descriptorType)
+    
+    if(descriptorInfo.Binding.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) 
     {
-    case VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_NV:
-        /* code */
-        break;
-    case VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER:
-        /* code */
-        break;
-    case VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER:
-        /* code */
-        break;
-    case VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER:
-        /* code */
-        break;
-    case VK_DESCRIPTOR_TYPE_STORAGE_IMAGE:
-        /* code */
-        break;
-    
-    default:
-        break;
+        descriptorBufferInfos = new VkDescriptorBufferInfo[bufferCount];
+        for(uint32_t bufferIndex = 0; bufferIndex < bufferCount; bufferIndex++)
+        {
+            descriptorBufferInfos[bufferIndex] = bufferInfos[bufferIndex].descriptorBufferInfo;
+        }
+        
     }
-
-
+    else if (descriptorInfo.Binding.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER)
+    {
+        bufferViews = new VkBufferView[bufferCount];
+        for(uint32_t bufferIndex = 0; bufferIndex < bufferCount; bufferIndex++)
+        {
+            bufferViews[bufferIndex] = bufferInfos[bufferIndex].BufferView; 
+        }
+    }
+    
+    _instances[handle].SetWrites[descriptorInfo.BindingIndex].pBufferInfo = descriptorBufferInfos;
+    _instances[handle].SetWrites[descriptorInfo.BindingIndex].pTexelBufferView = bufferViews;
 }
 
-void DescriptorSet::UpdateUnifromBuffer(SetInstanceHandle handle)
+void DescriptorSet::UpdateImage(SetInstanceHandle handle, std::string descriptorName, ImageInfo *imageInfos, uint32_t imageCount)
 {
-    // VkWriteDescriptorSet descriptorWrite = {};
-    // descriptorWrites.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
-    // descriptorWrites.dstSet = 
-    // descriptorWrites.dstBinding = 0;
-    // descriptorWrites.dstArrayElement = 0;
-    // descriptorWrites.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    // descriptorWrites.descriptorCount = 1;
-    // descriptorWrites.pBufferInfo = &meshBuffer;
-}
+    auto descriptorInfo = _bindingMap[descriptorName];
+    VkDescriptorImageInfo* descriptorImageInfos = new VkDescriptorImageInfo[imageCount];
 
-void DescriptorSet::UpdateUniformTexelBuffer()
+    for(uint32_t imageIndex = 0; imageIndex < imageCount; imageIndex++)
+    {
+        descriptorImageInfos[imageIndex] = imageInfos[imageIndex].descriptorImageInfo;
+    }
+    _instances[handle].SetWrites[descriptorInfo.BindingIndex].pImageInfo = descriptorImageInfos;
+}
+void DescriptorSet::UpdateAccelerationStructure(SetInstanceHandle handle, std::string descriptorName, AccelerationStructure* as)
 {
-
+    auto& ASdescriptorWrite = as->GetDescriptorWrite();
+    auto descriptorInfo = _bindingMap[descriptorName];
+    _instances[handle].SetWrites[descriptorInfo.BindingIndex].pNext = &ASdescriptorWrite;
 }
 
-void DescriptorSet::UpdateCombinedImageSampler()
+
+void DescriptorSet::UpdateSetInstance(SetInstanceHandle handle)
 {
-
+    vkUpdateDescriptorSets(_instance->GetDevice(), _descriptorsCount, _instances[handle].SetWrites, 0, nullptr);
 }
 
-void DescriptorSet::UpdateStorageImage()
+void DescriptorSet::CreateBufferView(Instance* instance, BufferInformation &bufferInfo, VkFormat format)
 {
-
+    //If a buffer already has a view specified
+    if(bufferInfo.BufferView != VK_NULL_HANDLE) return;
+    
+    VkBufferViewCreateInfo bufferViewInfo;
+    bufferViewInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
+    bufferViewInfo.pNext = nullptr;
+    bufferViewInfo.flags = 0;
+    bufferViewInfo.buffer = bufferInfo.buffer;
+    bufferViewInfo.format = format;
+    bufferViewInfo.offset = 0;
+    bufferViewInfo.range = bufferInfo.size;
+    
+    VkResult code = vkCreateBufferView(instance->GetDevice(), &bufferViewInfo, nullptr, &bufferInfo.BufferView);
+    Utilities::CheckVkResult(code, "Could not create a buffer view!");
 }
-
-void DescriptorSet::UpdateAccelerationStructure()
-{
-
-}
-
 
 };

@@ -6,7 +6,9 @@
 #include <unordered_map>
 
 #include "Instance.hpp"
-
+#include "DeviceMemoryManager.h"
+#include "RenderLogicStructs.h"
+#include "AccelerationStructureRT.h"
 namespace RTE::Rendering
 {
 
@@ -27,28 +29,49 @@ private:
         std::vector<uint32_t> VariableDescriptorCounts;
         VkDescriptorSetVariableDescriptorCountAllocateInfoEXT VariableDescriptorCountInfo;
         VkDescriptorSetAllocateInfo DescriptorSetAllocateInfo;
-    } _allocationInfo;
+    };
+
+    struct DescriptorInfo
+    {
+        VkDescriptorSetLayoutBinding Binding;
+        VkDescriptorSetLayout Layout;
+        uint32_t BindingIndex;
+    };
+
+    struct SetInstance
+    {
+        VkDescriptorSet Set;
+        VkWriteDescriptorSet *SetWrites;
+        
+    };
     
     Instance* _instance;
+    uint32_t _descriptorsCount = 0;
     std::vector<VkDescriptorSetLayout> _setLayouts;
     std::vector<LayoutInfo>* _layoutInfos;
     VkPipelineLayout _pipelineLayout;
     
 
-    std::unordered_map<std::string, std::pair<VkDescriptorSetLayoutBinding, VkDescriptorSetLayout>> _bindingMap;
+    std::unordered_map<std::string, DescriptorInfo> _bindingMap;
     std::vector<VkDescriptorPoolSize> _poolSizes = {};
     std::vector<VkDescriptorPool> _descriptorPools = {};
-    std::vector<VkDescriptorSet> _descriptorSets = {};
+    
+    SetInstanceHandle _setAllocationsCount = 0;
+    std::unordered_map<SetInstanceHandle, SetInstance> _instances = {};
     uint32_t _maxSetsPerPool = 0;
+    
+    AllocationInfo _allocationInfo;
     uint32_t _poolAllocationCount = 0;
     uint32_t _currentPoolIndex = 0;
+    
     DescriptorSet(std::vector<LayoutInfo>* layoutInfos, Instance* instance, uint32_t maxSets);
     
 
     void CreatePipelineLayout();
     void CreateDescriptorPool();
     void CreateSetAllocationInfo();
-    void UpdateDescriptor(SetInstanceHandle handle);
+    VkWriteDescriptorSet GetDescriptorWrite(std::string descriptorName, VkDescriptorSet set);
+
 public:
     class DescriptorSetBuilder
     {
@@ -88,11 +111,19 @@ public:
     VkPipelineLayout GetPipelineLayout();
     SetInstanceHandle Allocate();
 
-    void UpdateUnifromBuffer(SetInstanceHandle handle);
-    void UpdateUniformTexelBuffer();
-    void UpdateCombinedImageSampler();
-    void UpdateStorageImage();
-    void UpdateAccelerationStructure();
+    /**
+	 * @brief Updates a uniform buffer. Includes texel buffers with a buffer view specified.
+	 */
+    void UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, BufferInformation *bufferInfos, uint32_t bufferCount);
+    void UpdateImage(SetInstanceHandle handle, std::string descriptorName, ImageInfo *imageInfos, uint32_t imageCount);
+    void UpdateAccelerationStructure(SetInstanceHandle handle, std::string descriptorName, AccelerationStructure* as);
+
+    /**
+	 * @brief Updates the whole set based on the previous descriptor updates. Should be the last update call.
+	 */
+    void UpdateSetInstance(SetInstanceHandle handle);
+
+    static void CreateBufferView(Instance* instance, BufferInformation &bufferInfo, VkFormat format);
 };
 
 };

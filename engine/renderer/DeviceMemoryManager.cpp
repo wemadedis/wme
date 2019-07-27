@@ -72,6 +72,10 @@ void DeviceMemoryManager::CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps 
     bufferInformation.memoryProperties = props;
     bufferInformation.size = size;
     bufferInformation.buffer = buffer;
+
+    bufferInformation.descriptorBufferInfo.buffer = buffer;
+    bufferInformation.descriptorBufferInfo.offset = 0;
+    bufferInformation.descriptorBufferInfo.range = size;
 }
 
 void DeviceMemoryManager::CopyDataToBuffer(BufferInformation& bufferInfo, void* data, uint64_t size){
