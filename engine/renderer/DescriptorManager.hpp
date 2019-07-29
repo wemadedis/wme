@@ -20,86 +20,11 @@ class DescriptorManager
      * @brief Pointer to the instance.
      */
     Instance *_instance;
-
-    /**
-     * @brief Vulkan handle to the descriptor set layout used in rasterization.
-     */
-    VkDescriptorSetLayout _layout;
     
     /**
      * @brief Vulkan handle to the descriptor pool used by a GUI module.
      */
     VkDescriptorPool _pool;
-    
-    /**
-     * @brief Vulkan handles to the descriptor pool used for meshes (rasterization).
-     */
-    std::vector<VkDescriptorPool> _pools;
-    
-    /**
-     * @brief Vulkan handles to the descriptor sets used for meshes (rasterization).
-     */
-    std::vector<VkDescriptorSet> _descriptorSets;
-
-    /**
-     * @brief Vulkan handles to descriptor set layouts (ray tracing).
-     */
-    std::vector<VkDescriptorSetLayout> _layoutsRT;
-    
-    /**
-     * @brief Vulkan handle to the descriptor pool (ray tracing).
-     */
-    VkDescriptorPool _poolRT;
-
-    /**
-     * @brief Vulkan handles to descriptor sets (ray tracing).
-     */
-    std::vector<VkDescriptorSet> _descriptorsetsRT;
-
-    /**
-     * @brief Acceleration structure descriptor set write info.
-     */
-    VkWriteDescriptorSetAccelerationStructureNV _descriptorAccelerationStructureInfo = {};
-
-    /**
-     * @brief Image descriptor info.
-     */
-    VkDescriptorImageInfo _descriptorOutputImageInfo = {};
-
-    /**
-     * @brief
-     */
-    VkDescriptorBufferInfo _globalBuffer = {};
-
-    /**
-     * @brief
-     */
-    VkBufferView _mappingView;
-
-    /**
-     * @brief
-     */
-    std::vector<VkBufferView> _indexViews;
-
-    /**
-     * @brief
-     */
-    std::vector<VkBufferView> _vertexViews;
-
-    /**
-     * @brief
-     */
-    std::vector<VkDescriptorBufferInfo> _meshBufferInfos;
-
-    /**
-     * @brief
-     */
-    std::vector<VkDescriptorImageInfo> _imageInfos;
-
-    /**
-     * @brief
-     */
-    std::vector<VkWriteDescriptorSet> _descriptorWritesRT;
 
     DescriptorSet* _rasterizationDescriptorSet;
     DescriptorSet* _raytracingDescriptorSet;
