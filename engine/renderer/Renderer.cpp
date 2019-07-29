@@ -235,7 +235,7 @@ void Renderer::RecordRenderPassRT()
 
         vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetHandle());
         //Buffer index = frame index
-        _descriptorManager->UpdateRTTargetImage(_swapChain->GetSwapChainImages()[bufferIndex].imageView);
+        _descriptorManager->UpdateRTTargetImage(_swapChain->GetSwapChainImages()[bufferIndex]);
         auto dset = _descriptorManager->GetDescriptorSetRT();
         vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_RAY_TRACING_NV, _pipelineRT->GetLayout(), 0, (uint32_t)dset.size(), dset.data(), 0, 0);
         auto extent = _swapChain->GetSwapChainExtent();
@@ -483,7 +483,7 @@ void Renderer::Finalize()
             }
         });
 
-        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _swapChain->GetSwapChainImages()[_currentFrame].imageView, _globalUniformBuffer, _meshes, _meshInstances, _instanceBuffer, _textures);
+        _descriptorManager->CreateDescriptorSetRT(_accelerationStructure, _swapChain->GetSwapChainImages()[_currentFrame], _globalUniformBuffer, _meshes, _meshInstances, _instanceBuffer, _textures);
     }
 
     _descriptorManager->CreateDescriptorPools(_swapChain, _meshInstances);
@@ -531,6 +531,7 @@ void Renderer::SetRenderMode(RenderMode mode)
 void Renderer::Draw()
 {
     vkWaitForFences(_instance->GetDevice(), 1, &_inFlightFences[_currentFrame], VK_TRUE, std::numeric_limits<uint64_t>::max());
+    _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT; 
     vkResetFences(_instance->GetDevice(), 1, &_inFlightFences[_currentFrame]);
 
     if (_renderMode == RenderMode::RASTERIZE)
@@ -567,7 +568,7 @@ void Renderer::Draw()
 
     VkSemaphore waitSemaphores[] = {_imageAvailableSemaphores[_currentFrame]};
 
-    _currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT; 
+    //_currentFrame = (_currentFrame + 1) % MAX_FRAMES_IN_FLIGHT; 
     VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
 
     VkSubmitInfo submitInfo = {};

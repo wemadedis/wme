@@ -63,6 +63,7 @@ void DescriptorManager::CreateDescriptorPools(SwapChain *swapChain, std::vector<
 
 void DescriptorManager::CreateDescriptorSetLayout()
 {
+/*
     VkDescriptorSetLayoutBinding meshUboLayout = {};
     meshUboLayout.binding = 0;
     meshUboLayout.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -93,7 +94,12 @@ void DescriptorManager::CreateDescriptorSetLayout()
 
     VkResult code = vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layout);
     Utilities::CheckVkResult(code, "DescriptorManager: Failed to create descriptor set layout!");
-
+*/
+    _rasterizationDescriptorSet = DescriptorSet::Create()
+                                        .WithUniformBuffer("meshUBO", 1, VK_SHADER_STAGE_VERTEX_BIT |VK_SHADER_STAGE_FRAGMENT_BIT)
+                                        .WithUniformBuffer("globalUBO", 1, VK_SHADER_STAGE_VERTEX_BIT |VK_SHADER_STAGE_FRAGMENT_BIT)
+                                        .WithCombinedImageSampler("sampler", 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+                                        .Build(_instance, 500);
 }
 
 void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount, uint32_t textureCount)
@@ -198,9 +204,21 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
     int i = 5;
     code = vkCreateDescriptorSetLayout(_instance->GetDevice(), &layoutInfo, nullptr, &_layoutsRT[3]);
     Utilities::CheckVkResult(code, "Failed to create texture descriptor set layout (RT)!");
+
+    _raytracingDescriptorSet = DescriptorSet::Create()
+                                    .WithAccelerationStructure("accelerationStructure", 1, VK_SHADER_STAGE_RAYGEN_BIT_NV | VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                    .WithStorageImage("targetImage", 1, VK_SHADER_STAGE_RAYGEN_BIT_NV)
+                                    .WithUniformBuffer("globalBuffer", 1, VK_SHADER_STAGE_RAYGEN_BIT_NV | VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV | VK_SHADER_STAGE_MISS_BIT_NV)
+                                    .WithUniformTexelBuffer("instanceMapping", 1, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                    .WithUniformTexelBuffer("indexBuffer", meshCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                    .WithUniformTexelBuffer("vertexBuffer", meshCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                    .WithUniformBuffer("instanceUniform", instanceCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                    .WithCombinedImageSampler("textureUniform", textureCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                    .Build(_instance, 1000U);
+    std::cout << _raytracingDescriptorSet->GetBindingsInformation() << std::endl;
 }
 
-void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures)
+void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, ImageInfo imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures)
 {
     _descriptorsetsRT.resize(4);
 
@@ -271,7 +289,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
 
 
     _descriptorOutputImageInfo.sampler = nullptr;
-    _descriptorOutputImageInfo.imageView = imageViewRT;
+    _descriptorOutputImageInfo.imageView = imageViewRT.imageView;
     _descriptorOutputImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
 
     VkWriteDescriptorSet outputImageWrite = {};
@@ -403,7 +421,65 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, VkImage
     if(_meshBufferInfos.size() > 0) _descriptorWritesRT.push_back(instanceBuffers);
     _descriptorWritesRT.push_back(textureSamplers);
     
-    vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)_descriptorWritesRT.size(), _descriptorWritesRT.data(), 0, nullptr);
+    //vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)_descriptorWritesRT.size(), _descriptorWritesRT.data(), 0, nullptr);
+    /*
+    _raytracingDescriptorSet = DescriptorSet::Create()
+                                .WithAccelerationStructure("accelerationStructure", 1, VK_SHADER_STAGE_RAYGEN_BIT_NV | VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                .WithStorageImage("targetImage", 1, VK_SHADER_STAGE_RAYGEN_BIT_NV)
+                                .WithUniformBuffer("globalBuffer", 1, VK_SHADER_STAGE_RAYGEN_BIT_NV | VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV | VK_SHADER_STAGE_MISS_BIT_NV)
+                                .WithUniformTexelBuffer("instanceMapping", 1, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                .WithUniformTexelBuffer("indexBuffer", meshCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                .WithUniformTexelBuffer("vertexBuffer", meshCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                .WithUniformBuffer("instanceUniform", instanceCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                .WithCombinedImageSampler("textureUniform", textureCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                .Build(_instance, 1000U);
+    */
+    //Handle this somehow
+    std::vector<BufferInformation> vertBuffers = {};
+    std::vector<BufferInformation> indBuffers = {};
+    std::vector<BufferInformation> instBuffers = {};
+    std::vector<ImageInfo> textureImages = {};
+
+    DescriptorSet::CreateBufferView(_instance, instanceBuffer, VK_FORMAT_R32_UINT);
+
+    for(auto mesh : meshes)
+    {
+        DescriptorSet::CreateBufferView(_instance, mesh.vertexBuffer, VK_FORMAT_R32_SFLOAT);
+        DescriptorSet::CreateBufferView(_instance, mesh.indexBuffer, VK_FORMAT_R16_UINT);
+        vertBuffers.push_back(mesh.vertexBuffer);
+        indBuffers.push_back(mesh.indexBuffer);
+    }
+    
+    for(auto instance : instances)
+    {
+        instBuffers.push_back(instance.uniformBuffer);
+    }
+
+    for(auto &texture : textures)
+    {
+        texture.image.descriptorImageInfo.sampler = texture.sampler;
+        texture.image.descriptorImageInfo.imageView = texture.image.imageView;
+        texture.image.descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        textureImages.push_back(texture.image);
+    }
+
+    imageViewRT.descriptorImageInfo.imageView = imageViewRT.imageView;
+    imageViewRT.descriptorImageInfo.sampler = nullptr;
+    imageViewRT.descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+
+    rtSetHandle = _raytracingDescriptorSet->Allocate();
+
+    _raytracingDescriptorSet->UpdateAccelerationStructure(rtSetHandle, "accelerationStructure", AS);
+    _raytracingDescriptorSet->UpdateImage(rtSetHandle, "targetImage", &imageViewRT, 1);
+    _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "globalBuffer", &globalUniform, 1);
+    _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "instanceMapping", &instanceBuffer, 1);
+    _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "indexBuffer", indBuffers.data(), indBuffers.size());
+    _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "vertexBuffer", vertBuffers.data(), vertBuffers.size());
+    _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "instanceUniform", instBuffers.data(), instBuffers.size());
+    _raytracingDescriptorSet->UpdateImage(rtSetHandle, "textureUniform", textureImages.data(), textureImages.size());
+    _raytracingDescriptorSet->UpdateSetInstance(rtSetHandle);
+
+
 }
 
 void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData)
@@ -412,6 +488,7 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instance
     std::vector<VkDescriptorSetLayout> layouts(setCount, _layout);
     _descriptorSets.resize(setCount);
     for (size_t i = 0; i < setCount; i++) {
+/*
         VkDescriptorSetAllocateInfo allocInfo = {};
         allocInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_ALLOCATE_INFO;
         allocInfo.descriptorPool = _pools[i];
@@ -435,11 +512,14 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instance
         globalBuffer.offset = 0;
         globalBuffer.range = sizeof(GlobalUniformData);
 
-
+*/
         VkDescriptorImageInfo imageInfo = {};
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         imageInfo.imageView = textures[instances[i].texture].image.imageView;
         imageInfo.sampler = textures[instances[i].texture].sampler;
+
+        textures[instances[i].texture].image.descriptorImageInfo = imageInfo; //FIX ALL THIS IMAGE MANAGEMENT MAN
+/*
         std::array<VkWriteDescriptorSet, 3> descriptorWrites = {};
 
         descriptorWrites[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
@@ -467,17 +547,25 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instance
         descriptorWrites[2].pImageInfo = &imageInfo;
 
         vkUpdateDescriptorSets(_instance->GetDevice(), static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+*/
+        auto instanceHandle = _rasterizationDescriptorSet->Allocate();
+        _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "meshUBO", &instances[i].uniformBuffer, 1);
+        _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "globalUBO", &globalUniformData, 1);
+        _rasterizationDescriptorSet->UpdateImage(instanceHandle, "sampler", &textures[instances[i].texture].image, 1);
+        _rasterizationDescriptorSet->UpdateSetInstance(instanceHandle);
+
+    //meshUBO globalUBO sampler
     }
 }
 
 
-void DescriptorManager::UpdateRTTargetImage(VkImageView imageViewRT)
+void DescriptorManager::UpdateRTTargetImage(ImageInfo imageViewRT)
 {
     VkDescriptorImageInfo descriptorOutputImageInfo = {};
     descriptorOutputImageInfo.sampler = nullptr;
-    descriptorOutputImageInfo.imageView = imageViewRT;
+    descriptorOutputImageInfo.imageView = imageViewRT.imageView;
     descriptorOutputImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-
+    imageViewRT.descriptorImageInfo = descriptorOutputImageInfo;
     
     _descriptorWritesRT[1].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
     _descriptorWritesRT[1].pNext = nullptr;
@@ -489,17 +577,21 @@ void DescriptorManager::UpdateRTTargetImage(VkImageView imageViewRT)
     _descriptorWritesRT[1].pImageInfo = &descriptorOutputImageInfo;
     _descriptorWritesRT[1].pBufferInfo = nullptr;
     _descriptorWritesRT[1].pTexelBufferView = nullptr;
-    vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)_descriptorWritesRT.size(), _descriptorWritesRT.data(), 0, nullptr);
+    //vkUpdateDescriptorSets(_instance->GetDevice(), (uint32_t)_descriptorWritesRT.size(), _descriptorWritesRT.data(), 0, nullptr);
+    _raytracingDescriptorSet->UpdateImage(rtSetHandle, "targetImage", &imageViewRT, 1);
+    _raytracingDescriptorSet->UpdateSetInstance(rtSetHandle);
 }
 
-VkDescriptorSetLayout* DescriptorManager::GetDescriptorLayout()
+VkPipelineLayout DescriptorManager::GetDescriptorLayout()
 {
-    return &_layout;
+    return _rasterizationDescriptorSet->GetPipelineLayout();
+    //return &_layout;
 }
 
-std::vector<VkDescriptorSetLayout> DescriptorManager::GetDescriptorLayoutRT()
+VkPipelineLayout DescriptorManager::GetDescriptorLayoutRT()
 {
-    return _layoutsRT;
+    return _raytracingDescriptorSet->GetPipelineLayout();
+    //return _layoutsRT;
 }
 
 VkDescriptorPool DescriptorManager::GetDescriptorPool()
@@ -509,12 +601,14 @@ VkDescriptorPool DescriptorManager::GetDescriptorPool()
 
 std::vector<VkDescriptorSet> DescriptorManager::GetDescriptorSets()
 {
-    return _descriptorSets;
+    return _rasterizationDescriptorSet->GetVkDescriptorSets();
+    //return _descriptorSets;
 }
 
 std::vector<VkDescriptorSet> DescriptorManager::GetDescriptorSetRT()
 {
-    return _descriptorsetsRT;
+    return _raytracingDescriptorSet->GetVkDescriptorSets();
+    //return _descriptorsetsRT;
 }
 
 };

@@ -12,8 +12,8 @@ struct HitInfo
     float Reflectivity;
 };
 
-layout(binding = 0) uniform accelerationStructureNV topLevelAS;
-layout(binding = 1, rgba8) uniform image2D image;
+layout(set = 0, binding = 0) uniform accelerationStructureNV topLevelAS;
+layout(set = 0, binding = 1, rgba8) uniform image2D image;
 
 layout(location = 0) rayPayloadNV HitInfo hitValue;
 layout(location = 3) rayPayloadNV HitInfo reflectionHit;
@@ -32,7 +32,7 @@ struct PointLight
     vec4 PositionRadius;
 };
 
-layout(binding = 2) uniform GlobalUniformData
+layout(set = 0, binding = 2) uniform GlobalUniformData
 {
     float FieldOfView;
     float NearPlane;

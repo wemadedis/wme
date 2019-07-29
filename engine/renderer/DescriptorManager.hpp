@@ -100,6 +100,10 @@ class DescriptorManager
      * @brief
      */
     std::vector<VkWriteDescriptorSet> _descriptorWritesRT;
+
+    DescriptorSet* _rasterizationDescriptorSet;
+    DescriptorSet* _raytracingDescriptorSet;
+    SetInstanceHandle rtSetHandle;
 public:
 
     /**
@@ -131,7 +135,7 @@ public:
     /**
      * @brief Creates the descriptor set (ray tracing).
      */
-    void CreateDescriptorSetRT(AccelerationStructure *AS, VkImageView imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures);
+    void CreateDescriptorSetRT(AccelerationStructure *AS, ImageInfo imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures);
     
     /**
      * @brief Creates the descriptor sets (rasterization)
@@ -144,17 +148,17 @@ public:
     /**
      * @brief Updated the current framebuffer image view for ray tracing.
      */
-    void UpdateRTTargetImage(VkImageView imageViewRT);
+    void UpdateRTTargetImage(ImageInfo imageViewRT);
     
     /**
      * @brief Gets the descriptor set layout (rasterization)
      */
-    VkDescriptorSetLayout* GetDescriptorLayout();
+    VkPipelineLayout GetDescriptorLayout();
 
     /**
      * @brief Gets the descriptor set layouts (ray tracing)
      */
-    std::vector<VkDescriptorSetLayout> GetDescriptorLayoutRT();
+    VkPipelineLayout GetDescriptorLayoutRT();
 
     /**
      * @brief Gets the descriptor pool (for GUI).

@@ -40,9 +40,9 @@ layout(location = 1) hitAttributeNV vec3 attribs;
 layout(location = 2) rayPayloadNV float shadowRayHitValue;
 
 
-layout(binding = 0) uniform accelerationStructureNV topLevelAS;
+layout(set = 0, binding = 0) uniform accelerationStructureNV topLevelAS;
 
-layout(binding = 2) uniform GlobalUniformData
+layout(set = 0, binding = 2) uniform GlobalUniformData
 {
     float FieldOfView;
     float NearPlane;
@@ -56,10 +56,10 @@ layout(binding = 2) uniform GlobalUniformData
     DirectionalLight DirectionalLights[MAX_LIGHTS];
 } GlobalUniform;
 
-layout(binding = 3) uniform usamplerBuffer InstanceMapping;
-layout(set = 0, binding = 4) uniform usamplerBuffer IndexBuffers[];
-layout(set = 1, binding = 4) uniform samplerBuffer VertexBuffers[];
-layout(set = 2, binding = 4) uniform InstanceUniformData
+layout(set = 0, binding = 3) uniform usamplerBuffer InstanceMapping;
+layout(set = 1, binding = 0) uniform usamplerBuffer IndexBuffers[];
+layout(set = 4, binding = 0) uniform samplerBuffer VertexBuffers[];
+layout(set = 2, binding = 0) uniform InstanceUniformData
 {
     mat4 ModelMatrix;
     mat4 NormalMatrix;
@@ -74,7 +74,7 @@ layout(set = 2, binding = 4) uniform InstanceUniformData
     bool HasTexture;
 } InstanceData[];
 
-layout(set = 3, binding = 4) uniform sampler2D TextureSamplers[];
+layout(set = 3, binding = 0) uniform sampler2D TextureSamplers[];
 
 float FetchFloat(uint meshIndex, int offset)
 {

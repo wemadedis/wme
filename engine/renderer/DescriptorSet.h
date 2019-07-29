@@ -35,14 +35,14 @@ private:
     {
         VkDescriptorSetLayoutBinding Binding;
         VkDescriptorSetLayout Layout;
-        uint32_t BindingIndex;
+        uint32_t LayoutIndex;
+        uint32_t DescriptorIndex;
     };
 
     struct SetInstance
     {
-        VkDescriptorSet Set;
-        VkWriteDescriptorSet *SetWrites;
-        
+        std::vector<VkDescriptorSet> Sets;
+        std::vector<VkWriteDescriptorSet> SetWrites;
     };
     
     Instance* _instance;
@@ -80,6 +80,8 @@ public:
         uint32_t _currentBinding = 0;
         void CreateDescriptorSetLayout(LayoutInfo& layoutInfo, Instance* instance);
 
+        DescriptorSetBuilder() = default;
+
         DescriptorSetBuilder& AddLayoutBinding(std::string name, 
                                                VkDescriptorType descriptorType, 
                                                uint32_t descriptorCount, 
@@ -106,11 +108,16 @@ public:
                                                         VkShaderStageFlags shaderStages);
 
         DescriptorSet* Build(Instance* instance, uint32_t maxSetsPerPool = 100);
+
+        friend class DescriptorSet;
     };
+
+    static DescriptorSetBuilder Create();
 
     VkPipelineLayout GetPipelineLayout();
     SetInstanceHandle Allocate();
-
+    std::vector<VkDescriptorSet> GetVkDescriptorSets();
+    
     /**
 	 * @brief Updates a uniform buffer. Includes texel buffers with a buffer view specified.
 	 */
@@ -124,6 +131,20 @@ public:
     void UpdateSetInstance(SetInstanceHandle handle);
 
     static void CreateBufferView(Instance* instance, BufferInformation &bufferInfo, VkFormat format);
+
+    //TODO: Generate initial shader code?
+    std::string GetBindingsInformation()
+    {
+        std::string info = "";
+        for(auto binding : _bindingMap)
+        {
+            info = info + std::string("layout(set = ") 
+                        + std::to_string(binding.second.LayoutIndex) + std::string(", binding = ") 
+                        + std::to_string(binding.second.Binding.binding)
+                        + std::string(") ") + binding.first + std::string("\n");
+        }
+        return info;
+    }
 };
 
 };

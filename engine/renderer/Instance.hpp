@@ -60,7 +60,7 @@ private:
      * @brief The validation layers used for debugging.
      */
     const std::vector<const char *> validationLayers = 
-    { "VK_LAYER_LUNARG_standard_validation" };
+    { "VK_LAYER_LUNARG_standard_validation" };//,"VK_LAYER_LUNARG_api_dump" };
 
     /**
      * @brief The device extentions needed by the renderer.

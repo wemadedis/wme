@@ -143,17 +143,19 @@ VkPipelineColorBlendStateCreateInfo GraphicsPipeline::GetColorBlendCreateInfo(Vk
 
 void GraphicsPipeline::CreatePipelineLayout()
 {
-    VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
+    _pipelineLayout = _descriptorManager->GetDescriptorLayout();
+    /*VkPipelineLayoutCreateInfo pipelineLayoutInfo = {};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutInfo.setLayoutCount = 1;				   // Optional
     pipelineLayoutInfo.pSetLayouts = _descriptorManager->GetDescriptorLayout(); // Optional
     pipelineLayoutInfo.pushConstantRangeCount = 0;		   // Optional
     pipelineLayoutInfo.pPushConstantRanges = nullptr;	  // Optional
-
+    
     if (vkCreatePipelineLayout(_instance->GetDevice(), &pipelineLayoutInfo, nullptr, &_pipelineLayout) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create pipeline layout!");
     }
+    */
 }
 
 void GraphicsPipeline::CreatePipeline(ShaderInfo vertexShader, ShaderInfo fragmentShader, VkPrimitiveTopology primitiveTopology)
@@ -209,8 +211,7 @@ void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, Sha
         GetPipelineStageInfo(VK_SHADER_STAGE_MISS_BIT_NV, srmiss)
     });
 
-    auto descriptorLayout = _descriptorManager->GetDescriptorLayoutRT();
-
+/*
     VkPipelineLayoutCreateInfo pipelineLayoutCreateInfo;
     pipelineLayoutCreateInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
     pipelineLayoutCreateInfo.pNext = nullptr;
@@ -219,10 +220,10 @@ void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, Sha
     pipelineLayoutCreateInfo.pSetLayouts = descriptorLayout.data();
     pipelineLayoutCreateInfo.pushConstantRangeCount = 0;
     pipelineLayoutCreateInfo.pPushConstantRanges = nullptr;
-
+    
     VkResult code = vkCreatePipelineLayout(_instance->GetDevice(), &pipelineLayoutCreateInfo, nullptr, &_pipelineLayout);
-    Utilities::CheckVkResult(code, "Failed to create RT pipeline layout!");
-
+    Utilities::CheckVkResult(code, "Failed to create RT pipeline layout!");*/
+    _pipelineLayout = _descriptorManager->GetDescriptorLayoutRT();
     std::vector<VkRayTracingShaderGroupCreateInfoNV> shaderGroups({
         // group0 = [ raygen ]
         { VK_STRUCTURE_TYPE_RAY_TRACING_SHADER_GROUP_CREATE_INFO_NV, nullptr, VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_NV, 0, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV, VK_SHADER_UNUSED_NV },
@@ -249,7 +250,7 @@ void GraphicsPipeline::CreatePipelineRT(ShaderInfo rayGen, ShaderInfo rchit, Sha
     rayPipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
     rayPipelineInfo.basePipelineIndex = 0;
 
-    code = RTUtilities::GetInstance()->vkCreateRayTracingPipelinesNV(_instance->GetDevice(), nullptr, 1, &rayPipelineInfo, nullptr, &_pipeline);
+    VkResult code = RTUtilities::GetInstance()->vkCreateRayTracingPipelinesNV(_instance->GetDevice(), nullptr, 1, &rayPipelineInfo, nullptr, &_pipeline);
     Utilities::CheckVkResult(code, "Failed to create RT pipeline!");
 
 }

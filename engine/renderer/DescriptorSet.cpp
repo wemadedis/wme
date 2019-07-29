@@ -52,7 +52,7 @@ void DescriptorSetBuilder::CreateDescriptorSetLayout(LayoutInfo& layoutInfo, Ins
         layoutCreateInfo.flags = 0;
         layoutCreateInfo.bindingCount = 1;
         //Can safely assume that there is only one layout binding struct.
-        layoutCreateInfo.pBindings = &layoutInfo.Bindings[0];
+        layoutCreateInfo.pBindings = &layoutInfo.Bindings.begin()->second;
         VkResult code = vkCreateDescriptorSetLayout(instance->GetDevice(), &layoutCreateInfo, nullptr, &layoutInfo.Layout);
     }
 }
@@ -67,7 +67,6 @@ DescriptorSetBuilder& DescriptorSetBuilder::AddLayoutBinding(std::string name, V
     VkDescriptorSetLayoutBinding layoutBinding = {};
     //If the descriptor count is larger than 1, set binding to 0, otherwise set to current binding count and increment it.
     layoutBinding.binding = (descriptorCount > 1) ? 0 : _currentBinding++;
-    layoutBinding.binding = binding;
     layoutBinding.descriptorType = descriptorType;
     layoutBinding.descriptorCount = descriptorCount;
     layoutBinding.stageFlags = shaderStages;
@@ -114,9 +113,9 @@ DescriptorSetBuilder& DescriptorSetBuilder::WithAccelerationStructure(std::strin
 
 DescriptorSet* DescriptorSetBuilder::Build(Instance* instance, uint32_t maxSetsPerPool)
 {
-    std::vector<LayoutInfo>* layoutInfos = {};
+    std::vector<LayoutInfo> layoutInfos = {};
     //Push an empty LayoutInfo, used for all descriptors of count 1
-    layoutInfos->push_back({});
+    layoutInfos.push_back({});
 
     //Add bindings to different "bins" (LayoutInfos).
     std::map<std::string, VkDescriptorSetLayoutBinding>::iterator bindingIterator;
@@ -126,23 +125,23 @@ DescriptorSet* DescriptorSetBuilder::Build(Instance* instance, uint32_t maxSetsP
         VkDescriptorSetLayoutBinding binding = bindingIterator->second;
         if(binding.descriptorCount == 1)
         {
-            layoutInfos->at(0).Bindings.insert({name, binding});
+            layoutInfos[0].Bindings.insert({name, binding});
         }
         else
         {
             LayoutInfo variableSizeBindingLayoutInfo = {};
             variableSizeBindingLayoutInfo.HasVariableSizeBinding = true;
             variableSizeBindingLayoutInfo.Bindings.insert({name, binding});
-            layoutInfos->push_back(variableSizeBindingLayoutInfo);
+            layoutInfos.push_back(variableSizeBindingLayoutInfo);
         }
     }
 
-    for(LayoutInfo layoutInfo : *layoutInfos)
+    for(LayoutInfo& layoutInfo : layoutInfos)
     {
         CreateDescriptorSetLayout(layoutInfo, instance);
     }
 
-    return new DescriptorSet(layoutInfos, instance, maxSetsPerPool);
+    return new DescriptorSet(&layoutInfos, instance, maxSetsPerPool);
 }
 
 
@@ -151,16 +150,25 @@ DescriptorSet::DescriptorSet(std::vector<LayoutInfo>* layoutInfos, Instance* ins
     _layoutInfos = layoutInfos;
     _instance = instance;
     _maxSetsPerPool = static_cast<uint32_t>(maxSets * layoutInfos->size());
-    for(LayoutInfo info : *_layoutInfos)
+    for(uint32_t layoutIndex = 0; layoutIndex < layoutInfos->size(); layoutIndex++)
     {
+        LayoutInfo info = _layoutInfos->at(layoutIndex);
         _setLayouts.push_back(info.Layout);
         for(auto nameMapping : info.Bindings)
         {
             //Map binding name to the binding and layout it belongs to. Binding to keep track of type and layout for updating the data.
-            _bindingMap.insert({nameMapping.first, {nameMapping.second, info.Layout, _descriptorsCount}});
+            _bindingMap.insert({nameMapping.first, {nameMapping.second, info.Layout, layoutIndex, _descriptorsCount}});
             _descriptorsCount++;
         }
     }
+    CreateDescriptorPool();
+    CreateSetAllocationInfo();
+    CreatePipelineLayout();
+}
+
+DescriptorSetBuilder DescriptorSet::Create()
+{
+    return DescriptorSet::DescriptorSetBuilder();
 }
 
 void DescriptorSet::CreatePipelineLayout()
@@ -263,23 +271,31 @@ VkPipelineLayout DescriptorSet::GetPipelineLayout()
 
 SetInstanceHandle DescriptorSet::Allocate()
 {
-    VkDescriptorSet descriptorSet;
-    VkResult code = vkAllocateDescriptorSets(_instance->GetDevice(), &_allocationInfo.DescriptorSetAllocateInfo, &descriptorSet);
+    SetInstance instance = {};
+    instance.Sets.resize(_setLayouts.size());
+    VkResult code = vkAllocateDescriptorSets(_instance->GetDevice(), &_allocationInfo.DescriptorSetAllocateInfo, instance.Sets.data());
     Utilities::CheckVkResult(code, "Failed to allocate a descriptor set!");
     
-    SetInstance instance = {};
-    instance.Set = descriptorSet;
-    instance.SetWrites = new VkWriteDescriptorSet[_descriptorsCount];
+    instance.SetWrites.resize(_descriptorsCount);
     
-    int bindingIndex = 0;
+
     for(auto bindingMapping : _bindingMap)
-        instance.SetWrites[bindingIndex++] = GetDescriptorWrite(bindingMapping.first, instance.Set);
+       instance.SetWrites[bindingMapping.second.DescriptorIndex] = GetDescriptorWrite(bindingMapping.first, instance.Sets[bindingMapping.second.LayoutIndex]);
     
     _instances.insert({_setAllocationsCount, instance});
 
     _poolAllocationCount += (uint32_t)_setLayouts.size();
     
     return static_cast<SetInstanceHandle>(_setAllocationsCount++);
+}
+
+std::vector<VkDescriptorSet> DescriptorSet::GetVkDescriptorSets()
+{
+    std::vector<VkDescriptorSet> sets = {};
+    for(auto instance : _instances)
+        for(auto set : instance.second.Sets)
+            sets.push_back(set);
+    return sets;
 }
 
 void DescriptorSet::UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, BufferInformation *bufferInfos, uint32_t bufferCount)
@@ -307,8 +323,8 @@ void DescriptorSet::UpdateUniformBuffer(SetInstanceHandle handle, std::string de
         }
     }
     
-    _instances[handle].SetWrites[descriptorInfo.BindingIndex].pBufferInfo = descriptorBufferInfos;
-    _instances[handle].SetWrites[descriptorInfo.BindingIndex].pTexelBufferView = bufferViews;
+    _instances[handle].SetWrites[descriptorInfo.DescriptorIndex].pBufferInfo = descriptorBufferInfos;
+    _instances[handle].SetWrites[descriptorInfo.DescriptorIndex].pTexelBufferView = bufferViews;
 }
 
 void DescriptorSet::UpdateImage(SetInstanceHandle handle, std::string descriptorName, ImageInfo *imageInfos, uint32_t imageCount)
@@ -320,19 +336,19 @@ void DescriptorSet::UpdateImage(SetInstanceHandle handle, std::string descriptor
     {
         descriptorImageInfos[imageIndex] = imageInfos[imageIndex].descriptorImageInfo;
     }
-    _instances[handle].SetWrites[descriptorInfo.BindingIndex].pImageInfo = descriptorImageInfos;
+    _instances[handle].SetWrites[descriptorInfo.DescriptorIndex].pImageInfo = descriptorImageInfos;
 }
 void DescriptorSet::UpdateAccelerationStructure(SetInstanceHandle handle, std::string descriptorName, AccelerationStructure* as)
 {
     auto& ASdescriptorWrite = as->GetDescriptorWrite();
     auto descriptorInfo = _bindingMap[descriptorName];
-    _instances[handle].SetWrites[descriptorInfo.BindingIndex].pNext = &ASdescriptorWrite;
+    _instances[handle].SetWrites[descriptorInfo.DescriptorIndex].pNext = &ASdescriptorWrite;
 }
 
 
 void DescriptorSet::UpdateSetInstance(SetInstanceHandle handle)
 {
-    vkUpdateDescriptorSets(_instance->GetDevice(), _descriptorsCount, _instances[handle].SetWrites, 0, nullptr);
+    vkUpdateDescriptorSets(_instance->GetDevice(), _descriptorsCount, _instances[handle].SetWrites.data(), 0, nullptr);
 }
 
 void DescriptorSet::CreateBufferView(Instance* instance, BufferInformation &bufferInfo, VkFormat format)

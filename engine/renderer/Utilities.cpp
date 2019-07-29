@@ -180,8 +180,8 @@ void CheckVkResult(VkResult code, const char *errorMessage)
 {
     if (code != VK_SUCCESS)
     {
-        errorMessage = (std::string(errorMessage) + std::string(" Code: ") + std::to_string(code)).c_str();
-        throw RTEException(errorMessage);
+        std::string message = std::string(errorMessage) + std::string(" Code: ") + std::to_string(code);
+        throw RTEException(message.c_str());
     }
 }
 

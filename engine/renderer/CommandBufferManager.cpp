@@ -63,16 +63,20 @@ VkCommandBuffer CommandBufferManager::BeginCommandBufferInstance()
 
 void CommandBufferManager::SubmitCommandBufferInstance(VkCommandBuffer buffer, VkQueue queue)
 {
-    vkEndCommandBuffer(buffer);
+    VkResult code = vkEndCommandBuffer(buffer);
+    Utilities::CheckVkResult(code, "Failed to end a single command buffer instance!");
 
     VkSubmitInfo submitInfo = {};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &buffer;
 
-    vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
-    vkQueueWaitIdle(queue); //<---------------------------------------------------- PERFORMANCE IS BAD I THINK
+    code = vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE);
+    Utilities::CheckVkResult(code, "Failed to submit a single command buffer instance!");
 
+    code = vkQueueWaitIdle(queue); //<---------------------------------------------------- PERFORMANCE IS BAD I THINK
+    Utilities::CheckVkResult(code, "Wait idle for command buffer submit gone wrong!");
+    
     vkFreeCommandBuffers(_instance->GetDevice(), _commandPool, 1, &buffer);
 }
 
