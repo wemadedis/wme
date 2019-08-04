@@ -8,7 +8,7 @@ typedef DescriptorSet::DescriptorSetBuilder DescriptorSetBuilder;
 
 void DescriptorSetBuilder::CreateDescriptorSetLayout(LayoutInfo& layoutInfo, Instance* instance)
 {
-    uint32_t bindingsCount = static_cast<uint32_t>(layoutInfo.Bindings.size()); 
+    uint32_t bindingsCount = static_cast<uint32_t>(layoutInfo.Descriptors.size()); 
     
     if(!layoutInfo.HasVariableSizeBinding)
     {
@@ -20,9 +20,9 @@ void DescriptorSetBuilder::CreateDescriptorSetLayout(LayoutInfo& layoutInfo, Ins
         }
         //Need to put bindings into contiguous memory.
         std::vector<VkDescriptorSetLayoutBinding> bindings = {};
-        for(auto bindingPair : layoutInfo.Bindings)
+        for(auto descriptorName : layoutInfo.Descriptors)
         {
-            bindings.push_back(bindingPair.second);
+            bindings.push_back(_layoutBindings[descriptorName]);
         }
 
         //Create the layout
@@ -52,18 +52,24 @@ void DescriptorSetBuilder::CreateDescriptorSetLayout(LayoutInfo& layoutInfo, Ins
         layoutCreateInfo.flags = 0;
         layoutCreateInfo.bindingCount = 1;
         //Can safely assume that there is only one layout binding struct.
-        layoutCreateInfo.pBindings = &layoutInfo.Bindings.begin()->second;
+        layoutCreateInfo.pBindings = &_layoutBindings[layoutInfo.Descriptors[0]];
         VkResult code = vkCreateDescriptorSetLayout(instance->GetDevice(), &layoutCreateInfo, nullptr, &layoutInfo.Layout);
     }
 }
-
-DescriptorSetBuilder& DescriptorSetBuilder::AddLayoutBinding(std::string name, VkDescriptorType descriptorType, uint32_t descriptorCount, VkShaderStageFlags shaderStages)
+/*
+DescriptorSetBuilder::DescriptorSetBuilder()
 {
+    _layoutInfos.push_back({});
+}
+*/
+DescriptorSetBuilder& DescriptorSetBuilder::AddLayoutBinding(std::string name, 
+                                                            VkDescriptorType descriptorType, 
+                                                            uint32_t descriptorCount, 
+                                                            VkShaderStageFlags shaderStages)
+{
+
     uint32_t binding = _currentBinding;
-    if(descriptorCount < 1)
-    {
-        throw "Exception";
-    }
+    
     VkDescriptorSetLayoutBinding layoutBinding = {};
     //If the descriptor count is larger than 1, set binding to 0, otherwise set to current binding count and increment it.
     layoutBinding.binding = (descriptorCount > 1) ? 0 : _currentBinding++;
@@ -73,6 +79,23 @@ DescriptorSetBuilder& DescriptorSetBuilder::AddLayoutBinding(std::string name, V
     layoutBinding.pImmutableSamplers = nullptr;
 
     _layoutBindings.insert({name, layoutBinding});
+
+    if(descriptorCount < 1)
+    {
+        throw "Exception";
+    }
+    else if (descriptorCount == 1)
+    {
+        _layoutInfos[0].Descriptors.push_back(name);
+    }
+    else
+    {
+        LayoutInfo variableSizeBindingLayoutInfo = {};
+        variableSizeBindingLayoutInfo.HasVariableSizeBinding = true;
+        variableSizeBindingLayoutInfo.Descriptors.push_back(name);
+        _layoutInfos.push_back(variableSizeBindingLayoutInfo);
+    }
+    
     return *this;
 }
 
@@ -86,8 +109,10 @@ DescriptorSetBuilder& DescriptorSetBuilder::WithUniformBuffer(std::string name,
 
 DescriptorSetBuilder& DescriptorSetBuilder::WithUniformTexelBuffer(std::string name,
                                                 uint32_t descriptorCount,
+                                                VkFormat viewFormat,
                                                 VkShaderStageFlags shaderStages)
 {
+    _descriptorFormats.insert({name, viewFormat});
     return AddLayoutBinding(name, VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, descriptorCount, shaderStages);
 }
 DescriptorSetBuilder& DescriptorSetBuilder::WithCombinedImageSampler(std::string name,
@@ -113,51 +138,31 @@ DescriptorSetBuilder& DescriptorSetBuilder::WithAccelerationStructure(std::strin
 
 DescriptorSet* DescriptorSetBuilder::Build(Instance* instance, uint32_t maxSetsPerPool)
 {
-    std::vector<LayoutInfo> layoutInfos = {};
-    //Push an empty LayoutInfo, used for all descriptors of count 1
-    layoutInfos.push_back({});
-
-    //Add bindings to different "bins" (LayoutInfos).
-    std::map<std::string, VkDescriptorSetLayoutBinding>::iterator bindingIterator;
-    for(bindingIterator = _layoutBindings.begin(); bindingIterator != _layoutBindings.end(); bindingIterator++)
-    {
-        std::string name = bindingIterator->first;
-        VkDescriptorSetLayoutBinding binding = bindingIterator->second;
-        if(binding.descriptorCount == 1)
-        {
-            layoutInfos[0].Bindings.insert({name, binding});
-        }
-        else
-        {
-            LayoutInfo variableSizeBindingLayoutInfo = {};
-            variableSizeBindingLayoutInfo.HasVariableSizeBinding = true;
-            variableSizeBindingLayoutInfo.Bindings.insert({name, binding});
-            layoutInfos.push_back(variableSizeBindingLayoutInfo);
-        }
-    }
-
-    for(LayoutInfo& layoutInfo : layoutInfos)
+    for(LayoutInfo& layoutInfo : _layoutInfos)
     {
         CreateDescriptorSetLayout(layoutInfo, instance);
     }
 
-    return new DescriptorSet(&layoutInfos, instance, maxSetsPerPool);
+    return new DescriptorSet(this, instance, maxSetsPerPool);
 }
 
 
-DescriptorSet::DescriptorSet(std::vector<LayoutInfo>* layoutInfos, Instance* instance, uint32_t maxSets)
+DescriptorSet::DescriptorSet(DescriptorSetBuilder *builder, Instance* instance, uint32_t maxSets)
 {
-    _layoutInfos = layoutInfos;
+    _layoutInfos = builder->_layoutInfos;
     _instance = instance;
-    _maxSetsPerPool = static_cast<uint32_t>(maxSets * layoutInfos->size());
-    for(uint32_t layoutIndex = 0; layoutIndex < layoutInfos->size(); layoutIndex++)
+    _maxSetsPerPool = static_cast<uint32_t>(maxSets * _layoutInfos.size());
+    for(uint32_t layoutIndex = 0; layoutIndex < _layoutInfos.size(); layoutIndex++)
     {
-        LayoutInfo info = _layoutInfos->at(layoutIndex);
+        LayoutInfo info = _layoutInfos[layoutIndex];
         _setLayouts.push_back(info.Layout);
-        for(auto nameMapping : info.Bindings)
+        for(auto descriptorName : info.Descriptors)
         {
+            auto binding = builder->_layoutBindings[descriptorName];
+            bool hasSpecifiedFormat = builder->_descriptorFormats.find(descriptorName) != builder->_descriptorFormats.end();
+            VkFormat format = hasSpecifiedFormat ? builder->_descriptorFormats[descriptorName] : VK_FORMAT_UNDEFINED;
             //Map binding name to the binding and layout it belongs to. Binding to keep track of type and layout for updating the data.
-            _bindingMap.insert({nameMapping.first, {nameMapping.second, info.Layout, layoutIndex, _descriptorsCount}});
+            _bindingMap.insert({descriptorName, {binding, format, info.Layout, layoutIndex, _descriptorsCount}});
             _descriptorsCount++;
         }
     }
@@ -224,12 +229,13 @@ void DescriptorSet::CreateDescriptorPool()
 
 void DescriptorSet::CreateSetAllocationInfo()
 {
-    for(auto layoutinfo : *_layoutInfos)
+    for(auto layoutinfo : _layoutInfos)
     {
         //Can safely take the first binding descriptor count since:
         // - The first layout only contains descriptors of count 1
         // - The remaining layouts contain one descriptor each, with the decriptor count specified.
-        uint32_t descriptorCount = layoutinfo.Bindings.begin()->second.descriptorCount;
+        std::string descriptorName = layoutinfo.Descriptors[0];
+        uint32_t descriptorCount = _bindingMap[descriptorName].Binding.descriptorCount;
         _allocationInfo.VariableDescriptorCounts.push_back(descriptorCount);
     }
     //VariableDescriptorCountInfo is used to inform how many descriptors per layout in a descriptor set are used.
@@ -304,13 +310,14 @@ void DescriptorSet::UpdateUniformBuffer(SetInstanceHandle handle, std::string de
     VkDescriptorBufferInfo* descriptorBufferInfos = nullptr;
     VkBufferView* bufferViews = nullptr;
     
-    
     if(descriptorInfo.Binding.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) 
     {
         descriptorBufferInfos = new VkDescriptorBufferInfo[bufferCount];
         for(uint32_t bufferIndex = 0; bufferIndex < bufferCount; bufferIndex++)
         {
-            descriptorBufferInfos[bufferIndex] = bufferInfos[bufferIndex].descriptorBufferInfo;
+            descriptorBufferInfos[bufferIndex].buffer = bufferInfos[bufferIndex].buffer;
+            descriptorBufferInfos[bufferIndex].offset = 0;
+            descriptorBufferInfos[bufferIndex].range = bufferInfos[bufferIndex].size;
         }
         
     }
@@ -319,7 +326,11 @@ void DescriptorSet::UpdateUniformBuffer(SetInstanceHandle handle, std::string de
         bufferViews = new VkBufferView[bufferCount];
         for(uint32_t bufferIndex = 0; bufferIndex < bufferCount; bufferIndex++)
         {
-            bufferViews[bufferIndex] = bufferInfos[bufferIndex].BufferView; 
+            if(_bufferViews.find(bufferInfos[bufferIndex].buffer) == _bufferViews.end())
+            {
+                CreateBufferView(handle, descriptorName, bufferInfos[bufferIndex]);
+            }
+            bufferViews[bufferIndex] = _bufferViews[bufferInfos[bufferIndex].buffer];
         }
     }
     
@@ -351,22 +362,21 @@ void DescriptorSet::UpdateSetInstance(SetInstanceHandle handle)
     vkUpdateDescriptorSets(_instance->GetDevice(), _descriptorsCount, _instances[handle].SetWrites.data(), 0, nullptr);
 }
 
-void DescriptorSet::CreateBufferView(Instance* instance, BufferInformation &bufferInfo, VkFormat format)
+void DescriptorSet::CreateBufferView(SetInstanceHandle handle, std::string descriptorName , BufferInformation &bufferInfo)
 {
-    //If a buffer already has a view specified
-    if(bufferInfo.BufferView != VK_NULL_HANDLE) return;
-    
     VkBufferViewCreateInfo bufferViewInfo;
     bufferViewInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
     bufferViewInfo.pNext = nullptr;
     bufferViewInfo.flags = 0;
     bufferViewInfo.buffer = bufferInfo.buffer;
-    bufferViewInfo.format = format;
+    bufferViewInfo.format = _bindingMap[descriptorName].Format;
     bufferViewInfo.offset = 0;
     bufferViewInfo.range = bufferInfo.size;
     
-    VkResult code = vkCreateBufferView(instance->GetDevice(), &bufferViewInfo, nullptr, &bufferInfo.BufferView);
+    VkBufferView bufferView;
+    VkResult code = vkCreateBufferView(_instance->GetDevice(), &bufferViewInfo, nullptr, &bufferView);
     Utilities::CheckVkResult(code, "Could not create a buffer view!");
+    _bufferViews.insert({bufferInfo.buffer, bufferView});
 }
 
 };

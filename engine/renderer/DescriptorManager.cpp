@@ -55,9 +55,9 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
                                     .WithAccelerationStructure("accelerationStructure", 1, VK_SHADER_STAGE_RAYGEN_BIT_NV | VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
                                     .WithStorageImage("targetImage", 1, VK_SHADER_STAGE_RAYGEN_BIT_NV)
                                     .WithUniformBuffer("globalBuffer", 1, VK_SHADER_STAGE_RAYGEN_BIT_NV | VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV | VK_SHADER_STAGE_MISS_BIT_NV)
-                                    .WithUniformTexelBuffer("instanceMapping", 1, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
-                                    .WithUniformTexelBuffer("indexBuffer", meshCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
-                                    .WithUniformTexelBuffer("vertexBuffer", meshCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                    .WithUniformTexelBuffer("instanceMapping", 1, VK_FORMAT_R32_UINT, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                    .WithUniformTexelBuffer("indexBuffer", meshCount, VK_FORMAT_R16_UINT,  VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
+                                    .WithUniformTexelBuffer("vertexBuffer", meshCount, VK_FORMAT_R32_SFLOAT, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
                                     .WithUniformBuffer("instanceUniform", instanceCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
                                     .WithCombinedImageSampler("textureUniform", textureCount, VK_SHADER_STAGE_CLOSEST_HIT_BIT_NV)
                                     .Build(_instance, 1000U);
@@ -71,12 +71,12 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, ImageIn
     std::vector<BufferInformation> instBuffers = {};
     std::vector<ImageInfo> textureImages = {};
 
-    DescriptorSet::CreateBufferView(_instance, instanceBuffer, VK_FORMAT_R32_UINT);
+    //DescriptorSet::CreateBufferView(_instance, instanceBuffer, VK_FORMAT_R32_UINT);
 
-    for(auto mesh : meshes)
+    for(auto& mesh : meshes)
     {
-        DescriptorSet::CreateBufferView(_instance, mesh.vertexBuffer, VK_FORMAT_R32_SFLOAT);
-        DescriptorSet::CreateBufferView(_instance, mesh.indexBuffer, VK_FORMAT_R16_UINT);
+        //DescriptorSet::CreateBufferView(_instance, mesh.vertexBuffer, VK_FORMAT_R32_SFLOAT);
+        //DescriptorSet::CreateBufferView(_instance, mesh.indexBuffer, VK_FORMAT_R16_UINT);
         vertBuffers.push_back(mesh.vertexBuffer);
         indBuffers.push_back(mesh.indexBuffer);
     }
@@ -109,7 +109,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, ImageIn
     _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "instanceUniform", instBuffers.data(), instBuffers.size());
     _raytracingDescriptorSet->UpdateImage(rtSetHandle, "textureUniform", textureImages.data(), textureImages.size());
     _raytracingDescriptorSet->UpdateSetInstance(rtSetHandle);
-
+    std::cout << _raytracingDescriptorSet->GetBindingsInformation() << std::endl;
 
 }
 

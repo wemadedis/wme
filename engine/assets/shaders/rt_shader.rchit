@@ -58,8 +58,8 @@ layout(set = 0, binding = 2) uniform GlobalUniformData
 
 layout(set = 0, binding = 3) uniform usamplerBuffer InstanceMapping;
 layout(set = 1, binding = 0) uniform usamplerBuffer IndexBuffers[];
-layout(set = 4, binding = 0) uniform samplerBuffer VertexBuffers[];
-layout(set = 2, binding = 0) uniform InstanceUniformData
+layout(set = 2, binding = 0) uniform samplerBuffer VertexBuffers[];
+layout(set = 3, binding = 0) uniform InstanceUniformData
 {
     mat4 ModelMatrix;
     mat4 NormalMatrix;
@@ -74,7 +74,7 @@ layout(set = 2, binding = 0) uniform InstanceUniformData
     bool HasTexture;
 } InstanceData[];
 
-layout(set = 3, binding = 0) uniform sampler2D TextureSamplers[];
+layout(set = 4, binding = 0) uniform sampler2D TextureSamplers[];
 
 float FetchFloat(uint meshIndex, int offset)
 {

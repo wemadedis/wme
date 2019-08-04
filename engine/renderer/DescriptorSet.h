@@ -17,11 +17,21 @@ typedef uint32_t SetInstanceHandle;
 class DescriptorSet
 {
 private:
+
+    struct DescriptorInfo
+    {
+        VkDescriptorSetLayoutBinding Binding;
+        VkFormat Format = VK_FORMAT_UNDEFINED;
+        VkDescriptorSetLayout Layout;
+        uint32_t LayoutIndex;
+        uint32_t DescriptorIndex;
+    };
+
     struct LayoutInfo
     {
         VkDescriptorSetLayout Layout = {};
         bool HasVariableSizeBinding = false;
-        std::map<std::string, VkDescriptorSetLayoutBinding> Bindings = {};
+        std::vector<std::string> Descriptors = {};
     };
 
     struct AllocationInfo
@@ -29,14 +39,6 @@ private:
         std::vector<uint32_t> VariableDescriptorCounts;
         VkDescriptorSetVariableDescriptorCountAllocateInfoEXT VariableDescriptorCountInfo;
         VkDescriptorSetAllocateInfo DescriptorSetAllocateInfo;
-    };
-
-    struct DescriptorInfo
-    {
-        VkDescriptorSetLayoutBinding Binding;
-        VkDescriptorSetLayout Layout;
-        uint32_t LayoutIndex;
-        uint32_t DescriptorIndex;
     };
 
     struct SetInstance
@@ -48,10 +50,11 @@ private:
     Instance* _instance;
     uint32_t _descriptorsCount = 0;
     std::vector<VkDescriptorSetLayout> _setLayouts;
-    std::vector<LayoutInfo>* _layoutInfos;
+    std::vector<LayoutInfo> _layoutInfos;
     VkPipelineLayout _pipelineLayout;
     
-
+    //Assuming only one buffer view per buffer per instance of this class
+    std::unordered_map<VkBuffer, VkBufferView> _bufferViews;
     std::unordered_map<std::string, DescriptorInfo> _bindingMap;
     std::vector<VkDescriptorPoolSize> _poolSizes = {};
     std::vector<VkDescriptorPool> _descriptorPools = {};
@@ -63,20 +66,21 @@ private:
     AllocationInfo _allocationInfo;
     uint32_t _poolAllocationCount = 0;
     uint32_t _currentPoolIndex = 0;
-    
-    DescriptorSet(std::vector<LayoutInfo>* layoutInfos, Instance* instance, uint32_t maxSets);
+
     
 
     void CreatePipelineLayout();
     void CreateDescriptorPool();
     void CreateSetAllocationInfo();
     VkWriteDescriptorSet GetDescriptorWrite(std::string descriptorName, VkDescriptorSet set);
-
+    void CreateBufferView(SetInstanceHandle handle, std::string descriptorName , BufferInformation &bufferInfo);
 public:
     class DescriptorSetBuilder
     {
     private:
         std::map<std::string,VkDescriptorSetLayoutBinding> _layoutBindings = {};
+        std::map<std::string, VkFormat> _descriptorFormats = {};
+        std::vector<LayoutInfo> _layoutInfos = {{}};
         uint32_t _currentBinding = 0;
         void CreateDescriptorSetLayout(LayoutInfo& layoutInfo, Instance* instance);
 
@@ -93,6 +97,7 @@ public:
 
         DescriptorSetBuilder& WithUniformTexelBuffer(std::string name,
                                                      uint32_t descriptorCount,
+                                                     VkFormat viewFormat,
                                                      VkShaderStageFlags shaderStages);                                                  
         
         DescriptorSetBuilder& WithCombinedImageSampler(std::string name,
@@ -130,8 +135,6 @@ public:
 	 */
     void UpdateSetInstance(SetInstanceHandle handle);
 
-    static void CreateBufferView(Instance* instance, BufferInformation &bufferInfo, VkFormat format);
-
     //TODO: Generate initial shader code?
     std::string GetBindingsInformation()
     {
@@ -145,6 +148,9 @@ public:
         }
         return info;
     }
+
+    private:
+        DescriptorSet(DescriptorSetBuilder *builder, Instance* instance, uint32_t maxSets);
 };
 
 };
