@@ -88,15 +88,13 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, Image i
 
     for(auto &texture : textures)
     {
-        texture.image.descriptorImageInfo.sampler = texture.sampler;
-        texture.image.descriptorImageInfo.imageView = texture.image.imageView;
-        texture.image.descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
+        texture.image.Sampler = texture.sampler;
+        texture.image.Layout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
         textureImages.push_back(texture.image);
     }
 
-    imageViewRT.descriptorImageInfo.imageView = imageViewRT.imageView;
-    imageViewRT.descriptorImageInfo.sampler = nullptr;
-    imageViewRT.descriptorImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
+    
+    imageViewRT.Layout = VK_IMAGE_LAYOUT_GENERAL;
 
     rtSetHandle = _raytracingDescriptorSet->Allocate();
 
@@ -118,10 +116,6 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instance
     for (size_t i = 0; i < instances.size(); i++) {
         VkDescriptorImageInfo imageInfo = {};
         imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
-        imageInfo.imageView = textures[instances[i].texture].image.imageView;
-        imageInfo.sampler = textures[instances[i].texture].sampler;
-
-        textures[instances[i].texture].image.descriptorImageInfo = imageInfo; //FIX ALL THIS IMAGE MANAGEMENT MAN
 
         auto instanceHandle = _rasterizationDescriptorSet->Allocate();
         _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "meshUBO", &instances[i].uniformBuffer, 1);
@@ -134,13 +128,7 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instance
 
 
 void DescriptorManager::UpdateRTTargetImage(Image imageViewRT)
-{
-    VkDescriptorImageInfo descriptorOutputImageInfo = {};
-    descriptorOutputImageInfo.sampler = nullptr;
-    descriptorOutputImageInfo.imageView = imageViewRT.imageView;
-    descriptorOutputImageInfo.imageLayout = VK_IMAGE_LAYOUT_GENERAL;
-    imageViewRT.descriptorImageInfo = descriptorOutputImageInfo;
-    
+{   
     _raytracingDescriptorSet->UpdateImage(rtSetHandle, "targetImage", &imageViewRT, 1);
     _raytracingDescriptorSet->UpdateSetInstance(rtSetHandle);
 }

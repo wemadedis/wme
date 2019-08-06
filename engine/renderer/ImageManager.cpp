@@ -106,7 +106,7 @@ TextureInfo ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigne
 
     _deviceMemoryManager->DestroyBuffer(stagingBuffer);
     VkImageView imageView = CreateImageView(texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
-    return {_stdSampler, {texture, imageView}};
+    return {_stdSampler, {texture, imageView, _stdSampler, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL}};
 }
 
 VkSampler ImageManager::CreateSampler() 
@@ -140,13 +140,13 @@ Image ImageManager::CreateDepthImage (uint32_t width, uint32_t height) {
     ImageMemory imgInfo = _deviceMemoryManager->CreateImage(width, height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
     VkImageView imgview = CreateImageView(imgInfo, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
     TransitionImageLayout(imgInfo, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
-    return {imgInfo, imgview};
+    return {imgInfo, imgview, VK_NULL_HANDLE, VK_IMAGE_LAYOUT_GENERAL};
 }
 
 void ImageManager::DestroyImage(Image &image)
 {
-    vkDestroyImageView(_instance->GetDevice(), image.imageView, nullptr);
-    _deviceMemoryManager->DestroyImage(image.ImageMemory);
+    vkDestroyImageView(_instance->GetDevice(), image.View, nullptr);
+    _deviceMemoryManager->DestroyImage(image.Memory);
 }
 
 ImageManager::ImageManager(Instance *instance, CommandBufferManager *cmdbManager, DeviceMemoryManager *memoryManager)

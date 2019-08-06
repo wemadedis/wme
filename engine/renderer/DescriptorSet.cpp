@@ -345,7 +345,9 @@ void DescriptorSet::UpdateImage(SetInstanceHandle handle, std::string descriptor
 
     for(uint32_t imageIndex = 0; imageIndex < imageCount; imageIndex++)
     {
-        descriptorImageInfos[imageIndex] = imageInfos[imageIndex].descriptorImageInfo;
+        descriptorImageInfos[imageIndex].imageLayout = imageInfos[imageIndex].Layout;
+        descriptorImageInfos[imageIndex].imageView = imageInfos[imageIndex].View;
+        descriptorImageInfos[imageIndex].sampler = imageInfos[imageIndex].Sampler;
     }
     _instances[handle].SetWrites[descriptorInfo.DescriptorIndex].pImageInfo = descriptorImageInfos;
 }

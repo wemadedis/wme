@@ -133,10 +133,10 @@ void SwapChain::CreateSwapChainImages()
     for(uint32_t imageIndex = 0; imageIndex < _swapChainImageCount; imageIndex++)
     {
         Image &img = _swapChainImages[imageIndex];
-        img.ImageMemory.image = vkSwapChainImages[imageIndex];
-        img.ImageMemory.width = _framebufferWidth;
-        img.ImageMemory.height = _framebufferHeight;
-        img.imageView = CreateSwapChainImageView(img.ImageMemory.image);
+        img.Memory.image = vkSwapChainImages[imageIndex];
+        img.Memory.width = _framebufferWidth;
+        img.Memory.height = _framebufferHeight;
+        img.View = CreateSwapChainImageView(img.Memory.image);
     }
 }
 
@@ -212,7 +212,7 @@ SwapChain::~SwapChain()
     for(size_t imageIndex = 0; imageIndex < _swapChainImageCount; imageIndex++)
     {
         vkDestroyFramebuffer(_instance->GetDevice(), _swapChainFramebuffers[imageIndex], nullptr);
-        vkDestroyImageView(_instance->GetDevice(), _swapChainImages[imageIndex].imageView, nullptr);
+        vkDestroyImageView(_instance->GetDevice(), _swapChainImages[imageIndex].View, nullptr);
         _imageManager->DestroyImage(_depthImages[imageIndex]);
     }
     vkDestroySwapchainKHR(_instance->GetDevice(), _swapChain, nullptr);
@@ -245,8 +245,8 @@ void SwapChain::CreateFramebuffers(RenderPass *renderPass, ImageManager *imageMa
     for (size_t fbIndex = 0; fbIndex < _swapChainImageCount; fbIndex++)
     {
         std::array<VkImageView, 2> attachments = {
-            _swapChainImages[fbIndex].imageView,
-            _depthImages[fbIndex].imageView
+            _swapChainImages[fbIndex].View,
+            _depthImages[fbIndex].View
         };
 
         VkFramebufferCreateInfo framebufferInfo = {};

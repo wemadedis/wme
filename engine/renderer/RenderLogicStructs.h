@@ -65,17 +65,22 @@ struct Image
 	/**
 	 * @brief Image memory allocation information.
 	 */
-    ImageMemory ImageMemory;
+    ImageMemory Memory;
 
 	/**
 	 * @brief The Vulkan image view handle.
 	 */
-    VkImageView imageView;
+    VkImageView View;
 
 	/**
-	 * @brief The Vulkan descriptor image info struct.
+	 * @brief The Vulkan sampler handle.
 	 */
-	VkDescriptorImageInfo descriptorImageInfo;
+	VkSampler Sampler;
+
+	/**
+	 * @brief The Vulkan image image layout.
+	 */
+	VkImageLayout Layout = VK_IMAGE_LAYOUT_GENERAL;
 };
 
 /**
