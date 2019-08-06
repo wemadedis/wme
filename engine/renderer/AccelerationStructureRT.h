@@ -69,12 +69,12 @@ class AccelerationStructure
     /**
      * @brief Allocation information on the scratch buffer.
      */
-    BufferInformation _scratchBuffer; 
+    Buffer _scratchBuffer; 
 
     /**
      * @brief Allocation information on the instance buffer.
      */
-    BufferInformation _instanceBuffer; 
+    Buffer _instanceBuffer; 
 
     /**
      * @brief Descriptor write for the acceleration structure. WARNING: Allows descriptor count of 1 only (cannot have arrays of acceleration structures in the shader)

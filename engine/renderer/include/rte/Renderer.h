@@ -137,7 +137,7 @@ private:
     /**
      * @brief Buffer information for the global uniform.
      */
-    BufferInformation _globalUniformBuffer;
+    Buffer _globalUniformBuffer;
 
     /**
      * @brief Vector of all mesh rendering data uploaded through the UploadMesh function. 
@@ -189,11 +189,11 @@ private:
     /**
      * @brief Shader binding table used for ray tracing. Not allocated if ray tracing is disabled.
      */
-    BufferInformation _shaderBindingTable;
+    Buffer _shaderBindingTable;
     /**
      * @brief Buffer containing all data about instances created for the acceleration structure. Not allocated if ray tracing is disabled.
      */
-    BufferInformation _instanceBuffer;
+    Buffer _instanceBuffer;
 
     /**
      * @brief GUI module used to draw the graphical interface, if set by the user.
@@ -206,7 +206,7 @@ private:
     LineDebugDrawModule *_lineModule = nullptr;
 
     GraphicsPipeline *_linePipeline = nullptr;
-    BufferInformation _lineBuffer = {};
+    Buffer _lineBuffer = {};
 
     /**
      * @brief Called at renderer creation, instantiating the necessary structure before the user can upload rendering data.

@@ -37,7 +37,7 @@ void DescriptorManager::CreateDescriptorPools(SwapChain *swapChain, std::vector<
     pool_info.poolSizeCount = (uint32_t)11;
     pool_info.pPoolSizes = pool_sizes;
     VkResult code = vkCreateDescriptorPool(_instance->GetDevice(), &pool_info, nullptr, &_pool);
-    Utilities::CheckVkResult(code, "Failed to create descriptor pool!");
+    Utilities::CheckVkResult(code, "Failed to create a descriptor pool!");
 }
 
 void DescriptorManager::CreateDescriptorSetLayout()
@@ -64,11 +64,11 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
     //std::cout << _raytracingDescriptorSet->GetBindingsInformation() << std::endl;
 }
 
-void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, Image imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures)
+void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, Image imageViewRT, Buffer &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, Buffer &instanceBuffer, std::vector<TextureInfo> textures)
 {
-    std::vector<BufferInformation> vertBuffers = {};
-    std::vector<BufferInformation> indBuffers = {};
-    std::vector<BufferInformation> instBuffers = {};
+    std::vector<Buffer> vertBuffers = {};
+    std::vector<Buffer> indBuffers = {};
+    std::vector<Buffer> instBuffers = {};
     std::vector<Image> textureImages = {};
 
     //DescriptorSet::CreateBufferView(_instance, instanceBuffer, VK_FORMAT_R32_UINT);
@@ -113,7 +113,7 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, Image i
 
 }
 
-void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData)
+void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, Buffer &globalUniformData)
 {
     for (size_t i = 0; i < instances.size(); i++) {
         VkDescriptorImageInfo imageInfo = {};

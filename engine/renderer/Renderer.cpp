@@ -73,7 +73,7 @@ MeshHandle Renderer::UploadMesh(Mesh &mesh)
     }
 
     //Indices
-    BufferInformation stagingBuffer = {};
+    Buffer stagingBuffer = {};
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, bufferSize, stagingBuffer);
     _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, (void *)mesh.Indices.data());
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_INDEX_BUFFER_BIT | VK_BUFFER_USAGE_UNIFORM_TEXEL_BUFFER_BIT, MemProps::DEVICE, bufferSize, info.indexBuffer);

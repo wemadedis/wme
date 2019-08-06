@@ -73,7 +73,7 @@ private:
     void CreateDescriptorPool();
     void CreateSetAllocationInfo();
     VkWriteDescriptorSet GetDescriptorWrite(std::string descriptorName, VkDescriptorSet set);
-    void CreateBufferView(SetInstanceHandle handle, std::string descriptorName , BufferInformation &bufferInfo);
+    void CreateBufferView(SetInstanceHandle handle, std::string descriptorName , Buffer &bufferInfo);
 public:
     class DescriptorSetBuilder
     {
@@ -126,7 +126,7 @@ public:
     /**
 	 * @brief Updates a uniform buffer. Includes texel buffers with a buffer view specified.
 	 */
-    void UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, BufferInformation *bufferInfos, uint32_t bufferCount);
+    void UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, Buffer *bufferInfos, uint32_t bufferCount);
     void UpdateImage(SetInstanceHandle handle, std::string descriptorName, Image *imageInfos, uint32_t imageCount);
     void UpdateAccelerationStructure(SetInstanceHandle handle, std::string descriptorName, AccelerationStructure* as);
 

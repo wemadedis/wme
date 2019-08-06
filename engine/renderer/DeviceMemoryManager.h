@@ -17,7 +17,7 @@ enum class MemProps { HOST, DEVICE };
  * @brief Struct describing a buffer allocation.
  * 
  */
-struct BufferInformation {
+struct Buffer {
 	VkBufferUsageFlags bufferUsage;
 	MemProps memoryProperties;
 	size_t size;
@@ -105,7 +105,7 @@ public:
 	 * @param size The size of the buffer, in bytes.
 	 * @param bufferInfo The buffer information object used to store the allocation information.
 	 */
-	void CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, BufferInformation& bufferInfo);
+	void CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, Buffer& bufferInfo);
 
 	/**
 	 * @brief Copies data to a buffer
@@ -114,7 +114,7 @@ public:
 	 * @param data Pointer to the data to be copied
 	 * @param size The size of the data to be copied. If 0, uses the allocation information size.
 	 */
-	void CopyDataToBuffer(BufferInformation& bufferInfo, void* data, uint64_t size = 0);
+	void CopyDataToBuffer(Buffer& bufferInfo, void* data, uint64_t size = 0);
 
 	/**
 	 * @brief Modifies data in a buffer in the host space.
@@ -124,7 +124,7 @@ public:
 	 * @param Mutator Function modifying the data based on the specified data type.
 	 */
 	template<typename T>
-	void ModifyBufferData(BufferInformation& bufferInfo, std::function<void(T*)> Mutator)
+	void ModifyBufferData(Buffer& bufferInfo, std::function<void(T*)> Mutator)
 	{
 		void* mapping;// = malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
 		VmaAllocation& allocation = _buffers[bufferInfo.buffer];
@@ -143,14 +143,14 @@ public:
 	 * @param commandPool Vulkan handle to a command pool.
 	 * @param submitQueue Queue to submit the copy command to.
 	 */
-	void CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue);
+	void CopyBuffer(Buffer& srcBuffer, Buffer& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue);
 
 	/**
 	 * @brief Destroys a buffer and deallocates the related memory.
 	 * 
 	 * @param bufferInfo The buffer allocation information.
 	 */
-	void DestroyBuffer(BufferInformation& bufferInfo);
+	void DestroyBuffer(Buffer& bufferInfo);
 
 	/*
 	Create an image allocated on the device.
@@ -175,7 +175,7 @@ public:
 	 * @param dstImage Allocation information on the destination image.
 	 * @param commandBuffer Command buffer used for the copy command.
 	 */
-	void CopyBufferToImage(BufferInformation &srcBuffer, ImageMemory &dstImage);
+	void CopyBufferToImage(Buffer &srcBuffer, ImageMemory &dstImage);
 
 
 	/**
@@ -208,6 +208,6 @@ public:
 	 * @param top The top level acceleration structure.
 	 * @param buffer The buffer information object used to store the allocation information.
 	 */
-	void CreateScratchBuffer(std::vector<VkAccelerationStructureNV> &bot, VkAccelerationStructureNV &top, BufferInformation &buffer);
+	void CreateScratchBuffer(std::vector<VkAccelerationStructureNV> &bot, VkAccelerationStructureNV &top, Buffer &buffer);
 };
 };

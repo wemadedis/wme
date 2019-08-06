@@ -264,12 +264,12 @@ struct MeshInfo
 	/**
 	 * @brief Vertex buffer memory allocation information.
 	 */
-	BufferInformation vertexBuffer  = {};
+	Buffer vertexBuffer  = {};
 
 	/**
 	 * @brief Index buffer memory allocation information.
 	 */
-	BufferInformation indexBuffer = {};
+	Buffer indexBuffer = {};
 };
 
 /**
@@ -290,7 +290,7 @@ struct MeshInstance
 	/**
 	 * @brief The instance uniform buffer memory allocation information.
 	 */
-	BufferInformation uniformBuffer = {};
+	Buffer uniformBuffer = {};
 };
 
 /**

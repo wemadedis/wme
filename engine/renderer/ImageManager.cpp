@@ -91,7 +91,7 @@ void ImageManager::TransitionImageLayout(ImageMemory &imageInfo, VkFormat format
 }
 
 TextureInfo ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t size){
-    BufferInformation stagingBuffer;
+    Buffer stagingBuffer;
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, size, stagingBuffer);
     _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, pixels);
     

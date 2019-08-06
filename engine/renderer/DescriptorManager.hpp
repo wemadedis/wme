@@ -60,7 +60,7 @@ public:
     /**
      * @brief Creates the descriptor set (ray tracing).
      */
-    void CreateDescriptorSetRT(AccelerationStructure *AS, Image imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures);
+    void CreateDescriptorSetRT(AccelerationStructure *AS, Image imageViewRT, Buffer &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, Buffer &instanceBuffer, std::vector<TextureInfo> textures);
     
     /**
      * @brief Creates the descriptor sets (rasterization)
@@ -68,7 +68,7 @@ public:
      * @param textures Vector of texture infos.
      * @param globalUniformData Global uniform buffer memory allocation information.
      */
-    void CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, BufferInformation &globalUniformData);
+    void CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<TextureInfo> textures, Buffer &globalUniformData);
 
     /**
      * @brief Updated the current framebuffer image view for ray tracing.

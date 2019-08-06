@@ -39,7 +39,7 @@ DeviceMemoryManager::DeviceMemoryManager(Instance *instance, CommandBufferManage
     vkGetPhysicalDeviceMemoryProperties(_instance->GetPhysicalDevice(), &_physicalDeviceMemoryProperties);
 }
 
-void DeviceMemoryManager::CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, BufferInformation& bufferInformation)
+void DeviceMemoryManager::CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps props, size_t size, Buffer& bufferInformation)
 {
     VkBufferCreateInfo bufferInfo = {};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
@@ -74,7 +74,7 @@ void DeviceMemoryManager::CreateBuffer(VkBufferUsageFlags bufferUsage, MemProps 
     bufferInformation.buffer = buffer;
 }
 
-void DeviceMemoryManager::CopyDataToBuffer(BufferInformation& bufferInfo, void* data, uint64_t size){
+void DeviceMemoryManager::CopyDataToBuffer(Buffer& bufferInfo, void* data, uint64_t size){
 	void* mapping;//= malloc(bufferInfo.size); //<--------------------------------------- TRIED TO FREE IT AFTER UNMAP, GOT EXCEPTION (IS UNMAP FREEING IT IMPLICITLY??)
     VmaAllocation& allocation = _buffers[bufferInfo.buffer];
     vmaMapMemory(*_allocator, allocation, &mapping); 
@@ -89,7 +89,7 @@ void DeviceMemoryManager::CopyDataToBuffer(BufferInformation& bufferInfo, void* 
     vmaUnmapMemory(*_allocator, allocation);
 }
 
-void DeviceMemoryManager::CopyBuffer(BufferInformation& srcBuffer, BufferInformation& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue) {
+void DeviceMemoryManager::CopyBuffer(Buffer& srcBuffer, Buffer& dstBuffer, size_t size, VkCommandPool commandPool, VkQueue submitQueue) {
 		VkCommandBufferAllocateInfo allocInfo = {};
 		allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
 		allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
@@ -127,7 +127,7 @@ void DeviceMemoryManager::CopyBuffer(BufferInformation& srcBuffer, BufferInforma
 		vkFreeCommandBuffers(_instance->GetDevice(), commandPool, 1, &commandBuffer);
 	}
 
-void DeviceMemoryManager::DestroyBuffer(BufferInformation& bufferInfo)
+void DeviceMemoryManager::DestroyBuffer(Buffer& bufferInfo)
 {
     VmaAllocation allocation = _buffers[bufferInfo.buffer];
     vmaDestroyBuffer(*_allocator, bufferInfo.buffer, allocation);
@@ -169,7 +169,7 @@ ImageMemory DeviceMemoryManager::CreateImage(uint32_t width, uint32_t height, Vk
     return imgInfo;
 }
 
-void DeviceMemoryManager::CopyBufferToImage(BufferInformation &srcBuffer, ImageMemory &dstImage) {
+void DeviceMemoryManager::CopyBufferToImage(Buffer &srcBuffer, ImageMemory &dstImage) {
     //Specify which part of the buffer will be copied to which part of the image
     VkBufferImageCopy region = {};
     region.bufferOffset = 0;
@@ -242,7 +242,7 @@ void DeviceMemoryManager::AllocateAccelerationStructureMemory(VkAccelerationStru
     _accelerationStructures.insert(pair<VkAccelerationStructureNV, VkDeviceMemory>(AS, memory));
 }
 
-void DeviceMemoryManager::CreateScratchBuffer(std::vector<VkAccelerationStructureNV> &bot, VkAccelerationStructureNV &top, BufferInformation &buffer)
+void DeviceMemoryManager::CreateScratchBuffer(std::vector<VkAccelerationStructureNV> &bot, VkAccelerationStructureNV &top, Buffer &buffer)
 {
     auto GetScratchBufferSize = [&](VkAccelerationStructureNV handle)
     {

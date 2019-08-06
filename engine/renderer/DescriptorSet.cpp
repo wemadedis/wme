@@ -304,7 +304,7 @@ std::vector<VkDescriptorSet> DescriptorSet::GetVkDescriptorSets()
     return sets;
 }
 
-void DescriptorSet::UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, BufferInformation *bufferInfos, uint32_t bufferCount)
+void DescriptorSet::UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, Buffer *bufferInfos, uint32_t bufferCount)
 {
     auto descriptorInfo = _bindingMap[descriptorName];
     VkDescriptorBufferInfo* descriptorBufferInfos = nullptr;
@@ -362,7 +362,7 @@ void DescriptorSet::UpdateSetInstance(SetInstanceHandle handle)
     vkUpdateDescriptorSets(_instance->GetDevice(), _descriptorsCount, _instances[handle].SetWrites.data(), 0, nullptr);
 }
 
-void DescriptorSet::CreateBufferView(SetInstanceHandle handle, std::string descriptorName , BufferInformation &bufferInfo)
+void DescriptorSet::CreateBufferView(SetInstanceHandle handle, std::string descriptorName , Buffer &bufferInfo)
 {
     VkBufferViewCreateInfo bufferViewInfo;
     bufferViewInfo.sType = VK_STRUCTURE_TYPE_BUFFER_VIEW_CREATE_INFO;
