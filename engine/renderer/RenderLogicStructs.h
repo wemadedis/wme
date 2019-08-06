@@ -60,12 +60,12 @@ struct ShaderInfo
 /**
  * @brief Struct containing image information for rendering.
  */ 
-struct ImageInfo
+struct Image
 {
 	/**
 	 * @brief Image memory allocation information.
 	 */
-    ImageInformation imageInfo;
+    ImageMemory ImageMemory;
 
 	/**
 	 * @brief The Vulkan image view handle.
@@ -90,7 +90,7 @@ struct TextureInfo
 	/**
 	 * @brief Information about the texture image.
 	 */
-	ImageInfo image;
+	Image image;
 };
 
 /**

@@ -28,7 +28,7 @@ struct BufferInformation {
  * @brief Struct describing an image allocation.
  * 
  */
-struct ImageInformation {
+struct ImageMemory {
 	MemProps memoryProperties;
 	uint32_t width;
 	uint32_t height;
@@ -164,9 +164,9 @@ public:
 	 * @param format The format of the image.
 	 * @param tiling The tiling arrangement of the image data.
 	 * @param usage  The usage of the image.
-	 * @return ImageInformation The image information object used to store the allocation information.
+	 * @return ImageMemory The image information object used to store the allocation information.
 	 */
-	ImageInformation CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage);
+	ImageMemory CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage);
 
 	/**
 	 * @brief Copies data from a buffer to an image.
@@ -175,7 +175,7 @@ public:
 	 * @param dstImage Allocation information on the destination image.
 	 * @param commandBuffer Command buffer used for the copy command.
 	 */
-	void CopyBufferToImage(BufferInformation &srcBuffer, ImageInformation &dstImage);
+	void CopyBufferToImage(BufferInformation &srcBuffer, ImageMemory &dstImage);
 
 
 	/**
@@ -183,7 +183,7 @@ public:
 	 * 
 	 * @param imageInfo The image information object.
 	 */
-	void DestroyImage(ImageInformation& imageInfo);
+	void DestroyImage(ImageMemory& imageInfo);
 
 	/**
 	 * @brief Finds the memory type based on a memory requirement and properies.

@@ -38,7 +38,7 @@ public:
      * @param aspectFlags Mask of image aspect flag bits.
      * @return Returns the an image view with the requested properties.
      */
-    VkImageView CreateImageView(ImageInformation &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags);
+    VkImageView CreateImageView(ImageMemory &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags);
 
     /**
      * @brief Transitions the layout of an image from its old layout to a new one.
@@ -47,7 +47,7 @@ public:
      * @param oldLayout The old image layout
      * @param newLayout The new image layout
      */
-    void TransitionImageLayout(ImageInformation &imageInfo, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+    void TransitionImageLayout(ImageMemory &imageInfo, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
     
     /**
      * @brief Uploads texture image data to the GPU and creates a texture info.
@@ -70,13 +70,13 @@ public:
      * @param width The width of the depth image to be created.
      * @param height The height of the depth image to be created.
      */
-    ImageInfo CreateDepthImage(uint32_t width, uint32_t height);
+    Image CreateDepthImage(uint32_t width, uint32_t height);
 
     /**
      * @brief Deallocates the memory of the image and deletes the image view.
-     * @param image The ImageInfo object containing a valid image and an image view.
+     * @param image The Image object containing a valid image and an image view.
      */
-    void DestroyImage(ImageInfo &image);
+    void DestroyImage(Image &image);
 
     /**
      * @brief Default constructor of the Image Manager.

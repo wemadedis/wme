@@ -3,7 +3,7 @@
 namespace RTE::Rendering
 {
 
-VkImageView ImageManager::CreateImageView(ImageInformation &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags)
+VkImageView ImageManager::CreateImageView(ImageMemory &imageInfo, VkFormat format, VkImageAspectFlags aspectFlags)
 {
     VkImageViewCreateInfo viewInfo = {};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -24,7 +24,7 @@ VkImageView ImageManager::CreateImageView(ImageInformation &imageInfo, VkFormat 
     return imageView;
 }
 
-void ImageManager::TransitionImageLayout(ImageInformation &imageInfo, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
+void ImageManager::TransitionImageLayout(ImageMemory &imageInfo, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout)
 {
     VkImageMemoryBarrier barrier = {};
     barrier.sType = VK_STRUCTURE_TYPE_IMAGE_MEMORY_BARRIER;
@@ -95,7 +95,7 @@ TextureInfo ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigne
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, size, stagingBuffer);
     _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, pixels);
     
-    ImageInformation texture = _deviceMemoryManager->CreateImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT); 
+    ImageMemory texture = _deviceMemoryManager->CreateImage(width, height, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_TRANSFER_DST_BIT | VK_IMAGE_USAGE_SAMPLED_BIT); 
     
     TransitionImageLayout(texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL);
 
@@ -135,19 +135,18 @@ VkSampler ImageManager::CreateSampler()
     return sampler;
 }
 
-
-ImageInfo ImageManager::CreateDepthImage(uint32_t width, uint32_t height) {
+Image ImageManager::CreateDepthImage (uint32_t width, uint32_t height) {
     VkFormat depthFormat = _instance->GetOptimalDepthFormat();
-    ImageInformation imgInfo = _deviceMemoryManager->CreateImage(width, height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
+    ImageMemory imgInfo = _deviceMemoryManager->CreateImage(width, height, depthFormat, VK_IMAGE_TILING_OPTIMAL, VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT);
     VkImageView imgview = CreateImageView(imgInfo, depthFormat, VK_IMAGE_ASPECT_DEPTH_BIT);
     TransitionImageLayout(imgInfo, depthFormat, VK_IMAGE_LAYOUT_UNDEFINED, VK_IMAGE_LAYOUT_DEPTH_STENCIL_ATTACHMENT_OPTIMAL);
     return {imgInfo, imgview};
 }
 
-void ImageManager::DestroyImage(ImageInfo &image)
+void ImageManager::DestroyImage(Image &image)
 {
     vkDestroyImageView(_instance->GetDevice(), image.imageView, nullptr);
-    _deviceMemoryManager->DestroyImage(image.imageInfo);
+    _deviceMemoryManager->DestroyImage(image.ImageMemory);
 }
 
 ImageManager::ImageManager(Instance *instance, CommandBufferManager *cmdbManager, DeviceMemoryManager *memoryManager)

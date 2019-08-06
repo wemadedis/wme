@@ -134,7 +134,7 @@ void DeviceMemoryManager::DestroyBuffer(BufferInformation& bufferInfo)
     _buffers.erase(bufferInfo.buffer);
 }
 
-ImageInformation DeviceMemoryManager::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage){
+ImageMemory DeviceMemoryManager::CreateImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage){
     VkImageCreateInfo createInfo = {};
     createInfo.sType = VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO;
     createInfo.imageType = VK_IMAGE_TYPE_2D;
@@ -155,7 +155,7 @@ ImageInformation DeviceMemoryManager::CreateImage(uint32_t width, uint32_t heigh
 
     VmaAllocationCreateInfo vmaAllocCreateInfo = {};
     vmaAllocCreateInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
-    ImageInformation imgInfo = {};
+    ImageMemory imgInfo = {};
     VmaAllocation vmaAlloc = {};
     VmaAllocationInfo allocInfo = {};
 
@@ -169,7 +169,7 @@ ImageInformation DeviceMemoryManager::CreateImage(uint32_t width, uint32_t heigh
     return imgInfo;
 }
 
-void DeviceMemoryManager::CopyBufferToImage(BufferInformation &srcBuffer, ImageInformation &dstImage) {
+void DeviceMemoryManager::CopyBufferToImage(BufferInformation &srcBuffer, ImageMemory &dstImage) {
     //Specify which part of the buffer will be copied to which part of the image
     VkBufferImageCopy region = {};
     region.bufferOffset = 0;
@@ -199,7 +199,7 @@ void DeviceMemoryManager::CopyBufferToImage(BufferInformation &srcBuffer, ImageI
     _cmdbManager->SubmitCommandBufferInstance(commandBuffer, _instance->GetGraphicsQueue());
 }
 
-void DeviceMemoryManager::DestroyImage(ImageInformation& imageInfo){
+void DeviceMemoryManager::DestroyImage(ImageMemory& imageInfo){
     VmaAllocation allocation = _images[imageInfo.image];
     vmaDestroyImage(*_allocator, imageInfo.image, allocation);
     _images.erase(imageInfo.image);

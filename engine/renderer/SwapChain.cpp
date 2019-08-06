@@ -35,9 +35,14 @@ SwapChain::SwapChainInformation SwapChain::GetSwapChainInformation(VkPhysicalDev
 
 
 //Where are my tuples?
-struct {VkSurfaceFormatKHR _surfaceFormat;
-        VkPresentModeKHR _presentMode;
-        VkExtent2D _extent;} PickOptimalSwapChainProperties(SwapChain::SwapChainInformation &info, int framebufferWidth, int framebufferHeight)
+struct SwapChainProperties
+{
+    VkSurfaceFormatKHR _surfaceFormat;
+    VkPresentModeKHR _presentMode;
+    VkExtent2D _extent;
+};
+
+SwapChainProperties PickOptimalSwapChainProperties(SwapChain::SwapChainInformation &info, int framebufferWidth, int framebufferHeight)
 {
     VkSurfaceFormatKHR optimalFormat;
     VkPresentModeKHR optimalPresentMode;
@@ -125,13 +130,13 @@ void SwapChain::CreateSwapChainImages()
     vkSwapChainImages.resize(_swapChainImageCount);
     vkGetSwapchainImagesKHR(_instance->GetDevice(), _swapChain, &_swapChainImageCount, vkSwapChainImages.data());
 
-    for(int imageIndex = 0; imageIndex < _swapChainImageCount; imageIndex++)
+    for(uint32_t imageIndex = 0; imageIndex < _swapChainImageCount; imageIndex++)
     {
-        ImageInfo &img = _swapChainImages[imageIndex];
-        img.imageInfo.image = vkSwapChainImages[imageIndex];
-        img.imageInfo.width = _framebufferWidth;
-        img.imageInfo.height = _framebufferHeight;
-        img.imageView = CreateSwapChainImageView(img.imageInfo.image);
+        Image &img = _swapChainImages[imageIndex];
+        img.ImageMemory.image = vkSwapChainImages[imageIndex];
+        img.ImageMemory.width = _framebufferWidth;
+        img.ImageMemory.height = _framebufferHeight;
+        img.imageView = CreateSwapChainImageView(img.ImageMemory.image);
     }
 }
 
@@ -273,7 +278,7 @@ VkExtent2D SwapChain::GetSwapChainExtent()
     return _swapChainExtent;
 }
 
-std::vector<ImageInfo> SwapChain::GetSwapChainImages()
+std::vector<Image> SwapChain::GetSwapChainImages()
 {
     return _swapChainImages;
 }

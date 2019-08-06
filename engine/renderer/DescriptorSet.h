@@ -127,7 +127,7 @@ public:
 	 * @brief Updates a uniform buffer. Includes texel buffers with a buffer view specified.
 	 */
     void UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, BufferInformation *bufferInfos, uint32_t bufferCount);
-    void UpdateImage(SetInstanceHandle handle, std::string descriptorName, ImageInfo *imageInfos, uint32_t imageCount);
+    void UpdateImage(SetInstanceHandle handle, std::string descriptorName, Image *imageInfos, uint32_t imageCount);
     void UpdateAccelerationStructure(SetInstanceHandle handle, std::string descriptorName, AccelerationStructure* as);
 
     /**

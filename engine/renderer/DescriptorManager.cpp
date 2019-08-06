@@ -64,12 +64,12 @@ void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t
     //std::cout << _raytracingDescriptorSet->GetBindingsInformation() << std::endl;
 }
 
-void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, ImageInfo imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures)
+void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, Image imageViewRT, BufferInformation &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, BufferInformation &instanceBuffer, std::vector<TextureInfo> textures)
 {
     std::vector<BufferInformation> vertBuffers = {};
     std::vector<BufferInformation> indBuffers = {};
     std::vector<BufferInformation> instBuffers = {};
-    std::vector<ImageInfo> textureImages = {};
+    std::vector<Image> textureImages = {};
 
     //DescriptorSet::CreateBufferView(_instance, instanceBuffer, VK_FORMAT_R32_UINT);
 
@@ -133,7 +133,7 @@ void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instance
 }
 
 
-void DescriptorManager::UpdateRTTargetImage(ImageInfo imageViewRT)
+void DescriptorManager::UpdateRTTargetImage(Image imageViewRT)
 {
     VkDescriptorImageInfo descriptorOutputImageInfo = {};
     descriptorOutputImageInfo.sampler = nullptr;

@@ -50,7 +50,7 @@ private:
 	/**
 	 * @brief The swap chain images.
 	 */
-	std::vector<ImageInfo> _swapChainImages;
+	std::vector<Image> _swapChainImages;
 
 	/**
 	 * @brief Format of the swap chain images.
@@ -70,7 +70,7 @@ private:
 	/**
 	 * @brief The depth images used for the depth buffers.
 	 */
-	std::vector<ImageInfo> _depthImages;
+	std::vector<Image> _depthImages;
 
 	/**
 	 * @brief Creates the depth images used by the frame buffers.
@@ -164,7 +164,7 @@ public:
 	 * @brief Gets the swap chain images.
 	 * @return Returns a vector of swap chain images.
 	 */
-	std::vector<ImageInfo> GetSwapChainImages();
+	std::vector<Image> GetSwapChainImages();
 
 	/**
 	 * @brief Gets the swap chain image count.

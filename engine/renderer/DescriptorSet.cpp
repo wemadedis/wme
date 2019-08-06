@@ -338,7 +338,7 @@ void DescriptorSet::UpdateUniformBuffer(SetInstanceHandle handle, std::string de
     _instances[handle].SetWrites[descriptorInfo.DescriptorIndex].pTexelBufferView = bufferViews;
 }
 
-void DescriptorSet::UpdateImage(SetInstanceHandle handle, std::string descriptorName, ImageInfo *imageInfos, uint32_t imageCount)
+void DescriptorSet::UpdateImage(SetInstanceHandle handle, std::string descriptorName, Image *imageInfos, uint32_t imageCount)
 {
     auto descriptorInfo = _bindingMap[descriptorName];
     VkDescriptorImageInfo* descriptorImageInfos = new VkDescriptorImageInfo[imageCount];
