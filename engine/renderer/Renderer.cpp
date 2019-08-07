@@ -58,6 +58,8 @@ void Renderer::Initialize()
 
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, MemProps::HOST, sizeof(GlobalUniformData), _globalUniformBuffer);
     CreateEmptyTexture();
+    _descriptorManager = new DescriptorManager(_instance);
+    _descriptorManager->CreateDescriptorSetLayout();
 }
 
 MeshHandle Renderer::UploadMesh(Mesh &mesh)
@@ -108,6 +110,7 @@ MeshInstanceHandle Renderer::CreateMeshInstance(MeshHandle mesh)
 
     _deviceMemoryManager->CopyDataToBuffer(instance.uniformBuffer, &meshUniform);
     _meshInstances.push_back(instance);
+    _descriptorManager->CreateDescriptorSet(instance, _textures[instance.texture], _globalUniformBuffer, _meshInstances.size() - 1);
     return (MeshInstanceHandle)_meshInstances.size() - 1;
 }
 
@@ -146,6 +149,7 @@ void Renderer::SetMeshInstanceProperties(MeshInstanceHandle instance, glm::mat4 
         data->Color = mat.Color;
         data->HasTexture = texture != Renderer::EMPTY_TEXTURE;
     });
+    _descriptorManager->UpdateDescriptor(instance, _textures[texture]); // ugly, remove, refactor, whatever
 }
 
 void Renderer::BindMeshToInstance(MeshHandle mesh, MeshInstanceHandle instance)
@@ -414,10 +418,6 @@ Renderer::Renderer(RendererInitInfo info, GUI::GUIModule *guiModule) : Renderer(
 
 void Renderer::Finalize()
 {
-
-    _descriptorManager = new DescriptorManager(_instance);
-    _descriptorManager->CreateDescriptorSetLayout();
-
     auto vertexShader = Utilities::GetStandardVertexShader(_instance->GetDevice());
     auto fragmentShader = Utilities::GetStandardFragmentShader(_instance->GetDevice());
 
@@ -487,7 +487,7 @@ void Renderer::Finalize()
     }
 
     _descriptorManager->CreateDescriptorPools(_swapChain, _meshInstances);
-    _descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
+    //_descriptorManager->CreateDescriptorSets(_meshInstances, _textures, _globalUniformBuffer);
     UploadGlobalUniform();
 
     

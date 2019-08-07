@@ -29,6 +29,8 @@ class DescriptorManager
     DescriptorSet* _rasterizationDescriptorSet;
     DescriptorSet* _raytracingDescriptorSet;
     SetInstanceHandle rtSetHandle;
+
+    std::unordered_map<MeshInstanceHandle, SetInstanceHandle> _rasterizationHandles = {};
 public:
 
     /**
@@ -50,6 +52,17 @@ public:
     void CreateDescriptorSetLayout();
 
     /**
+     * @brief Creates the descriptor sets (rasterization)
+     * @param instances Vector of instances.
+     * @param textures Vector of texture infos.
+     * @param globalUniformData Global uniform buffer memory allocation information.
+     */
+    void CreateDescriptorSet(MeshInstance &instance, Image &texture, Buffer &globalUniformData, MeshInstanceHandle handle);
+
+    void UpdateDescriptor(MeshInstanceHandle instance, Image &texture);
+
+
+    /**
      * @brief Creates the descriptor set layout (ray tracing).
      * @param meshCount The total number of meshes.
      * @instanceCount The total number of instances.
@@ -61,14 +74,6 @@ public:
      * @brief Creates the descriptor set (ray tracing).
      */
     void CreateDescriptorSetRT(AccelerationStructure *AS, Image imageViewRT, Buffer &globalUniform, std::vector<MeshInfo> meshes, std::vector<MeshInstance> instances, Buffer &instanceBuffer, std::vector<Image> textures);
-    
-    /**
-     * @brief Creates the descriptor sets (rasterization)
-     * @param instances Vector of instances.
-     * @param textures Vector of texture infos.
-     * @param globalUniformData Global uniform buffer memory allocation information.
-     */
-    void CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<Image> textures, Buffer &globalUniformData);
 
     /**
      * @brief Updated the current framebuffer image view for ray tracing.

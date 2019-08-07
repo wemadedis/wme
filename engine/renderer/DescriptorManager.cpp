@@ -49,6 +49,28 @@ void DescriptorManager::CreateDescriptorSetLayout()
                                         .Build(_instance, 500);
 }
 
+void DescriptorManager::CreateDescriptorSet(MeshInstance &instance, Image &texture, Buffer &globalUniformData, MeshInstanceHandle handle)
+{
+    auto instanceHandle = _rasterizationDescriptorSet->Allocate();
+    _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "meshUBO", &instance.uniformBuffer, 1);
+    _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "globalUBO", &globalUniformData, 1);
+    _rasterizationDescriptorSet->UpdateImage(instanceHandle, "sampler", &texture, 1);
+    _rasterizationDescriptorSet->UpdateSetInstance(instanceHandle);
+    //_rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "meshUBO", &instances[i].uniformBuffer, 1);
+    //_rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "globalUBO", &globalUniformData, 1);
+    //_rasterizationDescriptorSet->UpdateImage(instanceHandle, "sampler", &textures[instances[i].texture], 1);
+    //_rasterizationDescriptorSet->UpdateSetInstance(instanceHandle);
+    _rasterizationHandles.insert({handle, instanceHandle});
+}
+
+void DescriptorManager::UpdateDescriptor(MeshInstanceHandle instance, Image &texture)
+{
+    auto handle = _rasterizationHandles[instance];
+    _rasterizationDescriptorSet->UpdateImage(handle, "sampler", &texture, 1);
+    _rasterizationDescriptorSet->UpdateSetInstance(handle);
+
+}
+
 void DescriptorManager::CreateDescriptorSetLayoutRT(uint32_t meshCount, uint32_t instanceCount, uint32_t textureCount)
 {
     _raytracingDescriptorSet = DescriptorSet::Create()
@@ -81,9 +103,6 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, Image i
         instBuffers.push_back(instance.uniformBuffer);
     }
 
-    
-    imageViewRT.Layout = VK_IMAGE_LAYOUT_GENERAL;
-
     rtSetHandle = _raytracingDescriptorSet->Allocate();
 
     _raytracingDescriptorSet->UpdateAccelerationStructure(rtSetHandle, "accelerationStructure", AS);
@@ -98,18 +117,6 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, Image i
     std::cout << _raytracingDescriptorSet->GetBindingsInformation() << std::endl;
 
 }
-
-void DescriptorManager::CreateDescriptorSets(std::vector<MeshInstance> &instances, std::vector<Image> textures, Buffer &globalUniformData)
-{
-    for (size_t i = 0; i < instances.size(); i++) {
-        auto instanceHandle = _rasterizationDescriptorSet->Allocate();
-        _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "meshUBO", &instances[i].uniformBuffer, 1);
-        _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "globalUBO", &globalUniformData, 1);
-        _rasterizationDescriptorSet->UpdateImage(instanceHandle, "sampler", &textures[instances[i].texture], 1);
-        _rasterizationDescriptorSet->UpdateSetInstance(instanceHandle);
-    }
-}
-
 
 void DescriptorManager::UpdateRTTargetImage(Image imageViewRT)
 {   

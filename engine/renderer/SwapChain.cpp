@@ -132,6 +132,7 @@ void SwapChain::CreateSwapChainImages()
         img.Memory.image = vkSwapChainImages[imageIndex];
         img.Memory.width = _framebufferWidth;
         img.Memory.height = _framebufferHeight;
+        img.Layout = VK_IMAGE_LAYOUT_GENERAL;
         CreateSwapChainImageView(img);
     }
 }
