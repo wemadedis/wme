@@ -102,10 +102,10 @@ SwapChainProperties PickOptimalSwapChainProperties(SwapChain::SwapChainInformati
     return {optimalFormat, optimalPresentMode, optimalExtent};
 }
 
-VkImageView SwapChain::CreateSwapChainImageView(VkImage image) {
+void SwapChain::CreateSwapChainImageView(Image &image) {
     VkImageViewCreateInfo viewInfo = {};
     viewInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
-    viewInfo.image = image;
+    viewInfo.image = image.Memory.image;
     viewInfo.viewType = VK_IMAGE_VIEW_TYPE_2D;
     viewInfo.format = _swapChainImageFormat;
     viewInfo.subresourceRange.aspectMask = VK_IMAGE_ASPECT_COLOR_BIT;
@@ -114,12 +114,8 @@ VkImageView SwapChain::CreateSwapChainImageView(VkImage image) {
     viewInfo.subresourceRange.baseArrayLayer = 0;
     viewInfo.subresourceRange.layerCount = 1;
 
-    VkImageView imageView;
-    if (vkCreateImageView(_instance->GetDevice(), &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create texture image view!");
-    }
-
-    return imageView;
+    VkResult code = vkCreateImageView(_instance->GetDevice(), &viewInfo, nullptr, &image.View);
+    Utilities::CheckVkResult(code, "Failed to create a swap chain image view!");
 }
 
 void SwapChain::CreateSwapChainImages()
@@ -136,7 +132,7 @@ void SwapChain::CreateSwapChainImages()
         img.Memory.image = vkSwapChainImages[imageIndex];
         img.Memory.width = _framebufferWidth;
         img.Memory.height = _framebufferHeight;
-        img.View = CreateSwapChainImageView(img.Memory.image);
+        CreateSwapChainImageView(img);
     }
 }
 

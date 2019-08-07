@@ -90,7 +90,7 @@ void ImageManager::TransitionImageLayout(ImageMemory &imageInfo, VkFormat format
     _cmdbManager->SubmitCommandBufferInstance(commandBuffer, _instance->GetGraphicsQueue());
 }
 
-TextureInfo ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t size){
+Image ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t size){
     Buffer stagingBuffer;
     _deviceMemoryManager->CreateBuffer(VK_BUFFER_USAGE_TRANSFER_SRC_BIT, MemProps::HOST, size, stagingBuffer);
     _deviceMemoryManager->CopyDataToBuffer(stagingBuffer, pixels);
@@ -106,7 +106,7 @@ TextureInfo ImageManager::CreateTexture(uint32_t width, uint32_t height, unsigne
 
     _deviceMemoryManager->DestroyBuffer(stagingBuffer);
     VkImageView imageView = CreateImageView(texture, VK_FORMAT_R8G8B8A8_UNORM, VK_IMAGE_ASPECT_COLOR_BIT);
-    return {_stdSampler, {texture, imageView, _stdSampler, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL}};
+    return {texture, imageView, _stdSampler, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL};
 }
 
 VkSampler ImageManager::CreateSampler() 

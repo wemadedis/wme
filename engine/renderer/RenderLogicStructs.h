@@ -84,21 +84,6 @@ struct Image
 };
 
 /**
- * @brief Struct containing texture information for rendering.
- */
-struct TextureInfo
-{
-	/**
-	 * @brief Vulkan sampler specifying how to sample the texture.
-	 */
-	VkSampler sampler;
-	/**
-	 * @brief Information about the texture image.
-	 */
-	Image image;
-};
-
-/**
  * @brief Struct containing information of a mesh instance.
  */
 struct MeshInstanceUniformData

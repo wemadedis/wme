@@ -46,7 +46,6 @@ enum class RenderMode
 //Settings related to things such as resolution, background colour, etc. (dunno what more)
 
 struct MeshInfo;
-struct TextureInfo;
 
 /**
  * @brief Struct encapsulating the necessary data needed by the renderer to initialize.
@@ -146,7 +145,7 @@ private:
     /**
      * @brief Vector of all texture rendering data uploaded through the UploadTexture function. 
      */
-    std::vector<TextureInfo> _textures;
+    std::vector<Image> _textures;
     /**
      * @brief Vector of all instance rendering data created through the CreateMeshInstance function. 
      */

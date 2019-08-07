@@ -57,7 +57,7 @@ public:
      * @param size The size of the image, in bytes.
      * @return Returns a TextureInfo struct containing necessary information for rendering.
      */
-    TextureInfo CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t size);
+    Image CreateTexture(uint32_t width, uint32_t height, unsigned char *pixels, uint32_t size);
 
     /**
      * @brief Creates a sampler for texture sampling.

@@ -88,7 +88,7 @@ private:
 	 * @param image The Vulkan handle to an image.
 	 * @return Returns a Vulkan handle to the image view.
 	 */
-	VkImageView CreateSwapChainImageView(VkImage image);
+	void CreateSwapChainImageView(Image &image);
 	
 	/**
 	 * @brief Encapsulates the Vulkan swap chain creation process.
