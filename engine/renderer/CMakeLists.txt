@@ -12,6 +12,9 @@ add_library(renderer
     DescriptorSet.cpp
     AccelerationStructureRT.cpp
     RenderingManager.cpp
+    shader/AbstractSyntax.cpp
+    shader/ShaderGenerator.cpp
+    
 )
 target_include_directories(renderer PUBLIC include .)
 target_link_libraries(renderer PUBLIC rte)

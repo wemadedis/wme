@@ -304,37 +304,55 @@ std::vector<VkDescriptorSet> DescriptorSet::GetVkDescriptorSets()
     return sets;
 }
 
-void DescriptorSet::UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, Buffer *bufferInfos, uint32_t bufferCount)
+std::unordered_map<std::string, DescriptorSet::DescriptorInfo> DescriptorSet::GetBindingMap()
+{
+    return _bindingMap;
+}
+
+void DescriptorSet::UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, Buffer *bufferInfos, uint32_t bufferCount, VkDescriptorBufferInfo* descriptorBufferInfo)
 {
     auto descriptorInfo = _bindingMap[descriptorName];
-    VkDescriptorBufferInfo* descriptorBufferInfos = nullptr;
-    VkBufferView* bufferViews = nullptr;
     
-    if(descriptorInfo.Binding.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER) 
+    if(descriptorInfo.Binding.descriptorType != VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER)
     {
-        descriptorBufferInfos = new VkDescriptorBufferInfo[bufferCount];
-        for(uint32_t bufferIndex = 0; bufferIndex < bufferCount; bufferIndex++)
+        throw RTEException("Calling UpdateUniformBuffer with a wrong descriptor type!");
+    }
+
+
+    VkDescriptorBufferInfo* descriptorBufferInfos = new VkDescriptorBufferInfo[bufferCount];
+    for(uint32_t bufferIndex = 0; bufferIndex < bufferCount; bufferIndex++)
+    {
+        if(descriptorBufferInfo == nullptr) 
         {
             descriptorBufferInfos[bufferIndex].buffer = bufferInfos[bufferIndex].buffer;
             descriptorBufferInfos[bufferIndex].offset = 0;
             descriptorBufferInfos[bufferIndex].range = bufferInfos[bufferIndex].size;
-        }
-        
-    }
-    else if (descriptorInfo.Binding.descriptorType == VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER)
-    {
-        bufferViews = new VkBufferView[bufferCount];
-        for(uint32_t bufferIndex = 0; bufferIndex < bufferCount; bufferIndex++)
+        } else
         {
-            if(_bufferViews.find(bufferInfos[bufferIndex].buffer) == _bufferViews.end())
-            {
-                CreateBufferView(handle, descriptorName, bufferInfos[bufferIndex]);
-            }
-            bufferViews[bufferIndex] = _bufferViews[bufferInfos[bufferIndex].buffer];
+            descriptorBufferInfos[bufferIndex] = *descriptorBufferInfo;
         }
     }
-    
     _instances[handle].SetWrites[descriptorInfo.DescriptorIndex].pBufferInfo = descriptorBufferInfos;
+}
+
+void DescriptorSet::UpdateUniformTexelBuffer(SetInstanceHandle handle, std::string descriptorName, Buffer *bufferInfos, uint32_t bufferCount)
+{
+    auto descriptorInfo = _bindingMap[descriptorName];
+    
+    if (descriptorInfo.Binding.descriptorType != VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER)
+    {
+        throw RTEException("Calling UpdateUniformTexelBuffer with a wrong descriptor type!");
+    }
+
+    VkBufferView* bufferViews = new VkBufferView[bufferCount];
+    for(uint32_t bufferIndex = 0; bufferIndex < bufferCount; bufferIndex++)
+    {
+        if(_bufferViews.find(bufferInfos[bufferIndex].buffer) == _bufferViews.end())
+        {
+            CreateBufferView(handle, descriptorName, bufferInfos[bufferIndex]);
+        }
+        bufferViews[bufferIndex] = _bufferViews[bufferInfos[bufferIndex].buffer];
+    }
     _instances[handle].SetWrites[descriptorInfo.DescriptorIndex].pTexelBufferView = bufferViews;
 }
 

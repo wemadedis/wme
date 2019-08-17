@@ -15,9 +15,15 @@ struct PointLight
     vec4 PositionRadius;
 };
 
-layout(binding = 0) uniform InstanceUniformData {
+struct TransformData
+{
     mat4 ModelMatrix;
     mat4 NormalMatrix;
+    mat4 MVPMatrix;
+};
+
+struct SurfaceData
+{
     float Ambient;
     float Diffuse;
     float Specular;
@@ -27,20 +33,39 @@ layout(binding = 0) uniform InstanceUniformData {
     vec4 Color;
     uint Texture;
     bool HasTexture;
-} InstanceUniform;
+};
 
-layout(binding = 1) uniform GlobalUniformData
+struct CameraData
 {
-    float FieldOfView;
+    float FoV;
     float NearPlane;
     float FarPlane;
     vec4 Position;
-	mat4 ViewMatrix;
-	mat4 ProjectionMatrix;
     vec4 ClearColor;
-    vec4 LightCounts;
+    mat4 ViewMatrix;
+    mat4 ProjectionMatrix;
+};
+
+struct WorldData
+{
     PointLight PointLights[MAX_LIGHTS];
+    uint PointLightCount;
     DirectionalLight DirectionalLights[MAX_LIGHTS];
+    uint DirectionalLightCount;
+};
+
+layout(binding = 0) uniform InstanceData {
+    TransformData Transform;
+    SurfaceData Surface;
+} Instance;
+
+layout(binding = 1) uniform GlobalUniformData
+{
+    CameraData Camera;
+    WorldData World;
+    //vec4 LightCounts;
+    //PointLight PointLights[MAX_LIGHTS];
+    //DirectionalLight DirectionalLights[MAX_LIGHTS];
 } GlobalUniform;
 
 layout(binding = 2) uniform sampler2D texSampler;
@@ -58,14 +83,14 @@ layout(location = 0) out vec4 outColor;
 
 vec4 Phong(vec3 L, vec3 R)
 {
-    float diff = max(0.0f, dot(L,N)) * InstanceUniform.Diffuse;
-    float spec = pow(max(0.0f, dot(-V,R)) * InstanceUniform.Specular, InstanceUniform.Shininess);
+    float diff = max(0.0f, dot(L,N)) * Instance.Surface.Diffuse;
+    float spec = pow(max(0.0f, dot(-V,R)) * Instance.Surface.Specular, Instance.Surface.Shininess);
     return vec4(diff) + vec4(spec);
 }
 
 vec4 CalculatePointLightShading(PointLight light)
 {
-    vec3 lightPosition = vec3(GlobalUniform.ViewMatrix * vec4(light.PositionRadius.xyz,1.0f));
+    vec3 lightPosition = vec3(GlobalUniform.Camera.ViewMatrix * vec4(light.PositionRadius.xyz,1.0f));
     vec3 direction = lightPosition - PositionCameraSpace;
     vec3 L = normalize(direction);
     vec3 R = reflect(-L,N);
@@ -75,25 +100,25 @@ vec4 CalculatePointLightShading(PointLight light)
 
 vec4 CalculateDirectionalLightShading(DirectionalLight light)
 {
-    vec3 L = normalize(vec3(GlobalUniform.ViewMatrix * vec4(light.Direction.xyz,0.0f)));
+    vec3 L = normalize(vec3(GlobalUniform.Camera.ViewMatrix * vec4(light.Direction.xyz,0.0f)));
     vec3 R = normalize(reflect(L, N));
     return Phong(L,R) * light.Color;
 }
 
 vec4 CalculatePerLightShading()
 {
-    vec4 color = InstanceUniform.Color*InstanceUniform.Ambient;
+    vec4 color = Instance.Surface.Color*Instance.Surface.Ambient;
     if(HasTexture != 0)
     {
-        color = texture(texSampler, UV)*InstanceUniform.Ambient;
+        color = texture(texSampler, UV)*Instance.Surface.Ambient;
     }
-    for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
+    for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.World.PointLightCount; pointLightIndex++)
     {
-        color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex]);
+        color += CalculatePointLightShading(GlobalUniform.World.PointLights[pointLightIndex]);
     }
-    for(uint directionalLightIndex = 0; directionalLightIndex < GlobalUniform.LightCounts.x; directionalLightIndex++)
+    for(uint directionalLightIndex = 0; directionalLightIndex < GlobalUniform.World.DirectionalLightCount; directionalLightIndex++)
     {
-        color += CalculateDirectionalLightShading(GlobalUniform.DirectionalLights[directionalLightIndex]);
+        color += CalculateDirectionalLightShading(GlobalUniform.World.DirectionalLights[directionalLightIndex]);
     }
     return color;
 }

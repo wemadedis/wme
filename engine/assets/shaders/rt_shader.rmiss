@@ -31,12 +31,13 @@ layout(binding = 2) uniform GlobalUniformData
     float NearPlane;
     float FarPlane;
     vec4 Position;
+    vec4 ClearColor;
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
-    vec4 ClearColor;
-    vec4 LightCounts;
     PointLight PointLights[MAX_LIGHTS];
+    uint PointLightCount;
     DirectionalLight DirectionalLights[MAX_LIGHTS];
+    uint DirectionalLightCount;
 } GlobalUniform;
 
 layout(location = 0) rayPayloadInNV HitInfo hitValue;

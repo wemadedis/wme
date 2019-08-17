@@ -9,6 +9,7 @@
 #include "DeviceMemoryManager.h"
 #include "RenderLogicStructs.h"
 #include "AccelerationStructureRT.h"
+
 namespace RTE::Rendering
 {
 
@@ -17,7 +18,6 @@ typedef uint32_t SetInstanceHandle;
 class DescriptorSet
 {
 private:
-
     struct DescriptorInfo
     {
         VkDescriptorSetLayoutBinding Binding;
@@ -122,11 +122,13 @@ public:
     VkPipelineLayout GetPipelineLayout();
     SetInstanceHandle Allocate();
     std::vector<VkDescriptorSet> GetVkDescriptorSets();
-    
+    //TODO: Only used by ShaderGenerator, try to declare it a friend class instead!
+    std::unordered_map<std::string, DescriptorInfo> GetBindingMap();
     /**
 	 * @brief Updates a uniform buffer. Includes texel buffers with a buffer view specified.
 	 */
-    void UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, Buffer *bufferInfos, uint32_t bufferCount);
+    void UpdateUniformBuffer(SetInstanceHandle handle, std::string descriptorName, Buffer *bufferInfos, uint32_t bufferCount, VkDescriptorBufferInfo* descriptorBufferInfo = nullptr);
+    void UpdateUniformTexelBuffer(SetInstanceHandle handle, std::string descriptorName, Buffer *bufferInfos, uint32_t bufferCount);
     void UpdateImage(SetInstanceHandle handle, std::string descriptorName, Image *imageInfos, uint32_t imageCount);
     void UpdateAccelerationStructure(SetInstanceHandle handle, std::string descriptorName, AccelerationStructure* as);
 

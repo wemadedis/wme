@@ -43,7 +43,8 @@ void DescriptorManager::CreateDescriptorPools(SwapChain *swapChain, std::vector<
 void DescriptorManager::CreateDescriptorSetLayout()
 {
     _rasterizationDescriptorSet = DescriptorSet::Create()
-                                        .WithUniformBuffer("meshUBO", 1, VK_SHADER_STAGE_VERTEX_BIT |VK_SHADER_STAGE_FRAGMENT_BIT)
+                                        .WithUniformBuffer("Instance", 1, VK_SHADER_STAGE_VERTEX_BIT |VK_SHADER_STAGE_FRAGMENT_BIT)
+                                        //.WithUniformBuffer("Surface", 1, VK_SHADER_STAGE_VERTEX_BIT |VK_SHADER_STAGE_FRAGMENT_BIT)
                                         .WithUniformBuffer("globalUBO", 1, VK_SHADER_STAGE_VERTEX_BIT |VK_SHADER_STAGE_FRAGMENT_BIT)
                                         .WithCombinedImageSampler("sampler", 1, VK_SHADER_STAGE_FRAGMENT_BIT)
                                         .Build(_instance, 500);
@@ -51,8 +52,15 @@ void DescriptorManager::CreateDescriptorSetLayout()
 
 void DescriptorManager::CreateDescriptorSet(MeshInstance &instance, Image &texture, Buffer &globalUniformData, MeshInstanceHandle handle)
 {
+    /*
+    uint32_t transformDataSize = sizeof(glm::mat4)*3;
+    VkDescriptorBufferInfo transformInfo = {instance.uniformBuffer.buffer, 0, transformDataSize};
+    VkDescriptorBufferInfo surfaceInfo = {instance.uniformBuffer.buffer, transformDataSize, instance.uniformBuffer.size - transformDataSize};
+    */
+
     auto instanceHandle = _rasterizationDescriptorSet->Allocate();
-    _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "meshUBO", &instance.uniformBuffer, 1);
+    //_rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "Transform", &instance.uniformBuffer, 1, &transformInfo);
+    _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "Instance", &instance.uniformBuffer, 1);
     _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "globalUBO", &globalUniformData, 1);
     _rasterizationDescriptorSet->UpdateImage(instanceHandle, "sampler", &texture, 1);
     _rasterizationDescriptorSet->UpdateSetInstance(instanceHandle);
@@ -61,6 +69,7 @@ void DescriptorManager::CreateDescriptorSet(MeshInstance &instance, Image &textu
     //_rasterizationDescriptorSet->UpdateImage(instanceHandle, "sampler", &textures[instances[i].texture], 1);
     //_rasterizationDescriptorSet->UpdateSetInstance(instanceHandle);
     _rasterizationHandles.insert({handle, instanceHandle});
+    std::cout << _rasterizationDescriptorSet->GetBindingsInformation() << std::endl;
 }
 
 void DescriptorManager::UpdateDescriptor(MeshInstanceHandle instance, Image &texture)
@@ -108,13 +117,13 @@ void DescriptorManager::CreateDescriptorSetRT(AccelerationStructure *AS, Image i
     _raytracingDescriptorSet->UpdateAccelerationStructure(rtSetHandle, "accelerationStructure", AS);
     _raytracingDescriptorSet->UpdateImage(rtSetHandle, "targetImage", &imageViewRT, 1);
     _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "globalBuffer", &globalUniform, 1);
-    _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "instanceMapping", &instanceBuffer, 1);
-    _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "indexBuffer", indBuffers.data(), indBuffers.size());
-    _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "vertexBuffer", vertBuffers.data(), vertBuffers.size());
-    _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "instanceUniform", instBuffers.data(), instBuffers.size());
-    _raytracingDescriptorSet->UpdateImage(rtSetHandle, "textureUniform", textures.data(), textures.size());
+    _raytracingDescriptorSet->UpdateUniformTexelBuffer(rtSetHandle, "instanceMapping", &instanceBuffer, 1);
+    _raytracingDescriptorSet->UpdateUniformTexelBuffer(rtSetHandle, "indexBuffer", indBuffers.data(), (uint32_t)indBuffers.size());
+    _raytracingDescriptorSet->UpdateUniformTexelBuffer(rtSetHandle, "vertexBuffer", vertBuffers.data(), (uint32_t)vertBuffers.size());
+    _raytracingDescriptorSet->UpdateUniformBuffer(rtSetHandle, "instanceUniform", instBuffers.data(), (uint32_t)instBuffers.size());
+    _raytracingDescriptorSet->UpdateImage(rtSetHandle, "textureUniform", textures.data(), (uint32_t)textures.size());
     _raytracingDescriptorSet->UpdateSetInstance(rtSetHandle);
-    std::cout << _raytracingDescriptorSet->GetBindingsInformation() << std::endl;
+    //std::cout << _raytracingDescriptorSet->GetBindingsInformation() << std::endl;
 
 }
 

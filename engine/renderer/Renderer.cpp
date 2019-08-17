@@ -110,8 +110,9 @@ MeshInstanceHandle Renderer::CreateMeshInstance(MeshHandle mesh)
 
     _deviceMemoryManager->CopyDataToBuffer(instance.uniformBuffer, &meshUniform);
     _meshInstances.push_back(instance);
-    _descriptorManager->CreateDescriptorSet(instance, _textures[instance.texture], _globalUniformBuffer, _meshInstances.size() - 1);
-    return (MeshInstanceHandle)_meshInstances.size() - 1;
+    MeshInstanceHandle instanceHandle = (MeshInstanceHandle)_meshInstances.size() - 1;
+    _descriptorManager->CreateDescriptorSet(instance, _textures[instance.texture], _globalUniformBuffer, instanceHandle);
+    return instanceHandle;
 }
 
 
@@ -340,8 +341,8 @@ void Renderer::RecreateSwapChain()
 
 void Renderer::UploadGlobalUniform()
 {
-    _globalUniform.LightCounts.x = _directionalLights.size();
-    _globalUniform.LightCounts.y = _pointLights.size();
+    _globalUniform.DirectionalLightCount = _directionalLights.size();
+    _globalUniform.PointLightCount = _pointLights.size();
     for (uint32_t lightIndex = 0; lightIndex < 10; lightIndex++)
     {
         if (lightIndex < _directionalLights.size())
@@ -397,6 +398,7 @@ void Renderer::CreateShaderBindingTable()
 
 Renderer::Renderer(RendererInitInfo info)
 {
+    Shaders::GenerateDummyCode();
     _initInfo = info;
     _frameWidth = info.Width;
     _frameHeight = info.Height;

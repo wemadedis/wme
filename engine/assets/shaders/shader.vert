@@ -15,9 +15,15 @@ struct PointLight
     vec4 PositionRadius;
 };
 
-layout(binding = 0) uniform InstanceUniformData {
+struct TransformData
+{
     mat4 ModelMatrix;
     mat4 NormalMatrix;
+    mat4 MVPMatrix;
+};
+
+struct SurfaceData
+{
     float Ambient;
     float Diffuse;
     float Specular;
@@ -27,21 +33,41 @@ layout(binding = 0) uniform InstanceUniformData {
     vec4 Color;
     uint Texture;
     bool HasTexture;
-} InstanceUniform;
+};
 
-layout(binding = 1) uniform GlobalUniformData
+struct CameraData
 {
-    float FieldOfView;
+    float FoV;
     float NearPlane;
     float FarPlane;
     vec4 Position;
-	mat4 ViewMatrix;
-	mat4 ProjectionMatrix;
     vec4 ClearColor;
-    vec4 LightCounts;
+    mat4 ViewMatrix;
+    mat4 ProjectionMatrix;
+};
+
+struct LightData
+{
     PointLight PointLights[MAX_LIGHTS];
+    uint PointLightCount;
     DirectionalLight DirectionalLights[MAX_LIGHTS];
-} GlobalUniform;
+    uint DirectionalLightCount;
+};
+
+//layout(binding = 0) uniform TransformData Transform;
+layout(binding = 0) uniform InstanceData {
+    TransformData Transform;
+    SurfaceData Surface;
+} Instance;
+
+layout(binding = 1) uniform WorldData
+{
+    CameraData Camera;
+    LightData Lights;
+    //vec4 LightCounts;
+    //PointLight PointLights[MAX_LIGHTS];
+    //DirectionalLight DirectionalLights[MAX_LIGHTS];
+} World;
 
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec4 inColor;
@@ -60,8 +86,8 @@ layout(location = 6) out vec3 PositionCameraSpace;
 
 //https://learnopengl.com/Lighting/Multiple-lights
 void ComputePhongProperties(){
-    PositionCameraSpace = vec3(GlobalUniform.ViewMatrix * InstanceUniform.ModelMatrix * vec4(inPosition, 1.0));
-    N = normalize(vec3(InstanceUniform.NormalMatrix * vec4(normal,0.0f)));
+    PositionCameraSpace = vec3(World.Camera.ViewMatrix * Instance.Transform.ModelMatrix * vec4(inPosition, 1.0));
+    N = normalize(vec3(Instance.Transform.NormalMatrix * vec4(normal,0.0f)));
     V = normalize(PositionCameraSpace);
     //Flip the normal if it points away from the eye
     if(dot(N,V) > 0) N = -N;
@@ -69,9 +95,9 @@ void ComputePhongProperties(){
 
 
 void main() {
-    HasTexture = InstanceUniform.HasTexture ? 1 : 0;
-    gl_Position = GlobalUniform.ProjectionMatrix * GlobalUniform.ViewMatrix * InstanceUniform.ModelMatrix * vec4(inPosition, 1.0);
+    HasTexture = Instance.Surface.HasTexture ? 1 : 0;
+    gl_Position = World.Camera.ProjectionMatrix * World.Camera.ViewMatrix * Instance.Transform.ModelMatrix * vec4(inPosition, 1.0);
     ComputePhongProperties();
-    fragColor = vec4(InstanceUniform.Ambient);
+    fragColor = vec4(Instance.Surface.Ambient);
     UV = texCoord;
 }

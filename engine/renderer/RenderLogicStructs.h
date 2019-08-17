@@ -99,6 +99,11 @@ struct MeshInstanceUniformData
 	glm::mat4 NormalMatrix;
 
 	/**
+	 * @brief A 4x4 model-view-projection matrix to calculate a final vertex position.
+	 */
+	glm::mat4 MVPMatrix;
+
+	/**
 	 * @brief The ambient reflection instensity.
 	 */
 	float Ambient = 0.2f;
@@ -206,6 +211,11 @@ struct GlobalUniformData
 	glm::vec4 Position;
 
 	/**
+	 * @brief The clear color used before rendering a frame.
+	 */
+    glm::vec4 ClearColor;
+
+	/**
 	 * @brief The camera view matrix.
 	 */
 	glm::mat4 ViewMatrix;
@@ -216,24 +226,22 @@ struct GlobalUniformData
 	glm::mat4 ProjectionMatrix;
 
 	/**
-	 * @brief The clear color used before rendering a frame.
+	 * @brief Array of point lights of size MAX_LIGHTS
 	 */
-    glm::vec4 ClearColor;
+	PointLight PointLights[MAX_LIGHTS] = {};
 
 	/**
 	 * @brief 4D vector containing the number of directional lights as the X value, and number of point lights as the Y value. Remaining Y & W components are ignored.
 	 */
-	glm::vec4 LightCounts;
-
-	/**
-	 * @brief Array of point lights of size MAX_LIGHTS
-	 */
-	PointLight PointLights[MAX_LIGHTS] = {};
+	uint32_t PointLightCount;
+	uint32_t padding2[3];
 	
 	/**
 	 * @brief Array of directional lights of size MAX_LIGHTS
 	 */
     DirectionalLight DirectionalLights[MAX_LIGHTS] = {};
+	uint32_t DirectionalLightCount;
+	uint32_t padding3[3];
 };
 
 /**

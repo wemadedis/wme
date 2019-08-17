@@ -16,7 +16,7 @@
 #include "RenderStructs.h"
 #include "SwapChain.hpp"
 #include "Utilities.h"
-
+#include "shader/ShaderGenerator.hpp"
 //RT
 #include "AccelerationStructureRT.h"
 

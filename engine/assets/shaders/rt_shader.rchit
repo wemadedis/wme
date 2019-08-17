@@ -48,12 +48,13 @@ layout(set = 0, binding = 2) uniform GlobalUniformData
     float NearPlane;
     float FarPlane;
     vec4 Position;
+    vec4 ClearColor;
 	mat4 ViewMatrix;
 	mat4 ProjectionMatrix;
-    vec4 ClearColor;
-    vec4 LightCounts;
     PointLight PointLights[MAX_LIGHTS];
+    uint PointLightCount;
     DirectionalLight DirectionalLights[MAX_LIGHTS];
+    uint DirectionalLightCount;
 } GlobalUniform;
 
 layout(set = 0, binding = 3) uniform usamplerBuffer InstanceMapping;
@@ -63,6 +64,7 @@ layout(set = 3, binding = 0) uniform InstanceUniformData
 {
     mat4 ModelMatrix;
     mat4 NormalMatrix;
+    mat4 MVPMatrix;
     float Ambient;
     float Diffuse;
     float Specular;
@@ -176,11 +178,11 @@ vec4 CalculatePerLightShading(HitInfo hitinfo)
         uint texIndex = InstanceData[gl_InstanceCustomIndexNV].Texture;
         color = texture(TextureSamplers[texIndex], hitValue.UV)*InstanceData[gl_InstanceCustomIndexNV].Ambient;
     }
-    for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.LightCounts.y; pointLightIndex++)
+    for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.PointLightCount; pointLightIndex++)
     {
         color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex], hitinfo);
     }
-    for(uint directionalLightIndex = 0; directionalLightIndex < GlobalUniform.LightCounts.x; directionalLightIndex++)
+    for(uint directionalLightIndex = 0; directionalLightIndex < GlobalUniform.DirectionalLightCount; directionalLightIndex++)
     {
         color += CalculateDirectionalLightShading(GlobalUniform.DirectionalLights[directionalLightIndex], hitinfo);
     }
