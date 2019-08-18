@@ -60,7 +60,7 @@ void Renderer::Initialize()
     CreateEmptyTexture();
     _descriptorManager = new DescriptorManager(_instance);
     _descriptorManager->CreateDescriptorSetLayout();
-    Shaders::Shader::Create(_descriptorManager->_rasterizationDescriptorSet, &Vertex()).Build();
+    Shaders::Shader::Create(_descriptorManager->_rasterizationDescriptorSet, &Vertex()).WithPhong().Build();
 }
 
 MeshHandle Renderer::UploadMesh(Mesh &mesh)

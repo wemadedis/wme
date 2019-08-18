@@ -1,6 +1,7 @@
 #include "ShaderGenerator.hpp"
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 
 using namespace std;
 
@@ -140,7 +141,7 @@ void ShaderBuilder::CreateStandardInputOutput()
 
 ShaderBuilder& ShaderBuilder::WithPhong()
 {
-    UsePhong = true;
+    _usePhong = true;
     return *this;
 }
 
@@ -204,45 +205,138 @@ ShaderBuilder& ShaderBuilder::WithVariable(string type, string name)
 
 Shader ShaderBuilder::Build()
 {
-    vector<Declaration*> declarations;
-    
+    vector<Declaration*> vert_decl;
+    vector<Declaration*> frag_decl;
+
+    FreeCode* macros = new FreeCode(new string(
+        "#version 450\n"
+        "#extension GL_ARB_separate_shader_objects : enable\n"
+        "#define MAX_LIGHTS 10\n\n"
+    ));
+
+    vert_decl.push_back(macros);
+    frag_decl.push_back(macros);
+
     for(auto strpair : _structs)
     {
-        if(!strpair.second->IsUniform()) declarations.push_back(strpair.second);
+        if(!strpair.second->IsUniform())
+        {
+            vert_decl.push_back(strpair.second);
+            frag_decl.push_back(strpair.second);
+        }
     }
-    for(auto res : _vertexResources) declarations.push_back(res);
+
+    for(auto res : _vertexResources) vert_decl.push_back(res);
+    for(auto res : _fragmentResources) frag_decl.push_back(res);
+
+    if(_usePhong)
+    {
+        FreeCode* phong_vertex = new FreeCode(new string(
+            "void CalculatePhongComponents()\n"
+            "{\n"
+            "    mat4 modelView = Camera.ViewMatrix * Transform.ModelMatrix;\n"
+            "    vec4 position = vec4(in_position,1.0f)\n"
+            "    out_position_viewspace = vec3(modelView*position);\n"
+            "    vec4 normal = Transform.NormalMatrix * vec4(in_normal);\n"
+            "    out_normal = normalize(vec3(normal));\n"
+            "    out_eye = normalize(out_position_viewspace);\n"
+            "    if(dot(out_normal, out_eye) > 0) out_normal = -out_normal;\n"
+            "}\n"
+        ));
+        vert_decl.push_back(phong_vertex);
+
+        FreeCode* vert_main = new FreeCode(new string(
+            "void main()\n"
+            "{\n"
+            "    gl_Position = Transform.MVPMatrix * vec4(in_position,1.0f);\n"
+            "    CalculatePhongComponents();\n"
+            "    out_UV = in_UV;\n"
+            "}\n"
+        ));
+        vert_decl.push_back(vert_main);
+
+        FreeCode* phong_frag = new FreeCode(new string(
+            "vec4 Phong(vec3 L, vec3 R)\n"
+            "{\n"
+            "    float diff = max(0.0f, dot(L,N)) * Instance.Surface.Diffuse;\n"
+            "    float spec = pow(max(0.0f, dot(-V,R)) * Instance.Surface.Specular, Instance.Surface.Shininess);\n"
+            "    return vec4(diff) + vec4(spec)\n"
+            "}\n"
+        ));
+
+        FreeCode* pointlightPhong = new FreeCode(new string(
+            "vec4 CalculatePointLightShading(PointLight light)\n"
+            "{\n"
+            "    vec3 lightPosition = vec3(World.Camera.ViewMatrix * vec4(light.PositionRadius.xyz,1.0f));\n"
+            "    vec3 direction = lightPosition - PositionCameraSpace;\n"
+            "    vec3 L = normalize(direction);\n"
+            "    vec3 R = reflect(-L,N);\n"
+            "    float distance = length(direction);\n"
+            "    return Phong(L,R) * light.Color * light.PositionRadius.w / (distance*distance);\n"
+            "}\n"
+        ));
+
+        FreeCode* dirlightPhong = new FreeCode(new string(
+            "vec4 CalculateDirectionalLightShading(DirectionalLight light)\n"
+            "{\n"
+            "    vec3 L = normalize(vec3(World.Camera.ViewMatrix * vec4(light.Direction.xyz,0.0f)));\n"
+            "    vec3 R = normalize(reflect(L, N));\n"
+            "    return Phong(L,R) * light.Color;\n"
+            "}\n"
+        ));
+
+        FreeCode* perLight = new FreeCode(new string(
+            "vec4 CalculateDirectionalLightShading(DirectionalLight light)\n"
+            "{\n"
+            "    vec4 color = Instance.Surface.Color*Instance.Surface.Ambient;\n"
+            "    if(HasTexture != 0)\n"
+            "    {\n"
+            "        color = texture(texSampler, UV)*Instance.Surface.Ambient;\n"
+            "    }\n"
+            "    for(uint pointLightIndex = 0; pointLightIndex < World.Lights.PointLightCount; pointLightIndex++)\n"
+            "    {\n"
+            "        color += CalculatePointLightShading(World.Lights.PointLights[pointLightIndex]);\n"
+            "    }\n"
+            "    for(uint directionalLightIndex = 0; directionalLightIndex < World.Lights.DirectionalLightCount; directionalLightIndex++)\n"
+            "    {\n"
+            "        color += CalculateDirectionalLightShading(World.Lights.DirectionalLights[directionalLightIndex]);\n"
+            "    }\n"
+            "    return color;\n"
+            "}\n"
+        ));
+
+        FreeCode* main_frag = new FreeCode(new string(
+            "void main() \n"
+            "{\n"
+            "    outColor =  CalculatePerLightShading();\n"
+            "}\n"
+        ));
+
+        frag_decl.push_back(phong_frag);
+        frag_decl.push_back(pointlightPhong);
+        frag_decl.push_back(dirlightPhong);
+        frag_decl.push_back(main_frag);
+    }
+
+    Program vert = Program(vert_decl);
     
-    FreeCode* phong_vertex = new FreeCode(new string(
-        "void CalculatePhongComponents()\n"
-        "{\n"
-        "   mat4 modelView = Camera.ViewMatrix * Transform.ModelMatrix;\n"
-        "   vec4 position = vec4(in_position,1.0f)\n"
-        "   out_position_viewspace = vec3(modelView*position);\n"
-        "   vec4 normal = Transform.NormalMatrix * vec4(in_normal);\n"
-        "   out_normal = normalize(vec3(normal));\n"
-        "   out_eye = normalize(out_position_viewspace);\n"
-        "   if(dot(out_normal, out_eye) > 0) out_normal = -out_normal;\n"
-        "}\n"
-    ));
+    Program frag = Program(frag_decl);
+/*
+    ofstream outvert("Vertex.glsl");
+    ofstream outfrag("Fragment.glsl");
+    outvert << vert.ToString();
+    outvert.close();
 
-    FreeCode* main = new FreeCode(new string(
-        "void main()\n"
-        "{\n"
-        "   gl_Position = Transform.MVPMatrix * vec4(in_position,1.0f);\n"
-        "   CalculatePhongComponents();\n"
-        "   out_UV = in_UV;\n"
-        "}\n"
-    ));
-
-    declarations.push_back(phong_vertex);
-    declarations.push_back(main);
-    Program vert = Program(declarations);
+    outfrag << frag.ToString();
+    outfrag.close();
 
     cout << vert.ToString() << endl;
+    cout << endl << endl << frag.ToString() << endl;
+*/
     return Shader();
 }
 
-ShaderBuilder Shader::Create(DescriptorSet* descriptorSet, Vertex* vertex)
+Shader::ShaderBuilder Shader::Create(DescriptorSet* descriptorSet, Vertex* vertex)
 {
     return ShaderBuilder(descriptorSet, *vertex);
 }

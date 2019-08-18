@@ -1,18 +1,12 @@
 #version 450
 #extension GL_ARB_separate_shader_objects : enable
-
 #define MAX_LIGHTS 10
+
 
 struct DirectionalLight
 {
-	vec4 Color;
-	vec4 Direction;
-};
-
-struct PointLight
-{
     vec4 Color;
-    vec4 PositionRadius;
+    vec4 Direction;
 };
 
 struct TransformData
@@ -20,6 +14,12 @@ struct TransformData
     mat4 ModelMatrix;
     mat4 NormalMatrix;
     mat4 MVPMatrix;
+};
+
+struct PointLight
+{
+    vec4 Color;
+    vec4 PositionRadius;
 };
 
 struct SurfaceData
@@ -48,44 +48,32 @@ struct CameraData
 
 struct LightData
 {
-    PointLight PointLights[MAX_LIGHTS];
+    PointLight PointLights[10];
     uint PointLightCount;
-    DirectionalLight DirectionalLights[MAX_LIGHTS];
+    DirectionalLight DirectionalLights[10];
     uint DirectionalLightCount;
 };
 
-layout(binding = 0) uniform InstanceData {
+layout(set = 0, binding = 0) uniform InstanceData
+{
     TransformData Transform;
     SurfaceData Surface;
 } Instance;
-
-layout(binding = 1) uniform WorldData
+layout(set = 0, binding = 1) uniform WorldData
 {
     CameraData Camera;
     LightData Lights;
-    //vec4 LightCounts;
-    //PointLight PointLights[MAX_LIGHTS];
-    //DirectionalLight DirectionalLights[MAX_LIGHTS];
 } World;
-
-layout(binding = 2) uniform sampler2D texSampler;
-
-
-layout(location = 0) in vec4 fragColor;
-layout(location = 1) in vec3 N;
-layout(location = 2) in vec3 V;
-layout(location = 4) in vec2 UV;
-layout(location = 5) in flat int HasTexture;
-layout(location = 6) in vec3 PositionCameraSpace;
-
-
-layout(location = 0) out vec4 outColor;
-
+layout(set = 0, binding = 2) uniform sampler2D Texture;
+layout(location = 4) in vec3 out_normal;
+layout(location = 5) in vec3 out_eye;
+layout(location = 6) in vec2 out_UV;
+layout(location = 7) in vec3 out_position_viewspace;
 vec4 Phong(vec3 L, vec3 R)
 {
     float diff = max(0.0f, dot(L,N)) * Instance.Surface.Diffuse;
     float spec = pow(max(0.0f, dot(-V,R)) * Instance.Surface.Specular, Instance.Surface.Shininess);
-    return vec4(diff) + vec4(spec);
+    return vec4(diff) + vec4(spec)
 }
 
 vec4 CalculatePointLightShading(PointLight light)
@@ -105,25 +93,8 @@ vec4 CalculateDirectionalLightShading(DirectionalLight light)
     return Phong(L,R) * light.Color;
 }
 
-vec4 CalculatePerLightShading()
-{
-    vec4 color = Instance.Surface.Color*Instance.Surface.Ambient;
-    if(HasTexture != 0)
-    {
-        color = texture(texSampler, UV)*Instance.Surface.Ambient;
-    }
-    for(uint pointLightIndex = 0; pointLightIndex < World.Lights.PointLightCount; pointLightIndex++)
-    {
-        color += CalculatePointLightShading(World.Lights.PointLights[pointLightIndex]);
-    }
-    for(uint directionalLightIndex = 0; directionalLightIndex < World.Lights.DirectionalLightCount; directionalLightIndex++)
-    {
-        color += CalculateDirectionalLightShading(World.Lights.DirectionalLights[directionalLightIndex]);
-    }
-    return color;
-}
-
 void main() 
 {
     outColor =  CalculatePerLightShading();
 }
+

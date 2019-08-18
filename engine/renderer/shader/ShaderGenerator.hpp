@@ -29,7 +29,7 @@ public:
     class ShaderBuilder
     {
         const vector<string> standardTypes = {"sampler", "sampler2D", "samplerBuffer", "usamplerBuffer"};
-        bool UsePhong = false;
+        bool _usePhong = false;
         string _texture = "";
         string _normalMap = "";
         uint32_t _currentVarLocation = 0;
