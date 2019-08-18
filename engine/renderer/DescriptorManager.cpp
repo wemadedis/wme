@@ -44,38 +44,26 @@ void DescriptorManager::CreateDescriptorSetLayout()
 {
     _rasterizationDescriptorSet = DescriptorSet::Create()
                                         .WithUniformBuffer("Instance", 1, VK_SHADER_STAGE_VERTEX_BIT |VK_SHADER_STAGE_FRAGMENT_BIT)
-                                        //.WithUniformBuffer("Surface", 1, VK_SHADER_STAGE_VERTEX_BIT |VK_SHADER_STAGE_FRAGMENT_BIT)
-                                        .WithUniformBuffer("globalUBO", 1, VK_SHADER_STAGE_VERTEX_BIT |VK_SHADER_STAGE_FRAGMENT_BIT)
-                                        .WithCombinedImageSampler("sampler", 1, VK_SHADER_STAGE_FRAGMENT_BIT)
+                                        .WithUniformBuffer("World", 1, VK_SHADER_STAGE_VERTEX_BIT |VK_SHADER_STAGE_FRAGMENT_BIT)
+                                        .WithCombinedImageSampler("Texture", 1, VK_SHADER_STAGE_FRAGMENT_BIT)
                                         .Build(_instance, 500);
 }
 
 void DescriptorManager::CreateDescriptorSet(MeshInstance &instance, Image &texture, Buffer &globalUniformData, MeshInstanceHandle handle)
 {
-    /*
-    uint32_t transformDataSize = sizeof(glm::mat4)*3;
-    VkDescriptorBufferInfo transformInfo = {instance.uniformBuffer.buffer, 0, transformDataSize};
-    VkDescriptorBufferInfo surfaceInfo = {instance.uniformBuffer.buffer, transformDataSize, instance.uniformBuffer.size - transformDataSize};
-    */
-
     auto instanceHandle = _rasterizationDescriptorSet->Allocate();
-    //_rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "Transform", &instance.uniformBuffer, 1, &transformInfo);
     _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "Instance", &instance.uniformBuffer, 1);
-    _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "globalUBO", &globalUniformData, 1);
-    _rasterizationDescriptorSet->UpdateImage(instanceHandle, "sampler", &texture, 1);
+    _rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "World", &globalUniformData, 1);
+    _rasterizationDescriptorSet->UpdateImage(instanceHandle, "Texture", &texture, 1);
     _rasterizationDescriptorSet->UpdateSetInstance(instanceHandle);
-    //_rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "meshUBO", &instances[i].uniformBuffer, 1);
-    //_rasterizationDescriptorSet->UpdateUniformBuffer(instanceHandle, "globalUBO", &globalUniformData, 1);
-    //_rasterizationDescriptorSet->UpdateImage(instanceHandle, "sampler", &textures[instances[i].texture], 1);
-    //_rasterizationDescriptorSet->UpdateSetInstance(instanceHandle);
     _rasterizationHandles.insert({handle, instanceHandle});
-    std::cout << _rasterizationDescriptorSet->GetBindingsInformation() << std::endl;
+    //std::cout << _rasterizationDescriptorSet->GetBindingsInformation() << std::endl;
 }
 
 void DescriptorManager::UpdateDescriptor(MeshInstanceHandle instance, Image &texture)
 {
     auto handle = _rasterizationHandles[instance];
-    _rasterizationDescriptorSet->UpdateImage(handle, "sampler", &texture, 1);
+    _rasterizationDescriptorSet->UpdateImage(handle, "Texture", &texture, 1);
     _rasterizationDescriptorSet->UpdateSetInstance(handle);
 
 }

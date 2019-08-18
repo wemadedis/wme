@@ -32,20 +32,30 @@ struct PointLight
     vec4 PositionRadius;
 };
 
-layout(set = 0, binding = 2) uniform GlobalUniformData
+struct CameraData
 {
-    float FieldOfView;
+    float FoV;
     float NearPlane;
     float FarPlane;
     vec4 Position;
     vec4 ClearColor;
-	mat4 ViewMatrix;
-	mat4 ProjectionMatrix;
+    mat4 ViewMatrix;
+    mat4 ProjectionMatrix;
+};
+
+struct LightData
+{
     PointLight PointLights[MAX_LIGHTS];
     uint PointLightCount;
     DirectionalLight DirectionalLights[MAX_LIGHTS];
     uint DirectionalLightCount;
-} GlobalUniform;
+};
+
+layout(set = 0, binding = 2) uniform WorldData
+{
+    CameraData Camera;
+    LightData Lights;
+} World;
 
 
 void FireRay(vec3 origin, vec3 direction, float tmin, float tmax)
@@ -64,11 +74,11 @@ void main()
 
     vec2 d = inUV * 2.0 - 1.0;
     float aspectRatio = float(gl_LaunchSizeNV.x) / float(gl_LaunchSizeNV.y);
-    float fov = GlobalUniform.FieldOfView;
+    float fov = World.Camera.FoV;
     vec3 direction = normalize(vec3(d.x * aspectRatio*fov, d.y*fov, -1));
-    direction = vec3(vec4(direction,0.0f) * (GlobalUniform.ViewMatrix));
+    direction = vec3(vec4(direction,0.0f) * (World.Camera.ViewMatrix));
 
-    vec3 origin = vec3(GlobalUniform.Position);
+    vec3 origin = vec3(World.Camera.Position);
 
 /*
     HitInfo infos[MAX_RECURSION];
@@ -86,9 +96,9 @@ void main()
     }
 */
 
-    float tmin = GlobalUniform.NearPlane;
+    float tmin = World.Camera.NearPlane;
     vec4 color;
-    FireRay(origin, direction, tmin, GlobalUniform.FarPlane);
+    FireRay(origin, direction, tmin, World.Camera.FarPlane);
     color = hitValue.Color;
     float oldRefl = hitValue.Reflectivity;
     if(!hitValue.Missed && hitValue.Reflectivity >= 0.0f)
@@ -96,7 +106,7 @@ void main()
         origin = hitValue.Point + hitValue.Normal*0.01f;
         direction = normalize(reflect(direction, hitValue.Normal));
         tmin = 0.0f; //the reflections can have a minimum t = 0
-        FireRay(origin, direction, tmin, GlobalUniform.FarPlane);
+        FireRay(origin, direction, tmin, World.Camera.FarPlane);
         color = color * (1.0f - oldRefl) + hitValue.Color * oldRefl;
     }
 

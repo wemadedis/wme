@@ -6,24 +6,13 @@
 namespace RTE::Rendering::Shaders
 {
 using namespace AbstractSyntax;
-Variable* DefineVariable(Type* type, string name);
-Struct* DefineStruct(string name, vector<pair<Type*,string>> variables);
-
-vector<Struct*> GetStandardStructs();
-vector<Declaration*> GetStandardVertexInputOutput();
-vector<Declaration*> GetStandardFragmentInputOutput();
-vector<Declaration*> GetStandardUniforms();
-
-Program* GetStandardVertexShader();
 
 void SaveShaderToFile(Program* shader);
 void CompileShader(Program* shader);
 
-void GenerateDummyCode();
 
 class Shader
 {
-    const vector<string> standardTypes = {"sampler", "sampler2D", "samplerBuffer", "usamplerBuffer"};
 public:
     class StructBuilder
     {
@@ -32,18 +21,21 @@ public:
         StructBuilder(string structName);
     public:
         StructBuilder& WithMember(string type, string name, uint32_t arraySize = 1);
-        Struct* Build();
+        Struct* Build(bool isUniform = false);
 
         friend class Shader;
     };
 
     class ShaderBuilder
     {
+        const vector<string> standardTypes = {"sampler", "sampler2D", "samplerBuffer", "usamplerBuffer"};
         bool UsePhong = false;
         string _texture = "";
         string _normalMap = "";
-        uint32_t _currentVarLocation;
-        vector<Struct*> _structs;
+        uint32_t _currentVarLocation = 0;
+
+        unordered_map<string, Struct*> _structs;
+        unordered_map<string, Uniform*> _uniforms;
 
         vector<Declaration*> _vertexResources;
 
@@ -52,8 +44,10 @@ public:
         DescriptorSet* _descriptorSet;
         //TODO: Wanna define custom vertex structure?
         ShaderBuilder(DescriptorSet* descriptorSet, Vertex vertex);
+        void CreateDefaultStructs();
         void ProcessVertexInput(Vertex vertex);
         void ProcessDescriptorSet(DescriptorSet* descriptorSet);
+        void CreateStandardInputOutput();
 
     public:
         ShaderBuilder& WithPhong();

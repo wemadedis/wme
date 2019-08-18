@@ -17,6 +17,25 @@ struct PointLight
     vec4 PositionRadius;
 };
 
+struct CameraData
+{
+    float FoV;
+    float NearPlane;
+    float FarPlane;
+    vec4 Position;
+    vec4 ClearColor;
+    mat4 ViewMatrix;
+    mat4 ProjectionMatrix;
+};
+
+struct LightData
+{
+    PointLight PointLights[MAX_LIGHTS];
+    uint PointLightCount;
+    DirectionalLight DirectionalLights[MAX_LIGHTS];
+    uint DirectionalLightCount;
+};
+
 struct Vertex
 {
     vec3 pos;
@@ -42,20 +61,11 @@ layout(location = 2) rayPayloadNV float shadowRayHitValue;
 
 layout(set = 0, binding = 0) uniform accelerationStructureNV topLevelAS;
 
-layout(set = 0, binding = 2) uniform GlobalUniformData
+layout(set = 0, binding = 2) uniform WorldData
 {
-    float FieldOfView;
-    float NearPlane;
-    float FarPlane;
-    vec4 Position;
-    vec4 ClearColor;
-	mat4 ViewMatrix;
-	mat4 ProjectionMatrix;
-    PointLight PointLights[MAX_LIGHTS];
-    uint PointLightCount;
-    DirectionalLight DirectionalLights[MAX_LIGHTS];
-    uint DirectionalLightCount;
-} GlobalUniform;
+    CameraData Camera;
+    LightData Lights;
+} World;
 
 layout(set = 0, binding = 3) uniform usamplerBuffer InstanceMapping;
 layout(set = 1, binding = 0) uniform usamplerBuffer IndexBuffers[];
@@ -178,13 +188,13 @@ vec4 CalculatePerLightShading(HitInfo hitinfo)
         uint texIndex = InstanceData[gl_InstanceCustomIndexNV].Texture;
         color = texture(TextureSamplers[texIndex], hitValue.UV)*InstanceData[gl_InstanceCustomIndexNV].Ambient;
     }
-    for(uint pointLightIndex = 0; pointLightIndex < GlobalUniform.PointLightCount; pointLightIndex++)
+    for(uint pointLightIndex = 0; pointLightIndex < World.Lights.PointLightCount; pointLightIndex++)
     {
-        color += CalculatePointLightShading(GlobalUniform.PointLights[pointLightIndex], hitinfo);
+        color += CalculatePointLightShading(World.Lights.PointLights[pointLightIndex], hitinfo);
     }
-    for(uint directionalLightIndex = 0; directionalLightIndex < GlobalUniform.DirectionalLightCount; directionalLightIndex++)
+    for(uint directionalLightIndex = 0; directionalLightIndex < World.Lights.DirectionalLightCount; directionalLightIndex++)
     {
-        color += CalculateDirectionalLightShading(GlobalUniform.DirectionalLights[directionalLightIndex], hitinfo);
+        color += CalculateDirectionalLightShading(World.Lights.DirectionalLights[directionalLightIndex], hitinfo);
     }
     return color;
 }

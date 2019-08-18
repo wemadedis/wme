@@ -254,8 +254,9 @@ class Uniform : public Variable
 {
     uint32_t _set, _binding;
 public:
-    Uniform(Type *type, string name, uint32_t set, uint32_t binding);
+    Uniform(Type* type, string name, uint32_t set, uint32_t binding);
     string ToString();
+    void SetType(Type* type);
 };
 
 class AccessVariable : public Access
@@ -317,13 +318,15 @@ public:
     string ToString();
 };
 
-class Struct : public Declaration
+class Struct : public Declaration, public Type
 {
     vector<Declaration*> _declarations;
+    bool _isUniform = false;
 public:
-    Struct(string name, vector<Declaration*> declarations);
-    string GetName();
+    Struct(string name, vector<Declaration*> declarations, bool isUniform = false);
     string ToString();
+
+    bool IsUniform();
 };
 
 class FreeCode : public Declaration

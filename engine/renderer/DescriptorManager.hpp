@@ -104,5 +104,7 @@ public:
      * @brief Gets the descriptor sets (ray tracing)
      */
     std::vector<VkDescriptorSet> GetDescriptorSetRT();
+
+    friend class Renderer;
 };
 };

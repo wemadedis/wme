@@ -227,7 +227,7 @@ string OutVariable::ToString()
     return "layout(location = " + to_string(_location) +") out " + Variable::ToString() + ";";
 }
 
-Uniform::Uniform(Type *type, string name, uint32_t set, uint32_t binding) : Variable(type, name)
+Uniform::Uniform(Type* type, string name, uint32_t set, uint32_t binding) : Variable(type, name)
 {
     _set = set;
     _binding = binding;
@@ -238,6 +238,11 @@ string Uniform::ToString()
     string layout = "layout(set = " + to_string(_set) + ", binding = " + to_string(_binding) + ") ";
     string typeName = "uniform " + Variable::ToString();
     return layout + typeName + ";";
+}
+
+void Uniform::SetType(Type* type)
+{
+    _type = type;
 }
 
 AccessVariable::AccessVariable(string variableName)
@@ -330,23 +335,32 @@ string FunctionCall::ToString()
 }
 
 
-Struct::Struct(string name, vector<Declaration*> declarations)
+Struct::Struct(string name, vector<Declaration*> declarations, bool isUniform) : Type(name)
 {
     _name = name;
     _declarations = declarations;
+    _isUniform = isUniform;
 }
 
 string Struct::ToString()
 {
-    string str = "struct " + _name + "\n{\n";
+
+    string str;
+    if(!_isUniform) str += "struct ";
+    str += _name + "\n{\n";
     for(uint32_t declarationIndex = 0; declarationIndex < _declarations.size(); declarationIndex++)
     {
         str += tab + _declarations[declarationIndex]->ToString() + ";\n";
     }
-    str += "};\n";
+    if(!_isUniform) str += "};\n";
+    else str += "}";
     return str;
 }
 
+bool Struct::IsUniform()
+{
+    return _isUniform;
+}
 
 FreeCode::FreeCode(string* code)
 {

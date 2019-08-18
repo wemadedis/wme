@@ -60,6 +60,7 @@ void Renderer::Initialize()
     CreateEmptyTexture();
     _descriptorManager = new DescriptorManager(_instance);
     _descriptorManager->CreateDescriptorSetLayout();
+    Shaders::Shader::Create(_descriptorManager->_rasterizationDescriptorSet, &Vertex()).Build();
 }
 
 MeshHandle Renderer::UploadMesh(Mesh &mesh)
@@ -398,7 +399,6 @@ void Renderer::CreateShaderBindingTable()
 
 Renderer::Renderer(RendererInitInfo info)
 {
-    Shaders::GenerateDummyCode();
     _initInfo = info;
     _frameWidth = info.Width;
     _frameHeight = info.Height;
