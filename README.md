@@ -11,7 +11,7 @@ The engine has these features:
  - Spatial sound via SFML
  - Input via GLFW
  - GameObject-Component based runtime architecture
- 0
+
 ## How do I build it?
 
 The engine uses CMake to make a build system.
