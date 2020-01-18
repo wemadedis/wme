@@ -9,4 +9,4 @@ add_subdirectory(Runtime)
 add_subdirectory(Importer)
 add_subdirectory(StdComponents)
 add_subdirectory(Audio)
-
+add_subdirectory(asset_management)

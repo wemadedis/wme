@@ -36,5 +36,6 @@ target_link_libraries(rte INTERFACE
     bullet
     imgui
     sfml-audio
-    
+    rapidjson
+    assetmanagement
 )

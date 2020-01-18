@@ -84,3 +84,8 @@ set(SFML_USE_STATIC_STD_LIBS OFF)
 set(SFML_BUILD_AUDIO ON)
 add_subdirectory(SFML)
 ### </SFML>
+
+### <RAPIDJSON>
+add_library(rapidjson INTERFACE)
+target_include_directories(rapidjson INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/rapidjson")
+### </RAPIDJSON>
