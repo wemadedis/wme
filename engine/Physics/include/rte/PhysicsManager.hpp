@@ -225,7 +225,7 @@ public:
      * @brief Construct a new Physics Manager object
      * 
      */
-    PhysicsManager(RTEConfig &config);
+    PhysicsManager();
 
     /**
      * @brief Destroy the Physics Manager object

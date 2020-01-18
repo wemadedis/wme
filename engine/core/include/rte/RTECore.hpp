@@ -10,8 +10,8 @@
 #include "rte/RuntimeMain.hpp"
 #include "rte/WindowManager.h"
 
-extern void(ConfigureGame)(RTE::RTEConfig &config);
-extern void(OnGameStart)(RTE::Runtime::SceneManager &sceneManager);
+extern void(ConfigureGame)(RTE::RTEConfig *config);
+extern void(OnGameStart)(RTE::Runtime::SceneManager *sceneManager);
 
 namespace RTE
 {
@@ -22,13 +22,12 @@ class RTECore
 {
 
 private:
-    std::vector<RTEModule *> *Modules = nullptr;
+    std::vector<RTEModule *> _modules;
     Platform::WindowManager *_windowManager = nullptr;
     void RunUpdateLoop();
     void ValidateConfiguration();
 
 public:
-    static RTEConfig Config;
     RTECore();
 };
 } // namespace RTE

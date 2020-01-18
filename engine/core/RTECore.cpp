@@ -20,11 +20,13 @@ typedef high_resolution_clock Clock;
 typedef time_point<steady_clock> TimePoint;
 using FpSeconds = duration<float, seconds::period>;
 
+RTEConfig *config;
+
 void RTECore::RunUpdateLoop()
 {
     using namespace Platform;
     TimePoint lastFrameEnd = Clock::now();
-    float minFrameTime = 1.0f / Config.GraphicsConfig.FramesPerSecond;
+    float minFrameTime = 1.0f / config->GraphicsConfig.FramesPerSecond;
     float deltaTime = 0.0f;
 
     // std::vector<float> frameTimes;
@@ -33,10 +35,10 @@ void RTECore::RunUpdateLoop()
     while (_windowManager->ShouldClose() == false)
     {
         for (int32_t moduleIndex = 0;
-             moduleIndex < Modules->size();
+             moduleIndex < _modules.size();
              moduleIndex++)
         {
-            Modules->at(moduleIndex)->Update(deltaTime);
+            _modules[moduleIndex]->Update(deltaTime);
         }
 
         float time = std::chrono::duration_cast<FpSeconds>(Clock::now() - lastFrameEnd).count();
@@ -61,36 +63,35 @@ void RTECore::RunUpdateLoop()
 void RTECore::ValidateConfiguration()
 {
     // If the user requests raytracing while it is not available, crash
-    if (Config.GraphicsConfig.UseRaytracing && Config.GraphicsConfig.RaytracingAvailable == false)
+    if (config->GraphicsConfig.UseRaytracing && config->GraphicsConfig.RaytracingAvailable == false)
     {
         throw RTEException("Tried to use Raytracing when not available");
     }
 }
 
-//! Init static field
-RTEConfig RTECore::Config;
 RTECore::RTECore()
 {
-    Config.GraphicsConfig.RaytracingAvailable = Rendering::RenderingManager::RayTracingAvailable();
+    config = RTEConfig::GetInstance();
+    config->GraphicsConfig.RaytracingAvailable = Rendering::RenderingManager::RayTracingAvailable();
 
     if (ConfigureGame != nullptr)
     {
-        ConfigureGame(Config);
+        ConfigureGame(config);
     }
 
     ValidateConfiguration();
 
-    Modules = new std::vector<RTEModule *>();
 
-    _windowManager = new Platform::WindowManager(Config);
-    Modules->push_back(_windowManager);
-    Modules->push_back(new Physics::PhysicsManager(Config));
-    Rendering::RenderingManager *rm = new Rendering::RenderingManager(Config, *_windowManager);
+    _windowManager = new Platform::WindowManager();
+    Rendering::RenderingManager *rm = new Rendering::RenderingManager(*_windowManager);
     _windowManager->SetRenderingManager(rm);
     Runtime::SceneManager *sceneManager = new Runtime::SceneManager();
+    
 
-    Modules->push_back(sceneManager);
-    Modules->push_back(rm);
+    _modules.push_back(_windowManager);
+    _modules.push_back(new Physics::PhysicsManager());
+    _modules.push_back(sceneManager);
+    _modules.push_back(rm);
 
     // Call the client initialize function
     if (OnGameStart != nullptr)
@@ -98,9 +99,9 @@ RTECore::RTECore()
         Runtime::Scene *scene = sceneManager->MakeScene();
         sceneManager->SetActiveScene(scene);
 
-        OnGameStart(*sceneManager);
+        OnGameStart(sceneManager);
     }
-    if (Config.PhysicsConfig.DebugDrawColliders)
+    if (config->PhysicsConfig.DebugDrawColliders)
     {
         rm->SetLineDebugModule(Physics::PhysicsManager::GetInstance()->GetPhysicsDebugDraw());
     }

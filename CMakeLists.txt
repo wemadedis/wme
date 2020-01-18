@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.7.0)
 
+project(WeMadeEngine)
 
 set( CMAKE_VERBOSE_MAKEFILE off )
 set( CMAKE_CXX_STANDARD 17)

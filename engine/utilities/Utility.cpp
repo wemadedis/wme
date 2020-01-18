@@ -12,7 +12,8 @@ namespace RTE::Utilities
 AbsoluteFilePath GetFileFromAssets(RelativeFilePath path)
 {
     std::ostringstream ss;
-    AbsoluteFilePath folder = RTECore::Config.AssetConfig.AssetRootDir;
+    RTEConfig *config = RTEConfig::GetInstance();
+    AbsoluteFilePath folder = config->AssetConfig.AssetRootDir;
     ss << folder << path;
     return ss.str();
 }

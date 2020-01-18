@@ -1,29 +1,27 @@
-#include "rte/ModelImporter.h"
+#include "rte/AssimpMeshImporter.hpp"
 
 #include <cstdint>
 #include <iostream>
 #include <vector>
 
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/euler_angles.hpp>
-#include <glm/gtx/quaternion.hpp>
+#include <rte/GlmWrapper.hpp>
 
 #include <assimp/Importer.hpp>
 
-#include "rte/ImportException.h"
+#include "rte/ImportException.hpp"
 #include "rte/RenderStructs.h"
 
 namespace RTE::Importing
 {
 
-inline float ModelImporter::ColorAverage(aiColor4D col, float numChannels)
+inline float AssimpMeshImporter::ColorAverage(aiColor4D col, float numChannels)
 {
     return (col.r + col.g + col.b) / numChannels;
 }
 
-RTE::Rendering::Material ModelImporter::ConvertMaterial(aiMaterial *material)
+Rendering::Material AssimpMeshImporter::ConvertMaterial(aiMaterial *material)
 {
-    RTE::Rendering::Material mat;
+    Rendering::Material mat;
     aiColor4D diffuse;
     aiColor4D specular;
     aiColor4D transparency;
@@ -59,7 +57,7 @@ RTE::Rendering::Material ModelImporter::ConvertMaterial(aiMaterial *material)
     return mat;
 }
 
-RTE::Rendering::Transform ModelImporter::GetTransform(aiNode *node)
+Rendering::Transform AssimpMeshImporter::GetTransform(aiNode *node)
 {
     aiQuaternion rot;
     aiVector3D scale, pos;
@@ -73,7 +71,7 @@ RTE::Rendering::Transform ModelImporter::GetTransform(aiNode *node)
     return t;
 }
 
-MissingImportData ModelImporter::HandleNode(
+MissingImportData AssimpMeshImporter::HandleNode(
     RTE::Rendering::Mesh *mesh,
     const aiScene *scene,
     aiNode *node,
@@ -149,7 +147,7 @@ RTE::Rendering::Vertex ConvertVertex(aiMesh *mesh, uint32_t vertexIndex, Missing
     return v;
 }
 
-MissingImportData ModelImporter::HandleMesh(
+MissingImportData AssimpMeshImporter::HandleMesh(
     RTE::Rendering::Mesh *mesh,
     aiMesh *aiMesh,
     RTE::Rendering::Transform t)
@@ -185,10 +183,10 @@ MissingImportData ModelImporter::HandleMesh(
     return missingInfo;
 }
 
-RTE::Rendering::Mesh ModelImporter::ImportMesh(const char *filename)
+Rendering::Mesh AssimpMeshImporter::ImportMesh(std::string path)
 {
     Assimp::Importer importer;
-    const aiScene *scene = importer.ReadFile(filename, aiProcessPreset_TargetRealtime_MaxQuality);
+    const aiScene *scene = importer.ReadFile(path, aiProcessPreset_TargetRealtime_MaxQuality);
 
     if(scene == nullptr)
     {

@@ -142,11 +142,11 @@ GameObject* CreateMeshObject(std::string meshPath, glm::vec3 pos)
 }
 
 
-void OnGameStart(Runtime::SceneManager &sceneManager)
+void OnGameStart(Runtime::SceneManager *sceneManager)
 {
 
-    scene = sceneManager.MakeScene();
-    sceneManager.SetActiveScene(scene);
+    scene = sceneManager->MakeScene();
+    sceneManager->SetActiveScene(scene);
 
     // Init components pools
     transIndex = scene->DefineComponent<TransformComponent, 11000>();

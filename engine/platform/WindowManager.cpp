@@ -1,8 +1,9 @@
 #include <iostream>
 #include <vector>
 
-#include "rte/Renderer.h"
 #include "rte/WindowManager.h"
+#include "rte/Renderer.h"
+#include "rte/RTEConfig.hpp"
 
 namespace RTE::Platform
 {
@@ -49,13 +50,13 @@ void WindowManager::SetRenderingManager(Rendering::RenderingManager *rm)
     _renderingManager = rm;
 }
 
-WindowManager::WindowManager(RTEConfig &config)
+WindowManager::WindowManager()
 {
+    RTEConfig *config = RTEConfig::GetInstance();
     _instance = this;
-    OpenWindow(
-        config.WindowConfig.WindowWidth,
-        config.WindowConfig.WindowHeight,
-        config.WindowConfig.WindowName);
+    OpenWindow(config->WindowConfig.WindowWidth,
+               config->WindowConfig.WindowHeight,
+               config->WindowConfig.WindowName);
     SetupGLFWCallbacks();
 }
 

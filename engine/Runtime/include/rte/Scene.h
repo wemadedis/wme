@@ -25,7 +25,7 @@ public:
     {
         ComponentPool *compPool = new ComponentPoolInstance<TComp, MaxComponents>();
         _componentPools.push_back(compPool);
-        return _componentPools.size() - 1;
+        return static_cast<ComponentPoolId>(_componentPools.size() - 1);
     }
 
     template <typename TComp>

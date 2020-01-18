@@ -105,14 +105,15 @@ void PhysicsManager::SetupBulletCallbacks()
     gContactDestroyedCallback = ContactDestroyedCallback;
 }
 
-PhysicsManager::PhysicsManager(RTE::RTEConfig &config)
+PhysicsManager::PhysicsManager()
 {
+    RTEConfig *config = RTEConfig::GetInstance();
     _instance = this;
     _physicsWorld = CreateDefaultDynamicsWorld();
     _debugDraw = new PhysicsDebugDraw(_physicsWorld);
     _physicsWorld->setDebugDrawer(dynamic_cast<btIDebugDraw *>(_debugDraw));
-    _collisionPool = new GenericPool<Collision>(config.PhysicsConfig.MaxCollisionCount);
-    SetGravity(config.PhysicsConfig.Gravity);
+    _collisionPool = new GenericPool<Collision>(config->PhysicsConfig.MaxCollisionCount);
+    SetGravity(config->PhysicsConfig.Gravity);
 }
 
 PhysicsManager::~PhysicsManager()

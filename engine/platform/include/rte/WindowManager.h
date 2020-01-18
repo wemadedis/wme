@@ -27,7 +27,7 @@ typedef std::function<void(unsigned int character)> CharCallback;
 class WindowManager : public RTEModule
 {
 public:
-    WindowManager(RTE::RTEConfig &config);
+    WindowManager();
     bool ShouldClose();
     void OpenWindow(int width, int height, std::string title);
     static WindowManager *GetInstance();

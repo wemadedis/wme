@@ -103,12 +103,9 @@ public:
 
     /**
      * @brief The constructor of the rendering manager.
-     * @param config The configuration for the engine initialization, filled out by the user.
      * @param windowManager The window manager initialized before this class.
      */
-    RenderingManager(
-        RTEConfig &config,
-        Platform::WindowManager &windowManager);
+    RenderingManager(Platform::WindowManager &windowManager);
     ~RenderingManager();
 
     /**

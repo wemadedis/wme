@@ -1,6 +1,5 @@
 #include "rte/RenderingManager.h"
-#include "rte/ImportFunctions.h"
-#include "rte/ModelImporter.h"
+#include "rte/Importer.hpp"
 #include "rte/TransformComponent.hpp"
 #include "rte/WindowManager.h"
 
@@ -13,16 +12,15 @@ namespace RTE::Rendering
 {
     
 RenderingManager *RenderingManager::_instance = nullptr;
-RenderingManager::RenderingManager(
-    RTEConfig &config,
-    Platform::WindowManager &windowManager)
+RenderingManager::RenderingManager(Platform::WindowManager &windowManager)
 {
     RendererInitInfo info;
-    info.ApplicationName = config.WindowConfig.WindowName.c_str();
-    info.Width = config.WindowConfig.WindowWidth;
-    info.Height = config.WindowConfig.WindowHeight;
+    RTEConfig* config = RTEConfig::GetInstance();
+    info.ApplicationName = config->WindowConfig.WindowName.c_str();
+    info.Width = config->WindowConfig.WindowWidth;
+    info.Height = config->WindowConfig.WindowHeight;
     info.extensions = windowManager.GetRequiredExtensions();
-    info.RayTracingOn = config.GraphicsConfig.UseRaytracing;
+    info.RayTracingOn = config->GraphicsConfig.UseRaytracing;
     info.BindingFunc = [&](VkSurfaceKHR &surface, VkInstance instance) {
         windowManager.CreateSurface(instance, surface);
     };
@@ -40,9 +38,9 @@ RenderingManager::RenderingManager(
     };
 
     _renderer = new Renderer(info, _guiModule);
-    _rtEnabled = config.GraphicsConfig.UseRaytracing;
+    _rtEnabled = config->GraphicsConfig.UseRaytracing;
     _textures.insert({std::string(""), Renderer::EMPTY_TEXTURE});
-    ImportRenderingResources(config.AssetConfig.Meshes, config.AssetConfig.Textures);
+    ImportRenderingResources(config->AssetConfig.Meshes, config->AssetConfig.Textures);
 
     _instance = this;
 }
@@ -136,7 +134,8 @@ void RenderingManager::ImportRenderingResources(std::vector<std::string> &meshes
         std::string &meshPath = meshes[meshIndex];
         if (_meshes.find(meshPath) == _meshes.end())
         {
-            Mesh meshData = Importing::ModelImporter::ImportMesh(meshPath.c_str());
+            Mesh meshData = Importing::ImportMesh(meshPath);
+            
             MeshHandle mesh = _renderer->UploadMesh(meshData);
             _meshes.insert({meshPath, mesh});
         }

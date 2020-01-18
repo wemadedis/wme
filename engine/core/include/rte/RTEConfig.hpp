@@ -53,10 +53,23 @@ struct AssetConfig
      * 
      */
     AbsoluteFilePath AssetRootDir = ENGINE_ASSET_DIR;
+
     /// @brief File paths to the textures
     std::vector<AbsoluteFilePath> Textures;
+
     /// @brief File paths to the mesh geometry data
     std::vector<AbsoluteFilePath> Meshes;
+};
+
+struct ImportConfig
+{
+    enum class MeshImporter
+    {
+        ASSIMP = 0,
+        WME
+    };
+
+    MeshImporter MeshImporter = MeshImporter::ASSIMP;
 };
 
 /**
@@ -69,5 +82,13 @@ public:
     WindowConfig WindowConfig;
     AssetConfig AssetConfig;
     PhysicsConfig PhysicsConfig;
+    ImportConfig ImportConfig;
+
+    static RTEConfig *_instance;
+
+    static RTEConfig *GetInstance();
+
+private:
+    RTEConfig();
 };
 } // namespace RTE

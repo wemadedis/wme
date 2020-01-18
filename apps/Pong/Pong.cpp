@@ -11,24 +11,24 @@ Models models;
 Sounds sounds;
 Textures textures;
 
-void ConfigureGame(RTEConfig &config)
+void ConfigureGame(RTEConfig *config)
 {
-    config.GraphicsConfig.UseRaytracing = true;
-    config.GraphicsConfig.FramesPerSecond = 120;
-    config.PhysicsConfig.DebugDrawColliders = false;
-    config.WindowConfig.WindowWidth = 1000;
-    config.WindowConfig.WindowHeight = 800;
-    config.WindowConfig.WindowName = "RAYTRACING: PO(N)G-CHAMP!";
+    config->GraphicsConfig.UseRaytracing = true;
+    config->GraphicsConfig.FramesPerSecond = 120;
+    config->PhysicsConfig.DebugDrawColliders = false;
+    config->WindowConfig.WindowWidth = 1000;
+    config->WindowConfig.WindowHeight = 800;
+    config->WindowConfig.WindowName = "RAYTRACING: PO(N)G-CHAMP!";
 
     models.BoxPath = GetFileFromAssets(models.BoxPath);
     models.SpherePath = GetFileFromAssets(models.SpherePath);
 
     textures.BrickPath = GetFileFromAssets(textures.BrickPath);
 
-    config.AssetConfig.Meshes = {
+    config->AssetConfig.Meshes = {
         models.BoxPath,
         models.SpherePath};
-    config.AssetConfig.Textures = {
+    config->AssetConfig.Textures = {
         textures.BrickPath};
 
     sounds.PongHitPath = GetFileFromAssets(sounds.PongHitPath);
@@ -237,9 +237,9 @@ PointLightGO MakeSunlight(Scene &scene, Components &comps)
     return go;
 }
 
-void OnGameStart(SceneManager &sceneManager)
+void OnGameStart(SceneManager *sceneManager)
 {
-    Scene &scene = *sceneManager.GetActiveScene();
+    Scene scene = *sceneManager->GetActiveScene();
 
     Components comps = GetComponentPoolIds(scene);
 
