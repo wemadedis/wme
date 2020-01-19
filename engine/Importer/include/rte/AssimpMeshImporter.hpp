@@ -12,7 +12,7 @@
 namespace RTE::Importing
 {
 
-class AssimpMeshImporter : public MeshImporter
+class AssimpMeshImporter : public IMeshImporter
 {
 private:
     static RTE::Rendering::Material ConvertMaterial(aiMaterial *material);

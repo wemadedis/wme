@@ -1,7 +1,6 @@
 #include "rte/Importer.hpp"
 
 #include "rte/RTEConfig.hpp"
-#include "rte/MeshImporter.hpp"
 #include "rte/Utility.hpp"
 #include "rte/AssimpMeshImporter.hpp"
 #include "rte/STBITextureImporter.hpp"
@@ -12,7 +11,7 @@ Rendering::Mesh ImportMesh(std::string file)
 {
     RTEConfig *config = RTEConfig::GetInstance();
 
-    MeshImporter *meshImporter = nullptr;
+    IMeshImporter *meshImporter = nullptr;
     switch (config->ImportConfig.MeshImporter)
     {
     case ImportConfig::MeshImporter::ASSIMP:
