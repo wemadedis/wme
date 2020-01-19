@@ -24,7 +24,9 @@ private:
 
     void ReadProjectConfig();
 
-    void ReadAssets();
+    void LoadAsset();
+
+    void LoadAllAssets();
 
 public:
     AssetManager();

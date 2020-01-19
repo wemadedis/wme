@@ -19,7 +19,7 @@ FileTree::Node FileTree::ConstructNode(const fs::directory_entry &path)
         }
         else if(fs::is_regular_file(entry))
         {
-            n.Files.push_back(entry.path().string());
+            n.Files.push_back(entry.path().filename().string());
         }
     } 
     return n;
@@ -43,12 +43,35 @@ FileTree::Node FileTree::ConstructTree(string path)
     return root;
 }
 
+void FileTree::GetNodeFilesRecursive(Node& node, std::string currentPath, std::vector<std::string>& outFiles)
+{
+    currentPath += node.DirectoryName;
+    if(currentPath.back() != '/')
+    {
+        currentPath += + "/";
+    }
+
+    for(string fileName : node.Files)
+    {
+        outFiles.push_back(currentPath+fileName);
+    }
+
+    for(Node& child : node.Children)
+    {
+        GetNodeFilesRecursive(child, currentPath, outFiles);
+    }
+}
+
 FileTree::FileTree(string path)
 {
     root = ConstructTree(path);
-    int q = 0;
 }
 
-
+std::vector<std::string> FileTree::GetAllFiles()
+{
+    vector<string> files = {};
+    GetNodeFilesRecursive(root, "", files);
+    return files;
+}
 
 }

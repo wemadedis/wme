@@ -37,23 +37,27 @@ void AssetManager::ReadProjectConfig()
 
 }
 
-void AssetManager::ReadAssets()
+void AssetManager::LoadAllAssets()
 {
-
+    vector<string> files = _fileTree->GetAllFiles();
+    for(string file : files)
+    {
+        fs::path p = fs::path(file);
+        string extension = p.extension().string();
+        // TODO: Create a function that picks an import function based on the extension
+    }
 }
 
 
 AssetManager::AssetManager()
 {
-    string assetsPath = "C:\\Users\\Svampex\\Documents\\Projects\\wme\\engine\\assets";
+    string assetsPath = ENGINE_ASSET_DIR;
     _fileTree = new FileTree(assetsPath);
-
 }
 
 void AssetManager::ScanAssets()
 {
-    
-    
+    LoadAllAssets();
 }
 
 }

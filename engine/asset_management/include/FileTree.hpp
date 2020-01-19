@@ -4,11 +4,12 @@
 #include<string>
 #include<filesystem>
 
+
 namespace fs = std::filesystem;
 
 namespace RTE::AssetManagement
 {
-
+// TODO: Make tree iterator?
 
 class FileTree
 {
@@ -27,8 +28,12 @@ private:
 
     Node ConstructTree(std::string path);
 
+    void GetNodeFilesRecursive(Node& node, std::string currentPath, std::vector<std::string>& outFiles);
+
 public:
     FileTree(std::string path);
+
+    std::vector<std::string> GetAllFiles();
 
 };
 
