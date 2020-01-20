@@ -1,7 +1,9 @@
 #include "AssetManager.hpp"
 
 #include <rapidjson/rapidjson.h>
-
+#include "rapidjson/document.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
 
 #include <fstream>
 #include <iostream>
@@ -37,6 +39,26 @@ void AssetManager::ReadProjectConfig()
 
 }
 
+void AssetManager::GenerateProjectAssetDescriptor()
+{
+    using namespace rapidjson;
+    Document d;
+    d.SetObject();
+    auto& allocator = d.GetAllocator();
+
+    Value assets(kArrayType);
+    // assets.PushBack()
+    d.AddMember("Assets", 1, allocator);
+    int q = 0;
+    
+    StringBuffer buffer;
+    Writer<StringBuffer> writer(buffer);
+    d.Accept(writer);
+
+    // Output {"project":"rapidjson","stars":11}
+    std::cout << buffer.GetString() << std::endl;
+}
+
 void AssetManager::LoadAllAssets()
 {
     vector<string> files = _fileTree->GetAllFiles();
@@ -58,6 +80,7 @@ AssetManager::AssetManager()
 void AssetManager::ScanAssets()
 {
     LoadAllAssets();
+    GenerateProjectAssetDescriptor();
 }
 
 }
